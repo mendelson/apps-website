@@ -9,9 +9,9 @@
 
 <style>
 
-/* ==================================================
-   THEME VARIABLES
-================================================== */
+/* ============================================
+   AUTOMATIC THEMES
+============================================ */
 :root {
   --bg: #fafafa;
   --text: #222;
@@ -19,22 +19,24 @@
   --border: #ddd;
   --accent: #111;
   --accent-text: #fff;
-  --section: #f1f1f1;
+  --section: #f2f2f2;
 }
 
-[data-theme="dark"] {
-  --bg: #0e0e0e;
-  --text: #e4e4e4;
-  --card: #1a1a1a;
-  --border: #444;
-  --accent: #e4e4e4;
-  --accent-text: #000;
-  --section: #151515;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e0e;
+    --text: #e4e4e4;
+    --card: #1a1a1a;
+    --border: #444;
+    --accent: #e4e4e4;
+    --accent-text: #000;
+    --section: #151515;
+  }
 }
 
-/* ==================================================
+/* ============================================
    BASE
-================================================== */
+============================================ */
 html { scroll-behavior: smooth; }
 
 body {
@@ -51,41 +53,54 @@ header {
   color: var(--accent-text);
 }
 
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 30px 20px;
+/* ============================================
+   MENU / NAV
+============================================ */
+nav {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
-/* ==================================================
-   TOP BAR
-================================================== */
-.top-bar {
+nav ul {
+  list-style: none;
   display: flex;
-  gap: 12px;
   justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
+  gap: 30px;
+  margin: 0;
+  padding: 14px 20px;
 }
 
-.top-bar input {
+nav a {
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ============================================
+   TOP CONTROLS
+============================================ */
+.top-controls {
+  display: flex;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+.top-controls input {
   padding: 10px;
   min-width: 260px;
   border-radius: 6px;
   border: 1px solid var(--border);
-}
-
-.top-bar button {
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
   background: var(--card);
-  cursor: pointer;
+  color: var(--text);
 }
 
-/* ==================================================
-   SECTIONS
-================================================== */
+/* ============================================
+   SECTION WRAPPERS
+============================================ */
 .section {
   background: var(--section);
   padding: 50px 0;
@@ -100,30 +115,31 @@ header {
 
 .section p.desc {
   text-align: center;
+  opacity: .75;
   max-width: 700px;
   margin: 0 auto 30px auto;
-  opacity: 0.75;
 }
 
-/* ==================================================
+/* ============================================
    GRID
-================================================== */
+============================================ */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
+  padding: 0 20px;
 }
 
-/* ==================================================
+/* ============================================
    CARD
-================================================== */
+============================================ */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 18px;
   text-align: center;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s, box-shadow .2s;
 }
 
 .card:hover {
@@ -132,8 +148,8 @@ header {
 }
 
 .card img {
-  width: 100%;
   max-width: 240px;
+  width: 100%;
   border-radius: 10px;
   margin-bottom: 14px;
 }
@@ -144,17 +160,19 @@ header {
   padding: 8px 14px;
   background: var(--accent);
   color: var(--accent-text);
-  border-radius: 6px;
   text-decoration: none;
+  border-radius: 6px;
 }
 
-/* ==================================================
+/* ============================================
    FOOTER
-================================================== */
+============================================ */
 footer {
-  text-align: center;
+  margin-top: 60px;
   padding: 30px;
+  text-align: center;
   font-size: 14px;
+  background: var(--card);
   border-top: 1px solid var(--border);
 }
 
@@ -168,100 +186,90 @@ footer {
   <p>Developed by Mateus Mendelson</p>
 </header>
 
-<div class="container">
+<nav>
+  <ul>
+    <li><a href="#data-fields">Data Fields</a></li>
+    <li><a href="#watch-faces">Watch Faces</a></li>
+  </ul>
+</nav>
 
-  <div class="top-bar">
-    <input type="text" id="search" placeholder="Search apps..." />
-    <button onclick="toggleTheme()">Toggle dark mode</button>
-  </div>
-
+<div class="top-controls">
+  <input type="text" id="search" placeholder="Search apps...">
 </div>
 
 <!-- ================= DATA FIELDS ================= -->
 <section id="data-fields" class="section">
-  <div class="container">
-    <h2>Data Fields</h2>
-    <p class="desc">
-      Tools that extend Garmin activities with live predictions, pacing guidance,
-      tracking and custom calculations.
-    </p>
+  <h2>Data Fields</h2>
+  <p class="desc">Tools that extend Garmin activities with predictions, pacing, tracking and performance insights.</p>
 
-    <div class="grid" id="apps">
+  <div class="grid">
 
-      <div class="card" data-name="Live Time Predictor">
-        <img src="img/live-time-predictor.jpeg">
-        <h3>Live Time Predictor</h3>
-        <p>Live time predictions for multiple custom distances.</p>
-        <a href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Live Predictor Premium">
-        <img src="img/live-predictor-premium.jpeg">
-        <h3>Live Predictor Premium</h3>
-        <p>Advanced prediction features with full and lite variants.</p>
-        <a href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Pacer">
-        <img src="img/pacer.jpeg">
-        <h3>Pacer Data Field</h3>
-        <p>Real-time pace guidance to stay exactly on target.</p>
-        <a href="https://apps.garmin.com/pt-BR/apps/6a1f0f57-2451-4ab1-a21d-47d919a03bfa">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Live Pace Speed Calculator">
-        <img src="img/pace-speed-calculator.jpeg">
-        <h3>Live Pace Speed Calculator</h3>
-        <p>Shows required pace or speed to hit custom goals.</p>
-        <a href="https://apps.garmin.com/pt-BR/apps/41a74229-1e7e-488d-8f43-1d01d28bad27">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Tracker">
-        <img src="img/tracker.jpeg">
-        <h3>Tracker Data Field</h3>
-        <p>Share your activity live using a unique tracker ID.</p>
-        <a href="https://apps.garmin.com/pt-BR/apps/9d8c6123-17e7-4ee2-a9c0-de88891d2b96">Connect IQ</a>
-      </div>
-
+    <div class="card" data-name="Live Time Predictor">
+      <img src="img/live-time-predictor.jpeg">
+      <h3>Live Time Predictor</h3>
+      <p>Live time predictions for custom distances.</p>
+      <a href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">Connect IQ</a>
     </div>
+
+    <div class="card" data-name="Live Predictor Premium">
+      <img src="img/live-predictor-premium.jpeg">
+      <h3>Live Predictor Premium</h3>
+      <p>Advanced real-time predictions with Full and Lite versions.</p>
+      <a href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">Connect IQ</a>
+    </div>
+
+    <div class="card" data-name="Pacer Data Field">
+      <img src="img/pacer.jpeg">
+      <h3>Pacer Data Field</h3>
+      <p>Real-time pace you must maintain to hit your goal.</p>
+      <a href="https://apps.garmin.com/pt-BR/apps/6a1f0f57-2451-4ab1-a21d-47d919a03bfa">Connect IQ</a>
+    </div>
+
+    <div class="card" data-name="Live Pace Speed Calculator">
+      <img src="img/pace-speed-calculator.jpeg">
+      <h3>Live Pace Speed Calculator</h3>
+      <p>Required paces and speeds to hit target distances and times.</p>
+      <a href="https://apps.garmin.com/pt-BR/apps/41a74229-1e7e-488d-8f43-1d01d28bad27">Connect IQ</a>
+    </div>
+
+    <div class="card" data-name="Tracker Data Field">
+      <img src="img/tracker.jpeg">
+      <h3>Tracker Data Field</h3>
+      <p>Share your activity live using a unique tracker ID.</p>
+      <a href="https://apps.garmin.com/pt-BR/apps/9d8c6123-17e7-4ee2-a9c0-de88891d2b96">Connect IQ</a>
+    </div>
+
   </div>
 </section>
 
 <!-- ================= WATCH FACES ================= -->
 <section id="watch-faces" class="section">
-  <div class="container">
-    <h2>Watch Faces</h2>
-    <p class="desc">
-      Creative and functional watch faces with unique visual concepts.
-    </p>
+  <h2>Watch Faces</h2>
+  <p class="desc">Creative and functional watch faces with unique visual styles.</p>
 
-    <div class="grid">
+  <div class="grid">
 
-      <div class="card" data-name="Route Silhouette">
-        <img src="img/route-silhouette.png">
-        <h3>Route Silhouette</h3>
-        <p>
-          Shows your latest GPS-based Strava activity directly on your watch
-          as a clean route silhouette.
-        </p>
-        <a href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Solve for X">
-        <img src="img/solve-for-x.jpeg">
-        <h3>Solve for X</h3>
-        <p>Solve a puzzle to reveal the time.</p>
-        <a href="https://apps.garmin.com/pt-BR/apps/0aeb6665-4a32-4bb9-9887-5532bafb4a3d">Connect IQ</a>
-      </div>
-
-      <div class="card" data-name="Time Across The Galaxy">
-        <img src="img/galaxy.png">
-        <h3>Time Across The Galaxy</h3>
-        <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
-        <a href="https://apps.garmin.com/pt-BR/apps/f2d3cd34-f9cf-45e1-bcf3-83d80aa2208f">Connect IQ</a>
-      </div>
-
+    <div class="card" data-name="Route Silhouette">
+      <img src="img/route-silhouette.png">
+      <h3>Route Silhouette</h3>
+      <p>Shows your latest GPS-based Strava activity directly on your watch.</p>
+      <a href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">Connect IQ</a>
     </div>
+
+    <div class="card" data-name="Solve for X">
+      <img src="img/solve-for-x.jpeg">
+      <h3>Solve for X</h3>
+      <p>Solve a math puzzle to reveal the time.</p>
+      <a href="https://apps.garmin.com/pt-BR/apps/0aeb6665-4a32-4bb9-9887-5532bafb4a3d">Connect IQ</a>
+    </div>
+
+    <div class="card" data-name="Time Across The Galaxy">
+      <img src="img/galaxy.png">
+      <h3>Time Across The Galaxy</h3>
+      <p>Cosmic watch face inspired by a galaxy far away.</p>
+      <a href="https://apps.garmin.com/pt-BR/apps/f2d3cd34-f9cf-45e1-bcf3-83d80aa2208f">Connect IQ</a>
+    </div>
+
   </div>
 </section>
 
@@ -270,21 +278,13 @@ footer {
 </footer>
 
 <script>
-
-/* SEARCH FILTER */
+/* REAL-TIME SEARCH */
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.card').forEach(card => {
-    card.style.display = card.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.display = c.dataset.name.toLowerCase().includes(q) ? '' : 'none';
   });
 });
-
-/* THEME TOGGLE */
-function toggleTheme() {
-  const t = document.documentElement.getAttribute('data-theme');
-  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
-}
-
 </script>
 
 </body>
