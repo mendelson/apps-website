@@ -8,24 +8,34 @@
   <meta name="description" content="Garmin Connect IQ apps developed by Mateus Mendelson. Data fields and watch faces including Live Time Predictor, Pacer, Tracker, Route Silhouette and more." />
 
   <style>
+
+    /* ============================================
+        LIGHT THEME
+    ============================================ */
     :root {
       --bg: #fafafa;
-      --card-bg: #ffffff;
       --text: #222;
+      --card-bg: #ffffff;
       --border: #ddd;
+      --section-bg: #f2f2f2;
       --header-bg: #111;
       --header-text: #fff;
       --btn-bg: #111;
       --btn-text: #fff;
       --btn-bg-hover: #333;
+      --grid-gap: 28px;
     }
 
+    /* ============================================
+        DARK THEME
+    ============================================ */
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0e0e0e;
-        --card-bg: #1a1a1a;
         --text: #e4e4e4;
+        --card-bg: #1a1a1a;
         --border: #444;
+        --section-bg: #151515;
         --header-bg: #000;
         --header-text: #fff;
         --btn-bg: #e4e4e4;
@@ -34,6 +44,9 @@
       }
     }
 
+    /* ============================================
+        GENERAL
+    ============================================ */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -70,31 +83,60 @@
       font-weight: 600;
     }
 
+    .section-wrapper {
+      background: var(--section-bg);
+      padding: 40px 0;
+      margin-top: 50px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: auto;
       padding: 20px;
     }
 
-    h2.section-title {
-      margin-top: 50px;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 8px;
+    .section-title {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .section-description {
+      text-align: center;
+      opacity: 0.75;
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      font-size: 15px;
+    }
+
+    /* ============================================
+        GRID LAYOUT FOR APP CARDS
+    ============================================ */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: var(--grid-gap);
     }
 
     .app-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
-      margin-top: 24px;
+      padding: 18px;
+      text-align: center;
     }
 
     .app-card img {
-      max-width: 340px;
+      max-width: 250px;
       width: 100%;
       border-radius: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+    }
+
+    .app-card h3 {
+      margin-top: 5px;
     }
 
     .btn {
@@ -120,10 +162,12 @@
       color: var(--text);
       border-top: 1px solid var(--border);
     }
+
   </style>
 </head>
 
 <body>
+
   <header>
     <h1>Garmin Connect IQ Apps</h1>
     <p>Developed by Mateus Mendelson</p>
@@ -136,77 +180,102 @@
     </ul>
   </nav>
 
-  <div class="container">
-
-    <!-- DATA FIELDS -->
-    <h2 id="data-fields" class="section-title">Data Fields</h2>
-
-    <div class="app-card">
-      <img src="img/live-time-predictor.jpeg" alt="Live Time Predictor Garmin data field" loading="lazy">
-      <h3>Live Time Predictor</h3>
-      <p>Customize up to five distances and get live updated time predictions based on your current average pace or speed.</p>
-      <a class="btn" href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">Connect IQ</a>
-    </div>
-
-    <div class="app-card">
-      <img src="img/live-predictor-premium.jpeg" alt="Live Predictor Premium Garmin data field" loading="lazy">
-      <h3>Live Predictor Premium</h3>
-      <p>Premium version of Live Time Predictor with advanced customization options and Full/Lite variants.</p>
-      <a class="btn" href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">Connect IQ</a>
-    </div>
-
-    <div class="app-card">
-      <img src="img/pacer.jpeg" alt="Pacer Garmin data field" loading="lazy">
-      <h3>Pacer Data Field</h3>
-      <p>Shows the exact pace or speed you need to maintain in real time to stay on your target.</p>
-      <a class="btn" href="https://apps.garmin.com/pt-BR/apps/6a1f0f57-2451-4ab1-a21d-47d919a03bfa">Connect IQ</a>
-    </div>
-
-    <div class="app-card">
-      <img src="img/pace-speed-calculator.jpeg" alt="Live Pace Speed Calculator Garmin data field" loading="lazy">
-      <h3>Live Pace Speed Calculator</h3>
-      <p>Set custom target distances and times and get live updated pace and speed requirements for each goal.</p>
-      <a class="btn" href="https://apps.garmin.com/pt-BR/apps/41a74229-1e7e-488d-8f43-1d01d28bad27">Connect IQ</a>
-    </div>
-
-    <div class="app-card">
-      <img src="img/tracker.jpeg" alt="Tracker Garmin data field" loading="lazy">
-      <h3>Tracker Data Field</h3>
-      <p>Share your activity live with friends and family using a unique tracker ID.</p>
-      <a class="btn" href="https://apps.garmin.com/pt-BR/apps/9d8c6123-17e7-4ee2-a9c0-de88891d2b96">Connect IQ</a>
-    </div>
-
-    <!-- WATCH FACES -->
-    <h2 id="watch-faces" class="section-title">Watch Faces</h2>
-
-    <div class="app-card">
-      <img src="img/route-silhouette.png" alt="Route Silhouette Garmin watch face" loading="lazy">
-      <h3>Route Silhouette</h3>
-      <p>
-        The Route Silhouette watch face shows your latest GPS-based activity from Strava
-        right on your watch, turning your most recent route into a clean visual silhouette.
+  <!-- ============================================
+       DATA FIELDS SECTION
+  ============================================ -->
+  <div id="data-fields" class="section-wrapper">
+    <div class="container">
+      <h2 class="section-title">Data Fields</h2>
+      <p class="section-description">
+        Dedicated tools that extend your activity metrics with predictions, pacing guidance, live tracking,
+        and custom calculations during your workouts.
       </p>
-      <a class="btn" href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">Connect IQ</a>
-    </div>
 
-    <div class="app-card">
-      <img src="img/solve-for-x.jpeg" alt="Solve for X Garmin watch face" loading="lazy">
-      <h3>Solve for X</h3>
-      <p>A puzzle-based watch face where you must solve a simple equation before time is revealed.</p>
-      <a class="btn" href="https://apps.garmin.com/pt-BR/apps/0aeb6665-4a32-4bb9-9887-5532bafb4a3d">Connect IQ</a>
-    </div>
+      <div class="app-grid">
 
-    <div class="app-card">
-      <img src="img/galaxy.png" alt="Time Across The Galaxy Garmin watch face" loading="lazy">
-      <h3>Time Across The Galaxy</h3>
-      <p>A cosmic-themed watch face that displays time across a galaxy far, far away.</p>
-      <a class="btn" href="https://apps.garmin.com/pt-BR/apps/f2d3cd34-f9cf-45e1-bcf3-83d80aa2208f">Connect IQ</a>
-    </div>
+        <div class="app-card">
+          <img src="img/live-time-predictor.jpeg" alt="Live Time Predictor Garmin data field" loading="lazy">
+          <h3>Live Time Predictor</h3>
+          <p>Customize up to five distances and get live updated time predictions based on your current average pace or speed.</p>
+          <a class="btn" href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">Connect IQ</a>
+        </div>
 
+        <div class="app-card">
+          <img src="img/live-predictor-premium.jpeg" alt="Live Predictor Premium Garmin data field" loading="lazy">
+          <h3>Live Predictor Premium</h3>
+          <p>Premium version of Live Time Predictor with advanced customization options and Full/Lite variants.</p>
+          <a class="btn" href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">Connect IQ</a>
+        </div>
+
+        <div class="app-card">
+          <img src="img/pacer.jpeg" alt="Pacer Garmin data field" loading="lazy">
+          <h3>Pacer Data Field</h3>
+          <p>Shows the exact pace or speed you need to maintain in real time to stay on your target.</p>
+          <a class="btn" href="https://apps.garmin.com/pt-BR/apps/6a1f0f57-2451-4ab1-a21d-47d919a03bfa">Connect IQ</a>
+        </div>
+
+        <div class="app-card">
+          <img src="img/pace-speed-calculator.jpeg" alt="Live Pace Speed Calculator Garmin data field" loading="lazy">
+          <h3>Live Pace Speed Calculator</h3>
+          <p>Set custom target distances and times and get live updated pace and speed requirements for each goal.</p>
+          <a class="btn" href="https://apps.garmin.com/pt-BR/apps/41a74229-1e7e-488d-8f43-1d01d28bad27">Connect IQ</a>
+        </div>
+
+        <div class="app-card">
+          <img src="img/tracker.jpeg" alt="Tracker Garmin data field" loading="lazy">
+          <h3>Tracker Data Field</h3>
+          <p>Share your activity live with friends and family using a unique tracker ID.</p>
+          <a class="btn" href="httpsapps.garmin.com/pt-BR/apps/9d8c6123-17e7-4ee2-a9c0-de88891d2b96">Connect IQ</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       WATCH FACES SECTION
+  ============================================ -->
+  <div id="watch-faces" class="section-wrapper">
+    <div class="container">
+      <h2 class="section-title">Watch Faces</h2>
+      <p class="section-description">
+        Unique visual experiences for your watch, each offering creative and functional ways to view time 
+        or display personalized activity-based visuals.
+      </p>
+
+      <div class="app-grid">
+
+        <div class="app-card">
+          <img src="img/route-silhouette.png" alt="Route Silhouette Garmin watch face" loading="lazy">
+          <h3>Route Silhouette</h3>
+          <p>
+            The Route Silhouette watch face shows your latest GPS-based activity from Strava 
+            right on your watch, turning your most recent route into a clean visual silhouette.
+          </p>
+          <a class="btn" href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">Connect IQ</a>
+        </div>
+
+        <div class="app-card">
+          <img src="img/solve-for-x.jpeg" alt="Solve for X Garmin watch face" loading="lazy">
+          <h3>Solve for X</h3>
+          <p>A puzzle-based watch face where you must solve a simple equation before time is revealed.</p>
+          <a class="btn" href="https://apps.garmin.com/pt-BR/apps/0aeb6665-4a32-4bb9-9887-5532bafb4a3d">Connect IQ</a>
+        </div>
+
+        <div class="app-card">
+          <img src="img/galaxy.png" alt="Time Across The Galaxy Garmin watch face" loading="lazy">
+          <h3>Time Across The Galaxy</h3>
+          <p>A cosmic-themed watch face that displays time across a galaxy far, far away.</p>
+          <a class="btn" href="https://apps.garmin.com/pt-BR/apps/f2d3cd34-f9cf-45e1-bcf3-83d80aa2208f">Connect IQ</a>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <footer>
     © 2026 Mateus Mendelson — Garmin Connect IQ Apps
   </footer>
+
 </body>
 </html>
