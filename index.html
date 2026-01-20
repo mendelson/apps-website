@@ -8,129 +8,217 @@
 <meta name="description" content="Garmin Connect IQ apps developed by Mateus Mendelson. Data fields and watch faces available on the Connect IQ Store.">
 
 <style>
-/* ================== AUTO LIGHT / DARK ================== */
+/* ================= THEME ================= */
 :root {
-  --bg:#fafafa; --text:#222; --card:#fff; --border:#ddd;
-  --section:#f2f2f2; --trial:#666;
+  --bg:#fafafa;
+  --text:#222;
+  --card:#fff;
+  --border:#ddd;
+  --section:#f2f2f2;
+  --trial:#666;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg:#0e0e0e; --text:#e4e4e4; --card:#1a1a1a; --border:#444;
-    --section:#151515; --trial:#aaa;
+    --bg:#0e0e0e;
+    --text:#e4e4e4;
+    --card:#1a1a1a;
+    --border:#444;
+    --section:#151515;
+    --trial:#aaa;
   }
 }
 
-/* ================== BASE ================== */
-html { scroll-behavior:smooth }
+/* ================= BASE ================= */
+html { scroll-behavior:smooth; }
 body {
-  margin:0; font-family:Arial,sans-serif;
-  background:var(--bg); color:var(--text);
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* ================== HEADER & NAV ================== */
+/* ================= HEADER / NAV ================= */
 header {
-  background:#000; color:#fff;
-  padding:40px 20px; text-align:center;
+  background:#000;
+  color:#fff;
+  padding:40px 20px;
+  text-align:center;
 }
+
 nav {
-  position:sticky; top:0; z-index:10;
-  background:var(--card); border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
 }
+
 nav ul {
-  list-style:none; margin:0; padding:14px;
-  display:flex; justify-content:center; gap:28px;
+  list-style:none;
+  display:flex;
+  justify-content:center;
+  gap:28px;
+  margin:0;
+  padding:14px;
 }
-nav a { text-decoration:none; color:var(--text); font-weight:600 }
 
-/* ================== SEARCH ================== */
-.search-container { text-align:center; margin:24px }
+nav a {
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+}
+
+/* ================= SEARCH ================= */
+.search-container {
+  text-align:center;
+  margin:24px;
+}
+
 .search-container input {
-  max-width:300px; width:100%; padding:10px;
-  border-radius:6px; border:1px solid var(--border);
-  background:var(--card); color:var(--text);
+  max-width:300px;
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
 }
 
-/* ================== SECTIONS ================== */
+/* ================= SECTIONS ================= */
 .section {
   background:var(--section);
-  padding:50px 0; border-top:1px solid var(--border);
-}
-.section h2 { text-align:center; font-size:32px; margin-bottom:6px }
-.section p.desc {
-  text-align:center; opacity:.8;
-  max-width:700px; margin:0 auto 26px;
+  padding:50px 0;
+  border-top:1px solid var(--border);
 }
 
-/* ================== GRID & CARD ================== */
+.section h2 {
+  text-align:center;
+  font-size:32px;
+  margin-bottom:6px;
+}
+
+.section p.desc {
+  text-align:center;
+  opacity:.8;
+  max-width:700px;
+  margin:0 auto 26px;
+}
+
+/* ================= GRID ================= */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:26px; padding:0 22px;
+  gap:26px;
+  padding:0 22px;
 }
+
+/* ================= CARD ================= */
 .card {
-  background:var(--card); border:1px solid var(--border);
-  border-radius:14px; padding:18px; text-align:center;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
   transition:.25s;
 }
+
 .card:hover {
   transform:translateY(-4px);
   box-shadow:0 8px 22px rgba(0,0,0,.15);
 }
-.card img {
-  max-width:240px; width:100%;
-  border-radius:10px; margin-bottom:14px;
-}
-.card h3 { margin:8px 0 4px; font-size:20px }
-.card p { font-size:14px; opacity:.85; margin:6px 0 12px }
 
-/* ================== CONNECT IQ BADGE ================== */
-.ciq-badge img {
-  height:44px;
-}
-.ciq-badge .dark { display:none }
-@media (prefers-color-scheme: dark) {
-  .ciq-badge .light { display:none }
-  .ciq-badge .dark { display:inline }
+/* reserved badge space */
+.badge-slot {
+  height:26px;
+  margin-bottom:6px;
 }
 
-/* ================== FREE TRIAL BADGE ================== */
 .trial {
   font-size:12px;
   color:var(--trial);
   border:1px solid var(--border);
   border-radius:999px;
   padding:4px 10px;
-  display:inline-block;
-  margin-bottom:8px;
 }
 
-/* ================== DROPDOWN ================== */
-.versions { position:relative; margin-top:10px }
+/* content */
+.card img {
+  max-width:240px;
+  width:100%;
+  border-radius:10px;
+  margin:12px 0;
+}
+
+.card h3 {
+  margin:6px 0 4px;
+  font-size:20px;
+}
+
+.card p {
+  font-size:14px;
+  opacity:.85;
+  margin:6px 0 12px;
+}
+
+/* ================= CONNECT IQ BADGE ================= */
+.ciq-badge img { height:44px; }
+
+.ciq-badge .dark { display:none; }
+
+@media (prefers-color-scheme: dark) {
+  .ciq-badge .light { display:none; }
+  .ciq-badge .dark { display:inline; }
+}
+
+/* ================= DROPDOWN ================= */
+.versions {
+  width:100%;
+  margin-top:10px;
+  position:relative;
+}
+
 .versions button {
-  width:100%; padding:8px;
+  width:100%;
+  padding:8px;
   background:var(--section);
   border:1px solid var(--border);
   border-radius:6px;
-  cursor:pointer; color:var(--text);
+  cursor:pointer;
+  color:var(--text);
 }
+
 .dropdown {
-  display:none; position:absolute; width:100%;
+  display:none;
+  position:absolute;
+  width:100%;
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:6px; margin-top:4px;
+  border-radius:6px;
+  margin-top:4px;
 }
-.dropdown a {
-  display:block; padding:8px 10px;
-  text-decoration:none; color:var(--text);
-}
-.dropdown a:hover { background:var(--section) }
-.versions:hover .dropdown { display:block }
 
-/* ================== FOOTER ================== */
+.dropdown a {
+  display:block;
+  padding:8px 10px;
+  text-decoration:none;
+  color:var(--text);
+}
+
+.dropdown a:hover { background:var(--section); }
+
+.versions:hover .dropdown { display:block; }
+
+/* ================= FOOTER ================= */
 footer {
-  text-align:center; padding:30px;
+  text-align:center;
+  padding:30px;
   border-top:1px solid var(--border);
-  font-size:14px; margin-top:40px;
+  font-size:14px;
+  margin-top:40px;
 }
 </style>
 </head>
@@ -162,7 +250,7 @@ footer {
 
 <!-- Live Predictor Premium -->
 <div class="card" data-name="Live Predictor Premium">
-  <span class="trial">FREE TRIAL</span>
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
   <img src="img/live-predictor-premium.jpeg">
   <h3>Live Predictor Premium</h3>
   <p>Advanced real-time predictions with flexible configurations.</p>
@@ -178,8 +266,9 @@ footer {
   </div>
 </div>
 
-<!-- Live Time Predictor (FREE) -->
+<!-- Live Time Predictor -->
 <div class="card" data-name="Live Time Predictor">
+  <div class="badge-slot"></div>
   <img src="img/live-time-predictor.jpeg">
   <h3>Live Time Predictor</h3>
   <p>Live time predictions for custom distances.</p>
@@ -191,7 +280,7 @@ footer {
 
 <!-- Pacer -->
 <div class="card" data-name="Pacer Data Field">
-  <span class="trial">FREE TRIAL</span>
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
   <img src="img/pacer.jpeg">
   <h3>Pacer Data Field</h3>
   <p>Real-time pacing guidance to stay exactly on target.</p>
@@ -202,8 +291,6 @@ footer {
   <div class="versions">
     <button>More versions ▾</button>
     <div class="dropdown">
-      <a href="#">Mirror B</a>
-      <a href="#">Mirror C</a>
       <a href="https://apps.garmin.com/apps/0dd6e1a1-b0b5-4e05-80de-8a4d21c2d857">Miles version</a>
     </div>
   </div>
@@ -219,9 +306,8 @@ footer {
 
 <div class="grid">
 
-<!-- Route Silhouette -->
 <div class="card" data-name="Route Silhouette">
-  <span class="trial">FREE TRIAL</span>
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
   <img src="img/route-silhouette.png">
   <h3>Route Silhouette</h3>
   <p>Shows your latest GPS-based Strava activity on your watch.</p>
@@ -231,8 +317,8 @@ footer {
   </a>
 </div>
 
-<!-- Galaxy (FREE) -->
 <div class="card" data-name="Time Across The Galaxy">
+  <div class="badge-slot"></div>
   <img src="img/galaxy.png">
   <h3>Time Across The Galaxy</h3>
   <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
@@ -242,8 +328,8 @@ footer {
   </a>
 </div>
 
-<!-- Solve for X (FREE) -->
 <div class="card" data-name="Solve for X">
+  <div class="badge-slot"></div>
   <img src="img/solve-for-x.jpeg">
   <h3>Solve for X</h3>
   <p>Solve a puzzle to reveal the time.</p>
