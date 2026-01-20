@@ -4,146 +4,221 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- ===== SEO CORE ===== -->
-<title>Garmin Connect IQ Apps & Watch Faces by Mateus Mendelson</title>
-<meta name="description" content="Explore Garmin Connect IQ data fields and watch faces developed by Mateus Mendelson. Performance tools, pacing data fields, live predictors, and creative watch faces for Garmin devices.">
-<link rel="canonical" href="https://apps.mmendelson.com/">
-
-<!-- ===== PERFORMANCE ===== -->
-<link rel="preconnect" href="https://apps.garmin.com">
-<link rel="dns-prefetch" href="https://apps.garmin.com">
-
-<!-- ===== OPEN GRAPH ===== -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="Garmin Connect IQ Apps by Mateus Mendelson">
-<meta property="og:description" content="Garmin data fields and watch faces focused on performance, pacing and creativity.">
-<meta property="og:url" content="https://apps.mmendelson.com/">
-<meta property="og:image" content="https://apps.mmendelson.com/img/og-cover.png">
-
-<!-- ===== TWITTER CARD ===== -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Garmin Connect IQ Apps by Mateus Mendelson">
-<meta name="twitter:description" content="Performance-focused data fields and creative watch faces for Garmin devices.">
-<meta name="twitter:image" content="https://apps.mmendelson.com/img/og-cover.png">
-
-<!-- ===== STRUCTURED DATA ===== -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "Garmin Connect IQ Apps by Mateus Mendelson",
-  "url": "https://apps.mmendelson.com/",
-  "description": "Collection of Garmin Connect IQ data fields and watch faces.",
-  "creator": {
-    "@type": "Person",
-    "name": "Mateus Mendelson"
-  }
-}
-</script>
+<title>Garmin Connect IQ Apps – Mateus Mendelson</title>
+<meta name="description" content="Garmin Connect IQ apps developed by Mateus Mendelson. Data fields and watch faces available on the Connect IQ Store.">
 
 <style>
 /* ================= THEME ================= */
 :root {
-  --bg:#fafafa; --text:#222; --card:#fff;
-  --border:#ddd; --section:#f2f2f2; --trial:#666;
+  --bg:#fafafa;
+  --text:#222;
+  --card:#fff;
+  --border:#ddd;
+  --section:#f2f2f2;
+  --trial:#666;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg:#0e0e0e; --text:#e4e4e4; --card:#1a1a1a;
-    --border:#444; --section:#151515; --trial:#aaa;
+    --bg:#0e0e0e;
+    --text:#e4e4e4;
+    --card:#1a1a1a;
+    --border:#444;
+    --section:#151515;
+    --trial:#aaa;
   }
 }
 
-body{margin:0;font-family:Arial, sans-serif;background:var(--bg);color:var(--text);}
-html{scroll-behavior:smooth}
-
-/* HEADER */
-header{background:#000;color:#fff;padding:42px 20px;text-align:center}
-
-/* NAV */
-nav{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--border);z-index:20}
-nav ul{display:flex;list-style:none;justify-content:center;gap:28px;padding:14px;margin:0}
-nav a{text-decoration:none;color:var(--text);font-weight:600}
-
-/* SEARCH */
-.search-container{text-align:center;margin:26px}
-.search-container input{
-  max-width:320px;width:100%;padding:10px;
-  border:1px solid var(--border);border-radius:6px;
-  background:var(--card);color:var(--text)
+/* ================= BASE ================= */
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* SECTIONS */
-.section{background:var(--section);padding:56px 0;border-top:1px solid var(--border)}
-.section h2{text-align:center;font-size:32px;margin:0 0 6px}
-.section p.desc{text-align:center;max-width:760px;margin:0 auto 30px;opacity:.85}
+/* ================= HEADER / NAV ================= */
+header {
+  background:#000;
+  color:#fff;
+  padding:40px 20px;
+  text-align:center;
+}
 
-/* GRID */
-.grid{
+nav {
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+}
+
+nav ul {
+  list-style:none;
+  display:flex;
+  justify-content:center;
+  gap:28px;
+  margin:0;
+  padding:14px;
+}
+
+nav a {
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+}
+
+/* ================= SEARCH ================= */
+.search-container {
+  text-align:center;
+  margin:24px;
+}
+
+.search-container input {
+  max-width:300px;
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
+}
+
+/* ================= SECTIONS ================= */
+.section {
+  background:var(--section);
+  padding:50px 0;
+  border-top:1px solid var(--border);
+}
+
+.section h2 {
+  text-align:center;
+  font-size:32px;
+  margin-bottom:6px;
+}
+
+.section p.desc {
+  text-align:center;
+  opacity:.8;
+  max-width:700px;
+  margin:0 auto 26px;
+}
+
+/* ================= GRID ================= */
+.grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:26px;padding:0 22px;
+  gap:26px;
+  padding:0 22px;
 }
 
-/* CARD */
-.card{
+/* ================= CARD ================= */
+.card {
   background:var(--card);
   border:1px solid var(--border);
   border-radius:14px;
   padding:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
   text-align:center;
   transition:.25s;
 }
-.card:hover{transform:translateY(-4px);box-shadow:0 8px 22px rgba(0,0,0,.15);}
-.card img{max-width:240px;width:100%;border-radius:10px;margin:12px 0}
-.card h3{margin:6px 0 4px;font-size:20px}
-.card p{font-size:14px;opacity:.85}
 
-/* BADGES */
-.badge-slot{height:28px;margin-bottom:8px}
-.ciq-badge img{height:44px}
-.ciq-badge .dark{display:none}
-@media(prefers-color-scheme: dark){
-  .ciq-badge .light{display:none}
-  .ciq-badge .dark{display:inline}
+.card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 8px 22px rgba(0,0,0,.15);
 }
 
-/* FREE / TRIAL BADGE */
-.tag{
-  display:inline-block;
+.badge-slot {
+  height:26px;
+  margin-bottom:6px;
+}
+
+.trial {
   font-size:12px;
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  margin-top:6px;
   color:var(--trial);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:4px 10px;
 }
 
-/* VERSION DROPDOWN */
-.versions{width:100%;margin-top:10px;position:relative}
-.versions button{
-  width:100%;padding:8px;
+/* content */
+.card img {
+  max-width:240px;
+  width:100%;
+  border-radius:10px;
+  margin:12px 0;
+}
+
+.card h3 {
+  margin:6px 0 4px;
+  font-size:20px;
+}
+
+.card p {
+  font-size:14px;
+  opacity:.85;
+  margin:6px 0 12px;
+}
+
+/* ================= CONNECT IQ BADGE ================= */
+.ciq-badge img { height:44px; }
+
+.ciq-badge .dark { display:none; }
+
+@media (prefers-color-scheme: dark) {
+  .ciq-badge .light { display:none; }
+  .ciq-badge .dark { display:inline; }
+}
+
+/* ================= DROPDOWN ================= */
+.versions {
+  width:100%;
+  margin-top:10px;
+  position:relative;
+}
+
+.versions button {
+  width:100%;
+  padding:8px;
   background:var(--section);
   border:1px solid var(--border);
   border-radius:6px;
-  cursor:pointer;color:var(--text)
+  cursor:pointer;
+  color:var(--text);
 }
-.dropdown{
-  display:none;position:absolute;width:100%;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:6px;margin-top:4px;
-  z-index:50;
+
+.dropdown {
+  display:none;
+  position:absolute;
+  width:100%;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  margin-top:4px;
 }
-.dropdown a{
+
+.dropdown a {
   display:block;
   padding:8px 10px;
-  text-decoration:none;color:var(--text)
+  text-decoration:none;
+  color:var(--text);
 }
-.dropdown a:hover{background:var(--section)}
-.versions:hover .dropdown{display:block}
 
-/* FOOTER */
-footer{text-align:center;padding:34px;border-top:1px solid var(--border);margin-top:40px;font-size:14px}
+.dropdown a:hover { background:var(--section); }
+
+.versions:hover .dropdown { display:block; }
+
+/* ================= FOOTER ================= */
+footer {
+  text-align:center;
+  padding:30px;
+  border-top:1px solid var(--border);
+  font-size:14px;
+  margin-top:40px;
+}
 </style>
 </head>
 
@@ -151,7 +226,7 @@ footer{text-align:center;padding:34px;border-top:1px solid var(--border);margin-
 
 <header>
   <h1>Garmin Connect IQ Apps</h1>
-  <p>Performance-focused data fields and creative watch faces by Mateus Mendelson</p>
+  <p>Developed by Mateus Mendelson</p>
 </header>
 
 <nav>
@@ -162,216 +237,158 @@ footer{text-align:center;padding:34px;border-top:1px solid var(--border);margin-
 </nav>
 
 <div class="search-container">
-  <input type="text" id="search" placeholder="Search Garmin apps…">
+  <input type="text" id="search" placeholder="Search apps…">
 </div>
 
-<!-- ========================================================= -->
-<!-- ======================= DATA FIELDS ====================== -->
-<!-- ========================================================= -->
-
+<!-- ================= DATA FIELDS ================= -->
 <section id="data-fields" class="section">
-<h2>Garmin Data Fields</h2>
-<p class="desc">Advanced performance tools for pacing, prediction and live activity tracking on Garmin devices.</p>
+<h2>Data Fields</h2>
+<p class="desc">Performance tools for pacing, prediction and live tracking.</p>
 
 <div class="grid">
 
-<!-- ========================================================= -->
-<!-- LIVE TIME PREDICTOR (FREE) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Live Time Predictor">
-  <div class="badge-slot">
-    <span class="tag">Free</span>
-  </div>
+<!-- Live Predictor Premium -->
+<div class="card" data-name="Live Predictor Premium">
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+  <img src="img/live-predictor-premium.jpeg">
+  <h3>Live Predictor Premium</h3>
+  <p>Advanced real-time predictions with flexible configurations.</p>
 
-  <img src="img/live-time-predictor.jpeg" alt="Live Time Predictor">
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
 
-  <h3>Live Time Predictor</h3>
-  <p>Predict your finish time dynamically as you run, adjusting instantly to your current performance.</p>
-
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/8a2fbc1c-1d13-4c3f-a05e-8d876e0d41cc">
-      <img src="img/connect-iq-badge-light.png" class="light" alt="Connect IQ">
-      <img src="img/connect-iq-badge-dark.png"  class="dark"  alt="Connect IQ">
-    </a>
+  <div class="versions">
+    <button>More versions ▾</button>
+    <div class="dropdown">
+      <a href="https://apps.garmin.com/apps/3df7d8a5-43d4-4d51-b379-abd8b03a84f9">Lite version</a>
+    </div>
   </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- LIVE PREDICTOR PREMIUM (FREE TRIAL) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Live Predictor Premium">
-  <div class="badge-slot">
-    <span class="tag">Free Trial</span>
-  </div>
+<!-- Live Time Predictor -->
+<div class="card" data-name="Live Time Predictor">
+  <div class="badge-slot"></div>
+  <img src="img/live-time-predictor.jpeg">
+  <h3>Live Time Predictor</h3>
+  <p>Live time predictions for custom distances.</p>
 
-  <img src="img/live-predictor-premium.jpeg" alt="Live Predictor Premium">
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
+</div>
 
-  <h3>Live Predictor Premium</h3>
-  <p>A more advanced, more precise version of the live predictor with additional metrics and logic.</p>
+<!-- Pacer -->
+<div class="card" data-name="Pacer Data Field">
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+  <img src="img/pacer.jpeg">
+  <h3>Pacer Data Field</h3>
+  <p>Real-time pacing guidance to stay exactly on target.</p>
 
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/ffb0b836-0db0-43c5-8a6c-e2d30f082e9f">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/738acc8f-c8eb-44cf-a929-b6a2ed083947">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
 
   <div class="versions">
-    <button>More versions</button>
+    <button>More versions ▾</button>
     <div class="dropdown">
-      <a href="https://apps.garmin.com/apps/48e3cfec-c2c2-4f22-8274-71f4b45f8718">Mirror A</a>
       <a href="https://apps.garmin.com/apps/d9f06aa8-5905-492f-9951-9e0a7b539a41">Mirror B</a>
       <a href="https://apps.garmin.com/apps/947be485-d8f3-4bd2-8a7b-c68ef1a92984">Mirror C</a>
+      <a href="https://apps.garmin.com/apps/0dd6e1a1-b0b5-4e05-80de-8a4d21c2d857">Miles version</a>
     </div>
   </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- PACER / PACER MILES -->
-<!-- ========================================================= -->
-<div class="card" data-name="Pacer">
-  <div class="badge-slot">
-    <span class="tag">Free Trial</span>
-  </div>
+<!-- Live Pace Speed Calculator -->
+<div class="card" data-name="Live Pace Speed Calculator">
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+  <img src="img/pace-speed-calculator.jpeg">
+  <h3>Live Pace Speed Calculator</h3>
+  <p>Required pace or speed for custom goals.</p>
 
-  <img src="img/pacer.jpeg" alt="Pacer Data Field">
-
-  <h3>Pacer</h3>
-  <p>A clean and highly accurate field for pacing your race strategy.</p>
-
-  <div class="ciq-badge">
-    <!-- MAIN VERSION = KM -->
-    <a href="https://apps.garmin.com/apps/d538408c-d4b1-4b16-8e60-e34f388cf4ef">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/240b756e-1e5b-4374-9d4b-9e67d5049759">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
 
   <div class="versions">
-    <button>More versions</button>
+    <button>More versions ▾</button>
     <div class="dropdown">
-      <a href="https://apps.garmin.com/apps/cccfb3af-7643-4ed0-b221-90ade78cb1bf">Mirror 1</a>
-      <a href="https://apps.garmin.com/apps/4ad7436c-82e2-4a41-8e30-5029c6786649">Mirror 2</a>
-      <a href="https://apps.garmin.com/apps/240b756e-1e5b-4374-9d4b-9e67d5049759">Miles Version</a>
+      <a href="https://apps.garmin.com/apps/41a74229-1e7e-488d-8f43-1d01d28bad27">Lite version</a>
     </div>
   </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- PACE / SPEED CALCULATOR (FREE TRIAL) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Pace Speed Calculator">
-  <div class="badge-slot">
-    <span class="tag">Free Trial</span>
-  </div>
+<!-- Tracker -->
+<div class="card" data-name="Tracker Data Field">
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+  <img src="img/tracker.jpeg">
+  <h3>Tracker Data Field</h3>
+  <p>Share your activity live with a unique tracker ID.</p>
 
-  <img src="img/pace-speed-calculator.jpeg" alt="Pace Speed Calculator">
-
-  <h3>Pace & Speed Calculator</h3>
-  <p>Calculate pace, distance or expected time directly on your Garmin.</p>
-
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/b86c34a5-f0f9-4d16-af44-d413f0de7cdc">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/30200a33-2330-4b15-8a6a-e87045bbf126">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
 </div>
 
-<!-- ========================================================= -->
-<!-- TIME ACROSS THE GALAXY (FREE) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Time Across the Galaxy">
-  <div class="badge-slot"><span class="tag">Free</span></div>
-
-  <img src="img/galaxy.png" alt="Time Across The Galaxy">
-
-  <h3>Time Across the Galaxy</h3>
-  <p>Fun, themed data field showing time and speed across a fictional galaxy.</p>
-
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/e9fcd49c-188e-4702-8b80-8bc1ef870c64">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
 </div>
-
-<!-- ========================================================= -->
-<!-- SOLVE FOR X (FREE) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Solve for X">
-  <div class="badge-slot"><span class="tag">Free</span></div>
-
-  <img src="img/solve-for-x.jpeg" alt="Solve for X Data Field">
-
-  <h3>Solve for X</h3>
-  <p>A playful puzzle-inspired data field with dynamic values.</p>
-
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/d5a9f3ea-aa71-49ef-b899-a0c315c4c747">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
-</div>
-
-</div> <!-- end grid -->
 </section>
 
-<!-- ========================================================= -->
-<!-- ====================== WATCH FACES ======================= -->
-<!-- ========================================================= -->
-
+<!-- ================= WATCH FACES ================= -->
 <section id="watch-faces" class="section">
-<h2>Garmin Watch Faces</h2>
-<p class="desc">Creative and functional watch faces designed for Garmin smartwatches.</p>
+<h2>Watch Faces</h2>
+<p class="desc">Creative watch faces with distinctive visual concepts.</p>
 
 <div class="grid">
 
-<!-- ========================================================= -->
-<!-- TRACKER (FREE TRIAL) -->
-<!-- ========================================================= -->
-<div class="card" data-name="Tracker">
-  <div class="badge-slot"><span class="tag">Free Trial</span></div>
-
-  <img src="img/tracker.jpeg" alt="Tracker Watch Face">
-
-  <h3>Tracker</h3>
-  <p>A stylish, minimalistic watch face focused on clean layout and readability.</p>
-
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
-</div>
-
-<!-- ========================================================= -->
-<!-- ROUTE SILHOUETTE -->
-<!-- ========================================================= -->
+<!-- Route Silhouette -->
 <div class="card" data-name="Route Silhouette">
-  <div class="badge-slot"><span class="tag">Free Trial</span></div>
-
-  <img src="img/route-silhouette.png" alt="Route Silhouette Watch Face">
-
+  <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+  <img src="img/route-silhouette.png">
   <h3>Route Silhouette</h3>
-  <p>The Route Silhouette watch face shows your latest GPS-based activity from Strava right on your watch!</p>
+  <p>Shows your latest GPS-based Strava activity on your watch.</p>
 
-  <div class="ciq-badge">
-    <a href="https://apps.garmin.com/apps/8bb79958-b580-40ae-83af-dcdaadbca9e5">
-      <img src="img/connect-iq-badge-light.png" class="light">
-      <img src="img/connect-iq-badge-dark.png" class="dark">
-    </a>
-  </div>
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
 </div>
 
-</div><!-- end grid -->
+<!-- Time Across The Galaxy -->
+<div class="card" data-name="Time Across The Galaxy">
+  <div class="badge-slot"></div>
+  <img src="img/galaxy.png">
+  <h3>Time Across The Galaxy</h3>
+  <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/5f4dad46-077c-4876-b860-9000e3285ef1">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
+</div>
+
+<!-- Solve for X -->
+<div class="card" data-name="Solve for X">
+  <div class="badge-slot"></div>
+  <img src="img/solve-for-x.jpeg">
+  <h3>Solve for X</h3>
+  <p>Solve a puzzle to reveal the time.</p>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/f6ae5589-7a3a-41c3-8f38-d46d39d898bb">
+    <img class="light" src="img/Connect IQ Badge-Black.svg">
+    <img class="dark"  src="img/Connect IQ Badge-White.svg">
+  </a>
+</div>
+
+</div>
 </section>
 
 <footer>
-  © 2026 Mateus Mendelson · Garmin Connect IQ Developer
+  © 2026 Mateus Mendelson — Garmin Connect IQ Apps
 </footer>
 
 <script>
