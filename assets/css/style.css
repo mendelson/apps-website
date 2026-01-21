@@ -250,10 +250,11 @@ nav a {
   border-bottom: 7px solid #555;
 }
 
-/* ===========================
-   METRICS (HIDE RAW VALUES)
-=========================== */
-
-.metrics {
+/* ===============================
+   FORCE HIDE RAW METRICS
+================================ */
+.metrics,
+.metrics .metric,
+.metric {
   display: none !important;
 }
