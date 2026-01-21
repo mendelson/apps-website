@@ -122,6 +122,35 @@ nav a {
 }
 
 /* ===========================
+   CONNECT IQ BADGE (THEME AWARE)
+=========================== */
+
+/* Default: assume light mode */
+.ciq-badge .dark {
+  display: none;
+}
+
+/* Dark mode – show the white badge */
+@media (prefers-color-scheme: dark) {
+  .ciq-badge .light {
+    display: none;
+  }
+  .ciq-badge .dark {
+    display: inline;
+  }
+}
+
+/* Light mode – show the black badge */
+@media (prefers-color-scheme: light) {
+  .ciq-badge .light {
+    display: inline;
+  }
+  .ciq-badge .dark {
+    display: none;
+  }
+}
+
+/* ===========================
    SEARCH
 =========================== */
 
