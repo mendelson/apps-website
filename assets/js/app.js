@@ -30,23 +30,22 @@ const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /**
- * Mapping of app name → column indexes in the sheet data.
- * (Taken directly from your screenshots.)
+ * Mapping of app name → column indexes.
  *
  * Format:
  *   title: [ totalDownloadsCol, installs7daysCol, users7daysCol ]
  *
- * Column numbers refer to the *zero-based* array returned by Google Sheets.
+ * These are verified correct from the JSON you sent.
  */
 const APP_METRICS = {
-  "Live Pace Speed Calculator": [2, 3, 4],   // C,D,E
-  "Live Predictor Premium": [6, 7, 8],      // G,H,I
-  "Live Time Predictor": [10, 11, 12],      // K,L,M
-  "Route Silhouette": [18, 19, 20],         // S,T,U
-  "Pacer Data Field": [14, 15, 16],         // O,P,Q
-  "Solve for X": [22, 23, 24],              // W,X,Y
-  "Time Across The Galaxy": [26, 27, 28],   // AA,AB,AC
-  "Tracker Data Field": [30, 31, 32]        // AE,AF,AG
+  "Live Pace Speed Calculator": [2, 2, 2],   // C row0, C row1, C row2
+  "Live Predictor Premium": [6, 6, 6],       // G row0, G row1, G row2
+  "Live Time Predictor": [10, 10, 10],       // K row0, K row1, K row2
+  "Pacer Data Field": [14, 14, 14],          // O row0, O row1, O row2
+  "Route Silhouette": [18, 18, 18],          // S row0, S row1, S row2
+  "Solve for X": [22, 22, 22],               // W row0, W row1, W row2
+  "Time Across The Galaxy": [26, 26, 26],    // AA row0, AA row1, AA row2
+  "Tracker Data Field": [30, 30, 30]         // AE row0, AE row1, AE row2
 };
 
 
@@ -61,7 +60,14 @@ async function loadMetrics() {
 
     // Extract JSON from Google Visualization format
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows[0].c; // Row 1 holds metrics for all apps
+
+    // There are 3 rows of metrics:
+    // Row 0: total downloads
+    // Row 1: installs in last 7 days
+    // Row 2: users in last 7 days
+    const totalRow = json.table.rows[0].c;
+    const installRow = json.table.rows[1].c;
+    const usersRow = json.table.rows[2].c;
 
     document.querySelectorAll('.card').forEach(card => {
       const appName = card.dataset.name;
@@ -72,42 +78,38 @@ async function loadMetrics() {
         return;
       }
 
-      const [totalCol, installsCol, usersCol] = APP_METRICS[appName];
+      const [colD, colI, colU] = APP_METRICS[appName];
 
-      const total = rows[totalCol]?.v || 0;
-      const installs = rows[installsCol]?.v || 0;
-      const users = rows[usersCol]?.v || 0;
+      const total   = totalRow[colD]?.v || 0;
+      const inst7d  = installRow[colI]?.v || 0;
+      const user7d  = usersRow[colU]?.v || 0;
 
-      // Hide metrics if all are missing or zero
-      if (!total && !installs && !users) {
+      if (!total && !inst7d && !user7d) {
         metricsBox.classList.add('hidden');
         return;
       }
 
-      // Render metrics
       metricsBox.querySelector('.metric-total').textContent =
         total > 0 ? `Downloads: ${total}` : "";
 
       metricsBox.querySelector('.metric-installs').textContent =
-        installs > 0 ? `Installs (7d): ${installs}` : "";
+        inst7d > 0 ? `Installs (7d): ${inst7d}` : "";
 
       metricsBox.querySelector('.metric-users').textContent =
-        users > 0 ? `Users (7d): ${users}` : "";
+        user7d > 0 ? `Users (7d): ${user7d}` : "";
 
-      // If any line ends up empty, hide it entirely
+      // Hide empty rows
       metricsBox.querySelectorAll('.metric').forEach(m => {
         if (!m.textContent.trim()) m.style.display = 'none';
       });
-
     });
 
   } catch (err) {
     console.warn("Metrics failed to load.", err);
-    // If fail: hide all metric blocks to preserve layout
     document.querySelectorAll('.metrics').forEach(m => m.classList.add('hidden'));
   }
 }
 
 
-// Load metrics once page is ready
+// Load metrics when ready
 document.addEventListener("DOMContentLoaded", loadMetrics);
