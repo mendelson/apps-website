@@ -114,6 +114,7 @@ nav a {
   align-items:center;
   text-align:center;
   transition:.25s;
+  position:relative;
 }
 
 .card:hover {
@@ -257,7 +258,34 @@ footer {
   font-weight:600;
   opacity:0.9;
   margin-top:4px;
-  margin-bottom:6px;
+  cursor:pointer;
 }
 
 .momentum-tag.hidden { display:none; }
+
+/* ================= TOOLTIP ================= */
+.tooltip {
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:13px;
+  opacity:0.95;
+  width:max-content;
+  max-width:200px;
+  margin-top:6px;
+  z-index:20;
+  display:none;
+}
+
+.tooltip.visible {
+  display:block;
+}
+
+.tooltip.hidden {
+  display:none;
+}
