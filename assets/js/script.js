@@ -65,6 +65,7 @@ async function loadMetrics() {
 
       const total = row[tCol]?.v || 0;
       const installs = row[iCol]?.v || 0;
+      alert(appName + " | installs = " + installs);
       const users = row[uCol]?.v || 0;
 
       if (!total && !installs && !users) return;
