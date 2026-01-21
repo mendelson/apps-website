@@ -20,234 +20,265 @@
 }
 
 /* ================= BASE ================= */
-html { scroll-behavior:smooth; }
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* ================= HEADER / NAV ================= */
 header {
-  background:#000;
-  color:#fff;
-  padding:40px 20px;
-  text-align:center;
+  background: #000;
+  color: #fff;
+  padding: 40px 20px;
+  text-align: center;
 }
 
 nav {
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:var(--card);
-  border-bottom:1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
 }
 
 nav ul {
-  list-style:none;
-  display:flex;
-  justify-content:center;
-  gap:28px;
-  margin:0;
-  padding:14px;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin: 0;
+  padding: 14px;
 }
 
 nav a {
-  text-decoration:none;
-  color:var(--text);
-  font-weight:600;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
 }
 
 /* ================= SEARCH ================= */
 .search-container {
-  text-align:center;
-  margin:24px;
+  text-align: center;
+  margin: 24px;
 }
 
 .search-container input {
-  max-width:300px;
-  width:100%;
-  padding:10px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--text);
+  max-width: 300px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
 }
 
 /* ================= SECTIONS ================= */
 .section {
-  background:var(--section);
-  padding:50px 0;
-  border-top:1px solid var(--border);
+  background: var(--section);
+  padding: 50px 0;
+  border-top: 1px solid var(--border);
 }
 
 .section h2 {
-  text-align:center;
-  font-size:32px;
-  margin-bottom:6px;
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 6px;
 }
 
 .section p.desc {
-  text-align:center;
-  opacity:.8;
-  max-width:700px;
-  margin:0 auto 26px;
+  text-align: center;
+  opacity: .8;
+  max-width: 700px;
+  margin: 0 auto 26px;
 }
 
 /* ================= GRID ================= */
 .grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:26px;
-  padding:0 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 26px;
+  padding: 0 22px;
 }
 
 /* ================= CARD ================= */
 .card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  transition:.25s;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: .25s;
 }
 
 .card:hover {
-  transform:translateY(-4px);
-  box-shadow:0 8px 22px rgba(0,0,0,.15);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.15);
 }
 
 .badge-slot {
-  height:26px;
-  margin-bottom:6px;
+  height: 26px;
+  margin-bottom: 6px;
 }
 
 .trial {
-  font-size:12px;
-  color:var(--trial);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:4px 10px;
+  font-size: 12px;
+  color: var(--trial);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 
 /* content */
 .card img {
-  max-width:240px;
-  width:100%;
-  border-radius:10px;
-  margin:12px 0;
+  max-width: 240px;
+  width: 100%;
+  border-radius: 10px;
+  margin: 12px 0;
 }
 
 .card h3 {
-  margin:6px 0 4px;
-  font-size:20px;
+  margin: 6px 0 4px;
+  font-size: 20px;
 }
 
 .card p {
-  font-size:14px;
-  opacity:.85;
-  margin:6px 0 12px;
+  font-size: 14px;
+  opacity: .85;
+  margin: 6px 0 12px;
+}
+
+/* ================= METRICS ================= */
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  min-height: 40px; /* ensures layout stability even if metrics are hidden */
+}
+
+.metrics.hidden {
+  display: none;
+}
+
+.metric {
+  font-size: 13px;
+  opacity: .8;
 }
 
 /* ================= CONNECT IQ BADGE ================= */
-.ciq-badge img { height:44px; }
-.ciq-badge .dark { display:none; }
+.ciq-badge img {
+  height: 44px;
+}
+
+.ciq-badge .dark {
+  display: none;
+}
 
 @media (prefers-color-scheme: dark) {
-  .ciq-badge .light { display:none; }
-  .ciq-badge .dark { display:inline; }
+  .ciq-badge .light { display: none; }
+  .ciq-badge .dark { display: inline; }
 }
 
 /* ================= DROPDOWN ================= */
 .versions {
-  width:100%;
-  margin-top:10px;
-  position:relative;
+  width: 100%;
+  margin-top: 10px;
+  position: relative;
 }
 
 .versions button {
-  width:100%;
-  padding:8px;
-  background:var(--section);
-  border:1px solid var(--border);
-  border-radius:6px;
-  cursor:pointer;
-  color:var(--text);
+  width: 100%;
+  padding: 8px;
+  background: var(--section);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text);
 }
 
 .dropdown {
-  display:none;
-  position:absolute;
-  width:100%;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:6px;
-  margin-top:4px;
+  display: none;
+  position: absolute;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 4px;
 }
 
 .dropdown a {
-  display:block;
-  padding:8px 10px;
-  text-decoration:none;
-  color:var(--text);
+  display: block;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: var(--text);
 }
 
-.dropdown a:hover { background:var(--section); }
-.versions:hover .dropdown { display:block; }
+.dropdown a:hover {
+  background: var(--section);
+}
+
+.versions:hover .dropdown {
+  display: block;
+}
 
 /* ================= CONTACT ================= */
 #contact {
-  background:var(--section);
-  padding:70px 20px;
-  border-top:1px solid var(--border);
+  background: var(--section);
+  padding: 70px 20px;
+  border-top: 1px solid var(--border);
 }
 
 .contact-card {
-  max-width:560px;
-  margin:0 auto;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:40px 30px;
-  text-align:center;
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 40px 30px;
+  text-align: center;
 }
 
 .contact-card h2 {
-  font-size:30px;
-  margin-bottom:12px;
+  font-size: 30px;
+  margin-bottom: 12px;
 }
 
 .contact-card p {
-  opacity:.85;
-  margin-bottom:26px;
-  font-size:15px;
+  opacity: .85;
+  margin-bottom: 26px;
+  font-size: 15px;
 }
 
 #emailBtn {
-  padding:14px 28px;
-  font-size:15px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:var(--bg);
-  color:var(--text);
-  cursor:pointer;
-  transition:.2s;
+  padding: 14px 28px;
+  font-size: 15px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: .2s;
 }
 
 #emailBtn:hover {
-  transform:translateY(-2px);
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
 }
 
 /* ================= FOOTER ================= */
 footer {
-  text-align:center;
-  padding:30px;
-  border-top:1px solid var(--border);
-  font-size:14px;
-  margin-top:40px;
+  text-align: center;
+  padding: 30px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  margin-top: 40px;
 }
