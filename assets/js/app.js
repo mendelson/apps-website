@@ -23,25 +23,22 @@ const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 const APP_METRICS = {
-  "Live Predictor Premium": [6, 6, 6],
-  "Live Time Predictor": [10, 10, 10],
-  "Pacer Data Field": [14, 14, 14],
-  "Live Pace Speed Calculator": [2, 2, 2],
-  "Tracker Data Field": [30, 30, 30],
-  "Route Silhouette": [18, 18, 18],
-  "Solve for X": [22, 22, 22],
-  "Time Across The Galaxy": [26, 26, 26]
+  "Live Predictor Premium": [6],
+  "Live Time Predictor": [10],
+  "Pacer Data Field": [14],
+  "Live Pace Speed Calculator": [2],
+  "Tracker Data Field": [30],
+  "Route Silhouette": [18],
+  "Solve for X": [22],
+  "Time Across The Galaxy": [26]
 };
 
 /* ======================
-   MOMENTUM TAG LOGIC
+   MOMENTUM LOGIC
 ====================== */
-
 function getMomentumTag(total, inst, users) {
-  // Hide tag when too low
-  if ((inst < 3 && users < 5 && total < 150)) return null;
+  if (total < 150 && inst < 3 && users < 5) return null;
 
-  // Order of priority
   if (inst > 20 || users > 30) return "Trending Up 🚀";
   if (users / total > 0.15) return "Highly Active 🔥";
   if (total < 300 && inst >= 5) return "New & Rising 🌱";
@@ -80,7 +77,6 @@ async function loadMetrics() {
       const inst7d = installRow[col]?.v || 0;
       const user7d = usersRow[col]?.v || 0;
 
-      // ---- Momentum Tag ----
       const tag = getMomentumTag(total, inst7d, user7d);
       if (tag) {
         momentumBox.textContent = tag;
@@ -89,7 +85,6 @@ async function loadMetrics() {
         momentumBox.classList.add('hidden');
       }
 
-      // ---- Metrics ----
       metricsBox.querySelector('.metric-total').textContent =
         total > 0 ? `Downloads: ${total}` : "";
 
