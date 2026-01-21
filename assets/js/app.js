@@ -38,11 +38,9 @@ const APP_METRICS = {
 ====================== */
 function getMomentumTag(total, inst, users) {
   if (total < 150 && inst < 3 && users < 5) return null;
-
   if (inst > 20 || users > 30) return "Trending Up 🚀";
   if (users / total > 0.15) return "Highly Active 🔥";
   if (total < 300 && inst >= 5) return "New & Rising 🌱";
-
   return "Stable 👍";
 }
 
@@ -64,10 +62,12 @@ async function loadMetrics() {
       const appName = card.dataset.name;
       const metricsBox = card.querySelector('.metrics');
       const momentumBox = card.querySelector('.momentum-tag');
+      const tooltip = card.querySelector('.tooltip');
 
       if (!APP_METRICS[appName]) {
         metricsBox.classList.add('hidden');
         momentumBox.classList.add('hidden');
+        tooltip.classList.add('hidden');
         return;
       }
 
@@ -77,14 +77,23 @@ async function loadMetrics() {
       const inst7d = installRow[col]?.v || 0;
       const user7d = usersRow[col]?.v || 0;
 
+      /* ----- MOMENTUM TAG ----- */
       const tag = getMomentumTag(total, inst7d, user7d);
       if (tag) {
-        momentumBox.textContent = tag;
+        momentumBox.textContent = tag + " ⓘ";
         momentumBox.classList.remove('hidden');
+
+        tooltip.innerHTML = `
+          <strong>This week:</strong><br>
+          • ${inst7d} installs<br>
+          • ${user7d} active users<br><br>
+          Total downloads: ${total}
+        `;
       } else {
         momentumBox.classList.add('hidden');
       }
 
+      /* ----- METRIC NUMBERS (hidden, used only for tooltip) ----- */
       metricsBox.querySelector('.metric-total').textContent =
         total > 0 ? `Downloads: ${total}` : "";
 
@@ -97,11 +106,30 @@ async function loadMetrics() {
       metricsBox.querySelectorAll('.metric').forEach(m => {
         if (!m.textContent.trim()) m.style.display = 'none';
       });
+
+      /* ----- TOOLTIP BEHAVIOR ----- */
+      momentumBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tooltip.classList.toggle('visible');
+      });
+
+      momentumBox.addEventListener('mouseenter', () => {
+        tooltip.classList.add('visible');
+      });
+
+      momentumBox.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+
+      document.addEventListener('click', () => {
+        tooltip.classList.remove('visible');
+      });
     });
 
   } catch (err) {
     document.querySelectorAll('.metrics').forEach(m => m.classList.add('hidden'));
     document.querySelectorAll('.momentum-tag').forEach(m => m.classList.add('hidden'));
+    document.querySelectorAll('.tooltip').forEach(t => t.classList.add('hidden'));
   }
 }
 
