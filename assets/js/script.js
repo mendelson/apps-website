@@ -136,9 +136,9 @@ async function loadMetrics() {
         </div>
 
         <div class="tip-metrics">
-          ${total    >= 1 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
-          ${installs >= 1 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
-          ${users    >= 1 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
+          ${total    > 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
+          ${installs > 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
+          ${users    > 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
         </div>
 
         <div class="tip-note">${TOOLTIP_TEXT[level].note}</div>
