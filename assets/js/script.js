@@ -42,15 +42,14 @@ const APP_METRICS = {
   "Tracker Data Field": [30, 31, 32]
 };
 
-/* TOOLTIP TEXTS */
 const TOOLTIP_TEXT = {
   high: "High adoption this week — many athletes are choosing this app.",
-  medium: "Consistent growth this week, showing strong athlete interest.",
-  low: "A steady performer trusted by athletes every week."
+  medium: "Consistent growth this week — solid ongoing traction.",
+  low: "A steady performer trusted by athletes each week."
 };
 
 /* ======================================
-   LOAD METRICS
+   LOAD METRICS + BUILD FEATURED
 ====================================== */
 
 async function loadMetrics() {
@@ -61,53 +60,57 @@ async function loadMetrics() {
     const row = json.table.rows[0].c;
 
     document.querySelectorAll('.card').forEach(card => {
-      const appName = card.dataset.name;
-      const metricsBox = card.querySelector('.metrics');
-      const tag = card.querySelector(".momentum-tag");
-      const tip = card.querySelector(".tooltip");
+      const name = card.dataset.name;
+      const mBox = card.querySelector('.metrics');
+      const tag = card.querySelector('.momentum-tag');
+      const tip = card.querySelector('.tooltip');
 
-      if (!APP_METRICS[appName]) return;
+      if (!APP_METRICS[name]) return;
 
-      const [tCol, iCol, uCol] = APP_METRICS[appName];
+      const [tCol, iCol, uCol] = APP_METRICS[name];
+
       const total = row[tCol]?.v || 0;
       const installs = row[iCol]?.v || 0;
       const users = row[uCol]?.v || 0;
 
-      // Store for featured selection
-      metricsBox.dataset.total = total;
-      metricsBox.dataset.installs = installs;
-      metricsBox.dataset.users = users;
+      // store for featured selection
+      mBox.dataset.total = total;
+      mBox.dataset.installs = installs;
+      mBox.dataset.users = users;
 
-      // Hide raw numbers
-      metricsBox.style.display = "none";
+      // hide raw numbers
+      mBox.style.display = "none";
 
-      // Momentum logic
+      // momentum logic
       if (installs >= 50) {
         tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
         tip.textContent = TOOLTIP_TEXT.high;
-      } else if (installs >= 10) {
+      } 
+      else if (installs >= 10) {
         tag.innerHTML = `📈 Growing Fast <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-strong");
         tip.textContent = TOOLTIP_TEXT.medium;
-      } else if (installs >= 1) {
+      } 
+      else if (installs >= 1) {
         tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-positive");
         tip.textContent = TOOLTIP_TEXT.low;
-      } else {
-        return;
+      } 
+      else {
+        return; // too low — omit completely
       }
 
       tag.classList.remove("hidden");
 
-      // Tooltip toggle
-      tag.addEventListener("click", e => {
+      tag.addEventListener("click", (e) => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
         tip.classList.toggle("hidden");
       });
     });
 
+    // clicking anywhere closes tooltips
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
@@ -122,111 +125,113 @@ async function loadMetrics() {
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
 /* ======================================
-   FEATURED CAROUSEL
+   FEATURED CAROUSEL (Option A – Clean Slides)
 ====================================== */
 
 function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
 
-  const getVal = (card, key) =>
-    Number(card.querySelector(".metrics").dataset[key] || 0);
+  const metric = (c, k) =>
+    Number(c.querySelector(".metrics").dataset[k] || 0);
 
-  const mostInstalls = cards.slice().sort((a,b) =>
-    getVal(b,"installs") - getVal(a,"installs"))[0];
+  // sorted lists
+  const byInstalls = cards.slice().sort((a,b)=> metric(b,"installs") - metric(a,"installs"));
+  const byDownloads = cards.slice().sort((a,b)=> metric(b,"total") - metric(a,"total"));
+  const byUsers = cards.slice().sort((a,b)=> metric(b,"users") - metric(a,"users"));
 
-  const mostDownloads = cards.slice().sort((a,b) =>
-    getVal(b,"total") - getVal(a,"total"))[0];
+  // unique picks
+  const picks = [];
+  const pushUnique = app => {
+    if (!picks.includes(app)) picks.push(app);
+  };
 
-  const mostActive = cards.slice().sort((a,b) =>
-    getVal(b,"users") - getVal(a,"users"))[0];
+  pushUnique(byInstalls[0]);
+  pushUnique(byDownloads.find(c=>!picks.includes(c)));
+  pushUnique(byUsers.find(c=>!picks.includes(c)));
 
-  const featured = [
-    { label: "🔥 Popular This Week", card: mostInstalls },
-    { label: "🏆 All-Time Favorite", card: mostDownloads },
-    { label: "💪 Most Engaged Users", card: mostActive }
+  // labels
+  const labels = [
+    "🔥 Popular This Week",
+    "🏆 All-Time Favorite",
+    "💪 Most Engaged Users"
   ];
 
   const track = document.querySelector(".carousel-track");
   const dots = document.querySelector(".carousel-indicators");
-
   track.innerHTML = "";
   dots.innerHTML = "";
 
-  featured.forEach((item, i) => {
-    const c = item.card;
-    const thumb = c.querySelector(".thumb").src;
+  picks.forEach((card, i) => {
+    const thumb = card.querySelector(".thumb").src;
+    const title = card.querySelector("h3").textContent;
+    const desc = card.querySelector("p").textContent;
 
     const slide = document.createElement("div");
     slide.className = "carousel-slide";
-
     slide.innerHTML = `
       <div class="featured-slide-content">
-        <div class="featured-label">${item.label}</div>
+        <div class="featured-label">${labels[i]}</div>
+
         <div class="featured-card-preview">
           <img src="${thumb}">
-          <h3>${c.querySelector("h3").textContent}</h3>
-          <p>${c.querySelector("p").textContent}</p>
+          <h3>${title}</h3>
+          <p>${desc}</p>
           <button class="featured-cta">See details</button>
         </div>
       </div>
     `;
 
-    // CTA scroll-to-card behavior (restored EXACTLY as before)
-    slide.querySelector(".featured-cta").addEventListener("click", () => {
-      c.scrollIntoView({ behavior: "smooth", block: "center" });
-      c.classList.add("highlight");
-      setTimeout(() => c.classList.remove("highlight"), 1700);
-    });
+    // CTA scroll/highlight (restored EXACT behavior)
+    slide.querySelector(".featured-cta")
+      .addEventListener("click", () => {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.classList.add("highlight");
+        setTimeout(() => card.classList.remove("highlight"), 1700);
+      });
 
     track.appendChild(slide);
 
-    // Indicators
+    // indicators
     const dot = document.createElement("div");
     dot.className = "indicator";
     if (i === 0) dot.classList.add("active");
-
     dots.appendChild(dot);
-
-    dot.addEventListener("click", () => goToSlide(i));
+    dot.addEventListener("click", () => goTo(i));
   });
 
   let index = 0;
-  let interval = setInterval(() => nextSlide(), 5000);
+  let interval = setInterval(() => move(+1), 5000);
 
-  function nextSlide() {
-    index = (index + 1) % featured.length;
-    goToSlide(index);
-  }
-
-  function goToSlide(i) {
+  function goTo(i) {
     index = i;
-    track.style.transform = `translateX(${-i * 100}%)`;
-
-    dots.querySelectorAll(".indicator").forEach((d, idx) =>
-      d.classList.toggle("active", idx === i)
+    track.style.transform = `translateX(-${i*100}%)`;
+    dots.querySelectorAll(".indicator").forEach((d,j)=> 
+      d.classList.toggle("active", j===i)
     );
   }
 
-  // Pause auto-rotate on hover
-  document.querySelector(".carousel")
-    .addEventListener("mouseenter", () => clearInterval(interval));
+  function move(dir) {
+    index = (index + dir + picks.length) % picks.length;
+    goTo(index);
+  }
 
-  document.querySelector(".carousel")
-    .addEventListener("mouseleave", () =>
-      interval = setInterval(nextSlide, 5000)
-    );
+  // Pause on hover
+  document.querySelector(".carousel").addEventListener("mouseenter", () => {
+    clearInterval(interval);
+  });
+  document.querySelector(".carousel").addEventListener("mouseleave", () => {
+    interval = setInterval(() => move(+1), 5000);
+  });
 
-  // Swipe gestures (mobile)
+  // Swipe
   let startX = 0;
-
-  track.addEventListener("touchstart", e =>
-    startX = e.touches[0].clientX
-  );
-
+  track.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
   track.addEventListener("touchend", e => {
-    let diff = e.changedTouches[0].clientX - startX;
-    if (diff > 60) goToSlide(Math.max(0, index - 1));
-    if (diff < -60) goToSlide(Math.min(featured.length - 1, index + 1));
+    let dx = e.changedTouches[0].clientX - startX;
+    if (dx > 60) move(-1);
+    if (dx < -60) move(+1);
   });
 }
 
