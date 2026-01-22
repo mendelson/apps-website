@@ -120,25 +120,6 @@ async function loadMetrics() {
 
       tag.classList.remove("hidden");
 
-      /* === Inject momentum badge into card === */
-      let badge = card.querySelector(".card-badge");
-      if (!badge) {
-        badge = document.createElement("div");
-          badge.className = "card-badge";
-            card.appendChild(badge);
-            }
-
-            if (installs >= 50) {
-              badge.classList.add("high");
-                badge.textContent = "🔥 Popular";
-                } else if (installs >= 10) {
-                  badge.classList.add("medium");
-                    badge.textContent = "📈 Growing";
-                    } else if (installs >= 1) {
-                      badge.classList.add("low");
-                        badge.textContent = "👍 Stable";
-                        }
-
       /* === Tooltip content (stats ≥ 7 only) === */
       const level = tip.dataset.level;
       let stats = "";
@@ -209,6 +190,7 @@ function adaptTooltipPosition(tag, tip) {
 ========================================================== */
 
 function buildFeaturedCarousel() {
+  document.querySelectorAll(".card-badge").forEach(b => b.remove());
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
 
