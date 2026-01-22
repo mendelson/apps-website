@@ -1,6 +1,7 @@
-/* ======================
+/* ======================================
    SEARCH
-====================== */
+====================================== */
+
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase();
   document.querySelectorAll('.card').forEach(c => {
@@ -8,297 +9,242 @@ document.getElementById('search').addEventListener('input', e => {
   });
 });
 
-/* ======================
+/* ======================================
    EMAIL
-====================== */
+====================================== */
+
 document.getElementById('emailBtn').addEventListener('click', () => {
   window.location.href = "mailto:mateusmendelson@hotmail.com";
 });
 
-/* ======================
+/* ======================================
    DROPDOWN
-====================== */
+====================================== */
+
 document.querySelectorAll(".versions button").forEach(btn => {
   btn.addEventListener("click", () => {
     btn.parentElement.classList.toggle("open");
   });
 });
 
-/* ======================
+/* ======================================
    METRICS CONFIG
-====================== */
+====================================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
-const APP_COL = {
-  "Live Pace Speed Calculator": 2,
-  "Live Predictor Premium": 6,
-  "Live Time Predictor": 10,
-  "Route Silhouette": 18,
-  "Pacer Data Field": 14,
-  "Solve for X": 22,
-  "Time Across The Galaxy": 26,
-  "Tracker Data Field": 30
+const APP_METRICS = {
+  "Live Pace Speed Calculator": [2, 3, 4],
+  "Live Predictor Premium": [6, 7, 8],
+  "Live Time Predictor": [10, 11, 12],
+  "Route Silhouette": [18, 19, 20],
+  "Pacer Data Field": [14, 15, 16],
+  "Solve for X": [22, 23, 24],
+  "Time Across The Galaxy": [26, 27, 28],
+  "Tracker Data Field": [30, 31, 32]
 };
 
-/* ======================
-   FEATURED CAROUSEL
-====================== */
+/* ======================================
+   TOOLTIP TEXTS
+====================================== */
 
-function buildFeaturedCarousel(metrics) {
+const TOOLTIP_TEXT = {
+  high: "High adoption this week — many athletes are choosing this app.",
+  medium: "Consistent growth this week, showing strong athlete interest.",
+  low: "A steady performer trusted by athletes every week."
+};
 
-  const apps = Object.keys(APP_COL).map(name => {
-    const col = APP_COL[name];
-    return {
-      name,
-      col,
-      total: metrics.total[col] || 0,
-      installs: metrics.installs[col] || 0,
-      users: metrics.users[col] || 0,
-      image: document.querySelector(`.card[data-name="${name}"] .thumb`)?.src
-    };
-  });
-
-  /* Prevent duplicate featured apps */
-  const used = new Set();
-  const pick = list => list.find(app => !used.has(app.name));
-
-  const byInstalls = [...apps].sort((a,b) => b.installs - a.installs);
-  const byTotal    = [...apps].sort((a,b) => b.total - a.total);
-  const byUsers    = [...apps].sort((a,b) => b.users - a.users);
-
-  const popular    = pick(byInstalls); used.add(popular.name);
-  const allTime    = pick(byTotal);    used.add(allTime.name);
-  const loved      = pick(byUsers);    used.add(loved.name);
-
-  const slides = [
-    {
-      title: "🔥 Popular This Week",
-      desc: "The fastest-growing app right now among athletes.",
-      app: popular
-    },
-    {
-      title: "⭐ All-Time Favorite",
-      desc: "The most downloaded app of the entire collection.",
-      app: allTime
-    },
-    {
-      title: "👥 Loved by Its Athletes",
-      desc: "Athletes who use it tend to stick with it.",
-      app: loved
-    }
-  ];
-
-  const track = document.querySelector(".carousel-track");
-  const indicators = document.querySelector(".carousel-indicators");
-
-  track.innerHTML = "";
-  indicators.innerHTML = "";
-
-  slides.forEach((slide, i) => {
-    track.innerHTML += `
-      <div class="carousel-slide">
-        <h3>${slide.title}</h3>
-        <img src="${slide.app.image}">
-        <h4>${slide.app.name}</h4>
-        <p>${slide.desc}</p>
-        <a class="button" data-target="${slide.app.name}">View App</a>
-      </div>
-    `;
-
-    indicators.innerHTML += `
-      <span data-index="${i}" class="${i === 0 ? "active" : ""}"></span>
-    `;
-  });
-
-  let current = 0;
-  const totalSlides = slides.length;
-
-  const update = () => {
-    const w = document.querySelector(".carousel").offsetWidth;
-    track.style.transform = `translateX(-${current * w}px)`;
-    indicators.querySelectorAll("span").forEach((dot, idx) =>
-      dot.classList.toggle("active", idx === current)
-    );
-  };
-
-  /* Auto rotate 5s */
-  let auto = setInterval(() => {
-    current = (current + 1) % totalSlides;
-    update();
-  }, 5000);
-
-  const carousel = document.querySelector(".carousel");
-
-  carousel.addEventListener("mouseenter", () => clearInterval(auto));
-  carousel.addEventListener("mouseleave", () => {
-    auto = setInterval(() => {
-      current = (current + 1) % totalSlides;
-      update();
-    }, 5000);
-  });
-
-  indicators.addEventListener("click", e => {
-    if (e.target.dataset.index) {
-      current = parseInt(e.target.dataset.index);
-      update();
-    }
-  });
-
-  /* Swipe gestures */
-  let start = 0;
-  let dragging = false;
-
-  track.addEventListener("touchstart", e => {
-    clearInterval(auto);
-    start = e.touches[0].clientX;
-    dragging = true;
-  });
-
-  track.addEventListener("touchmove", e => {
-    if (!dragging) return;
-    const dx = e.touches[0].clientX - start;
-    track.style.transition = "none";
-    track.style.transform =
-      `translateX(calc(-${current * 100}% + ${dx}px))`;
-  });
-
-  track.addEventListener("touchend", e => {
-    dragging = false;
-    track.style.transition = "transform 0.6s ease";
-
-    const dx = e.changedTouches[0].clientX - start;
-
-    if (dx > 60) current = Math.max(0, current - 1);
-    if (dx < -60) current = Math.min(totalSlides - 1, current + 1);
-
-    update();
-
-    auto = setInterval(() => {
-      current = (current + 1) % totalSlides;
-      update();
-    }, 5000);
-  });
-
-  /* CTA scroll to card */
-  track.querySelectorAll(".button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const name = btn.dataset.target;
-      const card = document.querySelector(`.card[data-name="${name}"]`);
-      if (!card) return;
-
-      const y = card.getBoundingClientRect().top + window.scrollY - 70;
-      window.scrollTo({ top: y, behavior: "smooth" });
-
-      card.classList.add("highlight");
-      setTimeout(() => card.classList.remove("highlight"), 2000);
-    });
-  });
-
-  window.addEventListener("resize", update);
-  update();
-}
-
-/* ======================
-   MOMENTUM TAGS + TOOLTIP
-====================== */
+/* ======================================
+   LOAD METRICS
+====================================== */
 
 async function loadMetrics() {
   try {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
+    const row = json.table.rows[0].c;
 
-    const metrics = {
-      total: rows[0].c.map(c => c?.v || 0),
-      installs: rows[1].c.map(c => c?.v || 0),
-      users: rows[2].c.map(c => c?.v || 0)
-    };
-
-    document.querySelectorAll(".card").forEach(card => {
-      const name = card.dataset.name;
-      const col = APP_COL[name];
-      if (col == null) return;
-
-      const total = metrics.total[col];
-      const inst  = metrics.installs[col];
-      const user  = metrics.users[col];
-
+    document.querySelectorAll('.card').forEach(card => {
+      const appName = card.dataset.name;
+      const metricsBox = card.querySelector('.metrics');
       const tag = card.querySelector(".momentum-tag");
       const tip = card.querySelector(".tooltip");
 
-      let label = "";
-      let text = "";
+      if (!APP_METRICS[appName]) return;
 
-      if (inst >= 50) {
-        label = "Trending Hot 🔥";
+      const [tCol, iCol, uCol] = APP_METRICS[appName];
+
+      const total = row[tCol]?.v || 0;
+      const installs = row[iCol]?.v || 0;
+      const users = row[uCol]?.v || 0;
+
+      metricsBox.dataset.total = total;
+      metricsBox.dataset.installs = installs;
+      metricsBox.dataset.users = users;
+
+      // Hide raw metrics on screen
+      metricsBox.style.display = "none";
+
+      // Mometum logic
+      if (installs >= 50) {
+        tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
-        text = "A lot of athletes discovered this app recently.";
-      } else if (inst >= 10) {
-        label = "Trending Up 🚀";
+        tip.textContent = TOOLTIP_TEXT.high;
+      } else if (installs >= 10) {
+        tag.innerHTML = `📈 Growing Fast <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-strong");
-        text = "Growing fast — more athletes are choosing this app every day.";
-      } else if (inst >= 1) {
-        label = "Getting Attention 👀";
+        tip.textContent = TOOLTIP_TEXT.medium;
+      } else if (installs >= 1) {
+        tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-positive");
-        text = "A rising pick among athletes this week.";
-      } else return;
+        tip.textContent = TOOLTIP_TEXT.low;
+      } else {
+        return;
+      }
 
-      tag.innerHTML = `${label} <span>ⓘ</span>`;
       tag.classList.remove("hidden");
 
-      let stats = "<strong>📊 App Metrics</strong><br>";
-      if (total >= 7) stats += `• Downloads: ${total}<br>`;
-      if (inst  >= 7) stats += `• Installs (7d): ${inst}<br>`;
-      if (user  >= 7) stats += `• Users (7d): ${user}<br>`;
-      stats += `<br>${text}`;
-
-      tip.innerHTML = stats;
-
+      // Tooltip toggle
       tag.addEventListener("click", e => {
         e.stopPropagation();
-        document.querySelectorAll(".tooltip")
-          .forEach(t => t !== tip && t.classList.add("hidden"));
+        document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
         tip.classList.toggle("hidden");
       });
     });
 
-    /* Close tooltip outside */
+    // Close tooltips when clicking outside
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
-    buildFeaturedCarousel(metrics);
+    buildFeaturedCarousel();
 
   } catch (err) {
-    console.error("Metrics load failed:", err);
+    console.warn("Failed to load metrics:", err);
   }
 }
 
-/* ======================
-   BACK TO TOP BUTTON
-====================== */
-function initBackToTop() {
-  const btn = document.createElement("div");
-  btn.id = "backToTop";
-  btn.innerHTML = "⬆";
-  document.body.appendChild(btn);
+document.addEventListener("DOMContentLoaded", loadMetrics);
 
-  window.addEventListener("scroll", () => {
-    btn.classList.toggle("show", window.scrollY > 400);
+/* ======================================
+   FEATURED CAROUSEL
+====================================== */
+
+function buildFeaturedCarousel() {
+  const cards = [...document.querySelectorAll(".card")];
+
+  // Get the best apps
+  let mostInstalls = cards.slice().sort((a,b) =>
+    b.querySelector('.metrics').dataset.installs -
+    a.querySelector('.metrics').dataset.installs
+  )[0];
+
+  let mostDownloads = cards.slice().sort((a,b) =>
+    b.querySelector('.metrics').dataset.total -
+    a.querySelector('.metrics').dataset.total
+  )[0];
+
+  let mostActive = cards.slice().sort((a,b) =>
+    b.querySelector('.metrics').dataset.users -
+    a.querySelector('.metrics').dataset.users
+  )[0];
+
+  const featured = [
+    { label: "🔥 Popular This Week", card: mostInstalls },
+    { label: "🏆 All-Time Favorite", card: mostDownloads },
+    { label: "💪 Most Engaged Users", card: mostActive }
+  ];
+
+  const track = document.querySelector(".carousel-track");
+  const dots = document.querySelector(".carousel-indicators");
+
+  track.innerHTML = "";
+  dots.innerHTML = "";
+
+  featured.forEach((item, i) => {
+    const slide = document.createElement("div");
+    slide.className = "carousel-slide";
+
+    slide.innerHTML = `
+      <div class="featured-label">${item.label}</div>
+      ${item.card.outerHTML}
+    `;
+
+    track.appendChild(slide);
+
+    const dot = document.createElement("div");
+    dot.className = "indicator";
+    if (i === 0) dot.classList.add("active");
+    dots.appendChild(dot);
+
+    dot.addEventListener("click", () => goToSlide(i));
   });
 
-  btn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  let index = 0;
+  let interval = setInterval(() => nextSlide(), 5000);
+
+  function nextSlide() {
+    index = (index + 1) % featured.length;
+    goToSlide(index);
+  }
+
+  function goToSlide(i) {
+    index = i;
+    track.style.transform = `translateX(${-i * 100}%)`;
+
+    dots.querySelectorAll(".indicator").forEach((d, idx) => {
+      d.classList.toggle("active", idx === i);
+    });
+  }
+
+  // Pause on hover
+  document.querySelector(".carousel").addEventListener("mouseenter", () => clearInterval(interval));
+  document.querySelector(".carousel").addEventListener("mouseleave", () =>
+    interval = setInterval(() => nextSlide(), 5000)
+  );
+
+  // Mobile swipe
+  let startX = 0;
+  track.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+  track.addEventListener("touchend", e => {
+    let diff = e.changedTouches[0].clientX - startX;
+    if (diff > 60) nextSlide(-1);
+    if (diff < -60) nextSlide(1);
+  });
+
+  // CTA scroll
+  document.querySelectorAll(".featured-label").forEach((label, i) => {
+    label.addEventListener("click", () => {
+      const originalCard = featured[i].card;
+      originalCard.classList.add("highlight");
+      originalCard.scrollIntoView({ behavior: "smooth" });
+
+      setTimeout(() => {
+        originalCard.classList.remove("highlight");
+      }, 1700);
+    });
   });
 }
 
-/* ======================
-   INIT
-====================== */
-document.addEventListener("DOMContentLoaded", () => {
-  loadMetrics();
-  initBackToTop();
+/* ======================================
+   BACK TO TOP BUTTON
+====================================== */
+
+const toTopBtn = document.createElement("div");
+toTopBtn.id = "toTopBtn";
+toTopBtn.textContent = "⬆";
+document.body.appendChild(toTopBtn);
+
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 600) {
+    toTopBtn.classList.add("show");
+  } else {
+    toTopBtn.classList.remove("show");
+  }
+});
+
+toTopBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
