@@ -25,16 +25,15 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   GOOGLE SHEET CONFIG (FINAL)
+   GOOGLE SHEET CONFIG — VERIFIED
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /*
-  Verified from your JSON:
-  Numeric values appear in columns:
-
+  From your actual JSON:
+  Correct numeric columns:
   2, 6, 10, 14, 18, 22, 26, 30
 */
 
@@ -52,7 +51,7 @@ const APP_COL = {
 };
 
 /* ======================
-   LOAD METRICS (FINAL)
+   LOAD METRICS — FINAL VERSION
 ====================== */
 
 async function loadMetrics() {
@@ -62,9 +61,9 @@ async function loadMetrics() {
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
     const rows = json.table.rows;
-    // Row 0 = total downloads
-    // Row 1 = installs last 7 days
-    // Row 2 = users last 7 days
+    // 0 = total downloads
+    // 1 = installs (7d)
+    // 2 = users (7d)
 
     document.querySelectorAll('.card').forEach(card => {
       const name = card.dataset.name;
@@ -100,34 +99,55 @@ async function loadMetrics() {
         msg = "👀 This app has activity this week.";
       }
       else {
-        return; // no momentum
+        return; // no momentum => hide everything
       }
 
       tag.classList.remove("hidden");
 
       /* ================
          TOOLTIP CONTENT (Option D)
+         Only show values >= 7
       ================= */
-      tip.innerHTML = `
-        <strong>📊 App Metrics</strong><br>
-        • Downloads: ${total}<br>
-        • Installs (7d): ${installs}<br>
-        • Users (7d): ${users}<br><br>
-        ${msg}
-      `;
+      let tooltipHTML = `<strong>📊 App Metrics</strong><br>`;
+
+      if (total >= 7)    tooltipHTML += `• Downloads: ${total}<br>`;
+      if (installs >= 7) tooltipHTML += `• Installs (7d): ${installs}<br>`;
+      if (users >= 7)    tooltipHTML += `• Users (7d): ${users}<br>`;
+
+      // Remove header if all suppressed
+      if (tooltipHTML === `<strong>📊 App Metrics</strong><br>`) {
+        tooltipHTML = "";
+      }
+
+      tooltipHTML += `<br>${msg}`;
+
+      tip.innerHTML = tooltipHTML;
 
       /* ================
-         SHOW/HIDE TOOLTIP
+         ONLY ONE TOOLTIP OPEN AT A TIME
       ================= */
-      tag.addEventListener("click", () => {
+      tag.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+
+        // Close all other tooltips
+        document.querySelectorAll(".tooltip").forEach(t => {
+          if (t !== tip) t.classList.add("hidden");
+        });
+
         tip.classList.toggle("hidden");
       });
-
     });
 
   } catch (err) {
     console.error("Failed to load metrics:", err);
   }
 }
+
+/* ======================
+   CLOSE ALL TOOLTIPS WHEN CLICKING OUTSIDE
+====================== */
+document.addEventListener("click", () => {
+  document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
+});
 
 document.addEventListener("DOMContentLoaded", loadMetrics);
