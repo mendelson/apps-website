@@ -244,9 +244,9 @@ function buildFeaturedCarousel() {
   ============================================ */
 
   const badgeMap = [
-    { emoji: "🔥", word: "Popular",  class: "popular" },
-    { emoji: "🏆", word: "Favorite", class: "favorite" },
-    { emoji: "💪", word: "Engaged",  class: "engaged" }
+    { emoji: "🔥", word: "Trending",  class: "trending" },
+{ emoji: "🏆", word: "Popular",   class: "popular" },
+{ emoji: "💪", word: "Consistent", class: "consistent" }
   ];
 
   picks.forEach((card, i) => {
