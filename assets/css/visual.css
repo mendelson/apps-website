@@ -10,25 +10,15 @@ body {
   line-height: 1.5;
 }
 
-header {
-  text-align: center;
-  padding: 30px 20px 10px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 32px;
-}
-
-header p {
-  margin-top: 5px;
-  opacity: 0.7;
-}
-
+/* Sticky nav */
 nav {
-  background: #1a1a1a;
+  background: #1a1a1aee;
   border-bottom: 1px solid #333;
   padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  backdrop-filter: blur(8px);
 }
 
 nav ul {
@@ -44,6 +34,24 @@ nav a {
   color: #eee;
   text-decoration: none;
   font-size: 18px;
+  transition: opacity .2s;
+}
+
+nav a:hover { opacity: 0.6; }
+
+header {
+  text-align: center;
+  padding: 30px 20px 10px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+header p {
+  margin-top: 5px;
+  opacity: 0.7;
 }
 
 .section {
@@ -83,13 +91,21 @@ nav a {
   position: relative;
 }
 
-/* Uniform image sizing */
-.card img {
+/* THUMBNAILS — UNIFIED SIZE */
+.card .thumb {
   width: 100%;
   height: 260px;
   object-fit: cover;
   object-position: center;
   border-radius: 14px;
+}
+
+/* Leave CIQ badges untouched */
+.ciq-badge img {
+  width: 160px;
+  height: auto;
+  object-fit: contain;
+  margin-top: 10px;
 }
 
 .card h3 {
@@ -120,18 +136,11 @@ nav a {
   opacity: 0.7;
 }
 
-.ciq-badge img {
-  width: 160px;
-  margin-top: 10px;
-}
-
 /* ===========================
    CONNECT IQ BADGE
 =========================== */
 
-.ciq-badge .dark {
-  display: none;
-}
+.ciq-badge .dark { display: none; }
 
 @media (prefers-color-scheme: dark) {
   .ciq-badge .light { display: none; }
@@ -186,9 +195,7 @@ nav a {
   padding: 10px;
 }
 
-.versions.open .dropdown {
-  display: block;
-}
+.versions.open .dropdown { display: block; }
 
 .dropdown a {
   display: block;
@@ -234,13 +241,19 @@ nav a {
   font-weight: 600;
   margin: 8px 0 4px;
   cursor: pointer;
-  position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .momentum-positive { color: #4cd964; }
 .momentum-strong  { color: #ffd60a; }
 .momentum-hot     { color: #ff453a; }
+
+/* Info symbol */
+.momentum-tag span {
+  opacity: .7;
+}
 
 /* ===========================
    TOOLTIP (UNDER TAG)
@@ -306,19 +319,16 @@ nav a {
   width: 100%;
   height: 260px;
   object-fit: cover;
-  object-position: center;
   border-radius: 14px;
   margin-bottom: 15px;
 }
 
 .carousel-slide h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 22px;
+  margin: 0 0 5px 0;
 }
 
 .carousel-slide p {
-  opacity: 0.8;
+  opacity: .75;
   margin-bottom: 12px;
 }
 
@@ -330,7 +340,6 @@ nav a {
   border-radius: 10px;
   color: #fff;
   text-decoration: none;
-  font-size: 16px;
 }
 
 .carousel-indicators {
@@ -346,6 +355,7 @@ nav a {
   border-radius: 50%;
   background: #555;
   cursor: pointer;
+  transition: background .2s;
 }
 
 .carousel-indicators .active {
@@ -353,17 +363,18 @@ nav a {
 }
 
 /* ===========================
-   CARD HIGHLIGHT (CTA Scroll)
+   CARD HIGHLIGHT (IMPROVED)
 =========================== */
 
 .card.highlight {
-  animation: highlightFlash 1.4s ease;
+  animation: cardPulse 1.8s ease;
 }
 
-@keyframes highlightFlash {
-  0%   { box-shadow: 0 0 0px 0px #fff0; }
-  40%  { box-shadow: 0 0 18px 5px #4cd964aa; }
-  100% { box-shadow: 0 0 0px 0px #fff0; }
+@keyframes cardPulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0px 0px #4cd96400; }
+  30%  { transform: scale(1.03); box-shadow: 0 0 22px 8px #4cd964aa; }
+  60%  { transform: scale(1.015); box-shadow: 0 0 14px 5px #4cd96499; }
+  100% { transform: scale(1);   box-shadow: 0 0 0px 0px #4cd96400; }
 }
 
 /* ===========================
@@ -392,19 +403,17 @@ nav a {
   z-index: 999;
 }
 
-#backToTop:hover {
-  transform: scale(1.08);
-}
-
 #backToTop.show {
   opacity: 1;
   pointer-events: auto;
+}
+
+#backToTop:hover {
+  transform: scale(1.12);
 }
 
 /* ===========================
    HIDDEN
 =========================== */
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
