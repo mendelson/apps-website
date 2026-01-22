@@ -19,9 +19,15 @@ document.getElementById('emailBtn').addEventListener('click', () => {
    DROPDOWN (VERSIONS)
 ========================================================== */
 document.querySelectorAll(".versions button").forEach(btn => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", e => {
+    e.stopPropagation(); // Prevent carousel or card handlers
     btn.parentElement.classList.toggle("open");
   });
+});
+
+document.addEventListener("click", e => {
+  if (!e.target.closest(".versions"))
+    document.querySelectorAll(".versions.open").forEach(v => v.classList.remove("open"));
 });
 
 /* ==========================================================
@@ -42,7 +48,6 @@ const APP_METRICS = {
   "Tracker Data Field": [30, 31, 32]
 };
 
-/* Better, user-oriented tooltip copies */
 const TOOLTIP_TEXT = {
   high: "This app is standing out among athletes this week — strong, accelerating usage.",
   medium: "Steady weekly growth — athletes continue discovering and adopting this app.",
@@ -60,7 +65,9 @@ async function loadMetrics() {
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const row = json.table.rows[0].c;
 
-    document.querySelectorAll('.card').forEach(card => {
+    const allCards = document.querySelectorAll('.card');
+
+    allCards.forEach(card => {
       const name = card.dataset.name;
       const metrics = card.querySelector('.metrics');
       const tag = card.querySelector(".momentum-tag");
@@ -106,12 +113,12 @@ async function loadMetrics() {
       });
     });
 
-    /* Close tooltips on outside click */
+    /* Close tooltips globally */
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
-    /* Build Featured after metrics exist */
+    /* Build featured ONLY after metrics exist */
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -122,25 +129,23 @@ async function loadMetrics() {
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
 /* ==========================================================
-   FEATURED CAROUSEL — OPTION A (Clean Preview Cards)
+   FEATURED CAROUSEL — CLEAN PREVIEW CARDS
 ========================================================== */
 
 function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
 
-  /* Sort by key metrics */
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
   const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
-  /* Unique picks logic (no duplicates) */
   const picks = [];
-  const add = (c) => { if (c && !picks.includes(c)) picks.push(c); };
+  const add = c => { if (c && !picks.includes(c)) picks.push(c); };
 
-  add(byInstalls[0]);                     // Popular this week
-  add(byTotal.find(c => !picks.includes(c))); // All-time favorite
-  add(byUsers.find(c => !picks.includes(c))); // Most engaged users
+  add(byInstalls[0]);
+  add(byTotal.find(c => !picks.includes(c)));
+  add(byUsers.find(c => !picks.includes(c)));
 
   const labels = [
     "🔥 Popular This Week",
@@ -150,17 +155,16 @@ function buildFeaturedCarousel() {
 
   const track = document.querySelector(".carousel-track");
   const dots = document.querySelector(".carousel-indicators");
-
   track.innerHTML = "";
   dots.innerHTML = "";
 
   picks.forEach((card, i) => {
-    const slide = document.createElement("div");
-    slide.className = "carousel-slide";
-
     const img = card.querySelector(".thumb").src;
     const title = card.querySelector("h3").textContent;
     const desc = card.querySelector("p").textContent;
+
+    const slide = document.createElement("div");
+    slide.className = "carousel-slide";
 
     slide.innerHTML = `
       <div class="featured-slide-content">
@@ -200,7 +204,6 @@ function buildFeaturedCarousel() {
     );
   }
 
-  /* Auto-rotate */
   let interval = setInterval(() => next(), 5000);
   const next = () => goTo((index + 1) % picks.length);
 
@@ -212,7 +215,7 @@ function buildFeaturedCarousel() {
     interval = setInterval(() => next(), 5000);
   });
 
-  /* Touch swipe — follow finger (correct version) */
+  /* TOUCH SWIPE — FIXED VERSION */
   let startX = 0;
   let currentX = 0;
   let dragging = false;
