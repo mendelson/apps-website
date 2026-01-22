@@ -1,6 +1,6 @@
-/* ======================================
+/* ==========================================================
    SEARCH
-====================================== */
+========================================================== */
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase();
   document.querySelectorAll('.card').forEach(c => {
@@ -8,25 +8,25 @@ document.getElementById('search').addEventListener('input', e => {
   });
 });
 
-/* ======================================
+/* ==========================================================
    EMAIL
-====================================== */
+========================================================== */
 document.getElementById('emailBtn').addEventListener('click', () => {
   window.location.href = "mailto:mateusmendelson@hotmail.com";
 });
 
-/* ======================================
-   DROPDOWNS
-====================================== */
+/* ==========================================================
+   DROPDOWN (VERSIONS)
+========================================================== */
 document.querySelectorAll(".versions button").forEach(btn => {
   btn.addEventListener("click", () => {
     btn.parentElement.classList.toggle("open");
   });
 });
 
-/* ======================================
+/* ==========================================================
    METRICS CONFIG
-====================================== */
+========================================================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
@@ -42,15 +42,16 @@ const APP_METRICS = {
   "Tracker Data Field": [30, 31, 32]
 };
 
+/* Better, user-oriented tooltip copies */
 const TOOLTIP_TEXT = {
-  high: "High adoption this week — many athletes are choosing this app.",
-  medium: "Consistent growth this week — solid ongoing traction.",
-  low: "A steady performer trusted by athletes each week."
+  high: "This app is standing out among athletes this week — strong, accelerating usage.",
+  medium: "Steady weekly growth — athletes continue discovering and adopting this app.",
+  low: "Reliable performance — athletes using it tend to return to it consistently."
 };
 
-/* ======================================
-   LOAD METRICS + BUILD FEATURED
-====================================== */
+/* ==========================================================
+   LOAD METRICS + POPULATE CARDS + BUILD FEATURED
+========================================================== */
 
 async function loadMetrics() {
   try {
@@ -61,60 +62,56 @@ async function loadMetrics() {
 
     document.querySelectorAll('.card').forEach(card => {
       const name = card.dataset.name;
-      const mBox = card.querySelector('.metrics');
-      const tag = card.querySelector('.momentum-tag');
-      const tip = card.querySelector('.tooltip');
+      const metrics = card.querySelector('.metrics');
+      const tag = card.querySelector(".momentum-tag");
+      const tip = card.querySelector(".tooltip");
 
       if (!APP_METRICS[name]) return;
 
       const [tCol, iCol, uCol] = APP_METRICS[name];
-
       const total = row[tCol]?.v || 0;
       const installs = row[iCol]?.v || 0;
       const users = row[uCol]?.v || 0;
 
-      // store for featured selection
-      mBox.dataset.total = total;
-      mBox.dataset.installs = installs;
-      mBox.dataset.users = users;
+      metrics.dataset.total = total;
+      metrics.dataset.installs = installs;
+      metrics.dataset.users = users;
 
-      // hide raw numbers
-      mBox.style.display = "none";
+      metrics.style.display = "none"; // raw numbers hidden
 
-      // momentum logic
+      /* MOMENTUM LOGIC */
       if (installs >= 50) {
         tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
         tip.textContent = TOOLTIP_TEXT.high;
-      } 
-      else if (installs >= 10) {
+      } else if (installs >= 10) {
         tag.innerHTML = `📈 Growing Fast <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-strong");
         tip.textContent = TOOLTIP_TEXT.medium;
-      } 
-      else if (installs >= 1) {
+      } else if (installs >= 1) {
         tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-positive");
         tip.textContent = TOOLTIP_TEXT.low;
-      } 
-      else {
-        return; // too low — omit completely
+      } else {
+        return;
       }
 
       tag.classList.remove("hidden");
 
-      tag.addEventListener("click", (e) => {
+      /* Tooltip toggle */
+      tag.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
         tip.classList.toggle("hidden");
       });
     });
 
-    // clicking anywhere closes tooltips
+    /* Close tooltips on outside click */
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
+    /* Build Featured after metrics exist */
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -124,32 +121,27 @@ async function loadMetrics() {
 
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
-/* ======================================
-   FEATURED CAROUSEL (Option A – Clean Slides)
-====================================== */
+/* ==========================================================
+   FEATURED CAROUSEL — OPTION A (Clean Preview Cards)
+========================================================== */
 
 function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
+  const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
 
-  const metric = (c, k) =>
-    Number(c.querySelector(".metrics").dataset[k] || 0);
+  /* Sort by key metrics */
+  const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
+  const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
+  const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
-  // sorted lists
-  const byInstalls = cards.slice().sort((a,b)=> metric(b,"installs") - metric(a,"installs"));
-  const byDownloads = cards.slice().sort((a,b)=> metric(b,"total") - metric(a,"total"));
-  const byUsers = cards.slice().sort((a,b)=> metric(b,"users") - metric(a,"users"));
-
-  // unique picks
+  /* Unique picks logic (no duplicates) */
   const picks = [];
-  const pushUnique = app => {
-    if (!picks.includes(app)) picks.push(app);
-  };
+  const add = (c) => { if (c && !picks.includes(c)) picks.push(c); };
 
-  pushUnique(byInstalls[0]);
-  pushUnique(byDownloads.find(c=>!picks.includes(c)));
-  pushUnique(byUsers.find(c=>!picks.includes(c)));
+  add(byInstalls[0]);                     // Popular this week
+  add(byTotal.find(c => !picks.includes(c))); // All-time favorite
+  add(byUsers.find(c => !picks.includes(c))); // Most engaged users
 
-  // labels
   const labels = [
     "🔥 Popular This Week",
     "🏆 All-Time Favorite",
@@ -158,22 +150,23 @@ function buildFeaturedCarousel() {
 
   const track = document.querySelector(".carousel-track");
   const dots = document.querySelector(".carousel-indicators");
+
   track.innerHTML = "";
   dots.innerHTML = "";
 
   picks.forEach((card, i) => {
-    const thumb = card.querySelector(".thumb").src;
+    const slide = document.createElement("div");
+    slide.className = "carousel-slide";
+
+    const img = card.querySelector(".thumb").src;
     const title = card.querySelector("h3").textContent;
     const desc = card.querySelector("p").textContent;
 
-    const slide = document.createElement("div");
-    slide.className = "carousel-slide";
     slide.innerHTML = `
       <div class="featured-slide-content">
         <div class="featured-label">${labels[i]}</div>
-
         <div class="featured-card-preview">
-          <img src="${thumb}">
+          <img src="${img}">
           <h3>${title}</h3>
           <p>${desc}</p>
           <button class="featured-cta">See details</button>
@@ -181,63 +174,78 @@ function buildFeaturedCarousel() {
       </div>
     `;
 
-    // CTA scroll/highlight (restored EXACT behavior)
-    slide.querySelector(".featured-cta")
-      .addEventListener("click", () => {
-        card.scrollIntoView({ behavior: "smooth", block: "center" });
-        card.classList.add("highlight");
-        setTimeout(() => card.classList.remove("highlight"), 1700);
-      });
+    slide.querySelector(".featured-cta").addEventListener("click", () => {
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.add("highlight");
+      setTimeout(() => card.classList.remove("highlight"), 1700);
+    });
 
     track.appendChild(slide);
 
-    // indicators
     const dot = document.createElement("div");
-    dot.className = "indicator";
-    if (i === 0) dot.classList.add("active");
+    dot.className = "indicator" + (i === 0 ? " active" : "");
     dots.appendChild(dot);
+
     dot.addEventListener("click", () => goTo(i));
   });
 
   let index = 0;
-  let interval = setInterval(() => move(+1), 5000);
 
   function goTo(i) {
     index = i;
-    track.style.transform = `translateX(-${i*100}%)`;
-    dots.querySelectorAll(".indicator").forEach((d,j)=> 
-      d.classList.toggle("active", j===i)
+    track.style.transition = "transform 0.45s ease";
+    track.style.transform = `translateX(-${i * 100}%)`;
+    dots.querySelectorAll(".indicator").forEach((d, j) =>
+      d.classList.toggle("active", j === i)
     );
   }
 
-  function move(dir) {
-    index = (index + dir + picks.length) % picks.length;
-    goTo(index);
-  }
+  /* Auto-rotate */
+  let interval = setInterval(() => next(), 5000);
+  const next = () => goTo((index + 1) % picks.length);
 
-  // Pause on hover
   document.querySelector(".carousel").addEventListener("mouseenter", () => {
     clearInterval(interval);
   });
+
   document.querySelector(".carousel").addEventListener("mouseleave", () => {
-    interval = setInterval(() => move(+1), 5000);
+    interval = setInterval(() => next(), 5000);
   });
 
-  // Swipe
+  /* Touch swipe — follow finger (correct version) */
   let startX = 0;
+  let currentX = 0;
+  let dragging = false;
+
   track.addEventListener("touchstart", e => {
+    dragging = true;
     startX = e.touches[0].clientX;
+    currentX = startX;
+    track.style.transition = "none";
   });
-  track.addEventListener("touchend", e => {
-    let dx = e.changedTouches[0].clientX - startX;
-    if (dx > 60) move(-1);
-    if (dx < -60) move(+1);
+
+  track.addEventListener("touchmove", e => {
+    if (!dragging) return;
+    currentX = e.touches[0].clientX;
+    const dx = currentX - startX;
+    track.style.transform = `translateX(calc(${-index * 100}% + ${dx}px))`;
+  });
+
+  track.addEventListener("touchend", () => {
+    dragging = false;
+    const dx = currentX - startX;
+    track.style.transition = "transform 0.45s ease";
+
+    if (dx > 60 && index > 0) index--;
+    else if (dx < -60 && index < picks.length - 1) index++;
+
+    goTo(index);
   });
 }
 
-/* ======================================
+/* ==========================================================
    BACK TO TOP BUTTON
-====================================== */
+========================================================== */
 
 const toTopBtn = document.createElement("div");
 toTopBtn.id = "toTopBtn";
@@ -245,11 +253,10 @@ toTopBtn.textContent = "⬆";
 document.body.appendChild(toTopBtn);
 
 window.addEventListener("scroll", () => {
-  if (window.scrollY > 600) {
+  if (window.scrollY > 600)
     toTopBtn.classList.add("show");
-  } else {
+  else
     toTopBtn.classList.remove("show");
-  }
 });
 
 toTopBtn.addEventListener("click", () => {

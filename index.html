@@ -8,7 +8,7 @@
 <meta name="description"
       content="Garmin Connect IQ apps developed by Motionforge. Data fields and watch faces available on the Connect IQ Store.">
 
-<link rel="stylesheet" href="assets/css/visual.css?v=13" />
+<link rel="stylesheet" href="assets/css/visual.css?v=14" />
 </head>
 
 <body>
@@ -31,33 +31,30 @@
   <input type="text" id="search" placeholder="Search apps…">
 </div>
 
-<!-- =====================================================
-     FEATURED SECTION — Option A (clean preview cards)
-===================================================== -->
+<!-- ================= FEATURED ================= -->
 <section id="featured" class="section">
-  <h2>Featured</h2>
-  <p class="desc">Top-performing apps among athletes.</p>
+<h2>Featured</h2>
+<p class="desc">Top-performing apps among athletes.</p>
 
-  <div id="featured-carousel">
-    <div class="carousel">
-      <div class="carousel-track"></div>
-      <div class="carousel-indicators"></div>
-    </div>
+<div id="featured-carousel">
+  <div class="carousel">
+    <div class="carousel-track"></div>
+    <div class="carousel-indicators"></div>
   </div>
+</div>
 </section>
 
-<!-- =====================================================
-     DATA FIELDS
-===================================================== -->
+<!-- ================= DATA FIELDS ================= -->
 <section id="data-fields" class="section">
 <h2>Data Fields</h2>
 <p class="desc">Performance tools for pacing, prediction and live tracking.</p>
 
 <div class="grid">
 
-<!-- CARD TEMPLATE (unchanged) -->
+<!-- LIVE PREDICTOR PREMIUM -->
 <div class="card" data-name="Live Predictor Premium">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+
   <img class="thumb" src="img/live-predictor-premium.jpeg" />
   <h3>Live Predictor Premium</h3>
   <p>Advanced real-time predictions with flexible configurations.</p>
@@ -84,9 +81,10 @@
   </div>
 </div>
 
-<!-- CARD: Live Time Predictor -->
+<!-- LIVE TIME PREDICTOR -->
 <div class="card" data-name="Live Time Predictor">
   <div class="badge-slot"></div>
+
   <img class="thumb" src="img/live-time-predictor.jpeg" />
   <h3>Live Time Predictor</h3>
   <p>Live time predictions for custom distances.</p>
@@ -106,9 +104,10 @@
   </a>
 </div>
 
-<!-- CARD: Pacer -->
+<!-- PACER -->
 <div class="card" data-name="Pacer Data Field">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+
   <img class="thumb" src="img/pacer.jpeg" />
   <h3>Pacer Data Field</h3>
   <p>Real-time pacing guidance to stay exactly on target.</p>
@@ -132,14 +131,15 @@
     <div class="dropdown">
       <a href="https://apps.garmin.com/apps/d9f06aa8-5905-492f-9951-9e0a7b539a41">Mirror B</a>
       <a href="https://apps.garmin.com/apps/947be485-d8f3-4bd2-8a7b-c68ef1a92984">Mirror C</a>
-      <a href="https://apps.garmin.com/apps/0dd6e1a1-b0b5-4e05-80de-8a4d21c2d857">Miles version</a>
+      <a href="httpsapps.garmin.com/apps/0dd6e1a1-b0b5-4e05-80de-8a4d21c2d857">Miles version</a>
     </div>
   </div>
 </div>
 
-<!-- CARD: Live Pace Speed Calculator -->
+<!-- LIVE PACE SPEED CALCULATOR -->
 <div class="card" data-name="Live Pace Speed Calculator">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+
   <img class="thumb" src="img/pace-speed-calculator.jpeg" />
   <h3>Live Pace Speed Calculator</h3>
   <p>Required pace or speed for custom goals.</p>
@@ -166,9 +166,10 @@
   </div>
 </div>
 
-<!-- CARD: Tracker -->
+<!-- TRACKER -->
 <div class="card" data-name="Tracker Data Field">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+
   <img class="thumb" src="img/tracker.jpeg" />
   <h3>Tracker Data Field</h3>
   <p>Share your activity live with a unique tracker ID.</p>
@@ -191,63 +192,76 @@
 </div>
 </section>
 
-<!-- =====================================================
-     WATCH FACES (unchanged)
-===================================================== -->
+<!-- ================= WATCH FACES ================= -->
 <section id="watch-faces" class="section">
 <h2>Watch Faces</h2>
 <p class="desc">Creative watch faces with distinctive visual concepts.</p>
 
 <div class="grid">
 
+<!-- ROUTE SILHOUETTE -->
 <div class="card" data-name="Route Silhouette">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
+
   <img class="thumb" src="img/route-silhouette.png" />
   <h3>Route Silhouette</h3>
   <p>Shows your latest GPS-based Strava activity on your watch.</p>
+
   <div class="momentum-tag hidden"></div>
   <div class="tooltip hidden"></div>
+
   <div class="metrics" data-app="route-silhouette">
     <span class="metric metric-total"></span>
     <span class="metric metric-installs"></span>
     <span class="metric metric-users"></span>
   </div>
+
   <a class="ciq-badge" href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">
     <img class="light" src="img/Connect IQ Badge-Black.svg" />
     <img class="dark" src="img/Connect IQ Badge-White.svg" />
   </a>
 </div>
 
+<!-- TIME ACROSS THE GALAXY -->
 <div class="card" data-name="Time Across The Galaxy">
   <div class="badge-slot"></div>
+
   <img class="thumb" src="img/galaxy.png" />
   <h3>Time Across The Galaxy</h3>
   <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
+
   <div class="momentum-tag hidden"></div>
   <div class="tooltip hidden"></div>
+
   <div class="metrics" data-app="time-across-the-galaxy">
     <span class="metric metric-total"></span>
     <span class="metric metric-installs"></span>
     <span class="metric metric-users"></span>
   </div>
+
   <a class="ciq-badge" href="https://apps.garmin.com/apps/5f4dad46-077c-4876-b860-9000e3285ef1">
     <img class="light" src="img/Connect IQ Badge-Black.svg" />
     <img class="dark" src="img/Connect IQ Badge-White.svg" />
   </a>
 </div>
 
+<!-- SOLVE FOR X -->
 <div class="card" data-name="Solve for X">
   <div class="badge-slot"></div>
+
   <img class="thumb" src="img/solve-for-x.jpeg" />
   <h3>Solve for X</h3>
   <p>Solve a puzzle to reveal the time.</p>
+
   <div class="momentum-tag hidden"></div>
   <div class="tooltip hidden"></div>
+
   <div class="metrics" data-app="solve-for-x">
     <span class="metric metric-total"></span>
     <span class="metric metric-installs"></span>
     <span class="metric metric-users"></span>
   </div>
+
   <a class="ciq-badge" href="https://apps.garmin.com/apps/f6ae5589-7a3a-41c3-8f38-d46d39d898bb">
     <img class="light" src="img/Connect IQ Badge-Black.svg" />
     <img class="dark" src="img/Connect IQ Badge-White.svg" />
@@ -257,9 +271,7 @@
 </div>
 </section>
 
-<!-- =====================================================
-     CONTACT
-===================================================== -->
+<!-- ================= CONTACT ================= -->
 <section id="contact">
   <div class="contact-card">
     <h2>Contact</h2>
@@ -272,7 +284,7 @@
   © 2026 Motionforge — Garmin Connect IQ Apps
 </footer>
 
-<script src="assets/js/script.js?v=13"></script>
+<script src="assets/js/script.js?v=14"></script>
 
 </body>
 </html>
