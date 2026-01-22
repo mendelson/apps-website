@@ -222,7 +222,7 @@ nav a {
 }
 
 /* ===========================
-   MOMENTUM TAG
+   MOMENTUM TAGS
 =========================== */
 
 .momentum-tag {
@@ -235,11 +235,11 @@ nav a {
 }
 
 .momentum-positive { color: #4cd964; }
-.momentum-strong   { color: #ffd60a; }
-.momentum-hot      { color: #ff453a; }
+.momentum-strong  { color: #ffd60a; }
+.momentum-hot     { color: #ff453a; }
 
 /* ===========================
-   TOOLTIP (FINAL)
+   TOOLTIP (UNDER THE TAG)
 =========================== */
 
 .tooltip {
@@ -255,7 +255,7 @@ nav a {
   width: 230px;
   text-align: left;
   z-index: 500;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
 }
 
 .tooltip::before {
@@ -269,16 +269,12 @@ nav a {
   border-bottom: 7px solid #555;
 }
 
-.card .tooltip {
-  bottom: auto !important;
-}
-
 /* ===========================
    FEATURED CAROUSEL
 =========================== */
 
 #featured-carousel {
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .carousel {
@@ -292,6 +288,7 @@ nav a {
 .carousel-track {
   display: flex;
   transition: transform 0.6s ease;
+  will-change: transform;
 }
 
 .carousel-slide {
@@ -307,17 +304,16 @@ nav a {
   font-size: 22px;
 }
 
-.carousel-slide p {
-  opacity: 0.8;
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
 .carousel-slide img {
   width: 100%;
   max-width: 330px;
   border-radius: 14px;
   margin-bottom: 15px;
+}
+
+.carousel-slide p {
+  opacity: 0.8;
+  margin-bottom: 12px;
 }
 
 .carousel-slide a.button {
@@ -348,6 +344,17 @@ nav a {
 
 .carousel-indicators .active {
   background: #eee;
+}
+
+/* Card highlight after scroll */
+.card.highlight {
+  animation: highlightFlash 1.4s ease;
+}
+
+@keyframes highlightFlash {
+  0%   { box-shadow: 0 0 0px 0px #fff0; }
+  30%  { box-shadow: 0 0 14px 4px #4cd964aa; }
+  100% { box-shadow: 0 0 0px 0px #fff0; }
 }
 
 /* ===========================
