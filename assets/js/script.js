@@ -153,8 +153,6 @@ if (installs >= 50) {
 tip.dataset.level = level;
 tag.classList.remove("hidden");
 
-      tag.classList.remove("hidden");
-
       /* === Tooltip content (stats ≥ 7 only) === */
       const tipLevel = tip.dataset.level;
       let stats = "";
