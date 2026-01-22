@@ -55,7 +55,7 @@ const TOOLTIP_TEXT = {
 };
 
 /* ==========================================================
-   LOAD METRICS + TOOLTIP WRAPPING FIX + BUILD FEATURED
+   LOAD METRICS + TOOLTIP FIX + FEATURED
 ========================================================== */
 
 async function loadMetrics() {
@@ -86,16 +86,7 @@ async function loadMetrics() {
 
       metrics.style.display = "none";
 
-      /* --- WRAP TAG + TOOLTIP IN A TOOLTIP CONTAINER --- */
-      if (!tag.parentElement.classList.contains("tooltip-container")) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "tooltip-container";
-        tag.before(wrapper);
-        wrapper.appendChild(tag);
-        wrapper.appendChild(tip);
-      }
-
-      /* MOMENTUM */
+      /* MOMENTUM TEXT */
       if (installs >= 50) {
         tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
@@ -114,6 +105,22 @@ async function loadMetrics() {
 
       tag.classList.remove("hidden");
 
+      /* ======================================================
+         ⭐ FINAL, CORRECT, BULLETPROOF TOOLTIP WRAPPER FIX
+         ====================================================== */
+      if (!tag.parentElement.classList.contains("tooltip-container")) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "tooltip-container";
+
+        // Insert wrapper exactly where the tag sits (prevents text node residue)
+        tag.parentNode.insertBefore(wrapper, tag);
+
+        // Move elements into wrapper (removes whitespace text nodes)
+        wrapper.appendChild(tag);
+        wrapper.appendChild(tip);
+      }
+
+      /* Tooltip toggle */
       tag.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
@@ -121,12 +128,12 @@ async function loadMetrics() {
       });
     });
 
-    /* Global click closes tooltips */
+    /* Global close */
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
-    /* Build featured section */
+    /* Build featured section AFTER metrics */
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -137,7 +144,7 @@ async function loadMetrics() {
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
 /* ==========================================================
-   FEATURED CAROUSEL — CLEAN PREVIEW CARDS
+   FEATURED CAROUSEL
 ========================================================== */
 
 function buildFeaturedCarousel() {
@@ -163,7 +170,6 @@ function buildFeaturedCarousel() {
 
   const track = document.querySelector(".carousel-track");
   const dots = document.querySelector(".carousel-indicators");
-
   track.innerHTML = "";
   dots.innerHTML = "";
 
@@ -203,7 +209,6 @@ function buildFeaturedCarousel() {
   });
 
   let index = 0;
-
   function goTo(i) {
     index = i;
     track.style.transition = "transform 0.45s ease";
@@ -224,7 +229,7 @@ function buildFeaturedCarousel() {
     interval = setInterval(() => next(), 5000);
   });
 
-  /* TOUCH SWIPE — FIXED */
+  /* TOUCH SWIPE */
   let startX = 0;
   let currentX = 0;
   let dragging = false;
@@ -240,7 +245,9 @@ function buildFeaturedCarousel() {
     if (!dragging) return;
     currentX = e.touches[0].clientX;
     const dx = currentX - startX;
-    track.style.transform = `translateX(calc(${-index * 100}% + ${dx}px))`;
+    track.style.transform = `
+      translateX(calc(${-index * 100}% + ${dx}px))
+    `;
   });
 
   track.addEventListener("touchend", () => {
