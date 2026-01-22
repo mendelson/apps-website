@@ -9,14 +9,14 @@ document.getElementById('search').addEventListener('input', e => {
 });
 
 /* ======================
-   EMAIL BUTTON
+   EMAIL
 ====================== */
 document.getElementById('emailBtn').addEventListener('click', () => {
   window.location.href = "mailto:mateusmendelson@hotmail.com";
 });
 
 /* ======================
-   DROPDOWN
+   DROPDOWN FIX
 ====================== */
 document.querySelectorAll(".versions button").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -25,126 +25,25 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   GOOGLE SHEET CONFIG (FINAL)
+   METRICS CONFIG
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
-/*
-  Verified JSON column indexes:
-  2, 6, 10, 14, 18, 22, 26, 30
-*/
-
 const APP_COL = {
-  "Live Predictor Premium":     6,
-  "Live Time Predictor":        10,
-  "Pacer Data Field":           14,
   "Live Pace Speed Calculator": 2,
-  "Tracker Data Field":         30,
-
-  // Watch faces
-  "Route Silhouette":           18,
-  "Time Across The Galaxy":     26,
-  "Solve for X":                22
+  "Live Predictor Premium": 6,
+  "Live Time Predictor": 10,
+  "Route Silhouette": 18,
+  "Pacer Data Field": 14,
+  "Solve for X": 22,
+  "Time Across The Galaxy": 26,
+  "Tracker Data Field": 30
 };
 
 /* ======================
-   LOAD METRICS (FINAL)
-====================== */
-
-async function loadMetrics() {
-  try {
-    const res = await fetch(SHEET_URL);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-
-    const rows = json.table.rows;
-    // rows[0] = total downloads
-    // rows[1] = installs last 7 days
-    // rows[2] = users last 7 days
-
-    document.querySelectorAll('.card').forEach(card => {
-      const name = card.dataset.name;
-      const col  = APP_COL[name];
-
-      if (col === undefined) return;
-
-      const total    = rows[0].c[col]?.v || 0;
-      const installs = rows[1].c[col]?.v || 0;
-      const users    = rows[2].c[col]?.v || 0;
-
-      const tag = card.querySelector(".momentum-tag");
-      const tip = card.querySelector(".tooltip");
-
-      /* ================
-         MOMENTUM LOGIC
-      ================= */
-      let msg = "";
-
-      function tagHTML(label) {
-        return `${label} <span class="info-icon" style="opacity:0.7; font-size:14px; margin-left:6px;">ⓘ</span>`;
-      }
-
-      if (installs >= 50) {
-        tag.innerHTML = tagHTML("Trending Hot 🔥");
-        tag.classList.add("momentum-hot");
-        msg = "🔥 This app is having a very strong week.";
-      }
-      else if (installs >= 10) {
-        tag.innerHTML = tagHTML("Trending Up 🚀");
-        tag.classList.add("momentum-strong");
-        msg = "🚀 This app is gaining momentum.";
-      }
-      else if (installs >= 1) {
-        tag.innerHTML = tagHTML("Getting Attention 👀");
-        tag.classList.add("momentum-positive");
-        msg = "👀 This app has activity this week.";
-      }
-      else {
-        return; // No momentum, no display
-      }
-
-      tag.classList.remove("hidden");
-
-      /* ================
-         TOOLTIP CONTENT (Filtered)
-         Only show metrics >= 7
-      ================= */
-      let tooltipHTML = `<strong>📊 App Metrics</strong><br>`;
-
-      if (total >= 7)    tooltipHTML += `• Downloads: ${total}<br>`;
-      if (installs >= 7) tooltipHTML += `• Installs (7d): ${installs}<br>`;
-      if (users >= 7)    tooltipHTML += `• Users (7d): ${users}<br>`;
-
-      if (tooltipHTML === `<strong>📊 App Metrics</strong><br>`)
-        tooltipHTML = ""; // hide all stats
-
-      tooltipHTML += `<br>${msg}`;
-      tip.innerHTML = tooltipHTML;
-
-      /* ================
-         OPEN/CLOSE TOOLTIP
-      ================= */
-      tag.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-
-        // Close all others
-        document.querySelectorAll(".tooltip").forEach(t => {
-          if (t !== tip) t.classList.add("hidden");
-        });
-
-        tip.classList.toggle("hidden");
-      });
-    });
-
-  } catch (err) {
-    console.error("Failed to load metrics:", err);
-  }
-}
-
-/* ======================
-   FEATURED CAROUSEL
+   FEATURED CAROUSEL BUILDER
 ====================== */
 
 function buildFeaturedCarousel(metrics) {
@@ -158,14 +57,14 @@ function buildFeaturedCarousel(metrics) {
       installs: metrics.installs[col] || 0,
       users: metrics.users[col] || 0,
       image: document.querySelector(`.card[data-name="${name}"] img`)?.src,
-      url: document.querySelector(`.card[data-name="${name}"] a.ciq-badge`)?.href
+      url: name
     };
   });
 
-  /* Helper: avoid showing same app twice */
   const used = new Set();
-  const pick = (sortedList) => {
-    for (const item of sortedList) {
+
+  const pick = sorted => {
+    for (const item of sorted) {
       if (!used.has(item.name)) {
         used.add(item.name);
         return item;
@@ -174,15 +73,13 @@ function buildFeaturedCarousel(metrics) {
     return null;
   };
 
-  /* Rankings */
   const byInstalls = [...apps].sort((a,b) => b.installs - a.installs);
-  const byTotal    = [...apps].sort((a,b) => b.total - a.total);
-  const byUsers    = [...apps].sort((a,b) => b.users - a.users);
+  const byTotal    = [...apps].sort((a,b) => b.total    - a.total);
+  const byUsers    = [...apps].sort((a,b) => b.users    - a.users);
 
-  /* Pick winners */
   const popularThisWeek  = pick(byInstalls);
   const allTimeFavorite  = pick(byTotal);
-  const lovedByAthletes  = pick(byUsers);
+  const lovedAthletes    = pick(byUsers);
 
   const slides = [
     {
@@ -198,11 +95,10 @@ function buildFeaturedCarousel(metrics) {
     {
       title: "👥 Loved by Its Athletes",
       desc: "Athletes who use it tend to stick with it.",
-      app: lovedByAthletes
+      app: lovedAthletes
     }
   ];
 
-  /* Build HTML */
   const track = document.querySelector(".carousel-track");
   const indicators = document.querySelector(".carousel-indicators");
 
@@ -218,7 +114,7 @@ function buildFeaturedCarousel(metrics) {
         <img src="${slide.app.image}" alt="${slide.app.name}">
         <h4>${slide.app.name}</h4>
         <p>${slide.desc}</p>
-        <a class="button" href="${slide.app.url}">View App</a>
+        <a class="button" data-target="${slide.app.name}">View App</a>
       </div>
     `;
 
@@ -227,7 +123,6 @@ function buildFeaturedCarousel(metrics) {
     `;
   });
 
-  /* Carousel behavior */
   let current = 0;
   const totalSlides = slides.length;
 
@@ -239,27 +134,84 @@ function buildFeaturedCarousel(metrics) {
     });
   };
 
-  /* Auto-rotate every 3 seconds */
-  setInterval(() => {
+  let auto = setInterval(() => {
     current = (current + 1) % totalSlides;
     updateCarousel();
-  }, 3000);
+  }, 5000);
 
-  /* Indicator click */
-  indicators.addEventListener("click", (e) => {
+  document.querySelector(".carousel").addEventListener("mouseenter", () => clearInterval(auto));
+  document.querySelector(".carousel").addEventListener("mouseleave", () => {
+    auto = setInterval(() => {
+      current = (current + 1) % totalSlides;
+      updateCarousel();
+    }, 5000);
+  });
+
+  indicators.addEventListener("click", e => {
     if (e.target.dataset.index) {
       current = parseInt(e.target.dataset.index);
       updateCarousel();
     }
   });
 
-  /* Update on resize */
+  /* Swipe gestures */
+  let startX = 0;
+  let isDragging = false;
+
+  track.addEventListener("touchstart", e => {
+    clearInterval(auto);
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  });
+
+  track.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    track.style.transform =
+      `translateX(calc(-${current * 100}% + ${dx}px))`;
+  });
+
+  track.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    isDragging = false;
+
+    if (dx > 60) current = Math.max(0, current - 1);
+    if (dx < -60) current = Math.min(totalSlides - 1, current + 1);
+
+    updateCarousel();
+
+    auto = setInterval(() => {
+      current = (current + 1) % totalSlides;
+      updateCarousel();
+    }, 5000);
+  });
+
+  /* CTA scroll-to-card */
+  track.querySelectorAll(".button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const name = btn.dataset.target;
+      const card = document.querySelector(`.card[data-name="${name}"]`);
+
+      if (!card) return;
+
+      const top = card.getBoundingClientRect().top + window.scrollY - 80;
+
+      window.scrollTo({
+        top,
+        behavior: "smooth"
+      });
+
+      card.classList.add("highlight");
+      setTimeout(() => card.classList.remove("highlight"), 1400);
+    });
+  });
+
   window.addEventListener("resize", updateCarousel);
+  updateCarousel();
 }
 
-
 /* ======================
-   LOAD METRICS EXTENDED
+   MOMENTUM + TOOLTIPS
 ====================== */
 
 async function loadMetrics() {
@@ -267,7 +219,6 @@ async function loadMetrics() {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-
     const rows = json.table.rows;
 
     const metrics = {
@@ -276,7 +227,6 @@ async function loadMetrics() {
       users: rows[2].c.map(c => c?.v || 0)
     };
 
-    /* Build momentum tags + tooltips */
     document.querySelectorAll('.card').forEach(card => {
       const name = card.dataset.name;
       const col = APP_COL[name];
@@ -292,43 +242,36 @@ async function loadMetrics() {
 
       let msg = "";
 
-      function tagHTML(label) {
-        return `${label} <span class="info-icon" style="opacity:0.7; font-size:14px; margin-left:6px;">ⓘ</span>`;
+      function html(label) {
+        return `${label} <span style="opacity:.7;margin-left:6px;">ⓘ</span>`;
       }
 
       if (installs >= 50) {
-        tag.innerHTML = tagHTML("Trending Hot 🔥");
+        tag.innerHTML = html("Trending Hot 🔥");
         tag.classList.add("momentum-hot");
         msg = "🔥 This app is having a very strong week.";
       } else if (installs >= 10) {
-        tag.innerHTML = tagHTML("Trending Up 🚀");
+        tag.innerHTML = html("Trending Up 🚀");
         tag.classList.add("momentum-strong");
         msg = "🚀 This app is gaining momentum.";
       } else if (installs >= 1) {
-        tag.innerHTML = tagHTML("Getting Attention 👀");
+        tag.innerHTML = html("Getting Attention 👀");
         tag.classList.add("momentum-positive");
         msg = "👀 This app has activity this week.";
-      } else {
-        return;
-      }
+      } else return;
 
       tag.classList.remove("hidden");
 
-      let tooltipHTML = `<strong>📊 App Metrics</strong><br>`;
+      let tooltip = `<strong>📊 App Metrics</strong><br>`;
+      if (total >= 7) tooltip += `• Downloads: ${total}<br>`;
+      if (installs >= 7) tooltip += `• Installs (7d): ${installs}<br>`;
+      if (users >= 7) tooltip += `• Users (7d): ${users}<br>`;
+      tooltip += `<br>${msg}`;
 
-      if (total >= 7) tooltipHTML += `• Downloads: ${total}<br>`;
-      if (installs >= 7) tooltipHTML += `• Installs (7d): ${installs}<br>`;
-      if (users >= 7) tooltipHTML += `• Users (7d): ${users}<br>`;
+      tip.innerHTML = tooltip;
 
-      if (tooltipHTML === `<strong>📊 App Metrics</strong><br>`) {
-        tooltipHTML = "";
-      }
-
-      tooltipHTML += `<br>${msg}`;
-      tip.innerHTML = tooltipHTML;
-
-      tag.addEventListener("click", (ev) => {
-        ev.stopPropagation();
+      tag.addEventListener("click", e => {
+        e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => {
           if (t !== tip) t.classList.add("hidden");
         });
@@ -336,26 +279,15 @@ async function loadMetrics() {
       });
     });
 
-    /* FEATURED CAROUSEL BUILD */
+    document.addEventListener("click", () =>
+      document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"))
+    );
+
     buildFeaturedCarousel(metrics);
 
   } catch (err) {
     console.error("Failed to load metrics:", err);
   }
 }
-
-/* Close all tooltips on outside click */
-document.addEventListener("click", () => {
-  document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
-});
-
-document.addEventListener("DOMContentLoaded", loadMetrics);
-
-/* ======================
-   CLOSE ALL TOOLTIPS WHEN CLICKING OUTSIDE
-====================== */
-document.addEventListener("click", () => {
-  document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
-});
 
 document.addEventListener("DOMContentLoaded", loadMetrics);
