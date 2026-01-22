@@ -39,14 +39,14 @@ const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 const APP_METRICS = {
-  "Live Pace Speed Calculator": [2, 3, 4],
-  "Live Predictor Premium": [6, 7, 8],
-  "Live Time Predictor": [10, 11, 12],
-  "Route Silhouette": [18, 19, 20],
-  "Pacer Data Field": [14, 15, 16],
-  "Solve for X": [22, 23, 24],
-  "Time Across The Galaxy": [26, 27, 28],
-  "Tracker Data Field": [30, 31, 32]
+  "Live Pace Speed Calculator": [2, 2, 2],
+  "Live Predictor Premium": [6, 6, 6],
+  "Live Time Predictor": [10, 10, 10],
+  "Pacer Data Field": [14, 14, 14],
+  "Route Silhouette": [18, 18, 18],
+  "Solve for X": [22, 22, 22],
+  "Time Across The Galaxy": [26, 26, 26],
+  "Tracker Data Field": [30, 30, 30]
 };
 
 const TOOLTIP_TEXT = {
@@ -64,7 +64,9 @@ async function loadMetrics() {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
-    const row = json.table.rows[0].c;
+    const rowTotal = json.table.rows[0].c;
+    const rowInstalls = json.table.rows[1].c;
+    const rowUsers = json.table.rows[2].c;
 
     const allCards = [...document.querySelectorAll('.card')];
 
@@ -77,9 +79,9 @@ async function loadMetrics() {
       if (!APP_METRICS[name]) return;
 
       const [tCol, iCol, uCol] = APP_METRICS[name];
-      const total = row[tCol]?.v || 0;
-      const installs = row[iCol]?.v || 0;
-      const users = row[uCol]?.v || 0;
+      const total = rowTotal[tCol]?.v || 0;
+      const installs = rowInstalls[iCol]?.v || 0;
+      const users = rowUsers[uCol]?.v || 0;
 
       metrics.dataset.total = total;
       metrics.dataset.installs = installs;
