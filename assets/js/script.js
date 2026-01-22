@@ -324,3 +324,82 @@ window.addEventListener("scroll", () => {
 toTopBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+/* ==========================================================
+   ADVANCED TRACKING – Motionforge
+========================================================== */
+
+/* ========== 1. TRACK: Search input ========== */
+document.getElementById("search").addEventListener("input", e => {
+  gtag("event", "search", {
+    search_term: e.target.value
+  });
+});
+
+/* ========== 2. TRACK: Click on app cards ========== */
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("click", () => {
+    gtag("event", "card_click", {
+      app_name: card.dataset.name
+    });
+  });
+});
+
+/* ========== 3. TRACK: Click on CIQ badges ========== */
+document.querySelectorAll(".ciq-badge").forEach(badge => {
+  badge.addEventListener("click", e => {
+    const card = e.target.closest(".card");
+    gtag("event", "ciq_click", {
+      app_name: card?.dataset.name || "unknown",
+      ciq_url: badge.href
+    });
+  });
+});
+
+/* ========== 4. TRACK: Click on Version links ========== */
+document.querySelectorAll(".versions .dropdown a").forEach(link => {
+  link.addEventListener("click", () => {
+    const card = link.closest(".card");
+    gtag("event", "version_click", {
+      app_name: card?.dataset.name || "unknown",
+      version_url: link.href
+    });
+  });
+});
+
+/* ========== 5. TRACK: Click on Tooltip icon ========== */
+document.querySelectorAll(".momentum-tag").forEach(tag => {
+  tag.addEventListener("click", () => {
+    const card = tag.closest(".card");
+    gtag("event", "tooltip_open", {
+      app_name: card?.dataset.name || "unknown"
+    });
+  });
+});
+
+/* ========== 6. TRACK: Click on Contact button ========== */
+document.getElementById("emailBtn").addEventListener("click", () => {
+  gtag("event", "contact_click", {
+    method: "email_button"
+  });
+});
+
+/* ========== 7. TRACK: Scroll depth tracking ========== */
+let scrollTracked = false;
+window.addEventListener("scroll", () => {
+  if (!scrollTracked && window.scrollY > 1200) {
+    scrollTracked = true;
+    gtag("event", "scroll_depth", {
+      depth: "50%"
+    });
+  }
+});
+
+/* ========== 8. TRACK: Featured carousel interactions ========== */
+document.querySelectorAll(".featured-cta").forEach(btn => {
+  btn.addEventListener("click", () => {
+    gtag("event", "featured_cta_click", {
+      card_title: btn.closest(".featured-card-preview").querySelector("h3")?.textContent
+    });
+  });
+});
