@@ -178,21 +178,19 @@ function adaptTooltipPosition(tag, tip) {
   const rect = tip.getBoundingClientRect();
 
   if (rect.top < 0) {
-    // Move below tag
+    // Tooltip BELOW the tag → arrow should point UP toward the tag
     tip.style.bottom = "auto";
     tip.style.top = "100%";
     tip.style.transform = "translateX(-50%)";
     tip.style.marginTop = "8px";
 
-    tip.style.setProperty("--arrow-top", "-7px");
-    tip.style.setProperty("--arrow-dir", "down");
+    tip.style.setProperty("--arrow-dir", "up");
   } else {
-    // Default = above
+    // Tooltip ABOVE the tag → arrow should point DOWN toward the tag
     tip.style.top = "auto";
     tip.style.bottom = "calc(100% + 6px)";
 
-    tip.style.setProperty("--arrow-top", "auto");
-    tip.style.setProperty("--arrow-dir", "up");
+    tip.style.setProperty("--arrow-dir", "down");
   }
 }
 

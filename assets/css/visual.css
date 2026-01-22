@@ -379,17 +379,18 @@ nav a:hover {
   transform: translateX(-50%);
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-
-  /* Default arrow (up) */
-  border-bottom: 7px solid #555;
-  top: var(--arrow-top);
 }
 
+/* Arrow UP (tooltip below the tag) */
+.tooltip[style*="--arrow-dir: up"]::before {
+  border-bottom: 7px solid #555;
+  top: -7px;
+}
+
+/* Arrow DOWN (tooltip above the tag) */
 .tooltip[style*="--arrow-dir: down"]::before {
-  border-bottom: none;
   border-top: 7px solid #555;
-  bottom: var(--arrow-bottom);
-  top: auto;
+  bottom: -7px;
 }
 
 /* Tooltip content */
