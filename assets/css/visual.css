@@ -485,31 +485,26 @@ nav a:hover {
 }
 
 /* ============================================
-   CARD BADGES – Momentum + Retention
-   ============================================ */
+   CARD BADGES – Featured only
+============================================ */
 
-   .card-badge {
-     position: absolute;
-       top: 12px;
-         left: 12px;
+.card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(4px);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 5;
+}
 
-           padding: 4px 10px;
-             border-radius: 999px;
-               font-size: 13px;
-                 font-weight: 600;
-
-                   border: 1px solid rgba(255,255,255,0.25);
-                     background: rgba(255,255,255,0.08);
-                       backdrop-filter: blur(4px);
-
-                         display: inline-flex;
-                           align-items: center;
-                             gap: 4px;
-
-                               z-index: 5;
-                               }
-
-                               .card-badge.high { border-color: #ff453a; color: #ff453a; }
-                               .card-badge.medium { border-color: #ffd60a; color: #ffd60a; }
-                               .card-badge.low { border-color: #4cd964; color: #4cd964; }
-                               .card-badge.retention { border-color: #4aa3ff; color: #4aa3ff; }
+.card-badge.popular   { color: #ff453a; border-color: #ff453a; }
+.card-badge.favorite  { color: #ffd60a; border-color: #ffd60a; }
+.card-badge.engaged   { color: #4cd964; border-color: #4cd964; }

@@ -225,17 +225,27 @@ function buildFeaturedCarousel() {
   add(byTotal.find(c => !picks.includes(c)));
   add(byUsers.find(c => !picks.includes(c)));
 
-  /* === Add retention badge to the high-retention pick === */
-  const retentionCard = byUsers[0];
-  if (retentionCard) {
-    let retBadge = retentionCard.querySelector(".card-badge.retention");
-      if (!retBadge) {
-          retBadge = document.createElement("div");
-              retBadge.className = "card-badge retention";
-                  retBadge.textContent = "💪 High Retention";
-                      retentionCard.appendChild(retBadge);
-                        }
-                        }
+  /* ============================================
+   FEATURED BADGES (only for the 3 picks)
+  ============================================ */
+
+  const badgeMap = [
+    { emoji: "🔥", word: "Popular",  class: "popular" },
+    { emoji: "🏆", word: "Favorite", class: "favorite" },
+    { emoji: "💪", word: "Engaged",  class: "engaged" }
+  ];
+
+  picks.forEach((card, i) => {
+    if (!card) return;
+
+    let badge = card.querySelector(".card-badge");
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.className = `card-badge ${badgeMap[i].class}`;
+      badge.textContent = `${badgeMap[i].emoji} ${badgeMap[i].word}`;
+      card.appendChild(badge);
+    }
+  });
 
   const labels = [
     "🔥 Popular This Week",
