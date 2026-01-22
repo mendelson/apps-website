@@ -148,26 +148,16 @@ nav a:hover {
    CONNECT IQ BADGE (THEME AWARE)
 =========================== */
 
-.ciq-badge .dark {
-  display: none;
-}
+.ciq-badge .dark { display: none; }
 
 @media (prefers-color-scheme: dark) {
-  .ciq-badge .light {
-    display: none;
-  }
-  .ciq-badge .dark {
-    display: inline;
-  }
+  .ciq-badge .light { display: none; }
+  .ciq-badge .dark { display: inline; }
 }
 
 @media (prefers-color-scheme: light) {
-  .ciq-badge .light {
-    display: inline;
-  }
-  .ciq-badge .dark {
-    display: none;
-  }
+  .ciq-badge .light { display: inline; }
+  .ciq-badge .dark { display: none; }
 }
 
 /* ===========================
@@ -192,9 +182,7 @@ nav a:hover {
    DROPDOWN
 =========================== */
 
-.versions {
-  margin-top: 20px;
-}
+.versions { margin-top: 20px; }
 
 .versions button {
   width: 100%;
@@ -213,9 +201,7 @@ nav a:hover {
   padding: 10px;
 }
 
-.versions.open .dropdown {
-  display: block !important;
-}
+.versions.open .dropdown { display: block !important; }
 
 .dropdown a {
   display: block;
@@ -265,19 +251,13 @@ nav a:hover {
 
 .featured-card-preview img {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 14px;
 }
 
-.featured-card-preview h3 {
-  margin: 10px 0 5px;
-}
-
-.featured-card-preview p {
-  opacity: 0.75;
-  margin-bottom: 10px;
-}
+.featured-card-preview h3 { margin: 10px 0 5px; }
+.featured-card-preview p { opacity: 0.75; margin-bottom: 10px; }
 
 .featured-cta {
   background: #444;
@@ -304,9 +284,7 @@ nav a:hover {
   transition: background 0.25s ease;
 }
 
-.indicator.active {
-  background: #fff;
-}
+.indicator.active { background: #fff; }
 
 /* ===========================
    MOMENTUM TAG
@@ -326,16 +304,23 @@ nav a:hover {
 }
 
 .momentum-positive { color: #4cd964; }
-.momentum-strong { color: #ffd60a; }
-.momentum-hot { color: #ff453a; }
+.momentum-strong   { color: #ffd60a; }
+.momentum-hot      { color: #ff453a; }
+
+/* ===========================
+   TOOLTIP CONTAINER (FINAL FIX)
+=========================== */
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
 
 /* ===========================
    TOOLTIP
 =========================== */
-
-.tooltip-container {
-  position: relative; /* FIXED: ensures tooltip anchors correctly */
-}
 
 .tooltip {
   position: absolute;
@@ -349,7 +334,7 @@ nav a:hover {
   width: 230px;
   text-align: left;
   bottom: calc(100% + 6px);
-  z-index: 50;
+  z-index: 999;
   box-shadow: 0 3px 16px rgba(0,0,0,0.45);
 }
 
@@ -363,6 +348,8 @@ nav a:hover {
   border-right: 7px solid transparent;
   border-top: 7px solid #555;
 }
+
+.tooltip.hidden { display: none !important; }
 
 /* ===========================
    CONTACT
@@ -393,7 +380,7 @@ nav a:hover {
 }
 
 /* ===========================
-   BACK TO TOP BUTTON
+   BACK TO TOP
 =========================== */
 
 #toTopBtn {
@@ -425,6 +412,4 @@ nav a:hover {
    HIDDEN
 =========================== */
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
