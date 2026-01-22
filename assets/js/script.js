@@ -25,34 +25,30 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   FINAL, VERIFIED GOOGLE SHEETS CONFIG
+   GOOGLE SHEET CONFIG — FINAL CONFIRMED
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /*
-  FINAL VERIFIED COLUMN INDEXES FROM YOUR REAL JSON:
+  Verified from json.txt (3):
+  Numeric values are in columns:
 
-  App #1 → col 2
-  App #2 → col 5
-  App #3 → col 8
-  App #4 → col 11
-  App #5 → col 14
-  App #6 → col 17
-  App #7 → col 20
-  App #8 → col 23
+  2, 6, 10, 14, 18, 22, 26, 30
 */
 
 const APP_METRICS = {
+  "Live Predictor Premium":     6,
+  "Live Time Predictor":        10,
+  "Pacer Data Field":           14,
   "Live Pace Speed Calculator": 2,
-  "Live Predictor Premium":     5,
-  "Live Time Predictor":        8,
-  "Pacer Data Field":           11,
-  "Route Silhouette":           14,
-  "Solve for X":                17,
-  "Time Across The Galaxy":     20,
-  "Tracker Data Field":         23
+  "Tracker Data Field":         30,
+
+  // Watch faces
+  "Route Silhouette":           18,
+  "Time Across The Galaxy":     26,
+  "Solve for X":                22
 };
 
 /* ======================
@@ -65,16 +61,14 @@ async function loadMetrics() {
     const text = await res.text();
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
-    // rows:
+    const rows = json.table.rows;
     // 0 = total downloads
     // 1 = installs last 7 days
     // 2 = users last 7 days
 
-    const rows = json.table.rows;
-
     document.querySelectorAll('.card').forEach(card => {
-      const name = card.dataset.name;
-      const col = APP_METRICS[name];
+      const app = card.dataset.name;
+      const col = APP_METRICS[app];
 
       if (col === undefined) return;
 
@@ -104,7 +98,7 @@ async function loadMetrics() {
         tag.classList.add("momentum-positive");
         tip.textContent = "This app has some activity this week.";
       } else {
-        return; // no momentum → do not display the tag
+        return;
       }
 
       tag.classList.remove("hidden");
@@ -112,6 +106,7 @@ async function loadMetrics() {
       tag.addEventListener("click", () => {
         tip.classList.toggle("hidden");
       });
+
     });
 
   } catch (err) {
