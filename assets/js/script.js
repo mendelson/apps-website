@@ -20,7 +20,7 @@ document.getElementById('emailBtn').addEventListener('click', () => {
 ========================================================== */
 document.querySelectorAll(".versions button").forEach(btn => {
   btn.addEventListener("click", e => {
-    e.stopPropagation(); // Prevent carousel or card handlers
+    e.stopPropagation();
     btn.parentElement.classList.toggle("open");
   });
 });
@@ -55,7 +55,7 @@ const TOOLTIP_TEXT = {
 };
 
 /* ==========================================================
-   LOAD METRICS + POPULATE CARDS + BUILD FEATURED
+   LOAD METRICS + TOOLTIP WRAPPING FIX + BUILD FEATURED
 ========================================================== */
 
 async function loadMetrics() {
@@ -84,9 +84,18 @@ async function loadMetrics() {
       metrics.dataset.installs = installs;
       metrics.dataset.users = users;
 
-      metrics.style.display = "none"; // raw numbers hidden
+      metrics.style.display = "none";
 
-      /* MOMENTUM LOGIC */
+      /* --- WRAP TAG + TOOLTIP IN A TOOLTIP CONTAINER --- */
+      if (!tag.parentElement.classList.contains("tooltip-container")) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "tooltip-container";
+        tag.before(wrapper);
+        wrapper.appendChild(tag);
+        wrapper.appendChild(tip);
+      }
+
+      /* MOMENTUM */
       if (installs >= 50) {
         tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
@@ -105,7 +114,6 @@ async function loadMetrics() {
 
       tag.classList.remove("hidden");
 
-      /* Tooltip toggle */
       tag.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
@@ -113,12 +121,12 @@ async function loadMetrics() {
       });
     });
 
-    /* Close tooltips globally */
+    /* Global click closes tooltips */
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
-    /* Build featured ONLY after metrics exist */
+    /* Build featured section */
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -155,6 +163,7 @@ function buildFeaturedCarousel() {
 
   const track = document.querySelector(".carousel-track");
   const dots = document.querySelector(".carousel-indicators");
+
   track.innerHTML = "";
   dots.innerHTML = "";
 
@@ -215,7 +224,7 @@ function buildFeaturedCarousel() {
     interval = setInterval(() => next(), 5000);
   });
 
-  /* TOUCH SWIPE — FIXED VERSION */
+  /* TOUCH SWIPE — FIXED */
   let startX = 0;
   let currentX = 0;
   let dragging = false;

@@ -38,13 +38,13 @@ nav {
 nav ul {
   display: flex;
   justify-content: center;
-  flex-wrap: nowrap;     /* Prevent cluttering */
-  gap: 24px;             /* Reduced gap for cleaner mobile layout */
+  flex-wrap: nowrap;
+  gap: 24px;
   list-style: none;
   padding: 0;
   margin: 0;
-  overflow-x: auto;      /* Allows scroll on tiny screens */
-  scrollbar-width: none; /* Hide scrollbar */
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 nav ul::-webkit-scrollbar {
@@ -140,7 +140,7 @@ nav a:hover {
 }
 
 .ciq-badge img {
-  width: 160px; /* DO NOT resize CIQ badges */
+  width: 160px;
   margin-top: 10px;
 }
 
@@ -265,7 +265,7 @@ nav a:hover {
 
 .featured-card-preview img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 14px;
 }
@@ -333,6 +333,10 @@ nav a:hover {
    TOOLTIP
 =========================== */
 
+.tooltip-container {
+  position: relative; /* FIXED: ensures tooltip anchors correctly */
+}
+
 .tooltip {
   position: absolute;
   left: 50%;
@@ -396,8 +400,8 @@ nav a:hover {
   position: fixed;
   bottom: 25px;
   right: 25px;
-  width: 46px;      /* Ensures perfect circle */
-  height: 46px;     /* Ensures perfect circle */
+  width: 46px;
+  height: 46px;
   padding: 0;
   display: flex;
   justify-content: center;
