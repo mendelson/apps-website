@@ -120,6 +120,25 @@ async function loadMetrics() {
 
       tag.classList.remove("hidden");
 
+      /* === Inject momentum badge into card === */
+      let badge = card.querySelector(".card-badge");
+      if (!badge) {
+        badge = document.createElement("div");
+          badge.className = "card-badge";
+            card.appendChild(badge);
+            }
+
+            if (installs >= 50) {
+              badge.classList.add("high");
+                badge.textContent = "🔥 Popular";
+                } else if (installs >= 10) {
+                  badge.classList.add("medium");
+                    badge.textContent = "📈 Growing";
+                    } else if (installs >= 1) {
+                      badge.classList.add("low");
+                        badge.textContent = "👍 Stable";
+                        }
+
       /* === Tooltip content (stats ≥ 7 only) === */
       const level = tip.dataset.level;
       let stats = "";
@@ -205,6 +224,18 @@ function buildFeaturedCarousel() {
   add(byInstalls[0]);
   add(byTotal.find(c => !picks.includes(c)));
   add(byUsers.find(c => !picks.includes(c)));
+
+  /* === Add retention badge to the high-retention pick === */
+  const retentionCard = byUsers[0];
+  if (retentionCard) {
+    let retBadge = retentionCard.querySelector(".card-badge.retention");
+      if (!retBadge) {
+          retBadge = document.createElement("div");
+              retBadge.className = "card-badge retention";
+                  retBadge.textContent = "💪 High Retention";
+                      retentionCard.appendChild(retBadge);
+                        }
+                        }
 
   const labels = [
     "🔥 Popular This Week",
