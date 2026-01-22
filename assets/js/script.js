@@ -175,23 +175,14 @@ document.addEventListener("DOMContentLoaded", loadMetrics);
 ========================================================== */
 
 function adaptTooltipPosition(tag, tip) {
-  const rect = tip.getBoundingClientRect();
+  // Tooltip ALWAYS appears BELOW the tag
+  tip.style.top = "100%";
+  tip.style.bottom = "auto";
+  tip.style.transform = "translateX(-50%)";
+  tip.style.marginTop = "8px";
 
-  if (rect.top < 0) {
-    // Tooltip BELOW the tag → arrow should point UP toward the tag
-    tip.style.bottom = "auto";
-    tip.style.top = "100%";
-    tip.style.transform = "translateX(-50%)";
-    tip.style.marginTop = "8px";
-
-    tip.style.setProperty("--arrow-dir", "up");
-  } else {
-    // Tooltip ABOVE the tag → arrow should point DOWN toward the tag
-    tip.style.top = "auto";
-    tip.style.bottom = "calc(100% + 6px)";
-
-    tip.style.setProperty("--arrow-dir", "down");
-  }
+  // Arrow always pointing UP toward the tag
+  tip.style.setProperty("--arrow-dir", "up");
 }
 
 /* ==========================================================
