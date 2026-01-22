@@ -16,7 +16,7 @@ document.getElementById('emailBtn').addEventListener('click', () => {
 });
 
 /* ======================
-   DROPDOWN FIX
+   DROPDOWN
 ====================== */
 document.querySelectorAll(".versions button").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -25,15 +25,14 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   GOOGLE SHEET CONFIG — VERIFIED
+   GOOGLE SHEET CONFIG (FINAL)
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /*
-  From your actual JSON:
-  Correct numeric columns:
+  Verified JSON column indexes:
   2, 6, 10, 14, 18, 22, 26, 30
 */
 
@@ -51,7 +50,7 @@ const APP_COL = {
 };
 
 /* ======================
-   LOAD METRICS — FINAL VERSION
+   LOAD METRICS (FINAL)
 ====================== */
 
 async function loadMetrics() {
@@ -61,13 +60,13 @@ async function loadMetrics() {
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
     const rows = json.table.rows;
-    // 0 = total downloads
-    // 1 = installs (7d)
-    // 2 = users (7d)
+    // rows[0] = total downloads
+    // rows[1] = installs last 7 days
+    // rows[2] = users last 7 days
 
     document.querySelectorAll('.card').forEach(card => {
       const name = card.dataset.name;
-      const col = APP_COL[name];
+      const col  = APP_COL[name];
 
       if (col === undefined) return;
 
@@ -83,30 +82,34 @@ async function loadMetrics() {
       ================= */
       let msg = "";
 
+      function tagHTML(label) {
+        return `${label} <span class="info-icon" style="opacity:0.7; font-size:14px; margin-left:6px;">ⓘ</span>`;
+      }
+
       if (installs >= 50) {
-        tag.textContent = "Trending Hot 🔥";
+        tag.innerHTML = tagHTML("Trending Hot 🔥");
         tag.classList.add("momentum-hot");
         msg = "🔥 This app is having a very strong week.";
       }
       else if (installs >= 10) {
-        tag.textContent = "Trending Up 🚀";
+        tag.innerHTML = tagHTML("Trending Up 🚀");
         tag.classList.add("momentum-strong");
         msg = "🚀 This app is gaining momentum.";
       }
       else if (installs >= 1) {
-        tag.textContent = "Getting Attention 👀";
+        tag.innerHTML = tagHTML("Getting Attention 👀");
         tag.classList.add("momentum-positive");
         msg = "👀 This app has activity this week.";
       }
       else {
-        return; // no momentum => hide everything
+        return; // No momentum, no display
       }
 
       tag.classList.remove("hidden");
 
       /* ================
-         TOOLTIP CONTENT (Option D)
-         Only show values >= 7
+         TOOLTIP CONTENT (Filtered)
+         Only show metrics >= 7
       ================= */
       let tooltipHTML = `<strong>📊 App Metrics</strong><br>`;
 
@@ -114,22 +117,19 @@ async function loadMetrics() {
       if (installs >= 7) tooltipHTML += `• Installs (7d): ${installs}<br>`;
       if (users >= 7)    tooltipHTML += `• Users (7d): ${users}<br>`;
 
-      // Remove header if all suppressed
-      if (tooltipHTML === `<strong>📊 App Metrics</strong><br>`) {
-        tooltipHTML = "";
-      }
+      if (tooltipHTML === `<strong>📊 App Metrics</strong><br>`)
+        tooltipHTML = ""; // hide all stats
 
       tooltipHTML += `<br>${msg}`;
-
       tip.innerHTML = tooltipHTML;
 
       /* ================
-         ONLY ONE TOOLTIP OPEN AT A TIME
+         OPEN/CLOSE TOOLTIP
       ================= */
       tag.addEventListener("click", (ev) => {
         ev.stopPropagation();
 
-        // Close all other tooltips
+        // Close all others
         document.querySelectorAll(".tooltip").forEach(t => {
           if (t !== tip) t.classList.add("hidden");
         });
