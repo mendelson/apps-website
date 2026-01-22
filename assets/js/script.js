@@ -62,22 +62,22 @@ const TOOLTIP_TEXT = {
   },
   consistent: {
     title: "💪 Consistently Used by Athletes",
-    message: "Athletes rely on this app regularly, showing steady weekly usage.",
+    message: "Athletes rely on this app regularly, maintaining steady 7-day usage.",
     note: "Retention-focused insight."
   },
   discovered: {
     title: "📈 Newly Discovered by Athletes",
-    message: "A solid number of new athletes have discovered this app recently.",
+    message: "A solid number of new athletes have discovered and installed this app in the last 7 days.",
     note: "Based on recent installs."
   },
   trusted: {
     title: "👍 Trusted by a Core Group",
-    message: "A reliable group of athletes keeps using this app week after week.",
+    message: "A reliable group of athletes keeps using this app over the last 7 days.",
     note: "Stable usage over time."
   },
   niche: {
     title: "✨ New or Niche App",
-    message: "This app serves a smaller audience or is still new on the platform.",
+    message: "This app has a large overall audience and strong 7-day usage.",
     note: "Focused or early-stage usage pattern."
   }
 };
