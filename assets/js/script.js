@@ -80,11 +80,12 @@ async function loadMetrics() {
       const installs = row[iCol]?.v || 0;
       const users = row[uCol]?.v || 0;
 
+      // Store values for featured apps selection
       metricsBox.dataset.total = total;
       metricsBox.dataset.installs = installs;
       metricsBox.dataset.users = users;
 
-      // Hide raw metrics on screen
+      // Hide raw metrics from UI
       metricsBox.style.display = "none";
 
       // Mometum logic
@@ -106,7 +107,7 @@ async function loadMetrics() {
 
       tag.classList.remove("hidden");
 
-      // Tooltip toggle
+      // Tooltip toggle for this card
       tag.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
@@ -119,6 +120,7 @@ async function loadMetrics() {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
+    // Build featured apps once metrics are ready
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -129,27 +131,25 @@ async function loadMetrics() {
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
 /* ======================================
-   FEATURED CAROUSEL
+   FEATURED CAROUSEL (PREVIEW CARDS ONLY)
 ====================================== */
 
 function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
 
-  // Get the best apps
-  let mostInstalls = cards.slice().sort((a,b) =>
-    b.querySelector('.metrics').dataset.installs -
-    a.querySelector('.metrics').dataset.installs
-  )[0];
+  // Extract metrics
+  const getVal = (card, key) =>
+    Number(card.querySelector(".metrics").dataset[key] || 0);
 
-  let mostDownloads = cards.slice().sort((a,b) =>
-    b.querySelector('.metrics').dataset.total -
-    a.querySelector('.metrics').dataset.total
-  )[0];
+  // Pick the top apps for each category
+  const mostInstalls = cards.slice().sort((a,b) =>
+    getVal(b,"installs") - getVal(a,"installs"))[0];
 
-  let mostActive = cards.slice().sort((a,b) =>
-    b.querySelector('.metrics').dataset.users -
-    a.querySelector('.metrics').dataset.users
-  )[0];
+  const mostDownloads = cards.slice().sort((a,b) =>
+    getVal(b,"total") - getVal(a,"total"))[0];
+
+  const mostActive = cards.slice().sort((a,b) =>
+    getVal(b,"users") - getVal(a,"users"))[0];
 
   const featured = [
     { label: "🔥 Popular This Week", card: mostInstalls },
@@ -158,22 +158,38 @@ function buildFeaturedCarousel() {
   ];
 
   const track = document.querySelector(".carousel-track");
-  const dots = document.querySelector(".carousel-indicators");
+  const dots  = document.querySelector(".carousel-indicators");
 
   track.innerHTML = "";
   dots.innerHTML = "";
 
   featured.forEach((item, i) => {
+    const c = item.card;
+
+    // Build a preview card — no duplication of heavy HTML
+    const previewHTML = `
+      <div class="featured-slide-content">
+        <div class="featured-label">${item.label}</div>
+
+        <div class="featured-card-preview">
+          <img src="${c.querySelector('.thumb').src}">
+          <h3>${c.querySelector('h3').textContent}</h3>
+          <p>${c.querySelector('p').textContent}</p>
+
+          <a class="ciq-badge" href="${c.querySelector('.ciq-badge').href}">
+            ${c.querySelector('.ciq-badge').innerHTML}
+          </a>
+        </div>
+      </div>
+    `;
+
     const slide = document.createElement("div");
     slide.className = "carousel-slide";
-
-    slide.innerHTML = `
-      <div class="featured-label">${item.label}</div>
-      ${item.card.outerHTML}
-    `;
+    slide.innerHTML = previewHTML;
 
     track.appendChild(slide);
 
+    // Indicators
     const dot = document.createElement("div");
     dot.className = "indicator";
     if (i === 0) dot.classList.add("active");
@@ -194,35 +210,42 @@ function buildFeaturedCarousel() {
     index = i;
     track.style.transform = `translateX(${-i * 100}%)`;
 
-    dots.querySelectorAll(".indicator").forEach((d, idx) => {
-      d.classList.toggle("active", idx === i);
-    });
+    dots.querySelectorAll(".indicator").forEach((d, idx) =>
+      d.classList.toggle("active", idx === i)
+    );
   }
 
-  // Pause on hover
-  document.querySelector(".carousel").addEventListener("mouseenter", () => clearInterval(interval));
-  document.querySelector(".carousel").addEventListener("mouseleave", () =>
-    interval = setInterval(() => nextSlide(), 5000)
+  // Pause auto-rotate on hover
+  document.querySelector(".carousel")
+    .addEventListener("mouseenter", () => clearInterval(interval));
+
+  document.querySelector(".carousel")
+    .addEventListener("mouseleave", () =>
+      interval = setInterval(() => nextSlide(), 5000)
+    );
+
+  // Swipe gestures (mobile)
+  let startX = 0;
+
+  track.addEventListener("touchstart", e =>
+    startX = e.touches[0].clientX
   );
 
-  // Mobile swipe
-  let startX = 0;
-  track.addEventListener("touchstart", e => startX = e.touches[0].clientX);
   track.addEventListener("touchend", e => {
     let diff = e.changedTouches[0].clientX - startX;
-    if (diff > 60) nextSlide(-1);
-    if (diff < -60) nextSlide(1);
+    if (diff > 60) goToSlide(Math.max(0, index - 1));
+    if (diff < -60) goToSlide(Math.min(featured.length - 1, index + 1));
   });
 
-  // CTA scroll
+  // CTA scroll — scroll to the original card and highlight it
   document.querySelectorAll(".featured-label").forEach((label, i) => {
     label.addEventListener("click", () => {
-      const originalCard = featured[i].card;
-      originalCard.classList.add("highlight");
-      originalCard.scrollIntoView({ behavior: "smooth" });
+      const original = featured[i].card;
+      original.classList.add("highlight");
+      original.scrollIntoView({ behavior: "smooth", block: "center" });
 
       setTimeout(() => {
-        originalCard.classList.remove("highlight");
+        original.classList.remove("highlight");
       }, 1700);
     });
   });
