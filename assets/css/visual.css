@@ -62,10 +62,11 @@ nav a {
   font-size: 18px;
 }
 
-/* MOBILE: HORIZONTAL SCROLL NAV */
+/* MOBILE horizontally scrollable menu */
 @media (max-width: 720px) {
   nav ul {
     overflow-x: auto;
+    white-space: nowrap;
     gap: 22px;
     padding: 0 16px;
     scroll-snap-type: x mandatory;
@@ -75,7 +76,6 @@ nav a {
   }
   nav a {
     scroll-snap-align: start;
-    white-space: nowrap;
     font-size: 16px;
   }
 }
@@ -136,12 +136,15 @@ nav a {
 
 .carousel-slide {
   min-width: 100%;
-  padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: center;   /* FIX: center the slide */
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .featured-slide-content {
+  width: 100%;
   max-width: 420px;
   text-align: center;
   margin: auto;
@@ -177,23 +180,41 @@ nav a {
   margin-bottom: 12px;
 }
 
+.featured-cta {
+  margin-top: 12px;
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+.featured-cta:hover {
+  background: #333;
+}
+
+/* Carousel indicators */
 .carousel-indicators {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 14px;
   gap: 8px;
 }
 
 .indicator {
   width: 12px;
   height: 12px;
-  background: #555;
+  background: #666;
   border-radius: 50%;
   cursor: pointer;
   transition: 0.2s;
 }
 .indicator.active {
-  background: #fff;
+  background: white;
 }
 
 /* ===================================
@@ -216,10 +237,10 @@ nav a {
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
 
-/* THUMBNAILS — uniform square */
+/* FIX: Only thumbnails cropped & resized */
 .card img.thumb {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;      /* square */
   object-fit: cover;
   border-radius: 14px;
 }
@@ -235,11 +256,11 @@ nav a {
 }
 
 /* ===================================
-   CARD HIGHLIGHT (scroll focus)
+   CARD HIGHLIGHT
 =================================== */
 
 .card.highlight {
-  box-shadow: 0 0 26px #00aaff;
+  box-shadow: 0 0 28px #00aaff;
   transform: scale(1.05);
   transition: all 0.9s ease;
 }
@@ -262,12 +283,15 @@ nav a {
   opacity: 0.7;
 }
 
+/* FIX: DO NOT resize CIQ badges */
 .ciq-badge img {
   width: 160px;
+  height: auto !important;
+  object-fit: contain;
   margin-top: 10px;
 }
 
-/* Light/Dark badge switching */
+/* Light/dark switching */
 .ciq-badge .dark { display: none; }
 
 @media (prefers-color-scheme: dark) {
@@ -316,7 +340,7 @@ nav a {
 }
 
 /* ===================================
-   MOMENTUM + TOOLTIP
+   MOMENTUM & TOOLTIP
 =================================== */
 
 .momentum-tag {
@@ -334,12 +358,10 @@ nav a {
   opacity: 0.6;
 }
 
-/* Colors */
 .momentum-positive { color: #4cd964; }
 .momentum-strong { color: #ffd60a; }
 .momentum-hot { color: #ff453a; }
 
-/* Tooltip */
 .tooltip {
   position: absolute;
   left: 50%;
