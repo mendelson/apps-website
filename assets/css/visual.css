@@ -26,6 +26,10 @@ header p {
   opacity: 0.7;
 }
 
+/* ===========================
+   NAV (improved)
+=========================== */
+
 nav {
   background: #1a1a1a;
   border-bottom: 1px solid #333;
@@ -61,6 +65,10 @@ nav a:hover {
   opacity: 0.7;
 }
 
+/* ===========================
+   SECTIONS
+=========================== */
+
 .section {
   padding: 40px 20px;
   max-width: 1100px;
@@ -78,6 +86,10 @@ nav a:hover {
   opacity: 0.75;
   margin-bottom: 25px;
 }
+
+/* ===========================
+   GRID
+=========================== */
 
 .grid {
   display: grid;
@@ -101,7 +113,6 @@ nav a:hover {
 
 .card.highlight {
   box-shadow: 0 0 0 3px #4cd964;
-  transition: box-shadow 0.35s ease;
 }
 
 .card .thumb {
@@ -145,7 +156,7 @@ nav a:hover {
 }
 
 /* ===========================
-   CONNECT IQ BADGE (THEME AWARE)
+   DARK/LIGHT CIQ BADGES
 =========================== */
 
 .ciq-badge .dark { display: none; }
@@ -182,7 +193,9 @@ nav a:hover {
    DROPDOWN
 =========================== */
 
-.versions { margin-top: 20px; }
+.versions {
+  margin-top: 20px;
+}
 
 .versions button {
   width: 100%;
@@ -201,7 +214,9 @@ nav a:hover {
   padding: 10px;
 }
 
-.versions.open .dropdown { display: block !important; }
+.versions.open .dropdown {
+  display: block !important;
+}
 
 .dropdown a {
   display: block;
@@ -251,13 +266,19 @@ nav a:hover {
 
 .featured-card-preview img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 14px;
 }
 
-.featured-card-preview h3 { margin: 10px 0 5px; }
-.featured-card-preview p { opacity: 0.75; margin-bottom: 10px; }
+.featured-card-preview h3 {
+  margin: 10px 0 5px;
+}
+
+.featured-card-preview p {
+  opacity: 0.75;
+  margin-bottom: 10px;
+}
 
 .featured-cta {
   background: #444;
@@ -284,7 +305,9 @@ nav a:hover {
   transition: background 0.25s ease;
 }
 
-.indicator.active { background: #fff; }
+.indicator.active {
+  background: #fff;
+}
 
 /* ===========================
    MOMENTUM TAG
@@ -304,22 +327,11 @@ nav a:hover {
 }
 
 .momentum-positive { color: #4cd964; }
-.momentum-strong   { color: #ffd60a; }
-.momentum-hot      { color: #ff453a; }
+.momentum-strong { color: #ffd60a; }
+.momentum-hot { color: #ff453a; }
 
 /* ===========================
-   TOOLTIP CONTAINER (FINAL FIX)
-=========================== */
-
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-}
-
-/* ===========================
-   TOOLTIP
+   TOOLTIP (with dynamic arrow)
 =========================== */
 
 .tooltip {
@@ -334,22 +346,23 @@ nav a:hover {
   width: 230px;
   text-align: left;
   bottom: calc(100% + 6px);
-  z-index: 999;
+  z-index: 50;
   box-shadow: 0 3px 16px rgba(0,0,0,0.45);
 }
 
+/* ARROW (dynamic via JS variables) */
 .tooltip::before {
   content: "";
   position: absolute;
-  bottom: -7px;
   left: 50%;
   transform: translateX(-50%);
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 7px solid #555;
-}
 
-.tooltip.hidden { display: none !important; }
+  /* Dynamic direction */
+  border-top: var(--arrow-top, 7px solid #555);
+  border-bottom: var(--arrow-bottom, 0);
+}
 
 /* ===========================
    CONTACT
@@ -380,7 +393,7 @@ nav a:hover {
 }
 
 /* ===========================
-   BACK TO TOP
+   BACK TO TOP BUTTON
 =========================== */
 
 #toTopBtn {
@@ -412,4 +425,6 @@ nav a:hover {
    HIDDEN
 =========================== */
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}

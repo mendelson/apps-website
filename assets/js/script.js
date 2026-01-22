@@ -27,7 +27,8 @@ document.querySelectorAll(".versions button").forEach(btn => {
 
 document.addEventListener("click", e => {
   if (!e.target.closest(".versions"))
-    document.querySelectorAll(".versions.open").forEach(v => v.classList.remove("open"));
+    document.querySelectorAll(".versions.open")
+      .forEach(v => v.classList.remove("open"));
 });
 
 /* ==========================================================
@@ -51,7 +52,7 @@ const APP_METRICS = {
 const TOOLTIP_TEXT = {
   high: "This app is standing out among athletes this week — strong, accelerating usage.",
   medium: "Steady weekly growth — athletes continue discovering and adopting this app.",
-  low: "Reliable performance — athletes using it tend to return to it consistently."
+  low: "Reliable performance — athletes keep returning to it consistently."
 };
 
 /* ==========================================================
@@ -65,7 +66,7 @@ async function loadMetrics() {
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const row = json.table.rows[0].c;
 
-    const allCards = document.querySelectorAll('.card');
+    const allCards = [...document.querySelectorAll('.card')];
 
     allCards.forEach(card => {
       const name = card.dataset.name;
@@ -84,56 +85,57 @@ async function loadMetrics() {
       metrics.dataset.installs = installs;
       metrics.dataset.users = users;
 
-      metrics.style.display = "none";
+      metrics.style.display = "none"; // raw numbers hidden
 
-      /* MOMENTUM TEXT */
+      /* === MOMENTUM TAG === */
       if (installs >= 50) {
         tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-hot");
-        tip.textContent = TOOLTIP_TEXT.high;
+        tip.dataset.level = "high";
       } else if (installs >= 10) {
         tag.innerHTML = `📈 Growing Fast <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-strong");
-        tip.textContent = TOOLTIP_TEXT.medium;
+        tip.dataset.level = "medium";
       } else if (installs >= 1) {
         tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
         tag.classList.add("momentum-positive");
-        tip.textContent = TOOLTIP_TEXT.low;
+        tip.dataset.level = "low";
       } else {
         return;
       }
 
       tag.classList.remove("hidden");
 
-      /* ======================================================
-         ⭐ FINAL, CORRECT, BULLETPROOF TOOLTIP WRAPPER FIX
-         ====================================================== */
-      if (!tag.parentElement.classList.contains("tooltip-container")) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "tooltip-container";
+      /* === Tooltip content (stats ≥ 7 only) === */
+      const level = tip.dataset.level;
+      let stats = "";
 
-        // Insert wrapper exactly where the tag sits (prevents text node residue)
-        tag.parentNode.insertBefore(wrapper, tag);
+      if (total >= 7) stats += `<div>Downloads: <strong>${total}</strong></div>`;
+      if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
+      if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
 
-        // Move elements into wrapper (removes whitespace text nodes)
-        wrapper.appendChild(tag);
-        wrapper.appendChild(tip);
-      }
+      tip.innerHTML = `
+        <div style="margin-bottom:6px;">${TOOLTIP_TEXT[level]}</div>
+        ${stats || ""}
+      `.trim();
 
-      /* Tooltip toggle */
+      /* === Tooltip toggle with adaptive positioning === */
       tag.addEventListener("click", e => {
         e.stopPropagation();
-        document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
+
+        document.querySelectorAll(".tooltip")
+          .forEach(t => t.classList.add("hidden"));
+
         tip.classList.toggle("hidden");
+        adaptTooltipPosition(tag, tip);
       });
     });
 
-    /* Global close */
+    /* Close tooltips when clicking outside */
     document.addEventListener("click", () => {
       document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
     });
 
-    /* Build featured section AFTER metrics */
     buildFeaturedCarousel();
 
   } catch (err) {
@@ -144,6 +146,32 @@ async function loadMetrics() {
 document.addEventListener("DOMContentLoaded", loadMetrics);
 
 /* ==========================================================
+   ADAPTIVE TOOLTIP POSITIONING
+========================================================== */
+
+function adaptTooltipPosition(tag, tip) {
+  const rect = tip.getBoundingClientRect();
+
+  if (rect.top < 0) {
+    // Move below tag
+    tip.style.bottom = "auto";
+    tip.style.top = "100%";
+    tip.style.transform = "translateX(-50%)";
+    tip.style.marginTop = "8px";
+
+    tip.style.setProperty("--arrow-top", "-7px");
+    tip.style.setProperty("--arrow-dir", "down");
+  } else {
+    // Default = above
+    tip.style.top = "auto";
+    tip.style.bottom = "calc(100% + 6px)";
+
+    tip.style.setProperty("--arrow-top", "auto");
+    tip.style.setProperty("--arrow-dir", "up");
+  }
+}
+
+/* ==========================================================
    FEATURED CAROUSEL
 ========================================================== */
 
@@ -151,10 +179,12 @@ function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
 
+  /* Sort */
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
   const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
+  /* Unique picks */
   const picks = [];
   const add = c => { if (c && !picks.includes(c)) picks.push(c); };
 
@@ -209,6 +239,7 @@ function buildFeaturedCarousel() {
   });
 
   let index = 0;
+
   function goTo(i) {
     index = i;
     track.style.transition = "transform 0.45s ease";
@@ -245,9 +276,7 @@ function buildFeaturedCarousel() {
     if (!dragging) return;
     currentX = e.touches[0].clientX;
     const dx = currentX - startX;
-    track.style.transform = `
-      translateX(calc(${-index * 100}% + ${dx}px))
-    `;
+    track.style.transform = `translateX(calc(${-index * 100}% + ${dx}px))`;
   });
 
   track.addEventListener("touchend", () => {
