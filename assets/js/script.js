@@ -43,7 +43,7 @@ const APP_COL = {
 };
 
 /* ======================
-   FEATURED CAROUSEL BUILDER
+   FEATURED CAROUSEL
 ====================== */
 
 function buildFeaturedCarousel(metrics) {
@@ -61,25 +61,26 @@ function buildFeaturedCarousel(metrics) {
     };
   });
 
+  /* Avoid duplicates */
   const used = new Set();
-
-  const pick = sorted => {
-    for (const item of sorted) {
-      if (!used.has(item.name)) {
-        used.add(item.name);
-        return item;
+  const pick = sortedList => {
+    for (const app of sortedList) {
+      if (!used.has(app.name)) {
+        used.add(app.name);
+        return app;
       }
     }
     return null;
   };
 
+  /* Rankings */
   const byInstalls = [...apps].sort((a,b) => b.installs - a.installs);
-  const byTotal    = [...apps].sort((a,b) => b.total    - a.total);
-  const byUsers    = [...apps].sort((a,b) => b.users    - a.users);
+  const byTotal    = [...apps].sort((a,b) => b.total - a.total);
+  const byUsers    = [...apps].sort((a,b) => b.users - a.users);
 
-  const popularThisWeek  = pick(byInstalls);
-  const allTimeFavorite  = pick(byTotal);
-  const lovedAthletes    = pick(byUsers);
+  const popularThisWeek = pick(byInstalls);
+  const allTimeFavorite = pick(byTotal);
+  const lovedAthletes   = pick(byUsers);
 
   const slides = [
     {
@@ -105,7 +106,7 @@ function buildFeaturedCarousel(metrics) {
   track.innerHTML = "";
   indicators.innerHTML = "";
 
-  slides.forEach((slide, index) => {
+  slides.forEach((slide, i) => {
     if (!slide.app) return;
 
     track.innerHTML += `
@@ -119,7 +120,7 @@ function buildFeaturedCarousel(metrics) {
     `;
 
     indicators.innerHTML += `
-      <span data-index="${index}" class="${index === 0 ? "active" : ""}"></span>
+      <span data-index="${i}" class="${i === 0 ? 'active' : ''}"></span>
     `;
   });
 
@@ -129,24 +130,29 @@ function buildFeaturedCarousel(metrics) {
   const updateCarousel = () => {
     const width = document.querySelector(".carousel").offsetWidth;
     track.style.transform = `translateX(-${current * width}px)`;
-    indicators.querySelectorAll("span").forEach((dot, i) => {
-      dot.classList.toggle("active", i === current);
+    indicators.querySelectorAll("span").forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === current);
     });
   };
 
+  /* Auto rotate 5s */
   let auto = setInterval(() => {
     current = (current + 1) % totalSlides;
     updateCarousel();
   }, 5000);
 
-  document.querySelector(".carousel").addEventListener("mouseenter", () => clearInterval(auto));
-  document.querySelector(".carousel").addEventListener("mouseleave", () => {
+  /* Pause on hover */
+  const carousel = document.querySelector(".carousel");
+
+  carousel.addEventListener("mouseenter", () => clearInterval(auto));
+  carousel.addEventListener("mouseleave", () => {
     auto = setInterval(() => {
       current = (current + 1) % totalSlides;
       updateCarousel();
     }, 5000);
   });
 
+  /* Indicator click */
   indicators.addEventListener("click", e => {
     if (e.target.dataset.index) {
       current = parseInt(e.target.dataset.index);
@@ -154,26 +160,29 @@ function buildFeaturedCarousel(metrics) {
     }
   });
 
-  /* Swipe gestures */
+  /* SWIPE */
   let startX = 0;
-  let isDragging = false;
+  let dragging = false;
 
   track.addEventListener("touchstart", e => {
     clearInterval(auto);
     startX = e.touches[0].clientX;
-    isDragging = true;
+    dragging = true;
   });
 
   track.addEventListener("touchmove", e => {
-    if (!isDragging) return;
+    if (!dragging) return;
     const dx = e.touches[0].clientX - startX;
+    track.style.transition = "none";
     track.style.transform =
       `translateX(calc(-${current * 100}% + ${dx}px))`;
   });
 
   track.addEventListener("touchend", e => {
     const dx = e.changedTouches[0].clientX - startX;
-    isDragging = false;
+    dragging = false;
+
+    track.style.transition = "transform 0.6s ease";
 
     if (dx > 60) current = Math.max(0, current - 1);
     if (dx < -60) current = Math.min(totalSlides - 1, current + 1);
@@ -191,10 +200,9 @@ function buildFeaturedCarousel(metrics) {
     btn.addEventListener("click", () => {
       const name = btn.dataset.target;
       const card = document.querySelector(`.card[data-name="${name}"]`);
-
       if (!card) return;
 
-      const top = card.getBoundingClientRect().top + window.scrollY - 80;
+      const top = card.getBoundingClientRect().top + window.scrollY - 70;
 
       window.scrollTo({
         top,
@@ -211,7 +219,7 @@ function buildFeaturedCarousel(metrics) {
 }
 
 /* ======================
-   MOMENTUM + TOOLTIPS
+   MOMENTUM TAGS + TOOLTIP
 ====================== */
 
 async function loadMetrics() {
@@ -227,10 +235,10 @@ async function loadMetrics() {
       users: rows[2].c.map(c => c?.v || 0)
     };
 
+    /* Apply momentum tags */
     document.querySelectorAll('.card').forEach(card => {
       const name = card.dataset.name;
       const col = APP_COL[name];
-
       if (col === undefined) return;
 
       const total = metrics.total[col];
@@ -238,51 +246,55 @@ async function loadMetrics() {
       const users = metrics.users[col];
 
       const tag = card.querySelector(".momentum-tag");
-      const tip = card.querySelector(".tooltip");
+      const tooltip = card.querySelector(".tooltip");
 
-      let msg = "";
+      let message = "";
 
-      function html(label) {
-        return `${label} <span style="opacity:.7;margin-left:6px;">ⓘ</span>`;
-      }
+      const html = label =>
+        `${label} <span style="opacity:.7;margin-left:6px;">ⓘ</span>`;
 
       if (installs >= 50) {
         tag.innerHTML = html("Trending Hot 🔥");
         tag.classList.add("momentum-hot");
-        msg = "🔥 This app is having a very strong week.";
-      } else if (installs >= 10) {
+        message = "A lot of athletes discovered this app recently.";
+      } 
+      else if (installs >= 10) {
         tag.innerHTML = html("Trending Up 🚀");
         tag.classList.add("momentum-strong");
-        msg = "🚀 This app is gaining momentum.";
-      } else if (installs >= 1) {
+        message = "Growing fast — more athletes are choosing this app every day.";
+      } 
+      else if (installs >= 1) {
         tag.innerHTML = html("Getting Attention 👀");
         tag.classList.add("momentum-positive");
-        msg = "👀 This app has activity this week.";
-      } else return;
+        message = "A rising pick among athletes this week.";
+      } 
+      else return;
 
       tag.classList.remove("hidden");
 
-      let tooltip = `<strong>📊 App Metrics</strong><br>`;
-      if (total >= 7) tooltip += `• Downloads: ${total}<br>`;
-      if (installs >= 7) tooltip += `• Installs (7d): ${installs}<br>`;
-      if (users >= 7) tooltip += `• Users (7d): ${users}<br>`;
-      tooltip += `<br>${msg}`;
+      let tipHtml = `<strong>📊 App Metrics</strong><br>`;
+      if (total >= 7) tipHtml += `• Downloads: ${total}<br>`;
+      if (installs >= 7) tipHtml += `• Installs (7d): ${installs}<br>`;
+      if (users >= 7) tipHtml += `• Users (7d): ${users}<br>`;
+      tipHtml += `<br>${message}`;
 
-      tip.innerHTML = tooltip;
+      tooltip.innerHTML = tipHtml;
 
       tag.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".tooltip").forEach(t => {
-          if (t !== tip) t.classList.add("hidden");
+          if (t !== tooltip) t.classList.add("hidden");
         });
-        tip.classList.toggle("hidden");
+        tooltip.classList.toggle("hidden");
       });
     });
 
-    document.addEventListener("click", () =>
-      document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"))
-    );
+    /* Close tooltips on outside click */
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
+    });
 
+    /* Build Featured Carousel */
     buildFeaturedCarousel(metrics);
 
   } catch (err) {
@@ -290,4 +302,37 @@ async function loadMetrics() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadMetrics);
+/* ======================
+   BACK TO TOP BUTTON
+====================== */
+
+function initBackToTop() {
+  const btn = document.createElement("div");
+  btn.id = "backToTop";
+  btn.innerHTML = "⬆";
+  document.body.appendChild(btn);
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 400) {
+      btn.classList.add("show");
+    } else {
+      btn.classList.remove("show");
+    }
+  });
+
+  btn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+}
+
+/* ======================
+   START EVERYTHING
+====================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadMetrics();
+  initBackToTop();
+});
