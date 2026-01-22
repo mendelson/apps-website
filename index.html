@@ -20,6 +20,7 @@
 
 <nav>
   <ul>
+    <li><a href="#featured">Featured</a></li>
     <li><a href="#data-fields">Data Fields</a></li>
     <li><a href="#watch-faces">Watch Faces</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -30,38 +31,36 @@
   <input type="text" id="search" placeholder="Search apps…">
 </div>
 
-<section id="featured-carousel" class="section">
-  <h2>Featured Apps</h2>
-  <p class="desc">Discover standout apps among athletes</p>
+<!-- ============================
+     FEATURED SECTION
+============================ -->
 
-  <div class="carousel">
-    
-    <div class="carousel-track">
+<section id="featured" class="section">
+  <h2>Featured</h2>
+  <p class="desc">Top-performing apps among athletes.</p>
 
-      <!-- Slides will be inserted dynamically by JS -->
-
+  <div id="featured-carousel">
+    <div class="carousel">
+      <div class="carousel-track"></div>
+      <div class="carousel-indicators"></div>
     </div>
-
-    <div class="carousel-indicators"></div>
-
   </div>
 </section>
 
-<!-- ================= DATA FIELDS ================= -->
+<!-- ===========================
+   DATA FIELDS
+=========================== -->
 <section id="data-fields" class="section">
 <h2>Data Fields</h2>
 <p class="desc">Performance tools for pacing, prediction and live tracking.</p>
 
 <div class="grid">
 
-<!-- CARD TEMPLATE -->
-<!-- Repeat this structure per app -->
-
 <!-- LIVE PREDICTOR PREMIUM -->
 <div class="card" data-name="Live Predictor Premium">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
 
-  <img src="img/live-predictor-premium.jpeg" />
+  <img class="thumb" src="img/live-predictor-premium.jpeg" />
   <h3>Live Predictor Premium</h3>
   <p>Advanced real-time predictions with flexible configurations.</p>
 
@@ -91,7 +90,7 @@
 <div class="card" data-name="Live Time Predictor">
   <div class="badge-slot"></div>
 
-  <img src="img/live-time-predictor.jpeg" />
+  <img class="thumb" src="img/live-time-predictor.jpeg" />
   <h3>Live Time Predictor</h3>
   <p>Live time predictions for custom distances.</p>
 
@@ -114,7 +113,7 @@
 <div class="card" data-name="Pacer Data Field">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
 
-  <img src="img/pacer.jpeg" />
+  <img class="thumb" src="img/pacer.jpeg" />
   <h3>Pacer Data Field</h3>
   <p>Real-time pacing guidance to stay exactly on target.</p>
 
@@ -146,7 +145,7 @@
 <div class="card" data-name="Live Pace Speed Calculator">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
 
-  <img src="img/pace-speed-calculator.jpeg" />
+  <img class="thumb" src="img/pace-speed-calculator.jpeg" />
   <h3>Live Pace Speed Calculator</h3>
   <p>Required pace or speed for custom goals.</p>
 
@@ -176,7 +175,7 @@
 <div class="card" data-name="Tracker Data Field">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
 
-  <img src="img/tracker.jpeg" />
+  <img class="thumb" src="img/tracker.jpeg" />
   <h3>Tracker Data Field</h3>
   <p>Share your activity live with a unique tracker ID.</p>
 
@@ -198,7 +197,9 @@
 </div>
 </section>
 
-<!-- ================= WATCH FACES ================= -->
+<!-- ===========================
+   WATCH FACES
+=========================== -->
 <section id="watch-faces" class="section">
 <h2>Watch Faces</h2>
 <p class="desc">Creative watch faces with distinctive visual concepts.</p>
@@ -209,7 +210,7 @@
 <div class="card" data-name="Route Silhouette">
   <div class="badge-slot"><span class="trial">FREE TRIAL</span></div>
 
-  <img src="img/route-silhouette.png" />
+  <img class="thumb" src="img/route-silhouette.png" />
   <h3>Route Silhouette</h3>
   <p>Shows your latest GPS-based Strava activity on your watch.</p>
 
@@ -232,7 +233,7 @@
 <div class="card" data-name="Time Across The Galaxy">
   <div class="badge-slot"></div>
 
-  <img src="img/galaxy.png" />
+  <img class="thumb" src="img/galaxy.png" />
   <h3>Time Across The Galaxy</h3>
   <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
 
@@ -255,7 +256,7 @@
 <div class="card" data-name="Solve for X">
   <div class="badge-slot"></div>
 
-  <img src="img/solve-for-x.jpeg" />
+  <img class="thumb" src="img/solve-for-x.jpeg" />
   <h3>Solve for X</h3>
   <p>Solve a puzzle to reveal the time.</p>
 
@@ -277,7 +278,9 @@
 </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
+<!-- ===========================
+   CONTACT
+=========================== -->
 <section id="contact">
   <div class="contact-card">
     <h2>Contact</h2>
