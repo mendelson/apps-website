@@ -350,6 +350,35 @@ nav a:hover {
   box-shadow: 0 3px 16px rgba(0,0,0,0.45);
 }
 
+/* Tooltip positioning variables (required by JS) */
+.tooltip {
+  --arrow-top: auto;
+  --arrow-bottom: -7px;
+  --arrow-dir: up;
+}
+
+/* Arrow logic based on JS-injected direction */
+.tooltip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+
+  /* Default = arrow pointing UP */
+  border-bottom: 7px solid #555;
+  top: var(--arrow-top);
+}
+
+/* Arrow DOWN */
+.tooltip[style*="--arrow-dir: down"]::before {
+  border-bottom: none;
+  border-top: 7px solid #555;
+  bottom: var(--arrow-bottom);
+  top: auto;
+}
+
 /* ARROW (dynamic via JS variables) */
 .tooltip::before {
   content: "";
