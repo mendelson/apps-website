@@ -125,29 +125,18 @@ nav a {
    CONNECT IQ BADGE (THEME AWARE)
 =========================== */
 
-/* Default: assume light mode */
 .ciq-badge .dark {
   display: none;
 }
 
-/* Dark mode – show the white badge */
 @media (prefers-color-scheme: dark) {
-  .ciq-badge .light {
-    display: none;
-  }
-  .ciq-badge .dark {
-    display: inline;
-  }
+  .ciq-badge .light { display: none; }
+  .ciq-badge .dark { display: inline; }
 }
 
-/* Light mode – show the black badge */
 @media (prefers-color-scheme: light) {
-  .ciq-badge .light {
-    display: inline;
-  }
-  .ciq-badge .dark {
-    display: none;
-  }
+  .ciq-badge .light { display: inline; }
+  .ciq-badge .dark { display: none; }
 }
 
 /* ===========================
@@ -241,47 +230,51 @@ nav a {
   font-weight: 600;
   margin: 8px 0 4px;
   cursor: pointer;
+  position: relative;
+  display: inline-block;
 }
 
-/* Color states */
 .momentum-positive { color: #4cd964; }
-.momentum-strong { color: #ffd60a; }
-.momentum-hot { color: #ff453a; }
+.momentum-strong   { color: #ffd60a; }
+.momentum-hot      { color: #ff453a; }
 
 /* ===========================
-   TOOLTIP (FIXED POSITION ABOVE TAG)
+   TOOLTIP (FINAL)
 =========================== */
 
 .tooltip {
   position: absolute;
+  top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   background: #111;
   border: 1px solid #555;
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-radius: 10px;
   font-size: 14px;
   width: 230px;
   text-align: left;
-  bottom: calc(100% + 6px);
-  z-index: 50;
-  box-shadow: 0 3px 16px rgba(0,0,0,0.45);
+  z-index: 500;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
 }
 
-/* Arrow */
 .tooltip::before {
   content: "";
   position: absolute;
-  bottom: -7px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 7px solid #555;
+  border-bottom: 7px solid #555;
+}
+
+.card .tooltip {
+  bottom: auto !important;
 }
 
 /* ===========================
-   HIDDEN HELPERS
+   HIDDEN
 =========================== */
 
 .hidden {
