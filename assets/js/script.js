@@ -209,7 +209,7 @@ function buildFeaturedCarousel() {
   const labels = [
     "🔥 Popular This Week",
     "🏆 All-Time Favorite",
-    "💪 Most Engaged Users"
+    "💪 Athletes keep using it"
   ];
 
   const track = document.querySelector(".carousel-track");
