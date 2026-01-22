@@ -25,22 +25,21 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   METRICS CONFIG — FINAL
+   GOOGLE SHEET CONFIG (FINAL)
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /*
-  Based on the REAL TSV + REAL GVIZ JSON structure:
+  VERIFIED FROM TSV + GVIZ JSON:
 
-  GVIZ rows:
-    0 = Total downloads
-    1 = Installs last 7 days
-    2 = Users last 7 days
+  - Row 0 = Total downloads
+  - Row 1 = Installs last 7 days
+  - Row 2 = Users last 7 days
 
-  GVIZ numeric columns:
-    2, 5, 8, 11, 14, 17, 20, 23
+  - Column indexes containing numeric data:
+      2, 5, 8, 11, 14, 17, 20, 23
 */
 
 const TOTAL_ROW    = 0;
@@ -59,7 +58,7 @@ const APP_METRICS = {
 };
 
 /* ======================
-   LOAD METRICS — FINAL
+   LOAD METRICS — FINAL LOGIC
 ====================== */
 
 async function loadMetrics() {
@@ -73,15 +72,15 @@ async function loadMetrics() {
       const col = APP_METRICS[appName];
       if (col === undefined) return;
 
-      const total    = json.table.rows[TOTAL_ROW].c[col]?.v    || 0;
-      const installs = json.table.rows[INSTALLS_ROW].c[col]?.v || 0;
-      const users    = json.table.rows[USERS_ROW].c[col]?.v    || 0;
+      // Read values EXACTLY as mapped
+      const total    = json.table.rows[TOTAL_ROW]?.c[col]?.v    || 0;
+      const installs = json.table.rows[INSTALLS_ROW]?.c[col]?.v || 0;
+      const users    = json.table.rows[USERS_ROW]?.c[col]?.v    || 0;
 
       const metricsBox = card.querySelector('.metrics');
       const tag = card.querySelector(".momentum-tag");
       const tip = card.querySelector(".tooltip");
 
-      // Display raw metrics
       metricsBox.querySelector(".metric-total").textContent    = `Downloads: ${total}`;
       metricsBox.querySelector(".metric-installs").textContent = `Installs: ${installs}`;
       metricsBox.querySelector(".metric-users").textContent    = `Users: ${users}`;
@@ -103,13 +102,11 @@ async function loadMetrics() {
         tip.textContent = "This app has some activity this week.";
       } 
       else {
-        return; // installs = 0 => no momentum
+        return; // no momentum
       }
 
-      // Show tag
       tag.classList.remove("hidden");
 
-      // Toggle tooltip on click
       tag.addEventListener("click", () => {
         tip.classList.toggle("hidden");
       });
