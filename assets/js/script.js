@@ -163,7 +163,7 @@ tag.classList.remove("hidden");
       if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
       if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
 
-      const tt = TOOLTIP_TEXT[level];
+      const tt = TOOLTIP_TEXT[tipLevel];
 
 tip.innerHTML = `
   <div class="tip-title">${tt.title}</div>
