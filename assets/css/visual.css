@@ -387,10 +387,10 @@ nav a:hover {
   top: -7px;
 }
 
-/* Arrow DOWN (tooltip above the tag) */
-.tooltip[style*="--arrow-dir: down"]::before {
-  border-top: 7px solid #555;
-  bottom: -7px;
+/* Arrow UP (tooltip below the tag) */
+.tooltip::before {
+  border-bottom: 7px solid #555;
+  top: -7px;
 }
 
 /* Tooltip content */
