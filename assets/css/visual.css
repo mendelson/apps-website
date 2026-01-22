@@ -83,8 +83,12 @@ nav a {
   position: relative;
 }
 
+/* Uniform image sizing */
 .card img {
   width: 100%;
+  height: 260px;
+  object-fit: cover;
+  object-position: center;
   border-radius: 14px;
 }
 
@@ -122,7 +126,7 @@ nav a {
 }
 
 /* ===========================
-   CONNECT IQ BADGE (THEME AWARE)
+   CONNECT IQ BADGE
 =========================== */
 
 .ciq-badge .dark {
@@ -239,7 +243,7 @@ nav a {
 .momentum-hot     { color: #ff453a; }
 
 /* ===========================
-   TOOLTIP (UNDER THE TAG)
+   TOOLTIP (UNDER TAG)
 =========================== */
 
 .tooltip {
@@ -298,17 +302,19 @@ nav a {
   text-align: center;
 }
 
+.carousel-slide img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  margin-bottom: 15px;
+}
+
 .carousel-slide h3 {
   margin-top: 0;
   margin-bottom: 8px;
   font-size: 22px;
-}
-
-.carousel-slide img {
-  width: 100%;
-  max-width: 330px;
-  border-radius: 14px;
-  margin-bottom: 15px;
 }
 
 .carousel-slide p {
@@ -346,15 +352,53 @@ nav a {
   background: #eee;
 }
 
-/* Card highlight after scroll */
+/* ===========================
+   CARD HIGHLIGHT (CTA Scroll)
+=========================== */
+
 .card.highlight {
   animation: highlightFlash 1.4s ease;
 }
 
 @keyframes highlightFlash {
   0%   { box-shadow: 0 0 0px 0px #fff0; }
-  30%  { box-shadow: 0 0 14px 4px #4cd964aa; }
+  40%  { box-shadow: 0 0 18px 5px #4cd964aa; }
   100% { box-shadow: 0 0 0px 0px #fff0; }
+}
+
+/* ===========================
+   BACK TO TOP BUTTON
+=========================== */
+
+#backToTop {
+  position: fixed;
+  bottom: 28px;
+  right: 26px;
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(6px);
+  border-radius: 50%;
+  border: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eee;
+  font-size: 22px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .2s ease;
+  z-index: 999;
+}
+
+#backToTop:hover {
+  transform: scale(1.08);
+}
+
+#backToTop.show {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ===========================
