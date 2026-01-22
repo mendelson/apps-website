@@ -31,52 +31,37 @@ document.querySelectorAll(".versions button").forEach(btn => {
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
-/*  
-   Correct spreadsheet layout (from screenshot):
+// From GVIZ JSON (confirmed structure):
+// row 0 = total downloads
+// row 1 = installs last 7 days
+// row 2 = users last 7 days
 
-   Row 4: Total downloads
-   Row 5: Installs last 7 days
-   Row 6: Users last 7 days
+const TOTAL_ROW    = 0;
+const INSTALLS_ROW = 1;
+const USERS_ROW    = 2;
 
-   App columns (C, F, I, L, O, R, U, X):
-   C  = 2
-   F  = 5
-   I  = 8
-   L  = 11
-   O  = 14
-   R  = 17
-   U  = 20
-   X  = 23
-*/
-
-const TOTAL_ROW    = 4;
-const INSTALLS_ROW = 5;
-const USERS_ROW    = 6;
-
+// Correct value columns (2,6,10,14,18,22,26,30)
 const APP_METRICS = {
   "Live Pace Speed Calculator": 2,
-  "Live Predictor Premium":     5,
-  "Live Time Predictor":        8,
-  "Pacer Data Field":           11,
-  "Route Silhouette":           14,
-  "Solve for X":                17,
-  "Time Across The Galaxy":     20,
-  "Tracker Data Field":         23
+  "Live Predictor Premium":     6,
+  "Live Time Predictor":        10,
+  "Pacer Data Field":           14,
+  "Route Silhouette":           18,
+  "Solve for X":                22,
+  "Time Across The Galaxy":     26,
+  "Tracker Data Field":         30
 };
 
 /* ======================
-   LOAD METRICS
+   LOAD METRICS — FINAL
 ====================== */
 
 async function loadMetrics() {
   try {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
-
-    // Extract JSON safely
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
-    // Loop over all app cards
     document.querySelectorAll('.card').forEach(card => {
       const appName = card.dataset.name;
       const col = APP_METRICS[appName];
@@ -90,7 +75,7 @@ async function loadMetrics() {
       const tag = card.querySelector(".momentum-tag");
       const tip = card.querySelector(".tooltip");
 
-      // Show raw numbers (your current expected behavior)
+      // Raw numbers (as per your current expected behavior)
       metricsBox.querySelector(".metric-total").textContent    = `Downloads: ${total}`;
       metricsBox.querySelector(".metric-installs").textContent = `Installs: ${installs}`;
       metricsBox.querySelector(".metric-users").textContent    = `Users: ${users}`;
@@ -112,10 +97,10 @@ async function loadMetrics() {
         tip.textContent = "This app has some activity this week.";
       } 
       else {
-        return; // no installs → no momentum
+        return;  // no momentum for 0 installs
       }
 
-      // Show the momentum tag now that we have valid installs
+      // Show momentum tag
       tag.classList.remove("hidden");
 
       // Toggle tooltip on click
