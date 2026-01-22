@@ -50,20 +50,35 @@ const APP_METRICS = {
 };
 
 const TOOLTIP_TEXT = {
-  high: {
-    title: "📈 Popular This Week",
-    message: "This app saw a strong increase in usage and is trending among athletes.",
-    note: "Above-average performance compared to similar apps."
+  trending: {
+    title: "🔥 Trending This Week",
+    message: "Many athletes have chosen this app recently, making it one of the most active picks this week.",
+    note: "Based on fresh weekly installs."
   },
-  medium: {
-    title: "🚀 Steady Growth",
-    message: "Athletes are adopting this app at a consistent and healthy pace.",
-    note: "Good retention and ongoing engagement."
+  popular: {
+    title: "🏆 Popular and Widely Used",
+    message: "This app has a large long-term audience and strong weekly usage among athletes.",
+    note: "Reflects both total installs and active athletes."
   },
-  low: {
-    title: "👍 Reliable Usage",
-    message: "This app maintains a stable base of weekly active athletes.",
-    note: "Solid and dependable performance."
+  consistent: {
+    title: "💪 Consistently Used by Athletes",
+    message: "Athletes rely on this app regularly, showing steady weekly usage.",
+    note: "Retention-focused insight."
+  },
+  discovered: {
+    title: "📈 Newly Discovered by Athletes",
+    message: "A solid number of new athletes have discovered this app recently.",
+    note: "Based on recent installs."
+  },
+  trusted: {
+    title: "👍 Trusted by a Core Group",
+    message: "A reliable group of athletes keeps using this app week after week.",
+    note: "Stable usage over time."
+  },
+  niche: {
+    title: "✨ New or Niche App",
+    message: "This app serves a smaller audience or is still new on the platform.",
+    note: "Focused or early-stage usage pattern."
   }
 };
 
@@ -102,21 +117,41 @@ async function loadMetrics() {
       metrics.style.display = "none"; // raw numbers hidden
 
       /* === MOMENTUM TAG === */
-      if (installs >= 50) {
-        tag.innerHTML = `🔥 Popular This Week <span class="info-icon">ⓘ</span>`;
-        tag.classList.add("momentum-hot");
-        tip.dataset.level = "high";
-      } else if (installs >= 10) {
-        tag.innerHTML = `📈 Growing Fast <span class="info-icon">ⓘ</span>`;
-        tag.classList.add("momentum-strong");
-        tip.dataset.level = "medium";
-      } else if (installs >= 1) {
-        tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
-        tag.classList.add("momentum-positive");
-        tip.dataset.level = "low";
-      } else {
-        return;
-      }
+      let level = null;
+
+if (installs >= 50) {
+  level = "trending";
+  tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-hot");
+
+} else if (total >= 100 && users >= 20) {
+  level = "popular";
+  tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-strong");
+
+} else if (users >= 10) {
+  level = "consistent";
+  tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-positive");
+
+} else if (installs >= 10) {
+  level = "discovered";
+  tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-positive");
+
+} else if (users >= 3) {
+  level = "trusted";
+  tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-positive");
+
+} else {
+  level = "niche";
+  tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
+  tag.classList.add("momentum-positive");
+}
+
+tip.dataset.level = level;
+tag.classList.remove("hidden");
 
       tag.classList.remove("hidden");
 
@@ -128,21 +163,20 @@ async function loadMetrics() {
       if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
       if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
 
-      tip.innerHTML = `
-        <div class="tip-title">${TOOLTIP_TEXT[level].title}</div>
+      const tt = TOOLTIP_TEXT[level];
 
-        <div class="tip-message">
-          ${TOOLTIP_TEXT[level].message}
-        </div>
+tip.innerHTML = `
+  <div class="tip-title">${tt.title}</div>
+  <div class="tip-message">${tt.message}</div>
 
-        <div class="tip-metrics">
-          ${total    > 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
-          ${installs > 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
-          ${users    > 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
-        </div>
+  <div class="tip-metrics">
+    ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
+    ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
+    ${users    >= 7 ? `<div><span>Active Users:</span> <strong>${users}</strong></div>` : ""}
+  </div>
 
-        <div class="tip-note">${TOOLTIP_TEXT[level].note}</div>
-      `;
+  <div class="tip-note">${tt.note}</div>
+`;
 
       /* === Tooltip toggle with adaptive positioning === */
       tag.addEventListener("click", e => {
