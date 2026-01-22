@@ -50,9 +50,21 @@ const APP_METRICS = {
 };
 
 const TOOLTIP_TEXT = {
-  high: "This app is standing out among athletes this week — strong, accelerating usage.",
-  medium: "Steady weekly growth — athletes continue discovering and adopting this app.",
-  low: "Reliable performance — athletes keep returning to it consistently."
+  high: {
+    title: "📈 Popular This Week",
+    message: "This app saw a strong increase in usage and is trending among athletes.",
+    note: "Above-average performance compared to similar apps."
+  },
+  medium: {
+    title: "🚀 Steady Growth",
+    message: "Athletes are adopting this app at a consistent and healthy pace.",
+    note: "Good retention and ongoing engagement."
+  },
+  low: {
+    title: "👍 Reliable Usage",
+    message: "This app maintains a stable base of weekly active athletes.",
+    note: "Solid and dependable performance."
+  }
 };
 
 /* ==========================================================
@@ -117,9 +129,20 @@ async function loadMetrics() {
       if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
 
       tip.innerHTML = `
-        <div style="margin-bottom:6px;">${TOOLTIP_TEXT[level]}</div>
-        ${stats || ""}
-      `.trim();
+        <div class="tip-title">${TOOLTIP_TEXT[level].title}</div>
+
+        <div class="tip-message">
+          ${TOOLTIP_TEXT[level].message}
+        </div>
+
+        <div class="tip-metrics">
+          ${total    >= 1 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
+          ${installs >= 1 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
+          ${users    >= 1 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
+        </div>
+
+        <div class="tip-note">${TOOLTIP_TEXT[level].note}</div>
+      `;
 
       /* === Tooltip toggle with adaptive positioning === */
       tag.addEventListener("click", e => {
