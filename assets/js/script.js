@@ -25,50 +25,62 @@ document.querySelectorAll(".versions button").forEach(btn => {
 });
 
 /* ======================
-   GOOGLE SHEET CONFIG — FINAL DEFINITIVE MAP
+   FINAL, VERIFIED GOOGLE SHEETS CONFIG
 ====================== */
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
 /*
-  Verified from json.txt:
-  Numeric value is ALWAYS at: 2, 6, 10, 14, 18, 22, 26, 30
+  FINAL VERIFIED COLUMN INDEXES FROM YOUR REAL JSON:
+
+  App #1 → col 2
+  App #2 → col 5
+  App #3 → col 8
+  App #4 → col 11
+  App #5 → col 14
+  App #6 → col 17
+  App #7 → col 20
+  App #8 → col 23
 */
 
-const COLS = {
+const APP_METRICS = {
   "Live Pace Speed Calculator": 2,
-  "Live Predictor Premium": 6,
-  "Live Time Predictor": 10,
-  "Pacer Data Field": 14,
-  "Route Silhouette": 18,
-  "Solve for X": 22,
-  "Time Across The Galaxy": 26,
-  "Tracker Data Field": 30
+  "Live Predictor Premium":     5,
+  "Live Time Predictor":        8,
+  "Pacer Data Field":           11,
+  "Route Silhouette":           14,
+  "Solve for X":                17,
+  "Time Across The Galaxy":     20,
+  "Tracker Data Field":         23
 };
+
+/* ======================
+   LOAD METRICS — FINAL VERSION
+====================== */
 
 async function loadMetrics() {
   try {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
-
-    // Clean GVIZ wrapper
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
-    // Rows:
-    // 0 = Total downloads
-    // 1 = Installs last 7 days
-    // 2 = Users last 7 days
+    // rows:
+    // 0 = total downloads
+    // 1 = installs last 7 days
+    // 2 = users last 7 days
+
+    const rows = json.table.rows;
 
     document.querySelectorAll('.card').forEach(card => {
-      const app = card.dataset.name;
-      const col = COLS[app];
+      const name = card.dataset.name;
+      const col = APP_METRICS[name];
 
       if (col === undefined) return;
 
-      const total    = json.table.rows[0].c[col]?.v || 0;
-      const installs = json.table.rows[1].c[col]?.v || 0;
-      const users    = json.table.rows[2].c[col]?.v || 0;
+      const total    = rows[0].c[col]?.v || 0;
+      const installs = rows[1].c[col]?.v || 0;
+      const users    = rows[2].c[col]?.v || 0;
 
       const metrics = card.querySelector(".metrics");
       const tag = card.querySelector(".momentum-tag");
@@ -92,7 +104,7 @@ async function loadMetrics() {
         tag.classList.add("momentum-positive");
         tip.textContent = "This app has some activity this week.";
       } else {
-        return;
+        return; // no momentum → do not display the tag
       }
 
       tag.classList.remove("hidden");
@@ -100,11 +112,10 @@ async function loadMetrics() {
       tag.addEventListener("click", () => {
         tip.classList.toggle("hidden");
       });
-
     });
 
   } catch (err) {
-    console.error("Error loading metrics:", err);
+    console.error("Failed to load metrics:", err);
   }
 }
 
