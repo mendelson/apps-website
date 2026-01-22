@@ -298,8 +298,11 @@ function buildFeaturedCarousel() {
     const dx = currentX - startX;
     track.style.transition = "transform 0.45s ease";
 
-    if (dx > 60 && index > 0) index--;
-    else if (dx < -60 && index < picks.length - 1) index++;
+    if (dx > 60) {
+      index = (index - 1 + picks.length) % picks.length;  // ciclo para trás
+    } else if (dx < -60) {
+      index = (index + 1) % picks.length;                 // ciclo para frente
+    }
 
     goTo(index);
   });
