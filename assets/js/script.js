@@ -356,13 +356,18 @@ document.querySelectorAll(".ciq-badge").forEach(badge => {
   });
 });
 
-/* ========== 4. TRACK: Click on Version links ========== */
+/* ========== 4. TRACK: Click on Version links (improved) ========== */
 document.querySelectorAll(".versions .dropdown a").forEach(link => {
   link.addEventListener("click", () => {
     const card = link.closest(".card");
-    gtag("event", "version_click", {
-      app_name: card?.dataset.name || "unknown",
-      version_url: link.href
+    const appName = card?.dataset.name || "unknown";
+    const versionName = link.textContent.trim();
+    const versionUrl = link.href;
+
+    gtag("event", "app_version_click", {
+      app_name: appName,
+      version_name: versionName,
+      url: versionUrl
     });
   });
 });
@@ -401,5 +406,86 @@ document.querySelectorAll(".featured-cta").forEach(btn => {
     gtag("event", "featured_cta_click", {
       card_title: btn.closest(".featured-card-preview").querySelector("h3")?.textContent
     });
+  });
+});
+
+/* ========== TRACK: Time viewing each card ========== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const card = entry.target;
+    const appName = card.dataset.name;
+
+    if (entry.isIntersecting) {
+      card._viewStart = performance.now();
+    } else if (card._viewStart) {
+      const time = performance.now() - card._viewStart;
+      gtag("event", "card_view_time", {
+        app_name: appName,
+        milliseconds: Math.round(time)
+      });
+      card._viewStart = null;
+    }
+  });
+}, { threshold: 0.6 });
+
+document.querySelectorAll(".card").forEach(card => observer.observe(card));
+
+/* ========== TRACK: Featured carousel impressions ========== */
+const carouselSlides = document.querySelectorAll(".carousel-slide");
+carouselSlides.forEach((slide, index) => {
+  slide._visible = false;
+});
+
+let carouselObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const title = entry.target.querySelector("h3")?.textContent || "unknown";
+
+      if (!entry.target._visible) {
+        entry.target._visible = true;
+        gtag("event", "featured_slide_view", {
+          slide_title: title
+        });
+      }
+    } else {
+      entry.target._visible = false;
+    }
+  });
+}, { threshold: 0.7 });
+
+carouselSlides.forEach(slide => carouselObserver.observe(slide));
+
+/* ========== TRACK: Returning users (D1, D3, D7) ========== */
+const lastVisit = localStorage.getItem("mf_last_visit");
+const now = Date.now();
+
+if (lastVisit) {
+  const days = Math.floor((now - Number(lastVisit)) / (1000 * 60 * 60 * 24));
+
+  if (days === 1) gtag("event", "return_d1");
+  if (days === 3) gtag("event", "return_d3");
+  if (days === 7) gtag("event", "return_d7");
+}
+
+localStorage.setItem("mf_last_visit", now.toString());
+
+/* ========== TRACK: Traffic source enrichment ========== */
+gtag("event", "page_source_detail", {
+  referrer: document.referrer || "direct",
+  utm_source: new URLSearchParams(location.search).get("utm_source") || null,
+  utm_campaign: new URLSearchParams(location.search).get("utm_campaign") || null,
+  utm_medium: new URLSearchParams(location.search).get("utm_medium") || null
+});
+
+/* ========== TRACK: Search → Click connection ========== */
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("click", () => {
+    const searchTerm = document.getElementById("search").value.trim();
+    if (searchTerm) {
+      gtag("event", "search_result_click", {
+        app_name: card.dataset.name,
+        search_term: searchTerm
+      });
+    }
   });
 });
