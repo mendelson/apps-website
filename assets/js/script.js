@@ -156,7 +156,7 @@ tag.classList.remove("hidden");
       tag.classList.remove("hidden");
 
       /* === Tooltip content (stats ≥ 7 only) === */
-      const level = tip.dataset.level;
+      const tipLevel = tip.dataset.level;
       let stats = "";
 
       if (total >= 7) stats += `<div>Downloads: <strong>${total}</strong></div>`;
