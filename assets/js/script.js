@@ -207,13 +207,14 @@ document.addEventListener("DOMContentLoaded", loadMetrics);
 ========================================================== */
 
 function adaptTooltipPosition(tag, tip) {
-  // Tooltip ALWAYS appears BELOW the tag
-  tip.style.top = "100%";
-  tip.style.bottom = "auto";
-  tip.style.transform = "translateX(-50%)";
-  tip.style.marginTop = "8px";
+  const rect = tag.getBoundingClientRect();
+  const top = rect.bottom + window.scrollY + 6; // 6px abaixo da tag
 
-  // Arrow always pointing UP toward the tag
+  tip.style.position = "absolute";
+  tip.style.left = "50%";
+  tip.style.top = `${top}px`;
+  tip.style.transform = "translateX(-50%)";
+  tip.style.marginTop = "0";
   tip.style.setProperty("--arrow-dir", "up");
 }
 
