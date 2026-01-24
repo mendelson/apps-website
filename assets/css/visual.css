@@ -727,7 +727,7 @@ nav a:hover {
   width: 90px;
   height: 130px;
   overflow: visible;
-  transform: scale(2.8) translateY(10px);
+  transform: scale(2.8) translateY(4px);
 }
 
 /* BOUNCE ANIMATION */
