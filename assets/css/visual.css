@@ -509,9 +509,9 @@ nav a:hover {
 .card-badge.favorite  { color: #ffd60a; border-color: #ffd60a; }
 .card-badge.engaged   { color: #4cd964; border-color: #4cd964; }
 
-/* ===========================
-   PRELOADER OVERLAY
-=========================== */
+/* ============================================
+   PRELOADER OVERLAY (tema adaptável + transição premium)
+============================================ */
 #preloader {
   position: fixed;
   inset: 0;
@@ -519,46 +519,53 @@ nav a:hover {
   justify-content: center;
   align-items: center;
   z-index: 99999;
-  transition: opacity 0.35s ease;
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* cor padrão (tema claro) */
+  /* tema claro */
   background: #fafafa;
 }
 
-/* DARK MODE */
+/* tema escuro */
 @media (prefers-color-scheme: dark) {
   #preloader {
     background: #111;
   }
 }
 
-/* LIGHT MODE */
-@media (prefers-color-scheme: light) {
-  #preloader {
-    background: #fafafa;
-  }
+/* estado final */
+#preloader.hide {
+  opacity: 0;
+  transform: scale(0.96);
+  filter: blur(3px);
 }
 
-/* ===========================
-   ANIMAÇÃO DO LOADER (tema adaptável)
-=========================== */
-
-/* Variável de cor usada na animação */
+/* ============================================
+   VARIÁVEL DE COR (adapta loader ao tema)
+============================================ */
 :root {
-  --loader-color: #000; /* LIGHT MODE */
+  --loader-color: #000; /* LIGHT */
 }
 
-/* DARK MODE usa animação branca */
 @media (prefers-color-scheme: dark) {
   :root {
-    --loader-color: #fff;
+    --loader-color: #fff; /* DARK */
   }
 }
 
-.loader {
+/* ============================================
+   PRELOADER 1 (seu primeiro loader adaptado)
+============================================ */
+.loader-1 {
   width: 106px;
   height: 56px;
   display: block;
+  position: relative;
   margin: 30px auto;
   background-image:
     linear-gradient(var(--loader-color) 50px, transparent 0),
@@ -569,56 +576,91 @@ nav a:hover {
   background-size: 48px 15px , 15px 35px, 15px 35px, 25px 15px, 28px 28px;
   background-position: 25px 5px, 58px 20px, 25px 17px, 2px 37px, 76px 0px;
   background-repeat: no-repeat;
-  position: relative;
   transform: rotate(-45deg);
   box-sizing: border-box;
 }
 
-.loader::after,
-.loader::before {
+.loader-1::after,
+.loader-1::before {
   content: '';
   position: absolute;
   width: 56px;
   height: 56px;
-  border: 6px solid var(--loader-color);
   border-radius: 50%;
-  left: -45px;
-  top: -10px;
+  border: 6px solid var(--loader-color);
   background-repeat: no-repeat;
   background-image:
     linear-gradient(var(--loader-color) 64px, transparent 0),
     linear-gradient(var(--loader-color) 66px, transparent 0),
     radial-gradient(circle 4px, var(--loader-color) 100%, transparent 0);
   background-size: 40px 1px , 1px 40px, 8px 8px;
-  background-position: center center;
-  box-sizing: border-box;
+  background-position: center;
   animation: rotation 0.3s linear infinite;
 }
 
-.loader::before {
+.loader-1::after {
+  left: -45px;
+  top: -10px;
+}
+
+.loader-1::before {
   left: 25px;
   top: 60px;
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* SUAVE, NATURAL E AGRADÁVEL */
-#preloader {
-  opacity: 1;
-  transform: scale(1);
-  filter: blur(0px);
-  transition:
-    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+/* ============================================
+   PRELOADER 2 (NOVO loader adaptado ao tema)
+============================================ */
+.loader-2 {
+  width: 96px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+  background: var(--loader-color);
+  border-radius: 48px 48px 0 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* ESTADO FINAL QUANDO SOME */
-#preloader.hide {
-  opacity: 0;
-  transform: scale(0.96);
-  filter: blur(3px);
+.loader-2::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 12px;
+  border-radius: 24px 24px 0 0;
+  background: #FF3D00;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+}
+
+.loader-2::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 32px;
+  background: #FF3D00;
+  left: 0;
+  right: 0;
+  margin: auto;
+  bottom: 0;
+  transform-origin: 50% 100%;
+  animation: animloader 2s linear infinite alternate;
+}
+
+@keyframes animloader {
+  0% { transform: rotate(-70deg); }
+  10% { transform: rotate(-40deg); }
+  20%, 35%, 45% { transform: rotate(-10deg); }
+  30%, 40% { transform: rotate(-30deg); }
+  50%, 60% { transform: rotate(20deg); }
+  55%, 65%, 75% { transform: rotate(40deg); }
+  70% { transform: rotate(45deg); }
+  85%, 90% { transform: rotate(50deg); }
+  95% { transform: rotate(75deg); }
+  93%, 100% { transform: rotate(70deg); }
 }

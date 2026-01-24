@@ -24,7 +24,7 @@
 
 <body>
   <div id="preloader">
-    <div class="loader"></div>
+    <div id="loader-container"></div>
   </div>
 
 <header>
@@ -303,28 +303,39 @@
 <script>
 (async function() {
   const pre = document.getElementById("preloader");
+  const container = document.getElementById("loader-container");
+
+  // Escolhe qual loader usar (1 ou 2)
+  const randomPick = Math.random() < 0.5 ? 1 : 2;
+
+  // Insere o loader correspondente
+  container.innerHTML = `<div class="loader-${randomPick}"></div>`;
+
+  // Marca início
   const start = performance.now();
 
+  // Aguarda carregamento do navegador
   await new Promise(resolve => {
     if (document.readyState === "complete") resolve();
     else window.addEventListener("load", resolve);
   });
 
+  // Aguarda métricas + featured
   if (window._mfMetricsPromise instanceof Promise) {
     await window._mfMetricsPromise;
   }
 
+  // Garantia mínima de 2s
   const elapsed = performance.now() - start;
   const minimum = 2000;
   if (elapsed < minimum) {
     await new Promise(r => setTimeout(r, minimum - elapsed));
   }
 
-  // APLICA A TRANSIÇÃO SUAVE
+  // Animação de saída suave
   pre.classList.add("hide");
 
-  // Remove após a animação
-  setTimeout(() => pre.remove(), 600);
+  setTimeout(() => pre.remove(), 650);
 })();
 </script>
 
