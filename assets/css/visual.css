@@ -604,3 +604,21 @@ nav a:hover {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* SUAVE, NATURAL E AGRADÁVEL */
+#preloader {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ESTADO FINAL QUANDO SOME */
+#preloader.hide {
+  opacity: 0;
+  transform: scale(0.96);
+  filter: blur(3px);
+}

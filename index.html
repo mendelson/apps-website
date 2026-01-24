@@ -303,33 +303,28 @@
 <script>
 (async function() {
   const pre = document.getElementById("preloader");
-
-  // 1) Marca o tempo de início
   const start = performance.now();
 
-  // 2) Espera o carregamento total do navegador
   await new Promise(resolve => {
     if (document.readyState === "complete") resolve();
     else window.addEventListener("load", resolve);
   });
 
-  // 3) Espera métricas/carrossel (se existir)
   if (window._mfMetricsPromise instanceof Promise) {
     await window._mfMetricsPromise;
   }
 
-  // 4) Garante que o preloader ficou visível por pelo menos 2 segundos
   const elapsed = performance.now() - start;
-  const minimum = 1500; // 1.5 segundo
-
+  const minimum = 2000;
   if (elapsed < minimum) {
     await new Promise(r => setTimeout(r, minimum - elapsed));
   }
 
-  // 5) Remove suavemente
-  pre.style.opacity = "0";
-  setTimeout(() => pre.remove(), 400);
+  // APLICA A TRANSIÇÃO SUAVE
+  pre.classList.add("hide");
 
+  // Remove após a animação
+  setTimeout(() => pre.remove(), 600);
 })();
 </script>
 
