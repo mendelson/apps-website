@@ -716,103 +716,137 @@ nav a:hover {
 }
 
 /* ==========================================================
-   PRELOADER 4 — Running Figure (fixed clipping)
+   PRELOADER 4 — Running Man (CSS puro e fiel ao original)
 ========================================================== */
 
 .loader-4 {
   --color: var(--loader-color);
-  --duration: 0.7s;
+  --duration: .7s;
 
   position: relative;
-  display: inline-block;
   width: 60px;
-  height: 80px;            /* AUMENTADO — evita corte */
-  overflow: visible;        /* IMPORTANTE — evita clipping */
-  transform: scale(1.6);    /* similar ao zoom original */
+  height: 80px;
+  overflow: visible;
 }
 
-/* OUTER bounce */
+/* BOUNCE ANIMATION */
 .loader-4 .outer {
-  animation: outerRun var(--duration) linear infinite;
-  transform-origin: bottom center;
-}
-
-@keyframes outerRun {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-3px); }
-  100% { transform: translateY(0); }
+  animation: outer var(--duration) linear infinite;
 }
 
 /* BODY */
-.loader-4 .body {
+.loader-4 .outer .body {
+  background: var(--color);
+  height: 15px;
+  width: 8px;
+  border-radius: 4px;
+  transform-origin: 4px 11px;
+  position: relative;
+  transform: rotate(32deg);
+  animation: body var(--duration) linear infinite;
+}
+.loader-4 .outer .body:before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  bottom: 16px;
+  left: 0;
   position: absolute;
-  width: 12px;
-  height: 24px;
-  left: 50%;
-  top: 20px;
-  transform: translateX(-50%);
-  border-radius: 6px;
   background: var(--color);
 }
 
-/* ========== ARMS ========== */
-
-.loader-4 .arm {
+/* ARMS & LEGS */
+.loader-4 .outer .body .arm,
+.loader-4 .outer .body .arm:before,
+.loader-4 .outer .body .leg,
+.loader-4 .outer .body .leg:before {
+  content: '';
   position: absolute;
-  width: 4px;
-  height: 16px;
-  top: 22px;
-  left: 50%;
-  transform-origin: top;
+  width: var(--w, 11px);
+  height: 4px;
+  top: var(--t, 0);
+  left: var(--l, 2px);
+  border-radius: 2px;
+  transform-origin: 2px 2px;
+  background: var(--c, var(--color));
+  transform: rotate(var(--r, 0deg));
+  animation: var(--name, arm-leg) var(--duration) linear infinite;
+}
+
+/* ARM POSITIONS */
+.loader-4 .outer .body .arm.front {
+  --r: 24deg;
+  --r-to: 164deg;
+}
+.loader-4 .outer .body .arm.front:before {
+  --l: 7px;
+  --r: -48deg;
+  --r-to: -36deg;
+  --name: arm-b;
+}
+.loader-4 .outer .body .arm.behind {
+  --r: 164deg;
+  --r-to: 24deg;
+}
+.loader-4 .outer .body .arm.behind:before {
+  --l: 7px;
+  --r: -36deg;
+  --r-to: -48deg;
+  --name: arm-b;
+}
+
+/* LEG POSITIONS */
+.loader-4 .outer .body .leg.front {
+  --w: 12px;
+  --t: 11px;
+  --r: 10deg;
+  --r-to: 108deg;
+}
+.loader-4 .outer .body .leg.front:before {
+  --t: 0;
+  --l: 8px;
+  --r: 18deg;
+  --r-to: 76deg;
+}
+.loader-4 .outer .body .leg.behind {
+  --w: 12px;
+  --t: 11px;
+  --c: none;
+  --r: 108deg;
+  --r-to: 10deg;
+}
+.loader-4 .outer .body .leg.behind:before {
+  --t: 0;
+  --l: 8px;
+  --c: var(--color);
+  --r: 76deg;
+  --r-to: 18deg;
+}
+/* extra foot shape */
+.loader-4 .outer .body .leg.behind:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 4px;
+  width: 6px;
+  clip-path: polygon(2px 0, 6px 0, 6px 4px, 0 4px);
+  border-radius: 0 2px 2px 0;
   background: var(--color);
 }
 
-.loader-4 .arm.front {
-  animation: armFront var(--duration) linear infinite;
+/* KEYFRAMES */
+@keyframes outer {
+  25%, 75% { transform: translateY(4px); }
 }
-.loader-4 .arm.behind {
-  animation: armBehind var(--duration) linear infinite;
+@keyframes body {
+  25%, 75% { transform: rotate(24deg); }
+  50% { transform: rotate(16deg); }
 }
-
-@keyframes armFront {
-  0% { transform: translateX(-50%) rotate(35deg); }
-  50% { transform: translateX(-50%) rotate(-25deg); }
-  100% { transform: translateX(-50%) rotate(35deg); }
+@keyframes arm-leg {
+  50% { transform: rotate(var(--r-to)); }
 }
-
-@keyframes armBehind {
-  0% { transform: translateX(-50%) rotate(-35deg); }
-  50% { transform: translateX(-50%) rotate(25deg); }
-  100% { transform: translateX(-50%) rotate(-35deg); }
-}
-
-/* ========== LEGS (corrigidas) ========== */
-
-.loader-4 .leg {
-  position: absolute;
-  width: 4px;
-  height: 20px;          /* antes estava curto → cortava */
-  top: 40px;
-  left: 50%;
-  transform-origin: top;
-  background: var(--color);
-}
-
-.loader-4 .leg.front {
-  animation: legFront var(--duration) linear infinite;
-}
-.loader-4 .leg.behind {
-  animation: legBehind var(--duration) linear infinite;
-}
-
-@keyframes legFront {
-  0% { transform: translateX(-50%) rotate(30deg); }
-  50% { transform: translateX(-50%) rotate(-40deg); }
-  100% { transform: translateX(-50%) rotate(30deg); }
-}
-
-@keyframes legBehind {
-  0% { transform: translateX(-50%) rotate(-30deg); }
-  50% { transform: translateX(-50%) rotate(40deg); }
-  100% { transform: translateX(-50%) rotate(-30deg); }
+@keyframes arm-b {
+  30%, 70% { transform: rotate(var(--r-to)); }
 }
