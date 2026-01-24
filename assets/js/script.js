@@ -86,118 +86,120 @@ const TOOLTIP_TEXT = {
    LOAD METRICS + TOOLTIP FIX + FEATURED
 ========================================================== */
 
-async function loadMetrics() {
-  try {
-    const res = await fetch(SHEET_URL);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rowTotal = json.table.rows[0].c;
-    const rowInstalls = json.table.rows[1].c;
-    const rowUsers = json.table.rows[2].c;
+function loadMetrics() {
+  window._mfMetricsPromise = (async function() {
+    try {
+      const res = await fetch(SHEET_URL);
+      const text = await res.text();
+      const json = JSON.parse(text.substring(47).slice(0, -2));
+      const rowTotal = json.table.rows[0].c;
+      const rowInstalls = json.table.rows[1].c;
+      const rowUsers = json.table.rows[2].c;
 
-    const allCards = [...document.querySelectorAll('.card')];
+      const allCards = [...document.querySelectorAll('.card')];
 
-    allCards.forEach(card => {
-      const name = card.dataset.name;
-      const metrics = card.querySelector('.metrics');
-      const tag = card.querySelector(".momentum-tag");
-      const tip = card.querySelector(".tooltip");
+      allCards.forEach(card => {
+        const name = card.dataset.name;
+        const metrics = card.querySelector('.metrics');
+        const tag = card.querySelector(".momentum-tag");
+        const tip = card.querySelector(".tooltip");
 
-      if (!APP_METRICS[name]) return;
+        if (!APP_METRICS[name]) return;
 
-      const [tCol, iCol, uCol] = APP_METRICS[name];
-      const total = rowTotal[tCol]?.v || 0;
-      const installs = rowInstalls[iCol]?.v || 0;
-      const users = rowUsers[uCol]?.v || 0;
+        const [tCol, iCol, uCol] = APP_METRICS[name];
+        const total = rowTotal[tCol]?.v || 0;
+        const installs = rowInstalls[iCol]?.v || 0;
+        const users = rowUsers[uCol]?.v || 0;
 
-      metrics.dataset.total = total;
-      metrics.dataset.installs = installs;
-      metrics.dataset.users = users;
+        metrics.dataset.total = total;
+        metrics.dataset.installs = installs;
+        metrics.dataset.users = users;
 
-      metrics.style.display = "none"; // raw numbers hidden
+        metrics.style.display = "none"; // raw numbers hidden
 
-      /* === MOMENTUM TAG === */
-      let level = null;
+        /* === MOMENTUM TAG === */
+        let level = null;
 
-if (installs >= 50) {
-  level = "trending";
-  tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-hot");
+  if (installs >= 50) {
+    level = "trending";
+    tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-hot");
 
-} else if (total >= 100 && users >= 20) {
-  level = "popular";
-  tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-strong");
+  } else if (total >= 100 && users >= 20) {
+    level = "popular";
+    tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-strong");
 
-} else if (users >= 10) {
-  level = "consistent";
-  tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-positive");
+  } else if (users >= 10) {
+    level = "consistent";
+    tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-positive");
 
-} else if (installs >= 10) {
-  level = "discovered";
-  tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-positive");
+  } else if (installs >= 10) {
+    level = "discovered";
+    tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-positive");
 
-} else if (users >= 3) {
-  level = "trusted";
-  tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-positive");
+  } else if (users >= 3) {
+    level = "trusted";
+    tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-positive");
 
-} else {
-  level = "niche";
-  tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
-  tag.classList.add("momentum-positive");
-}
-
-tip.dataset.level = level;
-tag.classList.remove("hidden");
-
-      /* === Tooltip content (stats ≥ 7 only) === */
-      const tipLevel = tip.dataset.level;
-      let stats = "";
-
-      if (total >= 7) stats += `<div>Downloads: <strong>${total}</strong></div>`;
-      if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
-      if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
-
-      const tt = TOOLTIP_TEXT[tipLevel];
-
-tip.innerHTML = `
-  <div class="tip-title">${tt.title}</div>
-  <div class="tip-message">${tt.message}</div>
-
-  <div class="tip-metrics">
-    ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
-    ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
-    ${users    >= 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
-  </div>
-
-  <div class="tip-note">${tt.note}</div>
-`;
-
-      /* === Tooltip toggle with adaptive positioning === */
-      tag.addEventListener("click", e => {
-        e.stopPropagation();
-
-        document.querySelectorAll(".tooltip")
-          .forEach(t => t.classList.add("hidden"));
-
-        tip.classList.toggle("hidden");
-        adaptTooltipPosition(tag, tip);
-      });
-    });
-
-    /* Close tooltips when clicking outside */
-    document.addEventListener("click", () => {
-      document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
-    });
-
-    buildFeaturedCarousel();
-
-  } catch (err) {
-    console.warn("Failed to load metrics:", err);
+  } else {
+    level = "niche";
+    tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
+    tag.classList.add("momentum-positive");
   }
+
+  tip.dataset.level = level;
+  tag.classList.remove("hidden");
+
+        /* === Tooltip content (stats ≥ 7 only) === */
+        const tipLevel = tip.dataset.level;
+        let stats = "";
+
+        if (total >= 7) stats += `<div>Downloads: <strong>${total}</strong></div>`;
+        if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
+        if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
+
+        const tt = TOOLTIP_TEXT[tipLevel];
+
+  tip.innerHTML = `
+    <div class="tip-title">${tt.title}</div>
+    <div class="tip-message">${tt.message}</div>
+
+    <div class="tip-metrics">
+      ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
+      ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
+      ${users    >= 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
+    </div>
+
+    <div class="tip-note">${tt.note}</div>
+  `;
+
+        /* === Tooltip toggle with adaptive positioning === */
+        tag.addEventListener("click", e => {
+          e.stopPropagation();
+
+          document.querySelectorAll(".tooltip")
+            .forEach(t => t.classList.add("hidden"));
+
+          tip.classList.toggle("hidden");
+          adaptTooltipPosition(tag, tip);
+        });
+      });
+
+      /* Close tooltips when clicking outside */
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
+      });
+
+      buildFeaturedCarousel();
+
+    } catch (err) {
+      console.warn("Failed to load metrics:", err);
+    }
+  })();
 }
 
 document.addEventListener("DOMContentLoaded", loadMetrics);

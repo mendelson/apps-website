@@ -298,14 +298,27 @@
   © 2026 Motionforge — Garmin Connect IQ Apps
 </footer>
 
-<script src="assets/js/script.js?v=15"></script>
+<script src="assets/js/script.js"></script>
 
 <script>
-window.addEventListener("load", () => {
+(async function() {
   const pre = document.getElementById("preloader");
+
+  // 1) Aguarda todos os recursos da página carregarem
+  await new Promise(resolve => {
+    if (document.readyState === "complete") resolve();
+    else window.addEventListener("load", resolve);
+  });
+
+  // 2) Aguarda conclusão da função loadMetrics(), caso ainda esteja rodando
+  if (window._mfMetricsPromise instanceof Promise) {
+    await window._mfMetricsPromise;
+  }
+
+  // 3) Remove o preloader com fade
   pre.style.opacity = "0";
   setTimeout(() => pre.remove(), 400);
-});
+})();
 </script>
 
 </body>
