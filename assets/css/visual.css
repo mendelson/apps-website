@@ -529,15 +529,14 @@ nav a:hover {
 
   /* tema claro */
   background: #fafafa;
+}
 
-  
-  
-  background: var(--preloader-bg);
-  /* display: flex;
+#loader-container {
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999999;
-  transition: opacity .6s ease; */
+  width: 100%;
+  height: 100%;
 }
 
 /* tema escuro */
