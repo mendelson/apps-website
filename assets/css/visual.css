@@ -716,88 +716,92 @@ nav a:hover {
 }
 
 /* ==========================================================
-   PRELOADER 4 — Running Figure (Dark/Light adaptive)
+   PRELOADER 4 — Running Figure (fixed clipping)
 ========================================================== */
 
 .loader-4 {
   --color: var(--loader-color);
   --duration: 0.7s;
 
-  display: inline-block;
   position: relative;
-  zoom: 1.5;
+  display: inline-block;
+  width: 60px;
+  height: 80px;            /* AUMENTADO — evita corte */
+  overflow: visible;        /* IMPORTANTE — evita clipping */
+  transform: scale(1.6);    /* similar ao zoom original */
 }
 
-/* Outer motion */
+/* OUTER bounce */
 .loader-4 .outer {
   animation: outerRun var(--duration) linear infinite;
-  transform-origin: center;
+  transform-origin: bottom center;
 }
 
 @keyframes outerRun {
   0%   { transform: translateY(0); }
-  50%  { transform: translateY(-4px); }
+  50%  { transform: translateY(-3px); }
   100% { transform: translateY(0); }
 }
 
-/* Body block */
+/* BODY */
 .loader-4 .body {
-  position: relative;
+  position: absolute;
   width: 12px;
-  height: 26px;
-  margin: auto;
-  background: var(--color);
+  height: 24px;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
   border-radius: 6px;
+  background: var(--color);
 }
 
-/* Arms */
+/* ========== ARMS ========== */
+
 .loader-4 .arm {
   position: absolute;
   width: 4px;
   height: 16px;
-  background: var(--color);
-  top: 4px;
+  top: 22px;
   left: 50%;
   transform-origin: top;
+  background: var(--color);
 }
 
 .loader-4 .arm.front {
-  transform: translateX(-50%) rotate(25deg);
   animation: armFront var(--duration) linear infinite;
 }
 .loader-4 .arm.behind {
-  transform: translateX(-50%) rotate(-25deg);
   animation: armBehind var(--duration) linear infinite;
 }
 
 @keyframes armFront {
-  0% { transform: translateX(-50%) rotate(25deg); }
+  0% { transform: translateX(-50%) rotate(35deg); }
   50% { transform: translateX(-50%) rotate(-25deg); }
-  100% { transform: translateX(-50%) rotate(25deg); }
-}
-@keyframes armBehind {
-  0% { transform: translateX(-50%) rotate(-25deg); }
-  50% { transform: translateX(-50%) rotate(25deg); }
-  100% { transform: translateX(-50%) rotate(-25deg); }
+  100% { transform: translateX(-50%) rotate(35deg); }
 }
 
-/* Legs */
+@keyframes armBehind {
+  0% { transform: translateX(-50%) rotate(-35deg); }
+  50% { transform: translateX(-50%) rotate(25deg); }
+  100% { transform: translateX(-50%) rotate(-35deg); }
+}
+
+/* ========== LEGS (corrigidas) ========== */
+
 .loader-4 .leg {
   position: absolute;
   width: 4px;
-  height: 18px;
-  background: var(--color);
-  bottom: 0;
+  height: 20px;          /* antes estava curto → cortava */
+  top: 40px;
   left: 50%;
   transform-origin: top;
+  background: var(--color);
 }
 
 .loader-4 .leg.front {
-  transform: translateX(-50%) rotate(30deg);
   animation: legFront var(--duration) linear infinite;
 }
 .loader-4 .leg.behind {
-  transform: translateX(-50%) rotate(-30deg);
   animation: legBehind var(--duration) linear infinite;
 }
 
@@ -806,6 +810,7 @@ nav a:hover {
   50% { transform: translateX(-50%) rotate(-40deg); }
   100% { transform: translateX(-50%) rotate(30deg); }
 }
+
 @keyframes legBehind {
   0% { transform: translateX(-50%) rotate(-30deg); }
   50% { transform: translateX(-50%) rotate(40deg); }
