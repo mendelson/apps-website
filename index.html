@@ -304,20 +304,32 @@
 (async function() {
   const pre = document.getElementById("preloader");
 
-  // 1) Aguarda todos os recursos da página carregarem
+  // 1) Marca o tempo de início
+  const start = performance.now();
+
+  // 2) Espera o carregamento total do navegador
   await new Promise(resolve => {
     if (document.readyState === "complete") resolve();
     else window.addEventListener("load", resolve);
   });
 
-  // 2) Aguarda conclusão da função loadMetrics(), caso ainda esteja rodando
+  // 3) Espera métricas/carrossel (se existir)
   if (window._mfMetricsPromise instanceof Promise) {
     await window._mfMetricsPromise;
   }
 
-  // 3) Remove o preloader com fade
+  // 4) Garante que o preloader ficou visível por pelo menos 2 segundos
+  const elapsed = performance.now() - start;
+  const minimum = 2000; // 2 segundos
+
+  if (elapsed < minimum) {
+    await new Promise(r => setTimeout(r, minimum - elapsed));
+  }
+
+  // 5) Remove suavemente
   pre.style.opacity = "0";
   setTimeout(() => pre.remove(), 400);
+
 })();
 </script>
 
