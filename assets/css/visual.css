@@ -732,10 +732,21 @@ nav a:hover {
   --duration: .7s;
 
   position: relative;
-  width: 90px;
-  height: 130px;
+
+  /* Área ampliada para acomodar o movimento vertical */
+  width: 120px;
+  height: 180px;
+
+  /* Garante que nada seja cortado */
   overflow: visible;
-  transform: scale(2.8) translateY(4px);
+
+  /* Scale maior, mas COM compensação vertical */
+  transform: scale(2.8) translateY(25px);
+
+  /* Centraliza o conteúdo interno */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* BOUNCE ANIMATION */
