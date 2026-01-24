@@ -23,6 +23,9 @@
 </head>
 
 <body>
+  <div id="preloader">
+    <div class="loader"></div>
+  </div>
 
 <header>
   <h1>Garmin Connect IQ Apps</h1>
@@ -296,6 +299,14 @@
 </footer>
 
 <script src="assets/js/script.js?v=15"></script>
+
+<script>
+window.addEventListener("load", () => {
+  const pre = document.getElementById("preloader");
+  pre.style.opacity = "0";
+  setTimeout(() => pre.remove(), 400);
+});
+</script>
 
 </body>
 </html>
