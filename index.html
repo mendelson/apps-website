@@ -305,11 +305,28 @@
   const pre = document.getElementById("preloader");
   const container = document.getElementById("loader-container");
 
-  // Sorteia entre loader 1, 2 ou 3
-  const randomPick = Math.ceil(Math.random() * 3);
+  const loaders = {
+    1: `<div class="loader-1"></div>`,
+    2: `<div class="loader-2"></div>`,
+    3: `<div class="loader-3"></div>`,
+    4: `
+      <div class="loader-4">
+          <div class="outer">
+              <div class="body">
+                  <div class="arm behind"></div>
+                  <div class="arm front"></div>
+                  <div class="leg behind"></div>
+                  <div class="leg front"></div>
+              </div>
+          </div>
+      </div>`
+  };
+
+  // Sorteia entre loader 1, 2, 3 ou 4
+  const randomPick = Math.ceil(Math.random() * 4);
 
   // Insere o loader correspondente
-  container.innerHTML = `<div class="loader-${randomPick}"></div>`;
+  container.innerHTML = loaders[randomPick];
 
   // Marca início
   const start = performance.now();

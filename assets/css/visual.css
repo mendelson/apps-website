@@ -714,3 +714,100 @@ nav a:hover {
   80% { height: 65%; opacity: 1; }
   100% { height: 65%; opacity: 0; }
 }
+
+/* ==========================================================
+   PRELOADER 4 — Running Figure (Dark/Light adaptive)
+========================================================== */
+
+.loader-4 {
+  --color: var(--loader-color);
+  --duration: 0.7s;
+
+  display: inline-block;
+  position: relative;
+  zoom: 1.5;
+}
+
+/* Outer motion */
+.loader-4 .outer {
+  animation: outerRun var(--duration) linear infinite;
+  transform-origin: center;
+}
+
+@keyframes outerRun {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Body block */
+.loader-4 .body {
+  position: relative;
+  width: 12px;
+  height: 26px;
+  margin: auto;
+  background: var(--color);
+  border-radius: 6px;
+}
+
+/* Arms */
+.loader-4 .arm {
+  position: absolute;
+  width: 4px;
+  height: 16px;
+  background: var(--color);
+  top: 4px;
+  left: 50%;
+  transform-origin: top;
+}
+
+.loader-4 .arm.front {
+  transform: translateX(-50%) rotate(25deg);
+  animation: armFront var(--duration) linear infinite;
+}
+.loader-4 .arm.behind {
+  transform: translateX(-50%) rotate(-25deg);
+  animation: armBehind var(--duration) linear infinite;
+}
+
+@keyframes armFront {
+  0% { transform: translateX(-50%) rotate(25deg); }
+  50% { transform: translateX(-50%) rotate(-25deg); }
+  100% { transform: translateX(-50%) rotate(25deg); }
+}
+@keyframes armBehind {
+  0% { transform: translateX(-50%) rotate(-25deg); }
+  50% { transform: translateX(-50%) rotate(25deg); }
+  100% { transform: translateX(-50%) rotate(-25deg); }
+}
+
+/* Legs */
+.loader-4 .leg {
+  position: absolute;
+  width: 4px;
+  height: 18px;
+  background: var(--color);
+  bottom: 0;
+  left: 50%;
+  transform-origin: top;
+}
+
+.loader-4 .leg.front {
+  transform: translateX(-50%) rotate(30deg);
+  animation: legFront var(--duration) linear infinite;
+}
+.loader-4 .leg.behind {
+  transform: translateX(-50%) rotate(-30deg);
+  animation: legBehind var(--duration) linear infinite;
+}
+
+@keyframes legFront {
+  0% { transform: translateX(-50%) rotate(30deg); }
+  50% { transform: translateX(-50%) rotate(-40deg); }
+  100% { transform: translateX(-50%) rotate(30deg); }
+}
+@keyframes legBehind {
+  0% { transform: translateX(-50%) rotate(-30deg); }
+  50% { transform: translateX(-50%) rotate(40deg); }
+  100% { transform: translateX(-50%) rotate(-30deg); }
+}
