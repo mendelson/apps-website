@@ -320,7 +320,7 @@
 
   // 4) Garante que o preloader ficou visível por pelo menos 2 segundos
   const elapsed = performance.now() - start;
-  const minimum = 2000; // 2 segundos
+  const minimum = 1500; // 1.5 segundo
 
   if (elapsed < minimum) {
     await new Promise(r => setTimeout(r, minimum - elapsed));
