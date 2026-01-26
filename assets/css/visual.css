@@ -873,98 +873,44 @@ nav a:hover {
 
 
 /* ============================================
-   PRELOADER 5 — Moto Looping (centralizado e corrigido)
+   PRELOADER — Loader minimalista com tema
 ============================================ */
 
-.loader-5 {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Loop */
-.loader-5 .loop {
-  position: absolute;
-  width: 130px;
-  height: 130px;
-  border: 4px solid var(--bike-accent);
-  border-radius: 50%;
-}
-
-/* Chão — agora rebaixado para não atravessar o loop */
-.loader-5 .loop::before {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 4px;
-  left: 50%;
-  top: 68%;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    to left,
-    rgba(0,0,0,0) 0%,
-    var(--bike-accent) 30%,
-    var(--bike-accent) 70%,
-    rgba(0,0,0,0) 100%
-  );
-}
-
-/* Wrapper que segue o círculo */
-.loader-5 .bike-wrapper {
-  position: absolute;
-  width: 130px;
-  height: 130px;
-
-  /* Faz a moto rodar em círculo */
-  animation: bikeCircle 2.4s linear infinite;
-}
-
-/* Moto */
-.loader-5 .bike {
-  width: 32px;
-  height: 32px;
-  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/133687/motorbike.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-
-  /* Centraliza no topo do círculo */
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%) rotate(0deg);
-
-  /* Faz a moto virar conforme o loop */
-  animation: bikeRotate 2.4s linear infinite;
-}
-
-/* Tema */
+/* Tema claro */
 :root {
-  --bike-accent: #bb5f27;
+  --loader-color: #000;
 }
+
+/* Tema escuro */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bike-accent: #e07d3b;
+    --loader-color: #fff;
   }
 }
 
-/* Moto faz o looping completo */
-@keyframes bikeCircle {
-  from {
-    transform: rotate(0deg);
-  }
+/* Loader novo */
+.loader {
+  width: 90px;
+  height: 12px;
+
+  --c: var(--loader-color) 50%, transparent 0;
+
+  background: 
+    linear-gradient(90deg ,var(--c)) 0 0%,
+    linear-gradient(-90deg,var(--c)) 0 50%,
+    linear-gradient(90deg ,var(--c)) 0 100%;
+
+  background-size: 8px calc(100%/3);
+  background-repeat: repeat-x;
+
+  animation: loaderMove .25s infinite linear;
+}
+
+@keyframes loaderMove {
   to {
-    transform: rotate(-360deg);
+    background-position:
+      -8px 0%,
+      -8px 50%,
+      -8px 100%;
   }
-}
-
-/* Moto gira conforme a inclinação da pista */
-@keyframes bikeRotate {
-  0%   { transform: translateX(-50%) rotate(0deg); }
-  25%  { transform: translateX(-50%) rotate(-90deg); }
-  50%  { transform: translateX(-50%) rotate(-180deg); }
-  75%  { transform: translateX(-50%) rotate(-270deg); }
-  100% { transform: translateX(-50%) rotate(-360deg); }
 }
