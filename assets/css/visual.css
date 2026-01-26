@@ -870,3 +870,96 @@ nav a:hover {
 @keyframes arm-b {
   30%, 70% { transform: rotate(var(--r-to)); }
 }
+
+
+/* ============================================
+   PRELOADER 5 — Moto (adaptado com tema + centralização)
+============================================ */
+.loader-5 {
+  position: relative;
+
+  /* aumenta a área para caber a animação */
+  width: 200px;
+  height: 200px;
+
+  /* centraliza o conteudo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* opcional: aumentar ou diminuir */
+  transform: scale(1.6);
+}
+
+/* Cores adaptáveis ao tema */
+:root {
+  --bike-accent: #bb5f27; /* light */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bike-accent: #e07d3b; /* dark */
+  }
+}
+
+.loader-5 #loop {
+  height: 100px;
+  width: 100px;
+  border: var(--bike-accent) solid 4px;
+  border-radius: 200px;
+  position: relative;
+}
+
+.loader-5 #loop:before {
+  background: linear-gradient(to left,
+    rgba(187,95,39,0) 0%,
+    var(--bike-accent) 30%,
+    var(--bike-accent) 70%,
+    rgba(187,95,39,0) 100%
+  );
+  content: "";
+  display: block;
+  height: 4px;
+  left: -100px;
+  position: absolute;
+  top: 100px;
+  width: 300px;
+}
+
+.loader-5 #bike-wrapper {
+  height: 108px;
+  width: 108px;
+  animation: drive 3s linear infinite;
+}
+
+.loader-5 #bike {
+  height: 24px;
+  width: 25px;
+  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/133687/motorbike.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Mantive a animação original */
+@keyframes drive {
+  0% {
+    margin-left: -364px;
+    opacity: 0;
+  }
+  33.33% {
+    transform: rotate(0deg);
+    margin-left: -50px;
+    opacity: 1;
+  }
+  66.66% {
+    transform: rotate(-360deg);
+    margin-left: -50px;
+    opacity: 1;
+  }
+  100% {
+    margin-left: 264px;
+    transform: rotate(-360deg);
+    opacity: 0;
+  }
+}
