@@ -873,26 +873,14 @@ nav a:hover {
 
 
 /* ============================================
-   PRELOADER — Loader minimalista com tema
+   PRELOADER 5 — Loader minimalista
 ============================================ */
 
-/* Tema claro */
-:root {
-  --loader-color: #000;
-}
-
-/* Tema escuro */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --loader-color: #fff;
-  }
-}
-
-/* Loader novo */
-.loader {
+.loader-5 {
   width: 90px;
   height: 12px;
 
+  /* usa cor dinâmica do tema */
   --c: var(--loader-color) 50%, transparent 0;
 
   background: 
