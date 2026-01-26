@@ -873,37 +873,36 @@ nav a:hover {
 
 
 /* ============================================
-   PRELOADER 5 — Moto (100% CENTRALIZADO)
+   PRELOADER 5 — Moto Looping (centralizado e corrigido)
 ============================================ */
 
 .loader-5 {
   position: relative;
-
-  /* área maior para garantir equilíbrio visual */
   width: 200px;
   height: 200px;
-
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Loop */
 .loader-5 .loop {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border: 4px solid var(--bike-accent);
   border-radius: 50%;
 }
 
+/* Chão — agora rebaixado para não atravessar o loop */
 .loader-5 .loop::before {
   content: "";
   position: absolute;
   width: 260px;
   height: 4px;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 68%;
+  transform: translateX(-50%);
   background: linear-gradient(
     to left,
     rgba(0,0,0,0) 0%,
@@ -913,53 +912,59 @@ nav a:hover {
   );
 }
 
+/* Wrapper que segue o círculo */
 .loader-5 .bike-wrapper {
   position: absolute;
-  width: 120px;
-  height: 120px;
-  animation: bikeDrive 3s linear infinite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 130px;
+  height: 130px;
+
+  /* Faz a moto rodar em círculo */
+  animation: bikeCircle 2.4s linear infinite;
 }
 
+/* Moto */
 .loader-5 .bike {
   width: 32px;
   height: 32px;
   background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/133687/motorbike.png");
   background-size: contain;
   background-repeat: no-repeat;
+
+  /* Centraliza no topo do círculo */
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%) rotate(0deg);
+
+  /* Faz a moto virar conforme o loop */
+  animation: bikeRotate 2.4s linear infinite;
 }
 
-/* Tema adaptável */
+/* Tema */
 :root {
-  --bike-accent: #bb5f27; /* Light */
+  --bike-accent: #bb5f27;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --bike-accent: #e07d3b; /* Dark */
+    --bike-accent: #e07d3b;
   }
 }
 
-/* Animação corrigida: moto atravessa o centro do círculo */
-@keyframes bikeDrive {
-  0% {
-    transform: translateX(-180px) rotate(0deg);
-    opacity: 0;
+/* Moto faz o looping completo */
+@keyframes bikeCircle {
+  from {
+    transform: rotate(0deg);
   }
-  15% {
-    opacity: 1;
+  to {
+    transform: rotate(-360deg);
   }
-  50% {
-    transform: translateX(0px) rotate(-360deg);
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(180px) rotate(-360deg);
-    opacity: 0;
-  }
+}
+
+/* Moto gira conforme a inclinação da pista */
+@keyframes bikeRotate {
+  0%   { transform: translateX(-50%) rotate(0deg); }
+  25%  { transform: translateX(-50%) rotate(-90deg); }
+  50%  { transform: translateX(-50%) rotate(-180deg); }
+  75%  { transform: translateX(-50%) rotate(-270deg); }
+  100% { transform: translateX(-50%) rotate(-360deg); }
 }
