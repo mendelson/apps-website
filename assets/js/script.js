@@ -33,21 +33,14 @@ document.addEventListener("click", e => {
 
 /* ==========================================================
    METRICS CONFIG
+   (now empty — replaced by API)
 ========================================================== */
 
-const SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc/gviz/tq?tqx=out:json";
 
-const APP_METRICS = {
-  "Live Pace Speed Calculator": [2, 2, 2],
-  "Live Predictor Premium": [6, 6, 6],
-  "Live Time Predictor": [10, 10, 10],
-  "Pacer Data Field": [14, 14, 14],
-  "Route Silhouette": [18, 18, 18],
-  "Solve for X": [22, 22, 22],
-  "Time Across The Galaxy": [26, 26, 26],
-  "Tracker Data Field": [30, 30, 30]
-};
+
+/* ==========================================================
+   TOOLTIP TEXT
+========================================================== */
 
 const TOOLTIP_TEXT = {
   trending: {
@@ -89,27 +82,24 @@ const TOOLTIP_TEXT = {
 function loadMetrics() {
   window._mfMetricsPromise = (async function() {
     try {
-      const res = await fetch(SHEET_URL);
-      const text = await res.text();
-      const json = JSON.parse(text.substring(47).slice(0, -2));
-      const rowTotal = json.table.rows[0].c;
-      const rowInstalls = json.table.rows[1].c;
-      const rowUsers = json.table.rows[2].c;
+      /* === Load from new API === */
+      const apiUrl = "https://script.google.com/macros/s/AKfycbw7rWrwkt2_mTbp80_-u55zMViemHwTTO9E69VBYJT4rM232LwH2qtcXMOEt8iX0u4N/exec";
+      const data = await fetch(apiUrl).then(r => r.json());
 
       const allCards = [...document.querySelectorAll('.card')];
 
       allCards.forEach(card => {
         const name = card.dataset.name;
+        const api = data[name];
+        if (!api) return;
+
+        const total = api.total_downloads;
+        const installs = api.installs_7_days;
+        const users = api.users_7_days;
+
         const metrics = card.querySelector('.metrics');
         const tag = card.querySelector(".momentum-tag");
         const tip = card.querySelector(".tooltip");
-
-        if (!APP_METRICS[name]) return;
-
-        const [tCol, iCol, uCol] = APP_METRICS[name];
-        const total = rowTotal[tCol]?.v || 0;
-        const installs = rowInstalls[iCol]?.v || 0;
-        const users = rowUsers[uCol]?.v || 0;
 
         metrics.dataset.total = total;
         metrics.dataset.installs = installs;
@@ -120,39 +110,39 @@ function loadMetrics() {
         /* === MOMENTUM TAG === */
         let level = null;
 
-  if (installs >= 50) {
-    level = "trending";
-    tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-hot");
+        if (installs >= 50) {
+          level = "trending";
+          tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-hot");
 
-  } else if (total >= 100 && users >= 20) {
-    level = "popular";
-    tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-strong");
+        } else if (total >= 100 && users >= 20) {
+          level = "popular";
+          tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-strong");
 
-  } else if (users >= 10) {
-    level = "consistent";
-    tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-positive");
+        } else if (users >= 10) {
+          level = "consistent";
+          tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-positive");
 
-  } else if (installs >= 10) {
-    level = "discovered";
-    tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-positive");
+        } else if (installs >= 10) {
+          level = "discovered";
+          tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-positive");
 
-  } else if (users >= 3) {
-    level = "trusted";
-    tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-positive");
+        } else if (users >= 3) {
+          level = "trusted";
+          tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-positive");
 
-  } else {
-    level = "niche";
-    tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
-    tag.classList.add("momentum-positive");
-  }
+        } else {
+          level = "niche";
+          tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
+          tag.classList.add("momentum-positive");
+        }
 
-  tip.dataset.level = level;
-  tag.classList.remove("hidden");
+        tip.dataset.level = level;
+        tag.classList.remove("hidden");
 
         /* === Tooltip content (stats ≥ 7 only) === */
         const tipLevel = tip.dataset.level;
@@ -164,20 +154,20 @@ function loadMetrics() {
 
         const tt = TOOLTIP_TEXT[tipLevel];
 
-  tip.innerHTML = `
-    <div class="tip-title">${tt.title}</div>
-    <div class="tip-message">${tt.message}</div>
+        tip.innerHTML = `
+          <div class="tip-title">${tt.title}</div>
+          <div class="tip-message">${tt.message}</div>
 
-    <div class="tip-metrics">
-      ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
-      ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
-      ${users    >= 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
-    </div>
+          <div class="tip-metrics">
+            ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
+            ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
+            ${users    >= 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
+          </div>
 
-    <div class="tip-note">${tt.note}</div>
-  `;
+          <div class="tip-note">${tt.note}</div>
+        `;
 
-        /* === Tooltip toggle with adaptive positioning === */
+        /* === Tooltip toggle === */
         tag.addEventListener("click", e => {
           e.stopPropagation();
 
@@ -209,13 +199,10 @@ document.addEventListener("DOMContentLoaded", loadMetrics);
 ========================================================== */
 
 function adaptTooltipPosition(tag, tip) {
-  // Tooltip ALWAYS appears BELOW the tag
   tip.style.top = "100%";
   tip.style.bottom = "auto";
   tip.style.transform = "translateX(-50%)";
   tip.style.marginTop = "8px";
-
-  // Arrow always pointing UP toward the tag
   tip.style.setProperty("--arrow-dir", "up");
 }
 
@@ -228,12 +215,10 @@ function buildFeaturedCarousel() {
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
 
-  /* Sort */
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
   const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
-  /* Unique picks */
   const picks = [];
   const add = c => { if (c && !picks.includes(c)) picks.push(c); };
 
@@ -247,8 +232,8 @@ function buildFeaturedCarousel() {
 
   const badgeMap = [
     { emoji: "🔥", word: "Trending",  class: "trending" },
-{ emoji: "🏆", word: "Popular",   class: "popular" },
-{ emoji: "💪", word: "Consistent", class: "consistent" }
+    { emoji: "🏆", word: "Popular",   class: "popular" },
+    { emoji: "💪", word: "Consistent", class: "consistent" }
   ];
 
   picks.forEach((card, i) => {
@@ -356,9 +341,9 @@ function buildFeaturedCarousel() {
     track.style.transition = "transform 0.45s ease";
 
     if (dx > 60) {
-      index = (index - 1 + picks.length) % picks.length;  // ciclo para trás
+      index = (index - 1 + picks.length) % picks.length;
     } else if (dx < -60) {
-      index = (index + 1) % picks.length;                 // ciclo para frente
+      index = (index + 1) % picks.length;
     }
 
     goTo(index);
@@ -416,7 +401,7 @@ document.querySelectorAll(".ciq-badge").forEach(badge => {
   });
 });
 
-/* ========== 4. TRACK: Click on Version links (improved) ========== */
+/* ========== 4. TRACK: Click on Version links ========== */
 document.querySelectorAll(".versions .dropdown a").forEach(link => {
   link.addEventListener("click", () => {
     const card = link.closest(".card");
