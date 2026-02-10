@@ -910,20 +910,23 @@ nav a:hover {
 
 .loader-gym {
     width: 260px;
-    height: 260px;
+    height: 330px;   /* increased to allow arm room */
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: visible;
+    overflow: visible; /* important */
     transform: scale(0.8);
 }
 
+/* internal canvas */
 .loader-gym .gym-container {
     position: relative;
     width: 260px;
-    height: 260px;
+    height: 330px;  /* matches expanded height */
+    overflow: visible; /* essential for limbs */
 }
+
 
 /* DARK/LIGHT ADAPTATION */
 :root {
@@ -962,7 +965,7 @@ nav a:hover {
 
 .loader-gym .man {
     position: absolute;
-    top: 40%;
+    top: 46%;
     left: 25%;
     width: 55%;
     height: 45%;
