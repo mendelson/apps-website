@@ -909,8 +909,8 @@ nav a:hover {
 ========================================================== */
 
 .loader-gym {
-    width: 320px;
-    height: 240px;
+    width: 600px;      /* bigger */
+    height: 450px;     /* bigger */
     position: relative;
     display: flex;
     justify-content: center;
@@ -918,13 +918,14 @@ nav a:hover {
     overflow: visible;
 }
 
+/* Original canvas: 800×600 scaled to 600×450 */
 .loader-gym .gym-container {
     width: 800px;
     height: 600px;
+    transform-origin: top left;
+    transform: scale(0.75);   /* 600/800 = 0.75 */
     position: relative;
     overflow: visible;
-    transform-origin: top left;
-    transform: scale(0.40);
 }
 
 /* COLOR VARIABLES */
