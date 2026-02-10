@@ -905,30 +905,29 @@ nav a:hover {
 
 
 /* ==========================================================
-   PRELOADER 6 — GYM MAN (ENCAPSULADO)
+   PRELOADER 6 — GYM MAN (FINAL VERSION)
 ========================================================== */
 
 .loader-gym {
-    width: 260px;
-    height: 330px;   /* increased to allow arm room */
+    width: 320px;
+    height: 240px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: visible; /* important */
-    transform: scale(0.8);
+    overflow: visible;
 }
 
-/* internal canvas */
 .loader-gym .gym-container {
+    width: 800px;
+    height: 600px;
     position: relative;
-    width: 260px;
-    height: 330px;  /* matches expanded height */
-    overflow: visible; /* essential for limbs */
+    overflow: visible;
+    transform-origin: top left;
+    transform: scale(0.40);
 }
 
-
-/* DARK/LIGHT ADAPTATION */
+/* COLOR VARIABLES */
 :root {
     --gym-skin-1: #ffaf72;
     --gym-skin-2: #f78d5c;
@@ -961,24 +960,23 @@ nav a:hover {
     }
 }
 
-/* ===== ORIGINAL STYLES (ENCAPSULATED) ===== */
-
+/* MAN POSITION (corrected) */
 .loader-gym .man {
     position: absolute;
-    top: 46%;
+    top: 40%;
     left: 25%;
     width: 55%;
     height: 45%;
     z-index: 3;
 }
 
+/* LEGS */
 .loader-gym .legs {
     position: absolute;
     width: 20%;
     height: 64%;
     bottom: 4%;
 }
-
 .loader-gym .leg {
     position: absolute;
     width: 20%;
@@ -986,7 +984,6 @@ nav a:hover {
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
 }
-
 .loader-gym .leg.one {
     background: var(--gym-skin-1);
     left: 20%;
@@ -998,7 +995,6 @@ nav a:hover {
     z-index: 2;
     transform: rotate(10deg);
 }
-
 .loader-gym .leg::after {
     content: "";
     background: #53313e;
@@ -1018,6 +1014,7 @@ nav a:hover {
     border-radius: 50%;
 }
 
+/* THIGH */
 .loader-gym .thy {
     z-index: 2;
     position: absolute;
@@ -1026,7 +1023,6 @@ nav a:hover {
     left: 24%;
     background: var(--gym-thigh);
 }
-
 .loader-gym .thy::after {
     content: "";
     position: absolute;
@@ -1039,6 +1035,7 @@ nav a:hover {
     background-color: var(--gym-thigh);
 }
 
+/* BODY */
 .loader-gym .main-parts {
     position: absolute;
     left: 33%;
@@ -1057,7 +1054,6 @@ nav a:hover {
 }
 .loader-gym .upper .above {
     position: absolute;
-    right: 0;
     background: var(--gym-shirt-1);
     width: 150%;
     height: 331%;
@@ -1069,7 +1065,7 @@ nav a:hover {
     position: absolute;
     height: 40%;
     width: 100%;
-    bottom: 0%;
+    bottom: 0;
     background: var(--gym-shirt-2);
     z-index: 2;
 }
@@ -1084,18 +1080,18 @@ nav a:hover {
     background: var(--gym-shirt-2);
 }
 
+/* ARM + WEIGHT (animated) */
 .loader-gym .arm {
     position: absolute;
     right: 28%;
     width: 10%;
     height: 10%;
+    border-radius: 30px 5px 5px 30px;
+    background: var(--gym-skin-2);
     z-index: 5;
     top: 88px;
-    background: var(--gym-skin-2);
-    border-radius: 30px 5px 5px 30px;
     animation: gym-hand 2s infinite;
 }
-
 .loader-gym .weight {
     position: absolute;
     height: 30%;
@@ -1129,15 +1125,13 @@ nav a:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
 }
 
 @keyframes gym-hand {
-    50% {
-        transform: translateY(-40px);
-    }
+    50% { transform: translateY(-40px); }
 }
 
+/* HEAD / FACE */
 .loader-gym .neck {
     position: absolute;
     left: 73%;
@@ -1145,9 +1139,7 @@ nav a:hover {
     height: 12%;
     background: var(--gym-skin-2);
     top: 32%;
-    overflow: hidden;
 }
-
 .loader-gym .head {
     position: absolute;
     right: 0;
@@ -1157,26 +1149,25 @@ nav a:hover {
     border-radius: 50%;
     background: var(--gym-skin-1);
 }
-
 .loader-gym .nose {
     width: 10%;
     height: 10%;
     position: absolute;
     right: 5%;
     top: 21%;
-    display: flex;
 }
 .loader-gym .nose div {
     position: absolute;
     bottom: -24%;
     width: 7px;
     height: 10px;
-    border-radius: 50%;
     background: var(--gym-skin-1);
+    border-radius: 50%;
 }
 .loader-gym .nose div:nth-child(1) { left: 10%; }
 .loader-gym .nose div:nth-child(2) { left: 50%; }
 
+/* HAIR */
 .loader-gym .hairs {
     position: absolute;
     left: 86%;
@@ -1197,20 +1188,20 @@ nav a:hover {
     position: absolute;
     right: -10%;
     bottom: 0;
-    height: 80%;
     width: 40%;
+    height: 80%;
 }
 .loader-gym .hairs .upper div {
     position: absolute;
     width: 100%;
     height: 40%;
-    background: var(--gym-hair);
     border-radius: 50%;
+    background: var(--gym-hair);
 }
 .loader-gym .hairs .upper div:nth-child(2) { top: 30%; }
 .loader-gym .hairs .upper div:nth-child(3) { top: 60%; }
 
-/* Bench */
+/* BENCH */
 .loader-gym .bench-container {
     position: absolute;
     top: 60%;
@@ -1234,17 +1225,17 @@ nav a:hover {
     height: 10%;
     left: -100%;
     bottom: 0;
-    border-top: 4px solid var(--gym-bench-detail);
     background: var(--gym-bench-main);
+    border-top: 4px solid var(--gym-bench-detail);
 }
 .loader-gym .bench-container .right {
-    z-index: -1;
     position: absolute;
     top: -100%;
     right: 5%;
     background: var(--gym-bench-main);
     width: 5%;
     height: 200%;
+    z-index: -1;
 }
 .loader-gym .bench-container .right::after {
     content: "";
@@ -1253,16 +1244,18 @@ nav a:hover {
     height: 5%;
     left: -150%;
     bottom: 0;
-    border-top: 4px solid var(--gym-bench-detail);
     background: var(--gym-bench-main);
+    border-top: 4px solid var(--gym-bench-detail);
 }
+
 .loader-gym .seat {
     width: 100%;
-    background: var(--gym-seat);
     height: 10%;
+    background: var(--gym-seat);
     border-radius: 15px 15px 0 0;
 }
 
+/* ROD */
 .loader-gym .rod1 {
     position: absolute;
     top: 70%;
