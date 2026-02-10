@@ -902,3 +902,171 @@ nav a:hover {
       -8px 100%;
   }
 }
+
+
+/* ==========================================================
+   LOADER 6 — GYM MAN (dark/light adaptive)
+========================================================== */
+
+.loader-gym {
+  width: 240px;
+  height: 200px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0.75);
+}
+
+/* COLORS */
+:root {
+  --gym-skin-1: #ffaf72;
+  --gym-skin-2: #f78d5c;
+  --gym-shirt-1: #e75a46;
+  --gym-shirt-2: #cf4444;
+  --gym-thigh: #649740;
+  --gym-hair: #54303c;
+  --gym-bench-main: #476199;
+  --gym-bench-detail: #4a8197;
+  --gym-seat: #4e9993;
+  --gym-weight-outer: #e75a46;
+  --gym-weight-middle: #cf4444;
+  --gym-weight-inner: #5aada7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gym-skin-1: #d49562;
+    --gym-skin-2: #b4744c;
+    --gym-shirt-1: #c94d3c;
+    --gym-shirt-2: #a93737;
+    --gym-thigh: #5a8038;
+    --gym-hair: #3a272f;
+    --gym-bench-main: #3a4b78;
+    --gym-bench-detail: #3f6c82;
+    --gym-seat: #3b7c75;
+    --gym-weight-outer: #c94d3c;
+    --gym-weight-middle: #a93737;
+    --gym-weight-inner: #4c8781;
+  }
+}
+
+/* BENCH */
+.loader-gym .bench-container {
+  position: absolute;
+  top: 60%;
+  left: 40%;
+  width: 45%;
+  height: 25%;
+}
+
+.loader-gym .bench-container .left,
+.loader-gym .bench-container .right {
+  background: var(--gym-bench-main);
+}
+
+.loader-gym .bench-container .left::after,
+.loader-gym .bench-container .right::after {
+  content: "";
+  position: absolute;
+  width: 300%;
+  height: 10%;
+  left: -100%;
+  bottom: 0;
+  border-top: 4px solid var(--gym-bench-detail);
+  background: var(--gym-bench-main);
+}
+
+.loader-gym .seat {
+  position: absolute;
+  width: 100%;
+  background: var(--gym-seat);
+  height: 10%;
+  border-radius: 15px 15px 0 0;
+}
+
+/* MAN */
+.loader-gym .man {
+  position: absolute;
+  top: 40%;
+  left: 25%;
+  width: 55%;
+  height: 45%;
+}
+
+.loader-gym .leg.one { background: var(--gym-skin-1); }
+.loader-gym .leg.two { background: var(--gym-skin-2); }
+.loader-gym .thy { background: var(--gym-thigh); }
+
+.loader-gym .main-parts .upper,
+.loader-gym .main-parts .upper .above {
+  background: var(--gym-shirt-1);
+}
+
+.loader-gym .main-parts .lower,
+.loader-gym .main-parts .lower::after {
+  background: var(--gym-shirt-2);
+}
+
+.loader-gym .neck,
+.loader-gym .neck .head,
+.loader-gym .hand {
+  background: var(--gym-skin-1);
+}
+
+.loader-gym .arm {
+  background: var(--gym-skin-2);
+}
+
+.loader-gym .hairs .lower,
+.loader-gym .hairs .upper div {
+  background: var(--gym-hair);
+}
+
+/* WEIGHT */
+.loader-gym .weight {
+  position: absolute;
+  height: 30%;
+  width: 18%;
+  border-radius: 50%;
+  border: 4px solid var(--gym-hair);
+  background: var(--gym-weight-outer);
+  left: 57%;
+  top: -10%;
+  animation: gymHand 2s infinite;
+}
+
+.loader-gym .weight::after {
+  content: "";
+  background-color: var(--gym-weight-middle);
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loader-gym .weight::before {
+  content: "";
+  background-color: var(--gym-weight-inner);
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ANIMATION */
+@keyframes gymHand {
+  50% {
+    transform: translateY(-22px);
+  }
+}
+
+.loader-gym .arm {
+  animation: gymHand 2s infinite;
+}
