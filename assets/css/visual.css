@@ -1105,16 +1105,16 @@ nav a:hover {
 }
 
 .loader-gym .arm {
-    position: absolute;              ✅ ADICIONADO
-    right: 18%;                      ✅ Corrigido
-    top: 25%;                        ✅ Corrigido
-    width: 16%;                      ✅ Corrigido
-    height: 8%;                      ✅ Corrigido
-    z-index: 8;                      ✅ ADICIONADO
-    background: var(--gym-skin-2);   ✅ ADICIONADO
-    border-radius: 4px 20px 20px 4px; ✅ Corrigido
-    animation: gym-hand 2s infinite;  ✅ ADICIONADO
-    transform-origin: right center;   ✅ Corrigido
+    position: absolute;              
+    right: 18%;                      
+    top: 25%;                        
+    width: 16%;                      
+    height: 8%;                      
+    z-index: 8;                      
+    background: var(--gym-skin-2);   
+    border-radius: 4px 20px 20px 4px; 
+    animation: gym-hand 2s infinite;  
+    transform-origin: right center;   
 }
 
 /* WEIGHT — VERSÃO CORRIGIDA (OPCIONAL) */
