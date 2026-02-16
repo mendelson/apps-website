@@ -1114,6 +1114,33 @@ nav a:hover {
     transform-origin: right center;     /* ✅ Pivô no ombro */
 }
 
+/* WEIGHT — VERSÃO CORRIGIDA (OPCIONAL) */
+.loader-gym .weight {
+    position: absolute;
+    height: 25%;       /* CORRIGIDO: era 30% */
+    width: 16%;        /* CORRIGIDO: era 18% */
+    border-radius: 50%;
+    border: 4px solid var(--gym-hair);
+    left: 60%;         /* CORRIGIDO: era 57% */
+    top: 5%;           /* CORRIGIDO: era -10% - IMPORTANTE! */
+    background: var(--gym-weight-outer);
+    z-index: 10;
+    animation: gym-hand 2s infinite;
+}
+
+/* Mantenha os ::after e ::before do weight como estão */
+.loader-gym .weight::after {
+    content: "";
+    background-color: var(--gym-weight-middle);
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .loader-gym .weight::before {
     content: "";
     background-color: var(--gym-weight-inner);
