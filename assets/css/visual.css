@@ -1104,14 +1104,17 @@ nav a:hover {
     background: var(--gym-shirt-2);
 }
 
-/* ARM — FIXED VERSION (full arm always visible) */
 .loader-gym .arm {
-    right: 18%;              /* ✅ Alinhado com ombro */
-    top: 25%;                /* ✅ Altura correta */
-    width: 16%;              /* ✅ Comprimento real */
-    height: 8%;              /* ✅ Espessura natural */
-    border-radius: 4px 20px 20px 4px;  /* ✅ CORRIGIDO! */
-    transform-origin: right center;     /* ✅ Pivô no ombro */
+    position: absolute;              ✅ ADICIONADO
+    right: 18%;                      ✅ Corrigido
+    top: 25%;                        ✅ Corrigido
+    width: 16%;                      ✅ Corrigido
+    height: 8%;                      ✅ Corrigido
+    z-index: 8;                      ✅ ADICIONADO
+    background: var(--gym-skin-2);   ✅ ADICIONADO
+    border-radius: 4px 20px 20px 4px; ✅ Corrigido
+    animation: gym-hand 2s infinite;  ✅ ADICIONADO
+    transform-origin: right center;   ✅ Corrigido
 }
 
 /* WEIGHT — VERSÃO CORRIGIDA (OPCIONAL) */
