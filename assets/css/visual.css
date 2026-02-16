@@ -1107,40 +1107,24 @@ nav a:hover {
 /* ARM — FIXED VERSION (full arm always visible) */
 .loader-gym .arm {
     position: absolute;
-    right: 24%;
-    top: 27%;
-    width: 14%;
-    height: 13%;
+    right: 18%;              /* ✅ Alinhado com ombro */
+    top: 25%;                /* ✅ Altura correta */
+    width: 16%;              /* ✅ Comprimento real */
+    height: 8%;              /* ✅ Espessura natural */
     z-index: 8;
     background: var(--gym-skin-2);
-    border-radius: 30px 5px 5px 30px;
+    border-radius: 4px 20px 20px 4px;  /* ✅ CORRIGIDO! */
+    transform-origin: right center;     /* ✅ Pivô no ombro */
     animation: gym-hand 2s infinite;
 }
 
-/* WEIGHT */
-.loader-gym .weight {
-    position: absolute;
-    height: 30%;
-    width: 18%;
-    border-radius: 50%;
-    border: 4px solid var(--gym-hair);
-    left: 57%;
-    top: -10%;
-    background: var(--gym-weight-outer);
-    z-index: 10;
-    animation: gym-hand 2s infinite;
-}
-
-.loader-gym .weight::after {
-    content: "";
-    background-color: var(--gym-weight-middle);
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.loader-gym .arm {
+    right: 18%;              /* ✅ Alinhado com ombro */
+    top: 25%;                /* ✅ Altura correta */
+    width: 16%;              /* ✅ Comprimento real */
+    height: 8%;              /* ✅ Espessura natural */
+    border-radius: 4px 20px 20px 4px;  /* ✅ CORRIGIDO! */
+    transform-origin: right center;     /* ✅ Pivô no ombro */
 }
 
 .loader-gym .weight::before {
