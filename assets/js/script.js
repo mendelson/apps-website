@@ -32,6 +32,81 @@ document.addEventListener("click", e => {
 });
 
 /* ==========================================================
+   EXTERNAL LINKS → NEW TAB
+========================================================== */
+function initExternalLinks() {
+  document.querySelectorAll("a[href]").forEach(a => {
+    const h = a.getAttribute("href");
+    if (!h || h.startsWith("#") || h.startsWith("mailto:") || h.startsWith("tel:")) return;
+    if (/^https?:\/\//i.test(h)) {
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener noreferrer");
+    }
+  });
+}
+
+const CAROUSEL_AUTOPLAY_MS = 6500;
+const CAROUSEL_RESUME_AFTER_INTERACTION_MS = 4200;
+/** “Just launched” if parsed `app_age` is at most this many months (sheet uses ~30 days/month). */
+const NEW_APP_MAX_AGE_MONTHS = 6;
+const NEW_APP_MAX_APPROX_DAYS = NEW_APP_MAX_AGE_MONTHS * 30;
+
+function scrollToAppCard(card) {
+  if (!card) return;
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  card.classList.add("highlight");
+  setTimeout(() => card.classList.remove("highlight"), 1700);
+}
+
+function escapeHtml(text) {
+  const d = document.createElement("div");
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+/**
+ * Parse sheet `app_age` strings like "1 years, 4 months, 19 days" → approximate total days.
+ * Must match the wording your spreadsheet uses (English plural/singular).
+ */
+function appAgeStringToApproxDays(ageStr) {
+  const s = String(ageStr || "");
+  const yMatch = /\b(\d+)\s*years?\b/i.exec(s);
+  const mMatch = /\b(\d+)\s*months?\b/i.exec(s);
+  const dMatch = /\b(\d+)\s*days?\b/i.exec(s);
+  const y = yMatch ? Number(yMatch[1]) : 0;
+  const mo = mMatch ? Number(mMatch[1]) : 0;
+  const d = dMatch ? Number(dMatch[1]) : 0;
+  return y * 365 + mo * 30 + d;
+}
+
+function isJustLaunchedFromAppAge(ageStr) {
+  const s = String(ageStr || "").trim();
+  if (!s) return false;
+  const approx = appAgeStringToApproxDays(s);
+  return approx >= 0 && approx <= NEW_APP_MAX_APPROX_DAYS;
+}
+
+/** Single “newest in window” card for the featured carousel (smallest parsed age). */
+function getYoungestNewLaunchCard(cards, data) {
+  let best = null;
+  let bestApprox = Infinity;
+  for (const card of cards) {
+    const api = data[card.dataset.name];
+    if (!api || !isJustLaunchedFromAppAge(api.app_age)) continue;
+    const approx = appAgeStringToApproxDays(api.app_age);
+    if (approx < bestApprox) {
+      bestApprox = approx;
+      best = card;
+    }
+  }
+  return best;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initExternalLinks();
+});
+
+/* ==========================================================
    METRICS CONFIG
    (now empty — replaced by API)
 ========================================================== */
@@ -83,7 +158,7 @@ function loadMetrics() {
   window._mfMetricsPromise = (async function() {
     try {
       /* === Load from new API === */
-      const apiUrl = "https://script.google.com/macros/s/AKfycbw7rWrwkt2_mTbp80_-u55zMViemHwTTO9E69VBYJT4rM232LwH2qtcXMOEt8iX0u4N/exec";
+      const apiUrl = "https://script.google.com/macros/s/AKfycbwZ0FmGK8cNGUK17ubQ2DVzdymfDRhZs6Ba_R4ZaI33y7jteIt706iFcXAu5-tUZfcB/exec";
       const data = await fetch(apiUrl).then(r => r.json());
 
       const allCards = [...document.querySelectorAll('.card')];
@@ -91,7 +166,10 @@ function loadMetrics() {
       allCards.forEach(card => {
         const name = card.dataset.name;
         const api = data[name];
-        if (!api) return;
+        card.querySelector(".card-app-age")?.remove();
+        if (!api) {
+          return;
+        }
 
         const total = api.total_downloads;
         const installs = api.installs_7_days;
@@ -184,7 +262,7 @@ function loadMetrics() {
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
       });
 
-      buildFeaturedCarousel();
+      buildFeaturedCarousel(data);
 
     } catch (err) {
       console.warn("Failed to load metrics:", err);
@@ -210,143 +288,298 @@ function adaptTooltipPosition(tag, tip) {
    FEATURED CAROUSEL
 ========================================================== */
 
-function buildFeaturedCarousel() {
+const MAX_FEATURED_SLIDES = 4;
+
+/**
+ * Featured carousel: up to 4 slides, each a different `.card` (no duplicates).
+ * If a qualifying “new” app exists (API `app_age`), it gets the first slide.
+ */
+function buildFeaturedCarousel(data) {
   document.querySelectorAll(".card-badge").forEach(b => b.remove());
+
   const cards = [...document.querySelectorAll(".card")];
-  const get = (c, k) => Number(c.querySelector(".metrics").dataset[k] || 0);
+  const get = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
 
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
   const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
-  const picks = [];
-  const add = c => { if (c && !picks.includes(c)) picks.push(c); };
+  const newcomer =
+    data && typeof data === "object"
+      ? getYoungestNewLaunchCard(cards, data)
+      : null;
 
+  const picks = [];
+  const add = c => {
+    if (!c) return;
+    if (picks.includes(c)) return;
+    if (picks.length >= MAX_FEATURED_SLIDES) return;
+    picks.push(c);
+  };
+
+  if (newcomer) add(newcomer);
   add(byInstalls[0]);
   add(byTotal.find(c => !picks.includes(c)));
   add(byUsers.find(c => !picks.includes(c)));
+  for (let i = 0; i < byInstalls.length && picks.length < MAX_FEATURED_SLIDES; i++) {
+    add(byInstalls[i]);
+  }
 
-  /* ============================================
-   FEATURED BADGES (only for the 3 picks)
-  ============================================ */
+  const validPicks = picks.filter(Boolean);
+  if (validPicks.length === 0) return;
 
-  const badgeMap = [
-    { emoji: "🔥", word: "Trending",  class: "trending" },
-    { emoji: "🏆", word: "Popular",   class: "popular" },
-    { emoji: "💪", word: "Consistent", class: "consistent" }
+  const hasNewSpotlight = newcomer && validPicks[0] === newcomer;
+
+  const metricBadgeMeta = [
+    { emoji: "🔥", word: "Trending", class: "trending" },
+    { emoji: "🏆", word: "Popular", class: "popular" },
+    { emoji: "💪", word: "Consistent", class: "consistent" },
+    { emoji: "⭐", word: "Momentum", class: "trending" }
   ];
 
-  picks.forEach((card, i) => {
-    if (!card) return;
-
-    let badge = card.querySelector(".card-badge");
-    if (!badge) {
-      badge = document.createElement("div");
-      badge.className = `card-badge ${badgeMap[i].class}`;
-      badge.textContent = `${badgeMap[i].emoji} ${badgeMap[i].word}`;
-      card.appendChild(badge);
-    }
-  });
-
-  const labels = [
+  const newcomerHeadline =
+    "✨ New on Connect IQ — jump in early";
+  const metricHeadlines = [
     "🔥 Popular This Week",
     "🏆 All-Time Favorite",
-    "💪 Athletes keep using it"
+    "💪 Athletes keep using it",
+    "⭐ Strong weekly installs"
   ];
 
-  const track = document.querySelector(".carousel-track");
-  const dots = document.querySelector(".carousel-indicators");
+  validPicks.forEach((card, i) => {
+    let badgeMeta;
+    if (hasNewSpotlight && i === 0) {
+      badgeMeta = { emoji: "✨", word: "Just launched", class: "fresh" };
+    } else {
+      const j = hasNewSpotlight ? i - 1 : i;
+      badgeMeta = metricBadgeMeta[j] || metricBadgeMeta[metricBadgeMeta.length - 1];
+    }
+    const badge = document.createElement("div");
+    badge.className = `card-badge ${badgeMeta.class}`;
+    badge.textContent = `${badgeMeta.emoji} ${badgeMeta.word}`;
+    card.appendChild(badge);
+  });
+
+  const labels = validPicks.map((_, i) => {
+    if (hasNewSpotlight && i === 0) return newcomerHeadline;
+    const j = hasNewSpotlight ? i - 1 : i;
+    return metricHeadlines[j] || metricHeadlines[metricHeadlines.length - 1];
+  });
+
+  const root = document.getElementById("featured-carousel");
+  const carousel = root?.querySelector(".carousel");
+  const track = root?.querySelector(".carousel-viewport .carousel-track") || root?.querySelector(".carousel-track");
+  const dots = root?.querySelector(".carousel-indicators");
+  const prevBtn = carousel?.querySelector(".carousel-prev");
+  const nextBtn = carousel?.querySelector(".carousel-next");
+  if (!root || !carousel || !track || !dots) return;
+
   track.innerHTML = "";
   dots.innerHTML = "";
 
-  picks.forEach((card, i) => {
-    const img = card.querySelector(".thumb").src;
-    const title = card.querySelector("h3").textContent;
-    const desc = card.querySelector("p").textContent;
+  let index = 0;
+  let dragging = false;
+  let activePointerId = null;
+  let startX = 0;
+  let dragDx = 0;
+  let carouselInView = true;
+  let autoplayTimer = null;
+
+  function goTo(i, animate = true) {
+    const n = validPicks.length;
+    index = ((i % n) + n) % n;
+    track.style.transition = animate
+      ? "transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)"
+      : "none";
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.querySelectorAll(".indicator").forEach((d, j) =>
+      d.classList.toggle("active", j === index)
+    );
+  }
+
+  function stopCarouselAutoplay() {
+    if (autoplayTimer !== null) {
+      clearTimeout(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  function armCarouselAutoplay() {
+    stopCarouselAutoplay();
+    if (validPicks.length <= 1) return;
+
+    const step = () => {
+      if (validPicks.length <= 1) return;
+      if (dragging || !carouselInView || document.visibilityState !== "visible") {
+        autoplayTimer = setTimeout(step, 400);
+        return;
+      }
+      goTo(index + 1);
+      autoplayTimer = setTimeout(step, CAROUSEL_AUTOPLAY_MS);
+    };
+
+    autoplayTimer = setTimeout(step, CAROUSEL_AUTOPLAY_MS);
+  }
+
+  function resumeCarouselAfterUserGesture() {
+    stopCarouselAutoplay();
+    if (validPicks.length <= 1) return;
+    autoplayTimer = setTimeout(() => {
+      autoplayTimer = null;
+      armCarouselAutoplay();
+    }, CAROUSEL_RESUME_AFTER_INTERACTION_MS);
+  }
+
+  validPicks.forEach((card, i) => {
+    const img = card.querySelector(".thumb")?.src || "";
+    const title = card.querySelector("h3")?.textContent || "";
+    const desc = card.querySelector("p")?.textContent || "";
+    const safeTitle = escapeHtml(title);
+    const safeDesc = escapeHtml(desc);
+    const ariaLabel = `View ${title}`;
 
     const slide = document.createElement("div");
     slide.className = "carousel-slide";
-
     slide.innerHTML = `
       <div class="featured-slide-content">
-        <div class="featured-label">${labels[i]}</div>
+        <div class="featured-label">${labels[i] || labels[0]}</div>
         <div class="featured-card-preview">
-          <img src="${img}">
-          <h3>${title}</h3>
-          <p>${desc}</p>
-          <button class="featured-cta">See details</button>
+          <button type="button" class="featured-thumb" aria-label="">
+            <img alt="" width="300" height="300" decoding="async" loading="lazy">
+          </button>
+          <h3>${safeTitle}</h3>
+          <p>${safeDesc}</p>
+          <button type="button" class="featured-cta">See details</button>
         </div>
       </div>
     `;
 
-    slide.querySelector(".featured-cta").addEventListener("click", () => {
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
-      card.classList.add("highlight");
-      setTimeout(() => card.classList.remove("highlight"), 1700);
-    });
+    const thumbBtn = slide.querySelector(".featured-thumb");
+    const thumbImg = thumbBtn.querySelector("img");
+    thumbImg.src = img;
+    thumbBtn.setAttribute("aria-label", ariaLabel);
+
+    thumbBtn.addEventListener("click", () => scrollToAppCard(card));
+    slide.querySelector(".featured-cta").addEventListener("click", () =>
+      scrollToAppCard(card)
+    );
 
     track.appendChild(slide);
 
     const dot = document.createElement("div");
     dot.className = "indicator" + (i === 0 ? " active" : "");
+    dot.setAttribute("role", "button");
+    dot.tabIndex = 0;
+    dot.setAttribute("aria-label", `Show slide ${i + 1} of ${validPicks.length}`);
+    dot.addEventListener("click", () => {
+      stopCarouselAutoplay();
+      goTo(i);
+      resumeCarouselAfterUserGesture();
+    });
+    dot.addEventListener("keydown", e => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      stopCarouselAutoplay();
+      goTo(i);
+      resumeCarouselAfterUserGesture();
+    });
     dots.appendChild(dot);
-
-    dot.addEventListener("click", () => goTo(i));
   });
 
-  let index = 0;
-
-  function goTo(i) {
-    index = i;
-    track.style.transition = "transform 0.45s ease";
-    track.style.transform = `translateX(-${i * 100}%)`;
-    dots.querySelectorAll(".indicator").forEach((d, j) =>
-      d.classList.toggle("active", j === i)
-    );
+  function navGo(delta) {
+    stopCarouselAutoplay();
+    goTo(index + delta);
+    resumeCarouselAfterUserGesture();
   }
 
-  let interval = setInterval(() => next(), 5000);
-  const next = () => goTo((index + 1) % picks.length);
+  prevBtn?.addEventListener("click", () => navGo(-1));
+  nextBtn?.addEventListener("click", () => navGo(1));
 
-  document.querySelector(".carousel").addEventListener("mouseenter", () => {
-    clearInterval(interval);
-  });
-
-  document.querySelector(".carousel").addEventListener("mouseleave", () => {
-    interval = setInterval(() => next(), 5000);
-  });
-
-  /* TOUCH SWIPE */
-  let startX = 0;
-  let currentX = 0;
-  let dragging = false;
-
-  track.addEventListener("touchstart", e => {
+  track.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (e.target.closest(".featured-cta")) return;
+    if (e.target.closest(".featured-thumb")) return;
+    activePointerId = e.pointerId;
     dragging = true;
-    startX = e.touches[0].clientX;
-    currentX = startX;
+    dragDx = 0;
+    startX = e.clientX;
+    stopCarouselAutoplay();
     track.style.transition = "none";
+    try {
+      track.setPointerCapture(e.pointerId);
+    } catch (_) {}
   });
 
-  track.addEventListener("touchmove", e => {
-    if (!dragging) return;
-    currentX = e.touches[0].clientX;
-    const dx = currentX - startX;
-    track.style.transform = `translateX(calc(${-index * 100}% + ${dx}px))`;
+  track.addEventListener("pointermove", e => {
+    if (e.pointerId !== activePointerId || !dragging) return;
+    dragDx = e.clientX - startX;
+    track.style.transform = `translateX(calc(${-index * 100}% + ${dragDx}px))`;
   });
 
-  track.addEventListener("touchend", () => {
+  function endPointerDrag(e) {
+    if (e.pointerId !== activePointerId) return;
+    try {
+      track.releasePointerCapture(activePointerId);
+    } catch (_) {}
+    activePointerId = null;
+    const dx = dragDx;
     dragging = false;
-    const dx = currentX - startX;
-    track.style.transition = "transform 0.45s ease";
+    track.style.transition =
+      "transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)";
 
-    if (dx > 60) {
-      index = (index - 1 + picks.length) % picks.length;
-    } else if (dx < -60) {
-      index = (index + 1) % picks.length;
-    }
+    if (dx > 60) goTo(index - 1);
+    else if (dx < -60) goTo(index + 1);
+    else goTo(index);
 
-    goTo(index);
+    dragDx = 0;
+    resumeCarouselAfterUserGesture();
+  }
+
+  track.addEventListener("pointerup", endPointerDrag);
+  track.addEventListener("pointercancel", endPointerDrag);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") stopCarouselAutoplay();
+    else resumeCarouselAfterUserGesture();
+  });
+
+  const io = new IntersectionObserver(
+    entries => {
+      const en = entries[0];
+      carouselInView = !!(en && en.isIntersecting);
+      if (!carouselInView) stopCarouselAutoplay();
+      else resumeCarouselAfterUserGesture();
+    },
+    { threshold: [0, 0.05, 0.25] }
+  );
+  io.observe(root);
+
+  goTo(0, false);
+  armCarouselAutoplay();
+
+  validPicks.forEach((_, si) => {
+    const slide = track.children[si];
+    if (!slide) return;
+    slide._featuredVisible = false;
+    const slideIo = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          const title = entry.target.querySelector("h3")?.textContent || "unknown";
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+            if (!entry.target._featuredVisible) {
+              entry.target._featuredVisible = true;
+              if (typeof gtag === "function") {
+                gtag("event", "featured_slide_view", { slide_title: title });
+              }
+            }
+          } else {
+            entry.target._featuredVisible = false;
+          }
+        });
+      },
+      { threshold: [0, 0.55] }
+    );
+    slideIo.observe(slide);
   });
 }
 
@@ -445,11 +678,19 @@ window.addEventListener("scroll", () => {
   }
 });
 
-/* ========== 8. TRACK: Featured carousel interactions ========== */
-document.querySelectorAll(".featured-cta").forEach(btn => {
-  btn.addEventListener("click", () => {
+/* ========== 8. Featured carousel → analytics (slides built at runtime) ========== */
+document.addEventListener("DOMContentLoaded", () => {
+  const fc = document.getElementById("featured-carousel");
+  if (!fc) return;
+  fc.addEventListener("click", e => {
+    const cta = e.target.closest(".featured-cta");
+    const thumb = e.target.closest(".featured-thumb");
+    if (!cta && !thumb) return;
+    if (typeof gtag !== "function") return;
+    const wrap = e.target.closest(".featured-card-preview");
     gtag("event", "featured_cta_click", {
-      card_title: btn.closest(".featured-card-preview").querySelector("h3")?.textContent
+      card_title: wrap?.querySelector("h3")?.textContent,
+      via: thumb ? "image" : "button"
     });
   });
 });
@@ -475,30 +716,7 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll(".card").forEach(card => observer.observe(card));
 
-/* ========== TRACK: Featured carousel impressions ========== */
-const carouselSlides = document.querySelectorAll(".carousel-slide");
-carouselSlides.forEach((slide, index) => {
-  slide._visible = false;
-});
-
-let carouselObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const title = entry.target.querySelector("h3")?.textContent || "unknown";
-
-      if (!entry.target._visible) {
-        entry.target._visible = true;
-        gtag("event", "featured_slide_view", {
-          slide_title: title
-        });
-      }
-    } else {
-      entry.target._visible = false;
-    }
-  });
-}, { threshold: 0.7 });
-
-carouselSlides.forEach(slide => carouselObserver.observe(slide));
+/* ========== Featured slide impressions: wired inside buildFeaturedCarousel ========== */
 
 /* ========== TRACK: Returning users (D1, D3, D7) ========== */
 const lastVisit = localStorage.getItem("mf_last_visit");

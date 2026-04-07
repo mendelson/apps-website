@@ -1,0 +1,3 @@
+# Local copy of Apps Script with real spreadsheet IDs (never commit)
+scripts/garmin-metrics-cache-sync.private.gs
+scripts/*.private.gs
