@@ -83,22 +83,49 @@ function isApiTextError(s) {
 }
 
 /**
- * Featured carousel “newcomer” slot: the app with the smallest parsed `app_age` (youngest),
- * using only `app_age` — not launch_date. Cards without a usable age are skipped for this slot.
+ * Featured carousel “newcomer” slot: youngest by `app_age` (prefer API `app_age_approx_days` from Apps Script).
+ * launch_date is not used. Ties on age → higher weekly installs, then higher total downloads.
  */
+function getApproxDaysFromApi(api) {
+  if (!api) return null;
+  if (
+    typeof api.app_age_approx_days === "number" &&
+    Number.isFinite(api.app_age_approx_days)
+  ) {
+    return api.app_age_approx_days;
+  }
+  const raw = String(api.app_age || "").trim();
+  if (!raw || isApiTextError(raw)) return null;
+  const approx = appAgeStringToApproxDays(raw);
+  if (!Number.isFinite(approx) || approx < 0) return null;
+  return approx;
+}
+
 function getYoungestAppCardByAge(cards, data) {
   let best = null;
   let bestApprox = Infinity;
+  let bestInstalls = -1;
+  let bestTotal = -1;
+
   for (const card of cards) {
     const api = data[card.dataset.name];
     if (!api) continue;
-    const raw = String(api.app_age || "").trim();
-    if (!raw || isApiTextError(raw)) continue;
-    const approx = appAgeStringToApproxDays(raw);
-    if (!Number.isFinite(approx) || approx < 0) continue;
-    if (approx < bestApprox) {
+    const approx = getApproxDaysFromApi(api);
+    if (approx === null) continue;
+
+    const ins = Number(api.installs_7_days) || 0;
+    const tot = Number(api.total_downloads) || 0;
+
+    const better =
+      approx < bestApprox ||
+      (approx === bestApprox &&
+        (ins > bestInstalls || (ins === bestInstalls && tot > bestTotal)));
+
+    if (better) {
       bestApprox = approx;
       best = card;
+      bestInstalls = ins;
+      bestTotal = tot;
     }
   }
   return best;

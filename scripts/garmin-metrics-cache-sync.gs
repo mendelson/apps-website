@@ -2,6 +2,9 @@
 // doGet includes every column with a valid title; missing/broken numeric cells → 0 in JSON so all apps
 // (e.g. Split Pacer Pro) still match the website even when one metric is #REF! in the cache.
 //
+// IMPORTANT: Saving the script does not update the public URL. Deploy → Manage deployments →
+// Edit (pencil) → New version → Deploy. Run updateCache() after source changes.
+//
 // Spreadsheets (same layout on both — tab "Página1"):
 //   Source: https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc
 //   Cache:  https://docs.google.com/spreadsheets/d/1okrpkfe8TWZSUsfFk3PGG1-FPC_JCQ74gEMMiNxiDe8
@@ -79,6 +82,30 @@ function isValidNumericMetric(displayValue) {
 function safeMetricNumberForJson(displayValue) {
   if (!isValidNumericMetric(displayValue)) return 0;
   return parseMetricNumber(displayValue);
+}
+
+/**
+ * Same logic as the website `appAgeStringToApproxDays` (years/months/days → ~days).
+ * Exposed as `app_age_approx_days` in JSON so the carousel matches the sheet exactly.
+ */
+function appAgeStringToApproxDays(ageStr) {
+  var s = String(ageStr || "");
+  var yMatch = /\b(\d+)\s*years?\b/i.exec(s);
+  var mMatch = /\b(\d+)\s*months?\b/i.exec(s);
+  var dMatch = /\b(\d+)\s*days?\b/i.exec(s);
+  var y = yMatch ? Number(yMatch[1]) : 0;
+  var mo = mMatch ? Number(mMatch[1]) : 0;
+  var d = dMatch ? Number(dMatch[1]) : 0;
+  return y * 365 + mo * 30 + d;
+}
+
+/** null if no usable age (empty / #error / unparsable). */
+function appAgeApproxDaysForJson(displayValue) {
+  if (looksLikeSheetError(displayValue)) return null;
+  var s = String(displayValue || "").trim();
+  if (!s) return null;
+  var days = appAgeStringToApproxDays(s);
+  return typeof days === "number" && isFinite(days) ? days : null;
 }
 
 function updateCache() {
@@ -173,6 +200,7 @@ function doGet(e) {
       installs_7_days: safeMetricNumberForJson(installs),
       users_7_days: safeMetricNumberForJson(users),
       app_age: looksLikeSheetError(appAge) ? "" : appAge,
+      app_age_approx_days: appAgeApproxDaysForJson(appAge),
       launch_date: launchOut,
       launch_date_iso: launch_date_iso
     };
