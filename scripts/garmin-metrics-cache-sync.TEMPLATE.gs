@@ -1,15 +1,14 @@
-// Copy to Google Apps Script only. Do not put real spreadsheet IDs in git.
-// Replace YOUR_SOURCE_ID / YOUR_CACHE_ID / sheet names below.
+// Copy into the Apps Script project (bound or standalone) that serves the web app / doGet.
 //
 // Layout must match your sheet: title in ROW_TITLE at col C, C+3, C+6…
 // (OFFSET_NEXT_APP = 3). Using 4 here was a bug and shifted every app’s metrics.
 
 // CONFIGURAÇÃO -------------------------------------------------
 
-const SOURCE_ID = "YOUR_SOURCE_ID";
+const SOURCE_ID = "1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc";
 const SOURCE_SHEET = "Página1";
 
-const CACHE_ID = "YOUR_CACHE_ID";
+const CACHE_ID = "1okrpkfe8TWZSUsfFk3PGG1-FPC_JCQ74gEMMiNxiDe8";
 const CACHE_SHEET = "Página1";
 
 const ROW_TITLE = 2;
