@@ -1,5 +1,8 @@
 // Copy to Google Apps Script only. Do not put real spreadsheet IDs in git.
 // Replace YOUR_SOURCE_ID / YOUR_CACHE_ID / sheet names below.
+//
+// Layout must match your sheet: title in ROW_TITLE at col C, C+3, C+6…
+// (OFFSET_NEXT_APP = 3). Using 4 here was a bug and shifted every app’s metrics.
 
 // CONFIGURAÇÃO -------------------------------------------------
 
@@ -16,11 +19,53 @@ const ROW_USERS = 6;
 const ROW_APP_AGE = 7;
 const ROW_LAUNCH_DATE = 8;
 
+// Métricas: 1 coluna à direita do título (igual ao script original).
 const OFFSET_METRICS = 1;
-const OFFSET_NEXT_APP = 4;
+// Próximo bloco de app: 3 colunas à frente (igual ao script original).
+const OFFSET_NEXT_APP = 3;
 
 // --------------------------------------------------------------
 
+/** Empty cell or any typical Sheets error (#REF!, #N/A!, #VALUE!, …). */
+function looksLikeSheetError(displayValue) {
+  const t = String(displayValue || "").trim();
+  if (!t) return true;
+  return /^#/.test(t);
+}
+
+/** Parse a numeric metric from getDisplayValue(); commas / NBSP tolerated. */
+function parseMetricNumber(displayValue) {
+  const t = String(displayValue || "")
+    .trim()
+    .replace(/\u00a0/g, "")
+    .replace(/,/g, "");
+  const n = Number(t);
+  return n;
+}
+
+function metricsAreComplete(total, installs, users) {
+  if (
+    looksLikeSheetError(total) ||
+    looksLikeSheetError(installs) ||
+    looksLikeSheetError(users)
+  ) {
+    return false;
+  }
+  const t = parseMetricNumber(total);
+  const i = parseMetricNumber(installs);
+  const u = parseMetricNumber(users);
+  return isFinite(t) && isFinite(i) && isFinite(u);
+}
+
+/** Clears this app’s block in the cache so doGet never serves stale numbers. */
+function clearAppBlockInCache(cache, titleCol, metricCol) {
+  cache.getRange(ROW_TITLE, titleCol).clearContent();
+  cache.getRange(ROW_TOTAL, metricCol).clearContent();
+  cache.getRange(ROW_INSTALLS, metricCol).clearContent();
+  cache.getRange(ROW_USERS, metricCol).clearContent();
+  cache.getRange(ROW_APP_AGE, metricCol).clearContent();
+  cache.getRange(ROW_LAUNCH_DATE, metricCol).clearContent();
+}
 
 function updateCache() {
   const source = SpreadsheetApp.openById(SOURCE_ID).getSheetByName(SOURCE_SHEET);
@@ -44,20 +89,21 @@ function updateCache() {
 
     const launchSrc = source.getRange(ROW_LAUNCH_DATE, metricCol);
 
-    const invalid = ["", "#REF!", "#N/A", "#ERROR!"];
-
-    const incomplete =
-      invalid.includes(total) ||
-      invalid.includes(installs) ||
-      invalid.includes(users);
-
-    if (!incomplete) {
+    if (metricsAreComplete(total, installs, users)) {
       cache.getRange(ROW_TITLE, col).setValue(title);
       cache.getRange(ROW_TOTAL, metricCol).setValue(total);
       cache.getRange(ROW_INSTALLS, metricCol).setValue(installs);
       cache.getRange(ROW_USERS, metricCol).setValue(users);
-      cache.getRange(ROW_APP_AGE, metricCol).setValue(appAge);
+
+      if (!looksLikeSheetError(appAge)) {
+        cache.getRange(ROW_APP_AGE, metricCol).setValue(appAge);
+      } else {
+        cache.getRange(ROW_APP_AGE, metricCol).clearContent();
+      }
+
       cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
+    } else {
+      clearAppBlockInCache(cache, col, metricCol);
     }
 
     col += OFFSET_NEXT_APP;
@@ -89,16 +135,21 @@ function doGet(e) {
     const launchVal = launchCell.getValue();
     const launchDisplay = launchCell.getDisplayValue().trim();
 
+    if (!metricsAreComplete(total, installs, users)) {
+      col += OFFSET_NEXT_APP;
+      continue;
+    }
+
     let launch_date_iso = null;
     if (launchVal instanceof Date && !isNaN(launchVal.getTime())) {
       launch_date_iso = Utilities.formatDate(launchVal, tz, "yyyy-MM-dd");
     }
 
     apps[title] = {
-      total_downloads: Number(total),
-      installs_7_days: Number(installs),
-      users_7_days: Number(users),
-      app_age: appAge,
+      total_downloads: parseMetricNumber(total),
+      installs_7_days: parseMetricNumber(installs),
+      users_7_days: parseMetricNumber(users),
+      app_age: looksLikeSheetError(appAge) ? "" : appAge,
       launch_date: launchDisplay,
       launch_date_iso: launch_date_iso
     };
