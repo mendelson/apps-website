@@ -9,11 +9,10 @@
 //   Source: https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc
 //   Cache:  https://docs.google.com/spreadsheets/d/1okrpkfe8TWZSUsfFk3PGG1-FPC_JCQ74gEMMiNxiDe8
 //
-// Layout (row numbers 1-based):
-//   Row ROW_TITLE: app names in consecutive columns from B onward (2, 3, 4, …).
-//   Rows ROW_TOTAL…ROW_LAUNCH_DATE: alternating label | value columns — for a title
-//   in column `col`, the metric VALUES live in column (2*col - 1), not col+1.
-//   Example: title B2 → totals in C4…C8; title C2 → totals in E4…E8; title D2 → G4…G8.
+// Layout (row numbers 1-based) — verified via public CSV export of the cache:
+//   Row ROW_TITLE: app name in columns 2, 6, 10, 14, … (every 4 cols from B).
+//   Rows ROW_TOTAL…ROW_LAUNCH_DATE: the VALUES for that app are in column titleCol + 1
+//   (e.g. title in B → metrics in C; title in F → metrics in G).
 
 // CONFIGURAÇÃO -------------------------------------------------
 
@@ -42,11 +41,11 @@ const MIN_TITLE_SCAN_LAST_COL = 40;
 // --------------------------------------------------------------
 
 /**
- * Column index (1-based) where numeric values for metrics live, given the title column.
- * Matches alternating label/value columns in rows ROW_TOTAL…ROW_LAUNCH_DATE.
+ * Column index (1-based) where metric values live for a title in `titleCol`.
+ * Cache layout: title col 2,6,10,… and values in the very next column (titleCol + 1).
  */
 function metricValueColumn(titleCol) {
-  return 2 * titleCol - 1;
+  return titleCol + 1;
 }
 
 /** Empty cell or any typical Sheets error (#REF!, #N/A!, #VALUE!, …). */
