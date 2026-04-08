@@ -328,8 +328,8 @@ const MAX_FEATURED_SLIDES = 4;
 /** Badge + carousel headline per slide reason (reason = why this app was chosen). */
 const FEATURED_REASON_COPY = {
   new: {
-    badge: { emoji: "✨", word: "Just launched", class: "fresh" },
-    headline: "✨ New on Connect IQ — jump in early"
+    badge: { emoji: "✨", word: "Newly launched", class: "fresh" },
+    headline: "✨ Newly launched"
   },
   installs: {
     badge: { emoji: "🔥", word: "Trending", class: "trending" },
