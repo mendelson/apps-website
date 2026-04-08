@@ -32,6 +32,12 @@ function looksLikeSheetError(displayValue) {
   return /^#/.test(t);
 }
 
+/** Only formula error displays (#…); empty string is not an error here. */
+function isFormulaErrorDisplay(displayValue) {
+  const t = String(displayValue || "").trim();
+  return /^#/.test(t);
+}
+
 /** Parse a numeric metric from getDisplayValue(); commas / NBSP tolerated. */
 function parseMetricNumber(displayValue) {
   const t = String(displayValue || "")
@@ -56,16 +62,6 @@ function metricsAreComplete(total, installs, users) {
   return isFinite(t) && isFinite(i) && isFinite(u);
 }
 
-/** Clears this app’s block in the cache so doGet never serves stale numbers. */
-function clearAppBlockInCache(cache, titleCol, metricCol) {
-  cache.getRange(ROW_TITLE, titleCol).clearContent();
-  cache.getRange(ROW_TOTAL, metricCol).clearContent();
-  cache.getRange(ROW_INSTALLS, metricCol).clearContent();
-  cache.getRange(ROW_USERS, metricCol).clearContent();
-  cache.getRange(ROW_APP_AGE, metricCol).clearContent();
-  cache.getRange(ROW_LAUNCH_DATE, metricCol).clearContent();
-}
-
 function updateCache() {
   const source = SpreadsheetApp.openById(SOURCE_ID).getSheetByName(SOURCE_SHEET);
   const cache = SpreadsheetApp.openById(CACHE_ID).getSheetByName(CACHE_SHEET);
@@ -87,22 +83,22 @@ function updateCache() {
     const appAge = source.getRange(ROW_APP_AGE, metricCol).getDisplayValue().trim();
 
     const launchSrc = source.getRange(ROW_LAUNCH_DATE, metricCol);
+    const launchDisplay = launchSrc.getDisplayValue().trim();
 
+    // Source broken → leave cache unchanged for this app (no clear, no overwrite).
     if (metricsAreComplete(total, installs, users)) {
       cache.getRange(ROW_TITLE, col).setValue(title);
       cache.getRange(ROW_TOTAL, metricCol).setValue(total);
       cache.getRange(ROW_INSTALLS, metricCol).setValue(installs);
       cache.getRange(ROW_USERS, metricCol).setValue(users);
 
-      if (!looksLikeSheetError(appAge)) {
+      if (!isFormulaErrorDisplay(appAge)) {
         cache.getRange(ROW_APP_AGE, metricCol).setValue(appAge);
-      } else {
-        cache.getRange(ROW_APP_AGE, metricCol).clearContent();
       }
 
-      cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
-    } else {
-      clearAppBlockInCache(cache, col, metricCol);
+      if (!isFormulaErrorDisplay(launchDisplay)) {
+        cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
+      }
     }
 
     col += OFFSET_NEXT_APP;
