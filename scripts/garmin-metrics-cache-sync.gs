@@ -1,4 +1,6 @@
 // Garmin metrics: sync source → cache sheet + doGet JSON (Apps Script).
+// doGet includes every column with a valid title; missing/broken numeric cells → 0 in JSON so all apps
+// (e.g. Split Pacer Pro) still match the website even when one metric is #REF! in the cache.
 //
 // Spreadsheets (same layout on both — tab "Página1"):
 //   Source: https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc
@@ -61,25 +63,16 @@ function parseMetricNumber(displayValue) {
   return n;
 }
 
-/** True only if all three are present, not #errors, and parse as finite numbers (for doGet). */
-function metricsAreComplete(total, installs, users) {
-  if (
-    looksLikeSheetError(total) ||
-    looksLikeSheetError(installs) ||
-    looksLikeSheetError(users)
-  ) {
-    return false;
-  }
-  const t = parseMetricNumber(total);
-  const i = parseMetricNumber(installs);
-  const u = parseMetricNumber(users);
-  return isFinite(t) && isFinite(i) && isFinite(u);
-}
-
 /** One numeric cell: OK to copy from source → cache (not empty/#… and parses as a finite number). */
 function isValidNumericMetric(displayValue) {
   if (looksLikeSheetError(displayValue)) return false;
   return isFinite(parseMetricNumber(displayValue));
+}
+
+/** JSON output: finite number, or 0 if cache cell is empty / #error (app still appears on the site). */
+function safeMetricNumberForJson(displayValue) {
+  if (!isValidNumericMetric(displayValue)) return 0;
+  return parseMetricNumber(displayValue);
 }
 
 function updateCache() {
@@ -158,22 +151,19 @@ function doGet(e) {
     const launchVal = launchCell.getValue();
     const launchDisplay = launchCell.getDisplayValue().trim();
 
-    if (!metricsAreComplete(total, installs, users)) {
-      col += OFFSET_NEXT_TITLE_COL;
-      continue;
-    }
-
     let launch_date_iso = null;
     if (launchVal instanceof Date && !isNaN(launchVal.getTime())) {
       launch_date_iso = Utilities.formatDate(launchVal, tz, "yyyy-MM-dd");
     }
 
+    const launchOut = isFormulaErrorDisplay(launchDisplay) ? "" : launchDisplay;
+
     apps[title] = {
-      total_downloads: parseMetricNumber(total),
-      installs_7_days: parseMetricNumber(installs),
-      users_7_days: parseMetricNumber(users),
+      total_downloads: safeMetricNumberForJson(total),
+      installs_7_days: safeMetricNumberForJson(installs),
+      users_7_days: safeMetricNumberForJson(users),
       app_age: looksLikeSheetError(appAge) ? "" : appAge,
-      launch_date: launchDisplay,
+      launch_date: launchOut,
       launch_date_iso: launch_date_iso
     };
 
