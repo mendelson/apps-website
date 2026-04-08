@@ -187,7 +187,7 @@ function loadMetrics() {
   window._mfMetricsPromise = (async function() {
     try {
       /* === Load from new API === */
-      const apiUrl = "https://script.google.com/macros/s/AKfycbzZj8VNCXc5lHh_BVehMcil58QjojygB8ktV_m3XfIdClNCIy1gReOI7tM2u_Xf3gqy/exec";
+      const apiUrl = "https://script.google.com/macros/s/AKfycbzgMu_lEW_1zrJjWZX8Sy9hPCojsaARKaitpz5_nBshTZOc8g5C6BHndlNyvFnX4aEb/exec";
       const data = await fetch(apiUrl).then(r => r.json());
 
       const allCards = [...document.querySelectorAll('.card')];
