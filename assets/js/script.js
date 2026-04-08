@@ -171,22 +171,28 @@ function loadMetrics() {
           return;
         }
 
-        const total = api.total_downloads;
-        const installs = api.installs_7_days;
-        const users = api.users_7_days;
+        const total = Number(api.total_downloads) || 0;
+        const installs = Number(api.installs_7_days) || 0;
+        const users = Number(api.users_7_days) || 0;
 
         const metrics = card.querySelector('.metrics');
         const tag = card.querySelector(".momentum-tag");
         const tip = card.querySelector(".tooltip");
 
-        metrics.dataset.total = total;
-        metrics.dataset.installs = installs;
-        metrics.dataset.users = users;
+        metrics.dataset.total = String(total);
+        metrics.dataset.installs = String(installs);
+        metrics.dataset.users = String(users);
 
         metrics.style.display = "none"; // raw numbers hidden
 
         /* === MOMENTUM TAG === */
         let level = null;
+
+        tag.classList.remove(
+          "momentum-hot",
+          "momentum-strong",
+          "momentum-positive"
+        );
 
         if (installs >= 50) {
           level = "trending";
@@ -290,6 +296,30 @@ function adaptTooltipPosition(tag, tip) {
 
 const MAX_FEATURED_SLIDES = 4;
 
+/** Badge + carousel headline per slide reason (reason = why this app was chosen). */
+const FEATURED_REASON_COPY = {
+  new: {
+    badge: { emoji: "✨", word: "Just launched", class: "fresh" },
+    headline: "✨ New on Connect IQ — jump in early"
+  },
+  installs: {
+    badge: { emoji: "🔥", word: "Trending", class: "trending" },
+    headline: "🔥 Popular This Week"
+  },
+  total: {
+    badge: { emoji: "🏆", word: "Popular", class: "popular" },
+    headline: "🏆 All-Time Favorite"
+  },
+  users: {
+    badge: { emoji: "💪", word: "Consistent", class: "consistent" },
+    headline: "💪 Athletes keep using it"
+  },
+  spotlight: {
+    badge: { emoji: "⭐", word: "Featured", class: "trending" },
+    headline: "⭐ Strong weekly installs"
+  }
+};
+
 /**
  * Featured carousel: up to 4 slides, each a different `.card` (no duplicates).
  * If a qualifying “new” app exists (API `app_age`), it gets the first slide.
@@ -309,62 +339,30 @@ function buildFeaturedCarousel(data) {
       ? getYoungestNewLaunchCard(cards, data)
       : null;
 
-  const picks = [];
-  const add = c => {
-    if (!c) return;
-    if (picks.includes(c)) return;
-    if (picks.length >= MAX_FEATURED_SLIDES) return;
-    picks.push(c);
+  /** @type {{ card: Element, reason: keyof typeof FEATURED_REASON_COPY }[]} */
+  const entries = [];
+  const hasCard = c => entries.some(e => e.card === c);
+  const pushEntry = (card, reason) => {
+    if (!card || hasCard(card) || entries.length >= MAX_FEATURED_SLIDES) return;
+    entries.push({ card, reason });
   };
 
-  if (newcomer) add(newcomer);
-  add(byInstalls[0]);
-  add(byTotal.find(c => !picks.includes(c)));
-  add(byUsers.find(c => !picks.includes(c)));
-  for (let i = 0; i < byInstalls.length && picks.length < MAX_FEATURED_SLIDES; i++) {
-    add(byInstalls[i]);
+  if (newcomer) pushEntry(newcomer, "new");
+
+  const topInstalls = byInstalls.find(c => !hasCard(c));
+  if (topInstalls) pushEntry(topInstalls, "installs");
+
+  const topTotal = byTotal.find(c => !hasCard(c));
+  if (topTotal) pushEntry(topTotal, "total");
+
+  const topUsers = byUsers.find(c => !hasCard(c));
+  if (topUsers) pushEntry(topUsers, "users");
+
+  for (let i = 0; i < byInstalls.length && entries.length < MAX_FEATURED_SLIDES; i++) {
+    pushEntry(byInstalls[i], "spotlight");
   }
 
-  const validPicks = picks.filter(Boolean);
-  if (validPicks.length === 0) return;
-
-  const hasNewSpotlight = newcomer && validPicks[0] === newcomer;
-
-  const metricBadgeMeta = [
-    { emoji: "🔥", word: "Trending", class: "trending" },
-    { emoji: "🏆", word: "Popular", class: "popular" },
-    { emoji: "💪", word: "Consistent", class: "consistent" },
-    { emoji: "⭐", word: "Momentum", class: "trending" }
-  ];
-
-  const newcomerHeadline =
-    "✨ New on Connect IQ — jump in early";
-  const metricHeadlines = [
-    "🔥 Popular This Week",
-    "🏆 All-Time Favorite",
-    "💪 Athletes keep using it",
-    "⭐ Strong weekly installs"
-  ];
-
-  validPicks.forEach((card, i) => {
-    let badgeMeta;
-    if (hasNewSpotlight && i === 0) {
-      badgeMeta = { emoji: "✨", word: "Just launched", class: "fresh" };
-    } else {
-      const j = hasNewSpotlight ? i - 1 : i;
-      badgeMeta = metricBadgeMeta[j] || metricBadgeMeta[metricBadgeMeta.length - 1];
-    }
-    const badge = document.createElement("div");
-    badge.className = `card-badge ${badgeMeta.class}`;
-    badge.textContent = `${badgeMeta.emoji} ${badgeMeta.word}`;
-    card.appendChild(badge);
-  });
-
-  const labels = validPicks.map((_, i) => {
-    if (hasNewSpotlight && i === 0) return newcomerHeadline;
-    const j = hasNewSpotlight ? i - 1 : i;
-    return metricHeadlines[j] || metricHeadlines[metricHeadlines.length - 1];
-  });
+  if (entries.length === 0) return;
 
   const root = document.getElementById("featured-carousel");
   const carousel = root?.querySelector(".carousel");
@@ -374,6 +372,14 @@ function buildFeaturedCarousel(data) {
   const nextBtn = carousel?.querySelector(".carousel-next");
   if (!root || !carousel || !track || !dots) return;
 
+  entries.forEach(({ card, reason }) => {
+    const copy = FEATURED_REASON_COPY[reason];
+    const badge = document.createElement("div");
+    badge.className = `card-badge ${copy.badge.class}`;
+    badge.textContent = `${copy.badge.emoji} ${copy.badge.word}`;
+    card.appendChild(badge);
+  });
+
   track.innerHTML = "";
   dots.innerHTML = "";
 
@@ -381,12 +387,15 @@ function buildFeaturedCarousel(data) {
   let dragging = false;
   let activePointerId = null;
   let startX = 0;
+  let startY = 0;
   let dragDx = 0;
+  let swipeBeganOnThumb = false;
+  let suppressNextThumbClick = false;
   let carouselInView = true;
   let autoplayTimer = null;
 
   function goTo(i, animate = true) {
-    const n = validPicks.length;
+    const n = entries.length;
     index = ((i % n) + n) % n;
     track.style.transition = animate
       ? "transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)"
@@ -406,10 +415,10 @@ function buildFeaturedCarousel(data) {
 
   function armCarouselAutoplay() {
     stopCarouselAutoplay();
-    if (validPicks.length <= 1) return;
+    if (entries.length <= 1) return;
 
     const step = () => {
-      if (validPicks.length <= 1) return;
+      if (entries.length <= 1) return;
       if (dragging || !carouselInView || document.visibilityState !== "visible") {
         autoplayTimer = setTimeout(step, 400);
         return;
@@ -423,14 +432,15 @@ function buildFeaturedCarousel(data) {
 
   function resumeCarouselAfterUserGesture() {
     stopCarouselAutoplay();
-    if (validPicks.length <= 1) return;
+    if (entries.length <= 1) return;
     autoplayTimer = setTimeout(() => {
       autoplayTimer = null;
       armCarouselAutoplay();
     }, CAROUSEL_RESUME_AFTER_INTERACTION_MS);
   }
 
-  validPicks.forEach((card, i) => {
+  entries.forEach(({ card, reason }, i) => {
+    const headline = FEATURED_REASON_COPY[reason].headline;
     const img = card.querySelector(".thumb")?.src || "";
     const title = card.querySelector("h3")?.textContent || "";
     const desc = card.querySelector("p")?.textContent || "";
@@ -442,7 +452,7 @@ function buildFeaturedCarousel(data) {
     slide.className = "carousel-slide";
     slide.innerHTML = `
       <div class="featured-slide-content">
-        <div class="featured-label">${labels[i] || labels[0]}</div>
+        <div class="featured-label">${headline}</div>
         <div class="featured-card-preview">
           <button type="button" class="featured-thumb" aria-label="">
             <img alt="" width="300" height="300" decoding="async" loading="lazy">
@@ -459,7 +469,16 @@ function buildFeaturedCarousel(data) {
     thumbImg.src = img;
     thumbBtn.setAttribute("aria-label", ariaLabel);
 
-    thumbBtn.addEventListener("click", () => scrollToAppCard(card));
+    slide._featuredLinkedCard = card;
+    thumbBtn.addEventListener("click", e => {
+      if (suppressNextThumbClick) {
+        e.preventDefault();
+        e.stopPropagation();
+        suppressNextThumbClick = false;
+        return;
+      }
+      scrollToAppCard(card);
+    });
     slide.querySelector(".featured-cta").addEventListener("click", () =>
       scrollToAppCard(card)
     );
@@ -470,7 +489,7 @@ function buildFeaturedCarousel(data) {
     dot.className = "indicator" + (i === 0 ? " active" : "");
     dot.setAttribute("role", "button");
     dot.tabIndex = 0;
-    dot.setAttribute("aria-label", `Show slide ${i + 1} of ${validPicks.length}`);
+    dot.setAttribute("aria-label", `Show slide ${i + 1} of ${entries.length}`);
     dot.addEventListener("click", () => {
       stopCarouselAutoplay();
       goTo(i);
@@ -495,14 +514,64 @@ function buildFeaturedCarousel(data) {
   prevBtn?.addEventListener("click", () => navGo(-1));
   nextBtn?.addEventListener("click", () => navGo(1));
 
+  const CAROUSEL_TAP_SLOP_PX = 22;
+
+  function endPointerDrag(e) {
+    if (e.pointerId !== activePointerId) return;
+    try {
+      track.releasePointerCapture(activePointerId);
+    } catch (_) {}
+    activePointerId = null;
+    const dx = dragDx;
+    const dy = e.clientY - startY;
+    const beganOnThumb = swipeBeganOnThumb;
+    swipeBeganOnThumb = false;
+    dragging = false;
+    track.style.transition =
+      "transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)";
+
+    const isTap =
+      beganOnThumb &&
+      Math.abs(dx) < CAROUSEL_TAP_SLOP_PX &&
+      Math.abs(dy) < CAROUSEL_TAP_SLOP_PX;
+
+    if (isTap) {
+      const slide = track.children[index];
+      const linked = slide?._featuredLinkedCard;
+      if (linked) {
+        suppressNextThumbClick = true;
+        scrollToAppCard(linked);
+        setTimeout(() => {
+          suppressNextThumbClick = false;
+        }, 400);
+      }
+      goTo(index);
+    } else if (dx > 60) goTo(index - 1);
+    else if (dx < -60) goTo(index + 1);
+    else goTo(index);
+
+    dragDx = 0;
+    resumeCarouselAfterUserGesture();
+  }
+
+  function onDocumentPointerEnd(e) {
+    if (!dragging || activePointerId === null) return;
+    if (e.pointerId !== activePointerId) return;
+    endPointerDrag(e);
+  }
+
+  document.addEventListener("pointerup", onDocumentPointerEnd, true);
+  document.addEventListener("pointercancel", onDocumentPointerEnd, true);
+
   track.addEventListener("pointerdown", e => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     if (e.target.closest(".featured-cta")) return;
-    if (e.target.closest(".featured-thumb")) return;
     activePointerId = e.pointerId;
     dragging = true;
     dragDx = 0;
     startX = e.clientX;
+    startY = e.clientY;
+    swipeBeganOnThumb = !!e.target.closest(".featured-thumb");
     stopCarouselAutoplay();
     track.style.transition = "none";
     try {
@@ -516,27 +585,11 @@ function buildFeaturedCarousel(data) {
     track.style.transform = `translateX(calc(${-index * 100}% + ${dragDx}px))`;
   });
 
-  function endPointerDrag(e) {
-    if (e.pointerId !== activePointerId) return;
-    try {
-      track.releasePointerCapture(activePointerId);
-    } catch (_) {}
-    activePointerId = null;
-    const dx = dragDx;
-    dragging = false;
-    track.style.transition =
-      "transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1)";
-
-    if (dx > 60) goTo(index - 1);
-    else if (dx < -60) goTo(index + 1);
-    else goTo(index);
-
-    dragDx = 0;
-    resumeCarouselAfterUserGesture();
-  }
-
   track.addEventListener("pointerup", endPointerDrag);
   track.addEventListener("pointercancel", endPointerDrag);
+  track.addEventListener("lostpointercapture", e => {
+    if (dragging && e.pointerId === activePointerId) endPointerDrag(e);
+  });
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") stopCarouselAutoplay();
@@ -544,20 +597,22 @@ function buildFeaturedCarousel(data) {
   });
 
   const io = new IntersectionObserver(
-    entries => {
-      const en = entries[0];
+    ioEntries => {
+      const en = ioEntries[0];
       carouselInView = !!(en && en.isIntersecting);
       if (!carouselInView) stopCarouselAutoplay();
       else resumeCarouselAfterUserGesture();
     },
-    { threshold: [0, 0.05, 0.25] }
+    { threshold: 0, rootMargin: "80px 0px 80px 0px" }
   );
   io.observe(root);
 
   goTo(0, false);
-  armCarouselAutoplay();
+  requestAnimationFrame(() => {
+    armCarouselAutoplay();
+  });
 
-  validPicks.forEach((_, si) => {
+  entries.forEach((_, si) => {
     const slide = track.children[si];
     if (!slide) return;
     slide._featuredVisible = false;

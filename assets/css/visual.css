@@ -243,7 +243,8 @@ nav a:hover {
   width: 100%;
   max-width: 520px;
   margin: 30px auto;
-  padding: 0 8px;
+  /* Horizontal padding leaves room for prev/next on narrow screens */
+  padding: 0 42px;
   box-sizing: border-box;
 }
 
@@ -262,13 +263,13 @@ nav a:hover {
 }
 
 .carousel-nav {
-  display: none;
+  display: flex;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 3;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -308,14 +309,16 @@ nav a:hover {
   }
 
   .carousel-nav {
-    display: flex;
+    width: 44px;
+    height: 44px;
   }
 }
 
 .carousel-track {
   display: flex;
   transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
-  touch-action: pan-y;
+  /* Let vertical scroll pass to the page; horizontal swipes stay with JS (see pointer handlers). */
+  touch-action: pan-y pinch-zoom;
   user-select: none;
   -webkit-user-select: none;
   cursor: grab;
@@ -396,21 +399,29 @@ nav a:hover {
 .carousel-indicators {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 12px;
-  gap: 8px;
+  gap: 4px;
+  padding: 6px 0;
 }
 
 .indicator {
-  width: 10px;
-  height: 10px;
-  background: #555;
+  /* ~44px touch target; visible dot stays 12px in the content box */
+  width: 12px;
+  height: 12px;
+  padding: 16px;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: #555;
+  border: none;
   border-radius: 50%;
   cursor: pointer;
-  transition: background 0.25s ease;
+  transition: background-color 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .indicator.active {
-  background: #fff;
+  background-color: #fff;
 }
 
 /* ===========================
