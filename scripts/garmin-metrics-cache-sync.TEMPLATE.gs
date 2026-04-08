@@ -1,7 +1,7 @@
 // Copy into the Apps Script project (bound or standalone) that serves the web app / doGet.
 //
-// Layout must match your sheet: title in ROW_TITLE at col C, C+3, C+6…
-// (OFFSET_NEXT_APP = 3). Using 4 here was a bug and shifted every app’s metrics.
+// Layout must match on BOTH source and cache: same ROW_* and title columns C, C+3, C+6…
+// (OFFSET_NEXT_APP = 3). If labels sit on different rows in one of the sheets, adjust ROW_*.
 
 // CONFIGURAÇÃO -------------------------------------------------
 
@@ -48,6 +48,7 @@ function parseMetricNumber(displayValue) {
   return n;
 }
 
+/** True only if all three are present, not #errors, and parse as finite numbers (for doGet). */
 function metricsAreComplete(total, installs, users) {
   if (
     looksLikeSheetError(total) ||
@@ -62,6 +63,12 @@ function metricsAreComplete(total, installs, users) {
   return isFinite(t) && isFinite(i) && isFinite(u);
 }
 
+/** One numeric cell: OK to copy from source → cache (not empty/#… and parses as a finite number). */
+function isValidNumericMetric(displayValue) {
+  if (looksLikeSheetError(displayValue)) return false;
+  return isFinite(parseMetricNumber(displayValue));
+}
+
 function updateCache() {
   const source = SpreadsheetApp.openById(SOURCE_ID).getSheetByName(SOURCE_SHEET);
   const cache = SpreadsheetApp.openById(CACHE_ID).getSheetByName(CACHE_SHEET);
@@ -72,6 +79,11 @@ function updateCache() {
     const title = source.getRange(ROW_TITLE, col).getDisplayValue().trim();
     if (!title) {
       col++;
+      continue;
+    }
+    // Title is #REF! etc. → do not touch this app block in the cache at all.
+    if (isFormulaErrorDisplay(title)) {
+      col += OFFSET_NEXT_APP;
       continue;
     }
 
@@ -85,20 +97,26 @@ function updateCache() {
     const launchSrc = source.getRange(ROW_LAUNCH_DATE, metricCol);
     const launchDisplay = launchSrc.getDisplayValue().trim();
 
-    // Source broken → leave cache unchanged for this app (no clear, no overwrite).
-    if (metricsAreComplete(total, installs, users)) {
-      cache.getRange(ROW_TITLE, col).setValue(title);
+    // Per-field sync: only overwrite cache cells whose source values are valid.
+    // Errored or empty metrics are skipped so the cache keeps the previous value.
+    cache.getRange(ROW_TITLE, col).setValue(title);
+
+    if (isValidNumericMetric(total)) {
       cache.getRange(ROW_TOTAL, metricCol).setValue(total);
+    }
+    if (isValidNumericMetric(installs)) {
       cache.getRange(ROW_INSTALLS, metricCol).setValue(installs);
+    }
+    if (isValidNumericMetric(users)) {
       cache.getRange(ROW_USERS, metricCol).setValue(users);
+    }
 
-      if (!isFormulaErrorDisplay(appAge)) {
-        cache.getRange(ROW_APP_AGE, metricCol).setValue(appAge);
-      }
+    if (!isFormulaErrorDisplay(appAge)) {
+      cache.getRange(ROW_APP_AGE, metricCol).setValue(appAge);
+    }
 
-      if (!isFormulaErrorDisplay(launchDisplay)) {
-        cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
-      }
+    if (!isFormulaErrorDisplay(launchDisplay)) {
+      cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
     }
 
     col += OFFSET_NEXT_APP;
