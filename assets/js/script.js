@@ -47,9 +47,6 @@ function initExternalLinks() {
 
 const CAROUSEL_AUTOPLAY_MS = 6500;
 const CAROUSEL_RESUME_AFTER_INTERACTION_MS = 4200;
-/** “Just launched” if parsed `app_age` is at most this many months (sheet uses ~30 days/month). */
-const NEW_APP_MAX_AGE_MONTHS = 6;
-const NEW_APP_MAX_APPROX_DAYS = NEW_APP_MAX_AGE_MONTHS * 30;
 
 function scrollToAppCard(card) {
   if (!card) return;
@@ -79,21 +76,26 @@ function appAgeStringToApproxDays(ageStr) {
   return y * 365 + mo * 30 + d;
 }
 
-function isJustLaunchedFromAppAge(ageStr) {
-  const s = String(ageStr || "").trim();
-  if (!s) return false;
-  const approx = appAgeStringToApproxDays(s);
-  return approx >= 0 && approx <= NEW_APP_MAX_APPROX_DAYS;
+/** Sheet formula error in a text field copied to JSON. */
+function isApiTextError(s) {
+  const t = String(s || "").trim();
+  return t.length > 0 && /^#/.test(t);
 }
 
-/** Single “newest in window” card for the featured carousel (smallest parsed age). */
-function getYoungestNewLaunchCard(cards, data) {
+/**
+ * Featured carousel “newcomer” slot: the app with the smallest parsed `app_age` (youngest),
+ * using only `app_age` — not launch_date. Cards without a usable age are skipped for this slot.
+ */
+function getYoungestAppCardByAge(cards, data) {
   let best = null;
   let bestApprox = Infinity;
   for (const card of cards) {
     const api = data[card.dataset.name];
-    if (!api || !isJustLaunchedFromAppAge(api.app_age)) continue;
-    const approx = appAgeStringToApproxDays(api.app_age);
+    if (!api) continue;
+    const raw = String(api.app_age || "").trim();
+    if (!raw || isApiTextError(raw)) continue;
+    const approx = appAgeStringToApproxDays(raw);
+    if (!Number.isFinite(approx) || approx < 0) continue;
     if (approx < bestApprox) {
       bestApprox = approx;
       best = card;
@@ -322,7 +324,7 @@ const FEATURED_REASON_COPY = {
 
 /**
  * Featured carousel: up to 4 slides, each a different `.card` (no duplicates).
- * If a qualifying “new” app exists (API `app_age`), it gets the first slide.
+ * First slide: app with the smallest parsed API `app_age` (youngest); launch_date is not used.
  */
 function buildFeaturedCarousel(data) {
   document.querySelectorAll(".card-badge").forEach(b => b.remove());
@@ -336,7 +338,7 @@ function buildFeaturedCarousel(data) {
 
   const newcomer =
     data && typeof data === "object"
-      ? getYoungestNewLaunchCard(cards, data)
+      ? getYoungestAppCardByAge(cards, data)
       : null;
 
   /** @type {{ card: Element, reason: keyof typeof FEATURED_REASON_COPY }[]} */

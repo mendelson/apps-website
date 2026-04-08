@@ -30,6 +30,12 @@ const ROW_LAUNCH_DATE = 8;
 /** Next app title is one column to the right (B → C → D …). */
 const OFFSET_NEXT_TITLE_COL = 1;
 
+/**
+ * getLastColumn() can stop early if the rightmost titles/metrics are sparse; scan at least this far
+ * so later apps (e.g. Split Pacer Pro) are still read and emitted.
+ */
+const MIN_TITLE_SCAN_LAST_COL = 40;
+
 // --------------------------------------------------------------
 
 /**
@@ -79,7 +85,7 @@ function updateCache() {
   const source = SpreadsheetApp.openById(SOURCE_ID).getSheetByName(SOURCE_SHEET);
   const cache = SpreadsheetApp.openById(CACHE_ID).getSheetByName(CACHE_SHEET);
 
-  const maxColumns = source.getLastColumn();
+  const maxColumns = Math.max(source.getLastColumn(), MIN_TITLE_SCAN_LAST_COL);
 
   for (let col = 1; col <= maxColumns; ) {
     const title = source.getRange(ROW_TITLE, col).getDisplayValue().trim();
@@ -128,7 +134,7 @@ function updateCache() {
 
 function doGet(e) {
   const cache = SpreadsheetApp.openById(CACHE_ID).getSheetByName(CACHE_SHEET);
-  const maxColumns = cache.getLastColumn();
+  const maxColumns = Math.max(cache.getLastColumn(), MIN_TITLE_SCAN_LAST_COL);
   const tz = Session.getScriptTimeZone();
 
   const apps = {};
@@ -136,6 +142,10 @@ function doGet(e) {
   for (let col = 1; col <= maxColumns; ) {
     const title = cache.getRange(ROW_TITLE, col).getDisplayValue().trim();
     if (!title) {
+      col++;
+      continue;
+    }
+    if (isFormulaErrorDisplay(title)) {
       col++;
       continue;
     }
