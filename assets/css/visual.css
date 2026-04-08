@@ -341,8 +341,13 @@ nav a:hover {
 
 .featured-label {
   font-size: 18px;
+  line-height: 1.25;
   margin-bottom: 8px;
   opacity: 0.9;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .featured-thumb {
