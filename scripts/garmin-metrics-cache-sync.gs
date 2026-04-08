@@ -1,7 +1,14 @@
-// Copy into the Apps Script project (bound or standalone) that serves the web app / doGet.
+// Garmin metrics: sync source → cache sheet + doGet JSON (Apps Script).
 //
-// Layout must match on BOTH source and cache: same ROW_* and title columns C, C+3, C+6…
-// (OFFSET_NEXT_APP = 3). If labels sit on different rows in one of the sheets, adjust ROW_*.
+// Spreadsheets (same layout on both — tab "Página1"):
+//   Source: https://docs.google.com/spreadsheets/d/1ss0plcKrV5QZmty1uoQ9AtzKIpd0PE1QwDV9U4NWlmc
+//   Cache:  https://docs.google.com/spreadsheets/d/1okrpkfe8TWZSUsfFk3PGG1-FPC_JCQ74gEMMiNxiDe8
+//
+// Layout (row numbers 1-based):
+//   Row ROW_TITLE: app names in consecutive columns from B onward (2, 3, 4, …).
+//   Rows ROW_TOTAL…ROW_LAUNCH_DATE: alternating label | value columns — for a title
+//   in column `col`, the metric VALUES live in column (2*col - 1), not col+1.
+//   Example: title B2 → totals in C4…C8; title C2 → totals in E4…E8; title D2 → G4…G8.
 
 // CONFIGURAÇÃO -------------------------------------------------
 
@@ -18,12 +25,18 @@ const ROW_USERS = 6;
 const ROW_APP_AGE = 7;
 const ROW_LAUNCH_DATE = 8;
 
-// Métricas: 1 coluna à direita do título (igual ao script original).
-const OFFSET_METRICS = 1;
-// Próximo bloco de app: 3 colunas à frente (igual ao script original).
-const OFFSET_NEXT_APP = 3;
+/** Next app title is one column to the right (B → C → D …). */
+const OFFSET_NEXT_TITLE_COL = 1;
 
 // --------------------------------------------------------------
+
+/**
+ * Column index (1-based) where numeric values for metrics live, given the title column.
+ * Matches alternating label/value columns in rows ROW_TOTAL…ROW_LAUNCH_DATE.
+ */
+function metricValueColumn(titleCol) {
+  return 2 * titleCol - 1;
+}
 
 /** Empty cell or any typical Sheets error (#REF!, #N/A!, #VALUE!, …). */
 function looksLikeSheetError(displayValue) {
@@ -81,13 +94,12 @@ function updateCache() {
       col++;
       continue;
     }
-    // Title is #REF! etc. → do not touch this app block in the cache at all.
     if (isFormulaErrorDisplay(title)) {
-      col += OFFSET_NEXT_APP;
+      col += OFFSET_NEXT_TITLE_COL;
       continue;
     }
 
-    const metricCol = col + OFFSET_METRICS;
+    const metricCol = metricValueColumn(col);
 
     const total = source.getRange(ROW_TOTAL, metricCol).getDisplayValue().trim();
     const installs = source.getRange(ROW_INSTALLS, metricCol).getDisplayValue().trim();
@@ -97,8 +109,6 @@ function updateCache() {
     const launchSrc = source.getRange(ROW_LAUNCH_DATE, metricCol);
     const launchDisplay = launchSrc.getDisplayValue().trim();
 
-    // Per-field sync: only overwrite cache cells whose source values are valid.
-    // Errored or empty metrics are skipped so the cache keeps the previous value.
     cache.getRange(ROW_TITLE, col).setValue(title);
 
     if (isValidNumericMetric(total)) {
@@ -119,7 +129,7 @@ function updateCache() {
       cache.getRange(ROW_LAUNCH_DATE, metricCol).setValue(launchSrc.getValue());
     }
 
-    col += OFFSET_NEXT_APP;
+    col += OFFSET_NEXT_TITLE_COL;
   }
 }
 
@@ -137,7 +147,7 @@ function doGet(e) {
       continue;
     }
 
-    const metricCol = col + OFFSET_METRICS;
+    const metricCol = metricValueColumn(col);
 
     const total = cache.getRange(ROW_TOTAL, metricCol).getDisplayValue().trim();
     const installs = cache.getRange(ROW_INSTALLS, metricCol).getDisplayValue().trim();
@@ -149,7 +159,7 @@ function doGet(e) {
     const launchDisplay = launchCell.getDisplayValue().trim();
 
     if (!metricsAreComplete(total, installs, users)) {
-      col += OFFSET_NEXT_APP;
+      col += OFFSET_NEXT_TITLE_COL;
       continue;
     }
 
@@ -167,7 +177,7 @@ function doGet(e) {
       launch_date_iso: launch_date_iso
     };
 
-    col += OFFSET_NEXT_APP;
+    col += OFFSET_NEXT_TITLE_COL;
   }
 
   return ContentService
