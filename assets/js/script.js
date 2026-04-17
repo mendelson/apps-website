@@ -688,7 +688,7 @@ toTopBtn.addEventListener("click", () => {
 });
 
 /* ==========================================================
-   ADVANCED TRACKING – Motionforge
+   ADVANCED TRACKING – M. Mendelson
 ========================================================== */
 
 /* ========== 1. TRACK: Search input ========== */
