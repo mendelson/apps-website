@@ -539,11 +539,7 @@
     var sel = document.createElement('div');
     sel.className = 'lang-selector';
     sel.innerHTML =
-      '<button class="lang-btn" aria-label="' + (tr.langLabel || 'Language') + '">' +
-        '<span class="lang-globe">🌐</span>' +
-        '<span class="lang-code">' + lang.toUpperCase() + '</span>' +
-        '<span class="lang-chevron">▾</span>' +
-      '</button>' +
+      '<button class="lang-btn" aria-label="' + (tr.langLabel || 'Language') + '">🌐</button>' +
       '<div class="lang-dropdown">' + opts + '</div>';
 
     document.body.insertBefore(sel, document.body.firstChild);

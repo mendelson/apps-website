@@ -1435,44 +1435,23 @@ nav a:hover {
 }
 
 .lang-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #ccc;
-  border-radius: 20px;
-  padding: 5px 11px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  font-family: system-ui, sans-serif;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
   line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .lang-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.lang-globe {
-  font-size: 14px;
-  line-height: 1;
-}
-
-.lang-code {
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.lang-chevron {
-  font-size: 10px;
-  opacity: 0.6;
-  transition: transform 0.2s;
-}
-
-.lang-selector.open .lang-chevron {
-  transform: rotate(180deg);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .lang-dropdown {
