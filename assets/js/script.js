@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
    TOOLTIP TEXT
 ========================================================== */
 
-const TOOLTIP_TEXT = {
+const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
   trending: {
     title: "🔥 Trending This Week",
     message: "Many athletes have chosen this app recently, making it one of the most active picks this week.",
@@ -223,34 +223,35 @@ function loadMetrics() {
           "momentum-positive"
         );
 
+        const _mt = window._T?.momentumTags || {};
         if (installs >= 50) {
           level = "trending";
-          tag.innerHTML = `🔥 Trending This Week <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.trending || "🔥 Trending This Week"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-hot");
 
         } else if (total >= 100 && users >= 20) {
           level = "popular";
-          tag.innerHTML = `🏆 Popular and Widely Used <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.popular || "🏆 Popular and Widely Used"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-strong");
 
         } else if (users >= 10) {
           level = "consistent";
-          tag.innerHTML = `💪 Consistently Used <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.consistent || "💪 Consistently Used"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-positive");
 
         } else if (installs >= 10) {
           level = "discovered";
-          tag.innerHTML = `📈 Newly Discovered <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.discovered || "📈 Newly Discovered"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-positive");
 
         } else if (users >= 3) {
           level = "trusted";
-          tag.innerHTML = `👍 Trusted by Athletes <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.trusted || "👍 Trusted by Athletes"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-positive");
 
         } else {
           level = "niche";
-          tag.innerHTML = `✨ Niche App <span class="info-icon">ⓘ</span>`;
+          tag.innerHTML = `${_mt.niche || "✨ Niche App"} <span class="info-icon">ⓘ</span>`;
           tag.classList.add("momentum-positive");
         }
 
@@ -272,9 +273,9 @@ function loadMetrics() {
           <div class="tip-message">${tt.message}</div>
 
           <div class="tip-metrics">
-            ${total    >= 7 ? `<div><span>Total Downloads:</span> <strong>${total}</strong></div>` : ""}
-            ${installs >= 7 ? `<div><span>Installs (7 days):</span> <strong>${installs}</strong></div>` : ""}
-            ${users    >= 7 ? `<div><span>Active Users (7 days):</span> <strong>${users}</strong></div>` : ""}
+            ${total    >= 7 ? `<div><span>${window._T?.metrics?.totalDownloads||"Total Downloads:"}</span> <strong>${total}</strong></div>` : ""}
+            ${installs >= 7 ? `<div><span>${window._T?.metrics?.installs7d||"Installs (7 days):"}</span> <strong>${installs}</strong></div>` : ""}
+            ${users    >= 7 ? `<div><span>${window._T?.metrics?.activeUsers||"Active Users (7 days):"}</span> <strong>${users}</strong></div>` : ""}
           </div>
 
           <div class="tip-note">${tt.note}</div>
@@ -326,7 +327,7 @@ function adaptTooltipPosition(tag, tip) {
 const MAX_FEATURED_SLIDES = 4;
 
 /** Badge + carousel headline per slide reason (reason = why this app was chosen). */
-const FEATURED_REASON_COPY = {
+const FEATURED_REASON_COPY = window.FEATURED_REASON_COPY || {
   new: {
     badge: { emoji: "✨", word: "Newly launched", class: "fresh" },
     headline: "✨ Newly launched"
@@ -475,7 +476,8 @@ function buildFeaturedCarousel(data) {
     const desc = card.querySelector("p")?.textContent || "";
     const safeTitle = escapeHtml(title);
     const safeDesc = escapeHtml(desc);
-    const ariaLabel = `View ${title}`;
+    const _viewTpl = (window._T?.viewApp) || "View {title}";
+    const ariaLabel = _viewTpl.replace("{title}", title);
 
     const slide = document.createElement("div");
     slide.className = "carousel-slide";
@@ -488,7 +490,7 @@ function buildFeaturedCarousel(data) {
           </button>
           <h3>${safeTitle}</h3>
           <p>${safeDesc}</p>
-          <button type="button" class="featured-cta">See details</button>
+          <button type="button" class="featured-cta">${window._T?.seeDetails||"See details"}</button>
         </div>
       </div>
     `;
@@ -518,7 +520,8 @@ function buildFeaturedCarousel(data) {
     dot.className = "indicator" + (i === 0 ? " active" : "");
     dot.setAttribute("role", "button");
     dot.tabIndex = 0;
-    dot.setAttribute("aria-label", `Show slide ${i + 1} of ${entries.length}`);
+    const _slideOfTpl = (window._T?.slideOf) || "Show slide {n} of {total}";
+    dot.setAttribute("aria-label", _slideOfTpl.replace("{n}", String(i + 1)).replace("{total}", String(entries.length)));
     dot.addEventListener("click", () => {
       stopCarouselAutoplay();
       goTo(i);

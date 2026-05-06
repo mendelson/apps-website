@@ -1422,3 +1422,103 @@ nav a:hover {
     right: 5%;
     z-index: 1;
 }
+
+/* ===========================
+   LANGUAGE SELECTOR
+=========================== */
+
+.lang-selector {
+  position: fixed;
+  top: 10px;
+  right: 16px;
+  z-index: 1001;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ccc;
+  border-radius: 20px;
+  padding: 5px 11px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: system-ui, sans-serif;
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.lang-globe {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.lang-code {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.lang-chevron {
+  font-size: 10px;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+
+.lang-selector.open .lang-chevron {
+  transform: rotate(180deg);
+}
+
+.lang-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 140px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.lang-selector.open .lang-dropdown {
+  display: block;
+}
+
+.lang-option {
+  display: block;
+  padding: 9px 16px;
+  color: #bbb;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-option:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.lang-option.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .lang-selector {
+    top: 7px;
+    right: 10px;
+  }
+
+  .lang-btn {
+    padding: 4px 9px;
+    font-size: 12px;
+  }
+}
