@@ -1471,10 +1471,6 @@ nav a:hover {
   display: block;
 }
 
-.lang-selector.open .lang-btn {
-  visibility: hidden;
-}
-
 .lang-option {
   display: block;
   padding: 9px 16px;
