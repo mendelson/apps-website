@@ -1458,7 +1458,7 @@ nav a:hover {
   display: none;
   position: absolute;
   right: 0;
-  top: calc(100% + 8px);
+  top: 0;
   background: #1e1e1e;
   border: 1px solid #333;
   border-radius: 10px;
@@ -1469,6 +1469,10 @@ nav a:hover {
 
 .lang-selector.open .lang-dropdown {
   display: block;
+}
+
+.lang-selector.open .lang-btn {
+  visibility: hidden;
 }
 
 .lang-option {

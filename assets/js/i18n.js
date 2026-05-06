@@ -532,7 +532,10 @@
   ];
 
   function buildLangSelector() {
-    var opts = LANGUAGES.map(function (l) {
+    var sorted = LANGUAGES.filter(function (l) { return l.code === lang; })
+      .concat(LANGUAGES.filter(function (l) { return l.code !== lang; }));
+
+    var opts = sorted.map(function (l) {
       return '<a href="/' + l.code + '/" class="lang-option' + (l.code === lang ? ' active' : '') + '">' + l.label + '</a>';
     }).join('');
 
