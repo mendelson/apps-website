@@ -546,6 +546,7 @@
       '<div class="lang-dropdown">' + opts + '</div>';
 
     document.body.insertBefore(sel, document.body.firstChild);
+    sel.style.cssText = 'position:fixed;top:10px;right:16px;z-index:1001;';
 
     var btn = sel.querySelector('.lang-btn');
     btn.addEventListener('click', function () { sel.classList.toggle('open'); });
