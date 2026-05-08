@@ -523,33 +523,27 @@
   }
 
   /* ── Language selector ────────────────────────────────────────────────────── */
-  var LANGUAGES = [
-    { code: 'de', label: 'Deutsch' },
-    { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' },
-    { code: 'fr', label: 'Français' },
-    { code: 'pt', label: 'Português' }
-  ];
-
   function buildLangSelector() {
-    var sorted = LANGUAGES.filter(function (l) { return l.code === lang; })
-      .concat(LANGUAGES.filter(function (l) { return l.code !== lang; }));
+    var sel = document.querySelector('.lang-selector');
+    if (!sel) return;
 
-    var opts = sorted.map(function (l) {
-      return '<a href="/' + l.code + '/" class="lang-option' + (l.code === lang ? ' active' : '') + '">' + l.label + '</a>';
-    }).join('');
+    /* Mark active and reorder: active language first */
+    var dropdown = sel.querySelector('.lang-dropdown');
+    var options = dropdown.querySelectorAll('.lang-option');
+    options.forEach(function (a) {
+      var code = a.getAttribute('href').replace(/\//g, '');
+      a.classList.toggle('active', code === lang);
+    });
+    var activeOpt = dropdown.querySelector('.lang-option.active');
+    if (activeOpt) dropdown.insertBefore(activeOpt, dropdown.firstChild);
 
-    var sel = document.createElement('div');
-    sel.className = 'lang-selector';
-    sel.innerHTML =
-      '<button class="lang-btn" aria-label="' + (tr.langLabel || 'Language') + '">🌐</button>' +
-      '<div class="lang-dropdown">' + opts + '</div>';
+    /* Update aria-label to translated string */
+    sel.querySelector('.lang-btn').setAttribute('aria-label', tr.langLabel || 'Language');
 
-    document.body.insertBefore(sel, document.body.firstChild);
-    sel.style.cssText = 'position:fixed;top:10px;right:16px;z-index:1001;';
-
-    var btn = sel.querySelector('.lang-btn');
-    btn.addEventListener('click', function () { sel.classList.toggle('open'); });
+    /* Toggle behaviour */
+    sel.querySelector('.lang-btn').addEventListener('click', function () {
+      sel.classList.toggle('open');
+    });
     sel.addEventListener('click', function (e) { e.stopPropagation(); });
     document.addEventListener('click', function () { sel.classList.remove('open'); });
   }
