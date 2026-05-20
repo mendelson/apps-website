@@ -12,7 +12,9 @@
 
     var first = segments[0];
     if (APPS.indexOf(first) !== -1) {
-      window.location.replace('/' + first + '/');
+      var user = segments.length > 1 ? segments[segments.length - 1] : null;
+      var dest = '/' + first + '/' + (user ? '?user=' + encodeURIComponent(user) : '');
+      window.location.replace(dest);
       return;
     }
 
