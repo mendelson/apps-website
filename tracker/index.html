@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -838,7 +838,7 @@
         title="Language / Idioma"
         onclick="toggleLangDropdown()">🌐</button>
       <div class="lang-dropdown" id="lang-dropdown">
-        <button class="lang-option" data-lang="pt-BR" onclick="setLanguage('pt-BR')">Português</button>
+        <button class="lang-option" data-lang="pt" onclick="setLanguage('pt')">Português</button>
         <button class="lang-option" data-lang="de"    onclick="setLanguage('de')">Deutsch</button>
         <button class="lang-option" data-lang="en"    onclick="setLanguage('en')">English</button>
         <button class="lang-option" data-lang="es"    onclick="setLanguage('es')">Español</button>
@@ -1061,7 +1061,7 @@ const state = {
 // i18n
 // ─────────────────────────────────────────────────────────────────────────────
 const TRANSLATIONS = {
-  'pt-BR': {
+  'pt': {
     name:'Português',
     subtitle:'Visualize uma sessão Garmin LiveTrack no mapa junto com sua própria localização em tempo real.',
     urlLabel:'URL da sessão Garmin LiveTrack',trackBtn:'Acompanhar',
@@ -1303,7 +1303,7 @@ function detectLang() {
   const saved = localStorage.getItem('gt-lang');
   if (saved && TRANSLATIONS[saved]) return saved;
   const nav = (navigator.language || 'en').toLowerCase();
-  if (nav.startsWith('pt')) return 'pt-BR';
+  if (nav.startsWith('pt')) return 'pt';
   if (nav.startsWith('de')) return 'de';
   if (nav.startsWith('es')) return 'es';
   if (nav.startsWith('fr')) return 'fr';
