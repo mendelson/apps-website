@@ -2893,7 +2893,7 @@ function onNameInput() {
   const emailName = document.getElementById('email-name');
   if (emailName) emailName.textContent = clean;
   const reveal = document.getElementById('email-reveal');
-  if (reveal) reveal.style.display = clean ? '' : 'none';
+  if (reveal) reveal.style.display = clean ? 'block' : 'none';
   const goBtn = document.getElementById('name-go-btn');
   if (goBtn) goBtn.disabled = !clean;
 }
