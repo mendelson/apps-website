@@ -180,6 +180,65 @@
     .user-banner-status { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
     .user-banner-countdown { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; opacity: 0.6; }
 
+    #landing { overflow-y: auto; }
+
+    /* ── Two-path layout ── */
+    .path-sep {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin: 1.25rem 0; color: var(--muted); font-size: 0.78rem;
+    }
+    .path-sep::before, .path-sep::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .url-builder {
+      display: flex; align-items: stretch;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .url-builder:focus-within {
+      border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+    .url-builder-base {
+      padding: 0.75rem 0.6rem 0.75rem 1rem;
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .url-builder input[type="text"] {
+      flex: 1; border: none; border-radius: 0; background: transparent;
+      padding: 0.75rem 0.75rem; font-size: 0.9rem; min-width: 0;
+    }
+    .url-builder input[type="text"]:focus { box-shadow: none; border-color: transparent; }
+    .email-reveal {
+      background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 0.75rem; font-size: 0.82rem;
+    }
+    .email-reveal-label { color: var(--muted); margin-bottom: 0.5rem; line-height: 1.4; }
+    .email-copy-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .email-display {
+      flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+      color: var(--accent); background: rgba(249,115,22,0.1);
+      padding: 0.3em 0.6em; border-radius: 5px; word-break: break-all;
+    }
+    .btn-copy {
+      background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 6px; color: var(--accent); font-size: 0.75rem; font-weight: 600;
+      font-family: inherit; cursor: pointer; padding: 0.3rem 0.65rem; flex-shrink: 0;
+      transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-copy:hover { background: rgba(249,115,22,0.25); }
+    .path2-steps { display: flex; flex-direction: column; gap: 0.45rem; }
+    .step { display: flex; align-items: flex-start; gap: 0.5rem; color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
+    .step-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(249,115,22,0.15); color: var(--accent);
+      font-size: 0.68rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 0.1rem;
+    }
+
     /* ── App ── */
     #app {
       position: fixed;
@@ -793,7 +852,34 @@
       <div class="user-banner-countdown" id="user-banner-countdown"></div>
     </div>
 
-    <label for="url-input">URL da sessão Garmin LiveTrack</label>
+    <!-- Option 2: username URL builder -->
+    <label id="opt2-lbl">Escolha a URL que deseja usar:</label>
+    <div class="url-builder">
+      <span class="url-builder-base">apps.mmendelson.com/tracker/</span>
+      <input type="text" id="name-input" placeholder="seunome"
+        autocomplete="off" spellcheck="false"
+        oninput="onNameInput()"
+        onkeydown="if(event.key==='Enter')goToUser()">
+    </div>
+    <div class="email-reveal">
+      <p class="email-reveal-label" id="email-lbl">Adicione este e-mail no app Garmin LiveTrack:</p>
+      <div class="email-copy-row">
+        <code class="email-display">mendelson.mateus+<span id="email-name">seunome</span>@gmail.com</code>
+        <button class="btn-copy" id="copy-email-btn" onclick="copyTrackerEmail()">Copiar</button>
+      </div>
+      <div class="path2-steps">
+        <div class="step"><span class="step-num">1</span><span id="step1">Adicione o e-mail acima como destinatário nas configurações de LiveTrack</span></div>
+        <div class="step"><span class="step-num">2</span><span id="step2">Inicie uma atividade no relógio</span></div>
+        <div class="step"><span class="step-num">3</span><span id="step3">Acesse a URL acima para acompanhar</span></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="name-go-btn" onclick="goToUser()" disabled style="width:100%;margin-bottom:0.25rem">Acompanhar</button>
+
+    <!-- Divider -->
+    <div class="path-sep"><span id="path-or">ou</span></div>
+
+    <!-- Option 1: direct URL -->
+    <label for="url-input" id="opt1-lbl">Cole a URL da sessão Garmin LiveTrack</label>
     <div class="input-row">
       <input type="url" id="url-input"
         placeholder="https://livetrack.garmin.com/session/…/token/…"
@@ -1106,6 +1192,15 @@ const TRANSLATIONS = {
     noActivity:'Nenhuma atividade registrada',
     checkingIn:'Verificando em {time}',
     checking:'Verificando…',
+    opt2Label:'Escolha a URL que deseja usar:',
+    opt2Placeholder:'seunome',
+    emailLabel:'Adicione este e-mail no app Garmin LiveTrack:',
+    emailCopy:'Copiar',
+    pathOr:'ou',
+    step1:'Adicione o e-mail acima como destinatário nas configurações de LiveTrack',
+    step2:'Inicie uma atividade no relógio',
+    step3:'Acesse a URL acima para acompanhar',
+    opt1Label:'Cole a URL da sessão Garmin LiveTrack',
   },
   'en': {
     name:'English',
@@ -1152,6 +1247,15 @@ const TRANSLATIONS = {
     noActivity:'No activity recorded',
     checkingIn:'Checking in {time}',
     checking:'Checking…',
+    opt2Label:'Choose the URL you want to use:',
+    opt2Placeholder:'yourname',
+    emailLabel:'Add this email in the Garmin LiveTrack settings:',
+    emailCopy:'Copy',
+    pathOr:'or',
+    step1:'Add the email above as a recipient in LiveTrack settings',
+    step2:'Start an activity on your watch',
+    step3:'Open the URL above to follow along',
+    opt1Label:'Paste a Garmin LiveTrack session URL',
   },
   'es': {
     name:'Español',
@@ -1198,6 +1302,15 @@ const TRANSLATIONS = {
     noActivity:'No hay actividad registrada',
     checkingIn:'Verificando en {time}',
     checking:'Verificando…',
+    opt2Label:'Elige la URL que quieres usar:',
+    opt2Placeholder:'tunombre',
+    emailLabel:'Añade este correo en los ajustes de Garmin LiveTrack:',
+    emailCopy:'Copiar',
+    pathOr:'o',
+    step1:'Añade el correo de arriba como destinatario en los ajustes de LiveTrack',
+    step2:'Inicia una actividad en el reloj',
+    step3:'Accede a la URL de arriba para seguir la actividad',
+    opt1Label:'Pega la URL de sesión Garmin LiveTrack',
   },
   'fr': {
     name:'Français',
@@ -1244,6 +1357,15 @@ const TRANSLATIONS = {
     noActivity:'Aucune activité enregistrée',
     checkingIn:'Vérification dans {time}',
     checking:'Vérification…',
+    opt2Label:'Choisissez l\'URL que vous souhaitez utiliser :',
+    opt2Placeholder:'votrenom',
+    emailLabel:'Ajoutez cet e-mail dans les paramètres Garmin LiveTrack :',
+    emailCopy:'Copier',
+    pathOr:'ou',
+    step1:'Ajoutez l\'e-mail ci-dessus comme destinataire dans les paramètres LiveTrack',
+    step2:'Démarrez une activité sur votre montre',
+    step3:'Ouvrez l\'URL ci-dessus pour suivre',
+    opt1Label:'Collez l\'URL de session Garmin LiveTrack',
   },
   'de': {
     name:'Deutsch',
@@ -1290,6 +1412,15 @@ const TRANSLATIONS = {
     noActivity:'Keine Aktivität erfasst',
     checkingIn:'Prüfe in {time}',
     checking:'Prüfe…',
+    opt2Label:'Wähle deine URL:',
+    opt2Placeholder:'deinname',
+    emailLabel:'Füge diese E-Mail in den Garmin LiveTrack-Einstellungen hinzu:',
+    emailCopy:'Kopieren',
+    pathOr:'oder',
+    step1:'Füge die obige E-Mail als Empfänger in den LiveTrack-Einstellungen hinzu',
+    step2:'Starte eine Aktivität auf deiner Uhr',
+    step3:'Öffne die obige URL, um zu folgen',
+    opt1Label:'Garmin LiveTrack Sitzungs-URL einfügen',
   },
 };
 
@@ -1323,6 +1454,29 @@ function applyTranslations() {
   if (hintPre) hintPre.textContent = t('hintPre');
   const hintPost = document.getElementById('hint-post');
   if (hintPost) hintPost.textContent = t('hintPost');
+  // Option 2 / username path
+  const opt2lbl = document.getElementById('opt2-lbl');
+  if (opt2lbl) opt2lbl.textContent = t('opt2Label');
+  const opt1lbl = document.getElementById('opt1-lbl');
+  if (opt1lbl) opt1lbl.textContent = t('opt1Label');
+  const emailLbl = document.getElementById('email-lbl');
+  if (emailLbl) emailLbl.textContent = t('emailLabel');
+  const copyBtn = document.getElementById('copy-email-btn');
+  if (copyBtn && copyBtn.textContent !== t('copied')) copyBtn.textContent = t('emailCopy');
+  const pathOr = document.getElementById('path-or');
+  if (pathOr) pathOr.textContent = t('pathOr');
+  const s1 = document.getElementById('step1'); if (s1) s1.textContent = t('step1');
+  const s2 = document.getElementById('step2'); if (s2) s2.textContent = t('step2');
+  const s3 = document.getElementById('step3'); if (s3) s3.textContent = t('step3');
+  const nameGoBtn = document.getElementById('name-go-btn');
+  if (nameGoBtn) nameGoBtn.textContent = t('trackBtn');
+  const nameInp = document.getElementById('name-input');
+  if (nameInp) nameInp.placeholder = t('opt2Placeholder');
+  // Refresh email name placeholder if field is empty
+  const emailName = document.getElementById('email-name');
+  if (emailName && !(document.getElementById('name-input')?.value)) {
+    emailName.textContent = t('opt2Placeholder');
+  }
   // App menu items
   const mca = document.getElementById('menu-calc-title');   if (mca) mca.textContent = t('menuCalcTitle');
   const mcb = document.getElementById('menu-calc-desc');    if (mcb) mcb.textContent = t('menuCalcDesc');
@@ -2728,6 +2882,35 @@ function calcUpdateUnits() {
     const sel = document.getElementById(`calc-${f}-unit`);
     if (sel) sel.value = _calcUnits[f];
   });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Username path
+// ─────────────────────────────────────────────────────────────────────────────
+function onNameInput() {
+  const inp = document.getElementById('name-input');
+  const clean = inp.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  if (inp.value !== clean) inp.value = clean;
+  const emailName = document.getElementById('email-name');
+  if (emailName) emailName.textContent = clean || t('opt2Placeholder');
+  const goBtn = document.getElementById('name-go-btn');
+  if (goBtn) goBtn.disabled = !clean;
+}
+
+function goToUser() {
+  const name = document.getElementById('name-input').value;
+  if (!name) return;
+  resolveUserSession(name);
+}
+
+function copyTrackerEmail() {
+  const name = document.getElementById('name-input').value || t('opt2Placeholder');
+  const email = `mendelson.mateus+${name}@gmail.com`;
+  navigator.clipboard.writeText(email).then(() => {
+    const btn = document.getElementById('copy-email-btn');
+    btn.textContent = t('copied');
+    setTimeout(() => { btn.textContent = t('emailCopy'); }, 2000);
+  }).catch(() => {});
 }
 
 document.addEventListener('click', e => {
