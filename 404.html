@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Garmin Live Track</title></head>
+<script>
+  (function () {
+    var segments = window.location.pathname.split('/').filter(Boolean);
+    var last = segments[segments.length - 1];
+    if (last && !last.includes('.')) {
+      var base = segments.slice(0, -1).join('/');
+      var baseSlash = base ? '/' + base + '/' : '/';
+      window.location.replace(baseSlash + '?user=' + encodeURIComponent(last));
+    }
+  })();
+</script>
+</html>
