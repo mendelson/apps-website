@@ -1101,6 +1101,11 @@ const TRANSLATIONS = {
     calcTitle:'Calculadora de Pace',calcHint:'Preencha dois campos para calcular o terceiro',
     calcLblDist:'Distância',calcLblDur:'Tempo',calcLblPace:'Ritmo (pace)',calcLblSpeed:'Velocidade',
     calcReset:'Limpar tudo',
+    lastActivityMins:'Última atividade: {mins} min atrás',
+    lastActivityHours:'Última atividade: {hours}h atrás',
+    noActivity:'Nenhuma atividade registrada',
+    checkingIn:'Verificando em {time}',
+    checking:'Verificando…',
   },
   'en': {
     name:'English',
@@ -1142,6 +1147,11 @@ const TRANSLATIONS = {
     calcTitle:'Pace Calculator',calcHint:'Fill in two fields to calculate the third',
     calcLblDist:'Distance',calcLblDur:'Duration',calcLblPace:'Pace',calcLblSpeed:'Speed',
     calcReset:'Clear all',
+    lastActivityMins:'Last activity: {mins} min ago',
+    lastActivityHours:'Last activity: {hours}h ago',
+    noActivity:'No activity recorded',
+    checkingIn:'Checking in {time}',
+    checking:'Checking…',
   },
   'es': {
     name:'Español',
@@ -1183,6 +1193,11 @@ const TRANSLATIONS = {
     calcTitle:'Calculadora de Paso',calcHint:'Rellena dos campos para calcular el tercero',
     calcLblDist:'Distancia',calcLblDur:'Tiempo',calcLblPace:'Ritmo (pace)',calcLblSpeed:'Velocidad',
     calcReset:'Limpiar todo',
+    lastActivityMins:'Última actividad: hace {mins} min',
+    lastActivityHours:'Última actividad: hace {hours}h',
+    noActivity:'No hay actividad registrada',
+    checkingIn:'Verificando en {time}',
+    checking:'Verificando…',
   },
   'fr': {
     name:'Français',
@@ -1224,6 +1239,11 @@ const TRANSLATIONS = {
     calcTitle:"Calculateur d'allure",calcHint:'Remplissez deux champs pour calculer le troisième',
     calcLblDist:'Distance',calcLblDur:'Durée',calcLblPace:'Allure',calcLblSpeed:'Vitesse',
     calcReset:'Tout effacer',
+    lastActivityMins:'Dernière activité : il y a {mins} min',
+    lastActivityHours:'Dernière activité : il y a {hours}h',
+    noActivity:'Aucune activité enregistrée',
+    checkingIn:'Vérification dans {time}',
+    checking:'Vérification…',
   },
   'de': {
     name:'Deutsch',
@@ -1265,6 +1285,11 @@ const TRANSLATIONS = {
     calcTitle:'Pace-Rechner',calcHint:'Fülle zwei Felder aus, um das dritte zu berechnen',
     calcLblDist:'Distanz',calcLblDur:'Zeit',calcLblPace:'Tempo (Pace)',calcLblSpeed:'Geschwindigkeit',
     calcReset:'Alles löschen',
+    lastActivityMins:'Letzte Aktivität: vor {mins} Min.',
+    lastActivityHours:'Letzte Aktivität: vor {hours}h',
+    noActivity:'Keine Aktivität erfasst',
+    checkingIn:'Prüfe in {time}',
+    checking:'Prüfe…',
   },
 };
 
@@ -2752,10 +2777,10 @@ function showUserBanner(user, ts) {
   if (ts) {
     const mins = Math.round((Date.now() - ts) / 60000);
     statusEl.textContent = mins < 60
-      ? `Última atividade: ${mins} min atrás`
-      : `Última atividade: ${Math.round(mins / 60)}h atrás`;
+      ? t('lastActivityMins').replace('{mins}', mins)
+      : t('lastActivityHours').replace('{hours}', Math.round(mins / 60));
   } else {
-    statusEl.textContent = 'Nenhuma atividade registrada';
+    statusEl.textContent = t('noActivity');
   }
   document.getElementById('user-banner').classList.remove('hidden');
 }
@@ -2771,7 +2796,7 @@ function startUserPolling(user) {
     if (!cdEl) return;
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
-    cdEl.textContent = `Verificando em ${m}:${String(s).padStart(2, '0')}`;
+    cdEl.textContent = t('checkingIn').replace('{time}', `${m}:${String(s).padStart(2, '0')}`);
     remaining--;
   }
   tick();
@@ -2779,7 +2804,7 @@ function startUserPolling(user) {
 
   _userPollTimer = setTimeout(async () => {
     clearInterval(_userCountdownInterval);
-    if (cdEl) cdEl.textContent = 'Verificando…';
+    if (cdEl) cdEl.textContent = t('checking');
     try {
       const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
       const data = await resp.json();
