@@ -177,10 +177,12 @@
       text-align: center;
     }
     .user-banner-name { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+    #user-banner.hidden { display: none; }
     .user-banner-status { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
     .user-banner-countdown { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; opacity: 0.6; }
 
-    #landing { overflow-y: auto; }
+    #landing { overflow-y: auto; align-items: flex-start; }
+    .landing-card { margin: 2rem auto; }
 
     /* ── Two-path layout ── */
     .path-sep {
@@ -211,6 +213,8 @@
       padding: 0.75rem 0.75rem; font-size: 0.9rem; min-width: 0;
     }
     .url-builder input[type="text"]:focus { box-shadow: none; border-color: transparent; }
+    .hint code { word-break: break-all; }
+    #email-reveal { display: none; }
     .email-reveal {
       background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2);
       border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 0.75rem; font-size: 0.82rem;
@@ -861,10 +865,10 @@
         oninput="onNameInput()"
         onkeydown="if(event.key==='Enter')goToUser()">
     </div>
-    <div class="email-reveal">
+    <div class="email-reveal" id="email-reveal">
       <p class="email-reveal-label" id="email-lbl">Adicione este e-mail no app Garmin LiveTrack:</p>
       <div class="email-copy-row">
-        <code class="email-display">mendelson.mateus+<span id="email-name">seunome</span>@gmail.com</code>
+        <code class="email-display">mendelson.mateus+<span id="email-name"></span>@gmail.com</code>
         <button class="btn-copy" id="copy-email-btn" onclick="copyTrackerEmail()">Copiar</button>
       </div>
       <div class="path2-steps">
@@ -1472,11 +1476,6 @@ function applyTranslations() {
   if (nameGoBtn) nameGoBtn.textContent = t('trackBtn');
   const nameInp = document.getElementById('name-input');
   if (nameInp) nameInp.placeholder = t('opt2Placeholder');
-  // Refresh email name placeholder if field is empty
-  const emailName = document.getElementById('email-name');
-  if (emailName && !(document.getElementById('name-input')?.value)) {
-    emailName.textContent = t('opt2Placeholder');
-  }
   // App menu items
   const mca = document.getElementById('menu-calc-title');   if (mca) mca.textContent = t('menuCalcTitle');
   const mcb = document.getElementById('menu-calc-desc');    if (mcb) mcb.textContent = t('menuCalcDesc');
@@ -2892,7 +2891,9 @@ function onNameInput() {
   const clean = inp.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
   if (inp.value !== clean) inp.value = clean;
   const emailName = document.getElementById('email-name');
-  if (emailName) emailName.textContent = clean || t('opt2Placeholder');
+  if (emailName) emailName.textContent = clean;
+  const reveal = document.getElementById('email-reveal');
+  if (reveal) reveal.style.display = clean ? '' : 'none';
   const goBtn = document.getElementById('name-go-btn');
   if (goBtn) goBtn.disabled = !clean;
 }
