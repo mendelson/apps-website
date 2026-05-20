@@ -1424,6 +1424,76 @@ nav a:hover {
 }
 
 /* ===========================
+   HAMBURGER / MOBILE NAV
+=========================== */
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  color: #eee;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+nav.open .nav-hamburger span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+nav.open .nav-hamburger span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+nav.open .nav-hamburger span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 640px) {
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    padding: 8px 0;
+    border-top: 1px solid #333;
+  }
+
+  nav.open ul {
+    display: flex;
+  }
+
+  nav a {
+    display: block;
+    padding: 12px 20px;
+    font-size: 16px;
+    text-align: left;
+  }
+}
+
+/* ===========================
    LANGUAGE SELECTOR
 =========================== */
 

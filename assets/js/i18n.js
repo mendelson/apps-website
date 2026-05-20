@@ -553,13 +553,39 @@
     document.addEventListener('click', function () { sel.classList.remove('open'); });
   }
 
+  /* ── Hamburger menu ──────────────────────────────────────────────────────── */
+  function buildHamburger() {
+    var btn = document.querySelector('.nav-hamburger');
+    if (!btn) return;
+    var nav = btn.closest('nav');
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+    nav.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        nav.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!nav.contains(e.target)) {
+        nav.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       applyTranslations();
       buildLangSelector();
+      buildHamburger();
     });
   } else {
     applyTranslations();
     buildLangSelector();
+    buildHamburger();
   }
 })();
