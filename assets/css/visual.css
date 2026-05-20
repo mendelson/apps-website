@@ -528,6 +528,41 @@ nav a:hover {
 }
 
 /* ===========================
+   TRACKER WEB CARD
+=========================== */
+
+.tracker-web-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 18px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 20px auto 0;
+  text-align: center;
+}
+
+.tracker-web-card p {
+  opacity: 0.8;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.tracker-web-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #444;
+  color: #eee;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.tracker-web-btn:hover {
+  background: #555;
+}
+
+/* ===========================
    CONTACT
 =========================== */
 
