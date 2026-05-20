@@ -847,6 +847,17 @@
         <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
       </div>
       <h1>Garmin Live Track</h1>
+      <div style="margin-left:auto;position:relative" id="landing-lang-selector">
+        <button class="btn btn-ghost" style="font-size:1rem;padding:0.35rem 0.55rem"
+          title="Language / Idioma" onclick="toggleLandingLang()">🌐</button>
+        <div class="lang-dropdown" id="landing-lang-dropdown">
+          <button class="lang-option" data-lang="pt" onclick="setLanguage('pt')">Português</button>
+          <button class="lang-option" data-lang="de" onclick="setLanguage('de')">Deutsch</button>
+          <button class="lang-option" data-lang="en" onclick="setLanguage('en')">English</button>
+          <button class="lang-option" data-lang="es" onclick="setLanguage('es')">Español</button>
+          <button class="lang-option" data-lang="fr" onclick="setLanguage('fr')">Français</button>
+        </div>
+      </div>
     </div>
     <p class="brand-sub">Visualize uma sessão Garmin LiveTrack no mapa junto com sua própria localização em tempo real.</p>
 
@@ -1533,11 +1544,16 @@ function toggleLangDropdown() {
   document.getElementById('lang-dropdown').classList.toggle('open');
 }
 
+function toggleLandingLang() {
+  document.getElementById('landing-lang-dropdown').classList.toggle('open');
+}
+
 function setLanguage(code) {
   if (!TRANSLATIONS[code]) return;
   currentLang = code;
   localStorage.setItem('gt-lang', code);
   document.getElementById('lang-dropdown').classList.remove('open');
+  document.getElementById('landing-lang-dropdown').classList.remove('open');
   applyTranslations();
 }
 
@@ -2917,6 +2933,10 @@ function copyTrackerEmail() {
 document.addEventListener('click', e => {
   if (!e.target.closest('#lang-selector')) {
     const dd = document.getElementById('lang-dropdown');
+    if (dd) dd.classList.remove('open');
+  }
+  if (!e.target.closest('#landing-lang-selector')) {
+    const dd = document.getElementById('landing-lang-dropdown');
     if (dd) dd.classList.remove('open');
   }
   if (!e.target.closest('#menu-btn') && !e.target.closest('#app-menu')) {
