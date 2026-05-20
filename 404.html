@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Garmin Live Track</title></head>
+<html><head><meta charset="utf-8"><title>Garmin Apps</title></head>
 <script>
   (function () {
     var APPS = ['tracker'];
     var segments = window.location.pathname.split('/').filter(Boolean);
+
+    if (segments.length === 0) {
+      window.location.replace('/en/');
+      return;
+    }
+
     var first = segments[0];
     if (APPS.indexOf(first) !== -1) {
       window.location.replace('/' + first + '/');
       return;
     }
+
     var last = segments[segments.length - 1];
     if (last && !last.includes('.')) {
       var base = segments.slice(0, -1).join('/');
