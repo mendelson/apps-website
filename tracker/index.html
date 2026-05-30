@@ -3034,17 +3034,22 @@ function stopUserPolling() {
 (function () {
   const params = new URLSearchParams(window.location.search);
   if (params.get('mock') === 'true') {
+    document.getElementById('landing').classList.add('hidden');
     setTimeout(startMockSession, 100);
     return;
   }
   const u = params.get('url') || params.get('session');
   if (u) {
+    document.getElementById('landing').classList.add('hidden');
     document.getElementById('url-input').value = decodeURIComponent(u);
     setTimeout(() => startSession(document.getElementById('url-input').value), 100);
     return;
   }
   const user = params.get('user');
-  if (user) setTimeout(() => resolveUserSession(user), 100);
+  if (user) {
+    document.getElementById('landing').classList.add('hidden');
+    setTimeout(() => resolveUserSession(user), 100);
+  }
 })();
 </script>
 </body>
