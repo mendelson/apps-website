@@ -840,7 +840,7 @@
 <body>
 
 <!-- ── Landing Screen ── -->
-<div id="landing">
+<div id="landing" class="hidden">
   <div class="landing-card">
     <div class="brand">
       <div class="brand-icon">
@@ -3049,7 +3049,9 @@ function stopUserPolling() {
   if (user) {
     document.getElementById('landing').classList.add('hidden');
     setTimeout(() => resolveUserSession(user), 100);
+    return;
   }
+  showLanding();
 })();
 </script>
 </body>
