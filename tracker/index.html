@@ -2441,8 +2441,13 @@ async function startSession(url) {
   document.getElementById('user-coords').textContent = '—';
   document.getElementById('tracker-coords').textContent = '—';
 
-  const shareUrl = `${location.pathname}?url=${encodeURIComponent(`https://livetrack.garmin.com/session/${parsed.sessionId}/token/${parsed.token}`)}`;
-  history.replaceState(null, '', shareUrl);
+  if (_trackUser) {
+    // Permanent per-user link: keep /tracker/<user> instead of the ephemeral Garmin session URL.
+    history.replaceState(null, '', userPathUrl(_trackUser));
+  } else {
+    const shareUrl = `${location.pathname}?url=${encodeURIComponent(`https://livetrack.garmin.com/session/${parsed.sessionId}/token/${parsed.token}`)}`;
+    history.replaceState(null, '', shareUrl);
+  }
 
   showLoading(t('connecting'));
   showApp();
@@ -2463,7 +2468,8 @@ function resetToLanding() {
   hideNoDataBar();
   hideNavButton();
   document.getElementById('live-badge').classList.remove('visible');
-  history.replaceState(null, '', location.pathname);
+  _trackUser = null;
+  history.replaceState(null, '', APP_BASE);
   showLanding();
 }
 
@@ -2953,8 +2959,24 @@ initLang();
 const USER_POLL_MS = 5 * 60 * 1000;
 let _userPollTimer = null;
 let _userCountdownInterval = null;
+let _trackUser = null; // when set, this is a permanent /tracker/<user> link
+
+// App directory captured at load, before any history rewrite mutates location.pathname
+// (e.g. to /tracker/<user>). Used to build per-user links and to return to the landing.
+const APP_BASE = (function () {
+  let b = location.pathname.replace(/index\.html$/, '');
+  if (!b.endsWith('/')) b += '/';
+  return b;
+})();
+
+// Clean, permanent per-user path: /tracker/<user> (not the ephemeral ?url= form).
+function userPathUrl(user) {
+  return APP_BASE + encodeURIComponent(user);
+}
 
 async function resolveUserSession(user) {
+  _trackUser = user.toLowerCase();
+  history.replaceState(null, '', userPathUrl(_trackUser));
   showLoading(t('connecting'));
   try {
     const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
@@ -3048,6 +3070,8 @@ function stopUserPolling() {
   const user = params.get('user');
   if (user) {
     document.getElementById('landing').classList.add('hidden');
+    _trackUser = user.toLowerCase();
+    history.replaceState(null, '', userPathUrl(_trackUser));
     setTimeout(() => resolveUserSession(user), 100);
     return;
   }
