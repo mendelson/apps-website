@@ -1182,7 +1182,7 @@ const TRANSLATIONS = {
     titleRoute:'Manter percurso visível — clique no mapa para cancelar',
     titleAll:'Manter percurso e minha localização visíveis — clique no mapa para cancelar',
     trackerPopup:'Posição do atleta',userPopup:'Minha localização',startTooltip:'Início',
-    connecting:'Conectando à sessão…',tryingAlt:'Tentando endpoints alternativos…',
+    connecting:'Conectando à sessão…',resolvingUser:'Buscando a sessão mais recente…',tryingAlt:'Tentando endpoints alternativos…',
     fetchingGarmin:'Buscando página da Garmin…',loadingTest:'Carregando sessão de teste…',
     connectedViaProxy:'Conectado via proxy',
     trackerNotAvail:'Localização do atleta ainda não disponível',
@@ -1237,7 +1237,7 @@ const TRANSLATIONS = {
     titleRoute:'Keep full route visible — click map to cancel',
     titleAll:'Keep route and my location visible — click map to cancel',
     trackerPopup:'Tracker position',userPopup:'My location',startTooltip:'Start',
-    connecting:'Connecting to session…',tryingAlt:'Trying alternative endpoints…',
+    connecting:'Connecting to session…',resolvingUser:'Finding the latest session…',tryingAlt:'Trying alternative endpoints…',
     fetchingGarmin:'Fetching Garmin page…',loadingTest:'Loading test session…',
     connectedViaProxy:'Connected via proxy',
     trackerNotAvail:'Tracker location not yet available',
@@ -1292,7 +1292,7 @@ const TRANSLATIONS = {
     titleRoute:'Mantener ruta visible — toca el mapa para cancelar',
     titleAll:'Mantener ruta y mi ubicación visibles — toca el mapa para cancelar',
     trackerPopup:'Posición del atleta',userPopup:'Mi ubicación',startTooltip:'Inicio',
-    connecting:'Conectando a la sesión…',tryingAlt:'Probando endpoints alternativos…',
+    connecting:'Conectando a la sesión…',resolvingUser:'Buscando la sesión más reciente…',tryingAlt:'Probando endpoints alternativos…',
     fetchingGarmin:'Buscando página de Garmin…',loadingTest:'Cargando sesión de prueba…',
     connectedViaProxy:'Conectado vía proxy',
     trackerNotAvail:'Ubicación del atleta aún no disponible',
@@ -1347,7 +1347,7 @@ const TRANSLATIONS = {
     titleRoute:'Maintenir le parcours visible — cliquez sur la carte pour annuler',
     titleAll:'Maintenir le parcours et ma position visibles — cliquez sur la carte pour annuler',
     trackerPopup:"Position de l'athlète",userPopup:'Ma position',startTooltip:'Départ',
-    connecting:'Connexion à la session…',tryingAlt:"Essai d'endpoints alternatifs…",
+    connecting:'Connexion à la session…',resolvingUser:'Recherche de la dernière session…',tryingAlt:"Essai d'endpoints alternatifs…",
     fetchingGarmin:'Récupération de la page Garmin…',loadingTest:'Chargement de la session de test…',
     connectedViaProxy:'Connecté via proxy',
     trackerNotAvail:"Position de l'athlète pas encore disponible",
@@ -1402,7 +1402,7 @@ const TRANSLATIONS = {
     titleRoute:'Gesamte Strecke anzeigen — Karte klicken zum Abbrechen',
     titleAll:'Strecke und Standort anzeigen — Karte klicken zum Abbrechen',
     trackerPopup:'Position des Athleten',userPopup:'Mein Standort',startTooltip:'Start',
-    connecting:'Verbindung zur Sitzung…',tryingAlt:'Alternative Endpunkte werden versucht…',
+    connecting:'Verbindung zur Sitzung…',resolvingUser:'Neueste Sitzung wird gesucht…',tryingAlt:'Alternative Endpunkte werden versucht…',
     fetchingGarmin:'Garmin-Seite wird abgerufen…',loadingTest:'Testsitzung wird geladen…',
     connectedViaProxy:'Verbunden über Proxy',
     trackerNotAvail:'Athletenposition noch nicht verfügbar',
@@ -2979,9 +2979,9 @@ function userPathUrl(user) {
 async function resolveUserSession(user) {
   _trackUser = user.toLowerCase();
   history.replaceState(null, '', userPathUrl(_trackUser));
-  showLoading(t('connecting'));
+  showLoading(t('resolvingUser'));
   try {
-    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(20_000) });
+    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(45_000) });
     const data = await resp.json();
     if (data.url && parseGarminUrl(data.url)) {
       startSession(data.url);
@@ -3034,7 +3034,7 @@ function startUserPolling(user) {
     clearInterval(_userCountdownInterval);
     if (cdEl) cdEl.textContent = t('checking');
     try {
-      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(20_000) });
+      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(45_000) });
       const data = await resp.json();
       if (data.url && parseGarminUrl(data.url)) {
         startSession(data.url);
