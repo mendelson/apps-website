@@ -2981,7 +2981,7 @@ async function resolveUserSession(user) {
   history.replaceState(null, '', userPathUrl(_trackUser));
   showLoading(t('resolvingUser'));
   try {
-    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(45_000) });
+    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(60_000) });
     const data = await resp.json();
     if (data.url && parseGarminUrl(data.url)) {
       startSession(data.url);
@@ -3034,7 +3034,7 @@ function startUserPolling(user) {
     clearInterval(_userCountdownInterval);
     if (cdEl) cdEl.textContent = t('checking');
     try {
-      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(45_000) });
+      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(60_000) });
       const data = await resp.json();
       if (data.url && parseGarminUrl(data.url)) {
         startSession(data.url);
