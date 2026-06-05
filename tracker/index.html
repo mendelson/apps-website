@@ -2408,6 +2408,8 @@ async function startSession(url) {
   const errEl = document.getElementById('url-error');
 
   if (!parsed) {
+    hideLoading(); // never leave the loading overlay stuck if this was reached mid-resolve
+    showLanding();
     errEl.textContent = t('invalidUrl');
     document.getElementById('url-input').classList.add('error-field');
     return;
@@ -2979,9 +2981,9 @@ async function resolveUserSession(user) {
   history.replaceState(null, '', userPathUrl(_trackUser));
   showLoading(t('connecting'));
   try {
-    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
+    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(20_000) });
     const data = await resp.json();
-    if (data.url) {
+    if (data.url && parseGarminUrl(data.url)) {
       startSession(data.url);
     } else {
       hideLoading();
@@ -3032,9 +3034,9 @@ function startUserPolling(user) {
     clearInterval(_userCountdownInterval);
     if (cdEl) cdEl.textContent = t('checking');
     try {
-      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
+      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`, { signal: AbortSignal.timeout(20_000) });
       const data = await resp.json();
-      if (data.url) {
+      if (data.url && parseGarminUrl(data.url)) {
         startSession(data.url);
       } else {
         showUserBanner(user, data.ts);
