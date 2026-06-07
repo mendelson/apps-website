@@ -2126,7 +2126,11 @@ async function fetchViaGASPage() {
     // not JSON → it's the HTML page, continue
   }
   const result = parseGarminPageData(body);
-  if (!result) throw new Error('no RSC data found in page');
+  if (!result) {
+    // Dump first 300 chars of body to help diagnose format changes
+    state._diagSnippet = body.slice(0, 300).replace(/\s+/g, ' ');
+    throw new Error('no RSC data found in page');
+  }
   return result;
 }
 
@@ -2160,6 +2164,7 @@ function stopCountdown() {
 // ─────────────────────────────────────────────────────────────────────────────
 async function loadData(isInitial = false) {
   state._diagErr = '';
+  state._diagSnippet = '';
   stopCountdown();
   if (!isInitial) {
     document.getElementById('last-update').textContent = t('refreshing');
@@ -2317,7 +2322,8 @@ function renderTrack({ source = 'cache' } = {}) {
     scraped: t('scrapedOk'),
     cache:   t('cacheOk'),
   };
-  showToast((msgs[source] ?? msgs.cache) + (state._diagErr ? ' [' + state._diagErr + ']' : ''), 'warn', 30000);
+  showToast((msgs[source] ?? msgs.cache) + (state._diagErr ? ' [' + state._diagErr + ']' : ''), 'warn', 8000);
+  if (state._diagSnippet) setTimeout(() => showToast('Página: ' + state._diagSnippet, 'warn', 60000), 8500);
 
   hideLoading();
   showApp();
