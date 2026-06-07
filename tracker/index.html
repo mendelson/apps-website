@@ -2127,8 +2127,14 @@ async function fetchViaGASPage() {
   }
   const result = parseGarminPageData(body);
   if (!result) {
-    // Dump first 300 chars of body to help diagnose format changes
-    state._diagSnippet = body.slice(0, 300).replace(/\s+/g, ' ');
+    const hasNextF = body.includes('__next_f');
+    const types = [];
+    for (let t = 0; t <= 5; t++) {
+      if (body.includes(`__next_f.push([${t},`)) types.push(t);
+    }
+    const hasQueries = body.includes('"queries":[');
+    const hasTrack = body.includes('trackPoints') || body.includes('track-points');
+    state._diagSnippet = `nextF:${hasNextF} types:[${types}] queries:${hasQueries} track:${hasTrack}`;
     throw new Error('no RSC data found in page');
   }
   return result;
