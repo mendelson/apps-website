@@ -2164,6 +2164,8 @@ async function loadData(isInitial = false) {
     document.getElementById('last-update').textContent = t('refreshing');
   }
 
+  let _diagErr = '';
+
   let sessionInfo, newPoints;
 
   // ── Strategy 1: GAS page fetch — parses Garmin's Next.js/Apollo RSC data ──
@@ -2172,6 +2174,7 @@ async function loadData(isInitial = false) {
     sessionInfo = r.sessionInfo;
     newPoints = r.trackPoints;
   } catch (gasErr) {
+    _diagErr = 'S1:' + gasErr.message;
     console.warn('[garmin] GAS page fetch failed, trying legacy API:', gasErr.message);
 
     // ── Strategy 2: Legacy REST API (likely broken after Garmin's Next.js migration) ──
@@ -2225,6 +2228,7 @@ async function loadData(isInitial = false) {
         showApp();
         showNoDataBar();
         startGeolocation();
+        if (_diagErr) showToast('Erro: ' + _diagErr, 'warn', 30000);
         return;
       }
 
