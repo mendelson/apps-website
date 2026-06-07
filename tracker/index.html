@@ -2135,9 +2135,14 @@ async function fetchViaGASPage() {
     while ((mm = reAll.exec(body)) !== null) {
       try { payload += JSON.parse('"' + mm[1] + '"'); } catch (_) {}
     }
-    const hasQ = payload.includes('"queries":[') || payload.includes('"queries":[]');
-    const hasTrk = payload.includes('trackPoints') || payload.includes('track-points');
-    state._diagSnippet = `payloadLen:${payload.length} queries:${hasQ} track:${hasTrk} | ${payload.slice(0, 200).replace(/\s+/g,' ')}`;
+    // Extract all queryKey arrays from the payload for diagnosis
+    const queryKeys = [];
+    const qkRe = /"queryKey"\s*:\s*(\[[^\]]*\])/g;
+    let qm;
+    while ((qm = qkRe.exec(payload)) !== null) {
+      try { queryKeys.push(JSON.stringify(JSON.parse(qm[1]))); } catch (_) { queryKeys.push(qm[1]); }
+    }
+    state._diagSnippet = `keys:${queryKeys.length} | ${queryKeys.join(' || ')}`.slice(0, 400);
     throw new Error('no RSC data found in page');
   }
   return result;
