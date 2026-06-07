@@ -2048,7 +2048,8 @@ function hideNoDataBar() {
 // Garmin Next.js page parser — extracts session + trackpoints from RSC payload
 // ─────────────────────────────────────────────────────────────────────────────
 function parseGarminPageData(html) {
-  const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g;
+  // Extract type 1 and type 2 string chunks from Next.js RSC flight data
+  const re = /self\.__next_f\.push\(\[(?:1|2),"((?:[^"\\]|\\.)*)"\]\)/g;
   let payload = '';
   let m;
   while ((m = re.exec(html)) !== null) {
@@ -2127,14 +2128,16 @@ async function fetchViaGASPage() {
   }
   const result = parseGarminPageData(body);
   if (!result) {
-    const hasNextF = body.includes('__next_f');
-    const types = [];
-    for (let t = 0; t <= 5; t++) {
-      if (body.includes(`__next_f.push([${t},`)) types.push(t);
+    // Decode RSC payload from both type 1 and type 2 chunks for diagnosis
+    const reAll = /self\.__next_f\.push\(\[(?:1|2),"((?:[^"\\]|\\.)*)"\]\)/g;
+    let payload = '';
+    let mm;
+    while ((mm = reAll.exec(body)) !== null) {
+      try { payload += JSON.parse('"' + mm[1] + '"'); } catch (_) {}
     }
-    const hasQueries = body.includes('"queries":[');
-    const hasTrack = body.includes('trackPoints') || body.includes('track-points');
-    state._diagSnippet = `nextF:${hasNextF} types:[${types}] queries:${hasQueries} track:${hasTrack}`;
+    const hasQ = payload.includes('"queries":[') || payload.includes('"queries":[]');
+    const hasTrk = payload.includes('trackPoints') || payload.includes('track-points');
+    state._diagSnippet = `payloadLen:${payload.length} queries:${hasQ} track:${hasTrk} | ${payload.slice(0, 200).replace(/\s+/g,' ')}`;
     throw new Error('no RSC data found in page');
   }
   return result;
