@@ -2135,14 +2135,30 @@ async function fetchViaGASPage() {
     while ((mm = reAll.exec(body)) !== null) {
       try { payload += JSON.parse('"' + mm[1] + '"'); } catch (_) {}
     }
-    // Extract all queryKey arrays from the payload for diagnosis
-    const queryKeys = [];
-    const qkRe = /"queryKey"\s*:\s*(\[[^\]]*\])/g;
-    let qm;
-    while ((qm = qkRe.exec(payload)) !== null) {
-      try { queryKeys.push(JSON.stringify(JSON.parse(qm[1]))); } catch (_) { queryKeys.push(qm[1]); }
+    // Find the session query's data object and dump its top-level keys + snippet
+    let sessSnippet = 'no-session-data';
+    const marker = '"mutations":[],"queries":[';
+    let searchFrom = 0;
+    while (true) {
+      const mi = payload.indexOf(marker, searchFrom);
+      if (mi === -1) break;
+      const arrStart = mi + marker.length - 1;
+      let depth = 0, i;
+      for (i = arrStart; i < payload.length; i++) {
+        if (payload[i] === '[') depth++;
+        else if (payload[i] === ']') { depth--; if (depth === 0) break; }
+      }
+      searchFrom = i + 1;
+      let qs;
+      try { qs = JSON.parse(payload.substring(arrStart, i + 1).replace(/"\$undefined"/g, 'null')); } catch (_) { continue; }
+      for (const q of qs) {
+        if (q?.queryKey?.[0] === 'session' && q?.state?.data) {
+          const d = q.state.data;
+          sessSnippet = 'fields:[' + Object.keys(d).join(',') + '] ' + JSON.stringify(d);
+        }
+      }
     }
-    state._diagSnippet = `keys:${queryKeys.length} | ${queryKeys.join(' || ')}`.slice(0, 400);
+    state._diagSnippet = sessSnippet.slice(0, 500);
     throw new Error('no RSC data found in page');
   }
   return result;
