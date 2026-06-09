@@ -2026,7 +2026,18 @@ function normalisePoints(arr) {
     const lat = parseFloat(p.latitude ?? p.lat ?? p.Latitude ?? p.Lat);
     const lng = parseFloat(p.longitude ?? p.lng ?? p.lon ?? p.Longitude ?? p.Lng ?? p.Lon);
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90) return null;
-    return { latitude: lat, longitude: lng, timestamp: p.timestamp ?? p.time ?? 0, metaData: p.metaData ?? p.metadata ?? {} };
+    const ts = p.timestamp != null ? p.timestamp
+      : p.time != null ? p.time
+      : p.dateTime ? new Date(p.dateTime).getTime()
+      : 0;
+    let meta = p.metaData ?? p.metadata ?? {};
+    if (Array.isArray(meta)) {
+      meta = Object.fromEntries(meta.map(m => [m.key, m.value]));
+    }
+    if (!meta.SPEED && p.speed != null) meta.SPEED = String(p.speed);
+    if (!meta.TOTAL_DISTANCE && p.distance != null) meta.TOTAL_DISTANCE = String(p.distance);
+    if (!meta.ELEVATION && p.altitude != null) meta.ELEVATION = String(p.altitude);
+    return { latitude: lat, longitude: lng, timestamp: ts, metaData: meta };
   }).filter(Boolean);
   return pts.length ? pts : null;
 }
@@ -2057,7 +2068,7 @@ function parseGarminPageData(html) {
   }
   // Garmin's page has multiple HydrationBoundary sections; iterate all of them
   const marker = '"mutations":[],"queries":[';
-  let sessionData = null, trackData = null, profileData = null;
+  let sessionData = null, profileData = null;
   let searchFrom = 0;
   while (true) {
     const mi = payload.indexOf(marker, searchFrom);
@@ -2076,34 +2087,21 @@ function parseGarminPageData(html) {
     for (const q of qs) {
       const k = q?.queryKey, d = q?.state?.data;
       if (!k || !d) continue;
-      if (k[0] === 'session' && k.length === 3) sessionData = d;
-      else if (k[0] === 'session' && k[3] === 'track-points') trackData = d;
+      if (k[0] === 'session' && k.length >= 2) sessionData = d;
       else if (k[0] === 'user' && k[2] === 'profile') profileData = d;
     }
   }
-  if (!trackData?.pages?.[0]?.trackPoints?.length) return null;
+  if (!sessionData && !profileData) return null;
   const now = Date.now();
   const endMs = sessionData?.end ? new Date(sessionData.end).getTime() : 0;
   const sessionInfo = {
     sessionStatus: now < endMs ? 'InProgress' : 'Ended',
     sessionName: sessionData?.sessionName || profileData?.name || 'Garmin LiveTrack',
     userName: profileData?.name || sessionData?.userDisplayName || 'Atleta',
+    startLatitude: sessionData?.startLatitude,
+    startLongitude: sessionData?.startLongitude,
   };
-  const trackPoints = trackData.pages[0].trackPoints
-    .filter(pt => pt.position?.lat != null)
-    .map(pt => ({
-      latitude:  pt.position.lat,
-      longitude: pt.position.lon,
-      timestamp: new Date(pt.dateTime).getTime(),
-      metaData: {
-        SPEED:          String(pt.speedMetersPerSec ?? 0),
-        TOTAL_DISTANCE: String(pt.totalDistanceMeters ?? 0),
-        ELEVATION:      String(pt.altitude ?? 0),
-        TOTAL_DURATION: String(pt.totalDurationSecs ?? 0),
-        ACTIVITY_TYPE:  pt.activityType || '',
-      },
-    }));
-  return { sessionInfo, trackPoints };
+  return { sessionInfo, trackPoints: null };
 }
 
 async function fetchViaGASPage() {
@@ -2128,38 +2126,13 @@ async function fetchViaGASPage() {
   }
   const result = parseGarminPageData(body);
   if (!result) {
-    // Decode RSC payload from both type 1 and type 2 chunks for diagnosis
-    const reAll = /self\.__next_f\.push\(\[(?:1|2),"((?:[^"\\]|\\.)*)"\]\)/g;
-    let payload = '';
-    let mm;
-    while ((mm = reAll.exec(body)) !== null) {
-      try { payload += JSON.parse('"' + mm[1] + '"'); } catch (_) {}
-    }
-    // Find the session query's data object and dump its top-level keys + snippet
-    let sessSnippet = 'no-session-data';
-    const marker = '"mutations":[],"queries":[';
-    let searchFrom = 0;
-    while (true) {
-      const mi = payload.indexOf(marker, searchFrom);
-      if (mi === -1) break;
-      const arrStart = mi + marker.length - 1;
-      let depth = 0, i;
-      for (i = arrStart; i < payload.length; i++) {
-        if (payload[i] === '[') depth++;
-        else if (payload[i] === ']') { depth--; if (depth === 0) break; }
-      }
-      searchFrom = i + 1;
-      let qs;
-      try { qs = JSON.parse(payload.substring(arrStart, i + 1).replace(/"\$undefined"/g, 'null')); } catch (_) { continue; }
-      for (const q of qs) {
-        if (q?.queryKey?.[0] === 'session' && q?.state?.data) {
-          const d = q.state.data;
-          sessSnippet = 'fields:[' + Object.keys(d).join(',') + '] ' + JSON.stringify(d);
-        }
-      }
-    }
-    state._diagSnippet = sessSnippet.slice(0, 500);
     throw new Error('no RSC data found in page');
+  }
+  if (result.sessionInfo) {
+    state.sessionInfo = result.sessionInfo;
+  }
+  if (!result.trackPoints) {
+    throw new Error('no track data in RSC');
   }
   return result;
 }
@@ -2193,8 +2166,6 @@ function stopCountdown() {
 // Main data load / refresh
 // ─────────────────────────────────────────────────────────────────────────────
 async function loadData(isInitial = false) {
-  state._diagErr = '';
-  state._diagSnippet = '';
   stopCountdown();
   if (!isInitial) {
     document.getElementById('last-update').textContent = t('refreshing');
@@ -2208,7 +2179,6 @@ async function loadData(isInitial = false) {
     sessionInfo = r.sessionInfo;
     newPoints = r.trackPoints;
   } catch (gasErr) {
-    state._diagErr = 'S1:' + gasErr.message;
     console.warn('[garmin] GAS page fetch failed, trying legacy API:', gasErr.message);
 
     // ── Strategy 2: Legacy REST API (likely broken after Garmin's Next.js migration) ──
@@ -2221,6 +2191,9 @@ async function loadData(isInitial = false) {
 
     try {
       [sessionInfo, newPoints] = await Promise.all([sessionPromise, trackPromise]);
+      if (newPoints && !Array.isArray(newPoints)) {
+        newPoints = deepFindPoints(newPoints, 0);
+      }
     } catch (err) {
       console.error('[garmin] trackpoint fetch failed:', err);
 
@@ -2262,7 +2235,6 @@ async function loadData(isInitial = false) {
         showApp();
         showNoDataBar();
         startGeolocation();
-        if (state._diagErr) showToast('Erro: ' + state._diagErr, 'warn', 30000);
         return;
       }
 
@@ -2352,8 +2324,7 @@ function renderTrack({ source = 'cache' } = {}) {
     scraped: t('scrapedOk'),
     cache:   t('cacheOk'),
   };
-  showToast((msgs[source] ?? msgs.cache) + (state._diagErr ? ' [' + state._diagErr + ']' : ''), 'warn', 8000);
-  if (state._diagSnippet) setTimeout(() => showToast('Página: ' + state._diagSnippet, 'warn', 60000), 8500);
+  showToast(msgs[source] ?? msgs.cache, 'warn', 6000);
 
   hideLoading();
   showApp();
