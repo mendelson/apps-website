@@ -963,6 +963,13 @@
             <span class="menu-item-desc" id="menu-copy-desc">Compartilhar esta sessão</span>
           </span>
         </button>
+        <button class="menu-item" id="menu-garmin-btn" onclick="openOnGarmin();toggleAppMenu()">
+          <span class="menu-item-icon">🏃</span>
+          <span class="menu-item-label">
+            <span class="menu-item-title" id="menu-garmin-title">Ver no Garmin</span>
+            <span class="menu-item-desc" id="menu-garmin-desc">Abrir sessão no site oficial</span>
+          </span>
+        </button>
         <button class="menu-item" onclick="resetToLanding();toggleAppMenu()">
           <span class="menu-item-icon">↩</span>
           <span class="menu-item-label">
@@ -1169,6 +1176,7 @@ const TRANSLATIONS = {
     hintPre:'Cole uma URL como:',hintPost:'Funciona para atividades ao vivo e sessões recentes.',
     navBtn:'Navegar até o atleta',menuNavDesc:'Abrir no Google Maps',
     copyLinkBtn:'Copiar link',menuCopyDesc:'Compartilhar esta sessão',
+    menuGarminTitle:'Ver no Garmin',menuGarminDesc:'Abrir sessão no site oficial',
     changeUrlBtn:'Trocar URL',menuChangeDesc:'Abrir outra sessão',
     nodataText:'Dados da rota indisponíveis —',nodataGarmin:'Abrir no Garmin ↗',
     nodataMyLoc:'Sua localização está visível no mapa',
@@ -1224,6 +1232,7 @@ const TRANSLATIONS = {
     hintPre:'Paste a URL like:',hintPost:'Works for live activities and recently-finished sessions.',
     navBtn:'Navigate to athlete',menuNavDesc:'Open in Google Maps',
     copyLinkBtn:'Copy link',menuCopyDesc:'Share this session',
+    menuGarminTitle:'View on Garmin',menuGarminDesc:'Open session on official site',
     changeUrlBtn:'Change URL',menuChangeDesc:'Open another session',
     nodataText:'Track data unavailable —',nodataGarmin:'Open on Garmin ↗',
     nodataMyLoc:'Your location is shown on the map',
@@ -1279,6 +1288,7 @@ const TRANSLATIONS = {
     hintPre:'Pega una URL como:',hintPost:'Funciona para actividades en vivo y sesiones recientes.',
     navBtn:'Navegar al atleta',menuNavDesc:'Abrir en Google Maps',
     copyLinkBtn:'Copiar enlace',menuCopyDesc:'Compartir esta sesión',
+    menuGarminTitle:'Ver en Garmin',menuGarminDesc:'Abrir sesión en el sitio oficial',
     changeUrlBtn:'Cambiar URL',menuChangeDesc:'Abrir otra sesión',
     nodataText:'Datos de ruta no disponibles —',nodataGarmin:'Abrir en Garmin ↗',
     nodataMyLoc:'Tu ubicación se muestra en el mapa',
@@ -1334,6 +1344,7 @@ const TRANSLATIONS = {
     hintPre:'Collez une URL comme :',hintPost:'Fonctionne pour les activités en direct et les sessions récentes.',
     navBtn:"Naviguer vers l'athlète",menuNavDesc:'Ouvrir dans Google Maps',
     copyLinkBtn:'Copier le lien',menuCopyDesc:'Partager cette session',
+    menuGarminTitle:'Voir sur Garmin',menuGarminDesc:'Ouvrir la session sur le site officiel',
     changeUrlBtn:"Changer l'URL",menuChangeDesc:'Ouvrir une autre session',
     nodataText:'Données de parcours indisponibles —',nodataGarmin:'Ouvrir sur Garmin ↗',
     nodataMyLoc:'Votre position est affichée sur la carte',
@@ -1389,6 +1400,7 @@ const TRANSLATIONS = {
     hintPre:'Füge eine URL ein wie:',hintPost:'Funktioniert für Live-Aktivitäten und kürzlich beendete Sessions.',
     navBtn:'Zum Athleten navigieren',menuNavDesc:'In Google Maps öffnen',
     copyLinkBtn:'Link kopieren',menuCopyDesc:'Diese Session teilen',
+    menuGarminTitle:'Auf Garmin ansehen',menuGarminDesc:'Session auf der offiziellen Seite öffnen',
     changeUrlBtn:'URL ändern',menuChangeDesc:'Andere Session öffnen',
     nodataText:'Streckendaten nicht verfügbar —',nodataGarmin:'Auf Garmin öffnen ↗',
     nodataMyLoc:'Dein Standort wird auf der Karte angezeigt',
@@ -1493,6 +1505,8 @@ function applyTranslations() {
   const nfl = document.getElementById('nav-fab-label');     if (nfl) nfl.textContent = t('navBtn');
   const mct = document.getElementById('menu-copy-title');   if (mct) mct.textContent = t('copyLinkBtn');
   const mcd = document.getElementById('menu-copy-desc');    if (mcd) mcd.textContent = t('menuCopyDesc');
+  const mgt = document.getElementById('menu-garmin-title'); if (mgt) mgt.textContent = t('menuGarminTitle');
+  const mgd = document.getElementById('menu-garmin-desc');  if (mgd) mgd.textContent = t('menuGarminDesc');
   const mut = document.getElementById('menu-change-title'); if (mut) mut.textContent = t('changeUrlBtn');
   const mud = document.getElementById('menu-change-desc');  if (mud) mud.textContent = t('menuChangeDesc');
   // No-data bar
@@ -2525,6 +2539,11 @@ document.getElementById('url-input').addEventListener('input', () => {
   document.getElementById('url-error').textContent = '';
   document.getElementById('url-input').classList.remove('error-field');
 });
+
+function openOnGarmin() {
+  const url = `https://livetrack.garmin.com/session/${state.sessionId}/token/${state.token}`;
+  window.open(url, '_blank', 'noopener');
+}
 
 function copyShareLink() {
   navigator.clipboard.writeText(location.href)
