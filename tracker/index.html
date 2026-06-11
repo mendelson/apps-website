@@ -1634,6 +1634,7 @@ function updateTrackerOnMap(lat, lng, label) {
   }
   document.getElementById('tracker-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   setNavButton(lat, lng);
+  if (_camBusy()) return;
   switch (state.autoFollow) {
     case 'tracker': map.panTo([lat, lng], { animate: true, duration: 0.5 }); break;
     case 'route':   _autoFitRoute(); break;
@@ -1677,11 +1678,19 @@ function updateUserOnMap(lat, lng, accuracy) {
   }
   document.getElementById('user-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   document.getElementById('user-loc-dot').className = 'loc-dot user';
+  if (_camBusy()) return;
   switch (state.autoFollow) {
     case 'user': map.panTo([lat, lng], { animate: true, duration: 0.5 }); break;
     case 'all':  _autoFitAll(); break;
   }
 }
+
+// While a click-triggered flight is running, auto-follow camera updates
+// (panTo/fitBounds from geolocation or refresh) must not cut it short —
+// that interruption is what makes the screen appear to "blink".
+let _camAnimUntil = 0;
+function _markCamAnim(durationSec) { _camAnimUntil = Date.now() + durationSec * 1000 + 150; }
+function _camBusy() { return Date.now() < _camAnimUntil; }
 
 function fitMap() {
   const bounds = [];
@@ -1691,6 +1700,7 @@ function fitMap() {
     trackPolyline.getLatLngs().forEach(ll => bounds.push(ll));
   }
   if (bounds.length === 0) return;
+  _markCamAnim(1.2);
   map.flyToBounds(L.latLngBounds(bounds), { padding: [60, 60], maxZoom: 16, duration: 1.2 });
 }
 
@@ -2562,11 +2572,11 @@ function setAutoFollow(mode) {
   if (state.autoFollow) {
     switch (state.autoFollow) {
       case 'tracker':
-        if (trackerMarker) map.flyTo(trackerMarker.getLatLng(), Math.max(map.getZoom(), 16), { duration: 1 });
+        if (trackerMarker) { _markCamAnim(1); map.flyTo(trackerMarker.getLatLng(), Math.max(map.getZoom(), 16), { duration: 1 }); }
         else showToast(t('trackerNotAvail'), 'warn', 3000);
         break;
       case 'user':
-        if (state.userLatLng) map.flyTo(state.userLatLng, Math.max(map.getZoom(), 16), { duration: 1 });
+        if (state.userLatLng) { _markCamAnim(1); map.flyTo(state.userLatLng, Math.max(map.getZoom(), 16), { duration: 1 }); }
         else showToast(t('userNotAvail'), 'warn', 3000);
         break;
       case 'route': fitRoute(); break;
@@ -2589,6 +2599,7 @@ function fitRoute() {
     bounds.push(trackerMarker.getLatLng());
   }
   if (bounds.length === 0) return;
+  _markCamAnim(1.2);
   map.flyToBounds(L.latLngBounds(bounds), { padding: [60, 60], maxZoom: 17, duration: 1.2 });
 }
 
