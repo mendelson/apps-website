@@ -1865,14 +1865,15 @@ function updateMetrics(point) {
 async function tryAlternativeEndpoints() {
   const ts = Date.now();
   const id = state.sessionId, tok = state.token;
-  // Different documented / guessed endpoint shapes
+  // Garmin killed the legacy /services/ API (404). The new frontend uses
+  // /api/sessions/ Next.js route handlers — exact shape unknown, so try
+  // the plausible variants.
   const variants = [
-    // Without the 'from' parameter (different server-side path for archived sessions?)
+    `https://livetrack.garmin.com/api/sessions/${id}/token/${tok}/trackpoints?requestTime=${ts}`,
+    `https://livetrack.garmin.com/api/sessions/${id}/trackpoints?token=${tok}&requestTime=${ts}`,
+    `https://livetrack.garmin.com/api/sessions/${id}/track-points?token=${tok}&requestTime=${ts}`,
+    // Legacy endpoints last, in case Garmin restores them
     `${API_BASE}/trackLog/${id}/token/${tok}?requestTime=${ts}`,
-    // Community-discovered pattern: token as query param, different path
-    `${API_BASE}/session/${id}/trackpoints?requestTime=${ts}&token=${tok}`,
-    // Session-relative trackLog
-    `${API_BASE}/session/${id}/token/${tok}/trackLog?requestTime=${ts}`,
   ];
 
   for (const url of variants) {
@@ -2023,8 +2024,8 @@ function normalisePoints(arr) {
   if (!Array.isArray(arr)) return null;
   const pts = arr.map(p => {
     if (!p || typeof p !== 'object') return null;
-    const lat = parseFloat(p.latitude ?? p.lat ?? p.Latitude ?? p.Lat);
-    const lng = parseFloat(p.longitude ?? p.lng ?? p.lon ?? p.Longitude ?? p.Lng ?? p.Lon);
+    const lat = parseFloat(p.latitude ?? p.lat ?? p.Latitude ?? p.Lat ?? p.position?.lat);
+    const lng = parseFloat(p.longitude ?? p.lng ?? p.lon ?? p.Longitude ?? p.Lng ?? p.Lon ?? p.position?.lon);
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90) return null;
     const ts = p.timestamp != null ? p.timestamp
       : p.time != null ? p.time
@@ -2034,9 +2035,11 @@ function normalisePoints(arr) {
     if (Array.isArray(meta)) {
       meta = Object.fromEntries(meta.map(m => [m.key, m.value]));
     }
-    if (!meta.SPEED && p.speed != null) meta.SPEED = String(p.speed);
-    if (!meta.TOTAL_DISTANCE && p.distance != null) meta.TOTAL_DISTANCE = String(p.distance);
+    if (!meta.SPEED && (p.speedMetersPerSec ?? p.speed) != null) meta.SPEED = String(p.speedMetersPerSec ?? p.speed);
+    if (!meta.TOTAL_DISTANCE && (p.totalDistanceMeters ?? p.distance) != null) meta.TOTAL_DISTANCE = String(p.totalDistanceMeters ?? p.distance);
     if (!meta.ELEVATION && p.altitude != null) meta.ELEVATION = String(p.altitude);
+    if (!meta.TOTAL_DURATION && p.totalDurationSecs != null) meta.TOTAL_DURATION = String(p.totalDurationSecs);
+    if (!meta.ACTIVITY_TYPE && p.activityType) meta.ACTIVITY_TYPE = p.activityType;
     return { latitude: lat, longitude: lng, timestamp: ts, metaData: meta };
   }).filter(Boolean);
   return pts.length ? pts : null;
@@ -2087,21 +2090,45 @@ function parseGarminPageData(html) {
     for (const q of qs) {
       const k = q?.queryKey, d = q?.state?.data;
       if (!k || !d) continue;
-      if (k[0] === 'session' && k.length >= 2) sessionData = d;
+      if (k[0] === 'session' && k[k.length - 1] === 'track-points') trackData = d;
+      else if (k[0] === 'session' && k.length <= 3) sessionData = d;
       else if (k[0] === 'user' && k[2] === 'profile') profileData = d;
     }
   }
-  if (!sessionData && !profileData) return null;
+  if (!sessionData && !profileData && !trackData) return null;
   const now = Date.now();
   const endMs = sessionData?.end ? new Date(sessionData.end).getTime() : 0;
   const sessionInfo = {
     sessionStatus: now < endMs ? 'InProgress' : 'Ended',
     sessionName: sessionData?.sessionName || profileData?.name || 'Garmin LiveTrack',
     userName: profileData?.name || sessionData?.userDisplayName || 'Atleta',
-    startLatitude: sessionData?.startLatitude,
-    startLongitude: sessionData?.startLongitude,
   };
-  return { sessionInfo, trackPoints: null };
+  // Track-points are SSR'd for current sessions (all pages of the infinite
+  // query); old/expired sessions lose them, in which case trackPoints stays
+  // null and the caller falls back to other strategies.
+  let trackPoints = null;
+  if (Array.isArray(trackData?.pages)) {
+    trackPoints = [];
+    for (const pg of trackData.pages) {
+      for (const pt of (pg?.trackPoints || [])) {
+        if (pt?.position?.lat == null) continue;
+        trackPoints.push({
+          latitude:  pt.position.lat,
+          longitude: pt.position.lon,
+          timestamp: new Date(pt.dateTime).getTime(),
+          metaData: {
+            SPEED:          String(pt.speedMetersPerSec ?? 0),
+            TOTAL_DISTANCE: String(pt.totalDistanceMeters ?? 0),
+            ELEVATION:      String(pt.altitude ?? 0),
+            TOTAL_DURATION: String(pt.totalDurationSecs ?? 0),
+            ACTIVITY_TYPE:  pt.activityType || '',
+          },
+        });
+      }
+    }
+    if (!trackPoints.length) trackPoints = null;
+  }
+  return { sessionInfo, trackPoints };
 }
 
 async function fetchViaGASPage() {

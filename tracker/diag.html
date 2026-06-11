@@ -148,6 +148,11 @@ function extractAllQueries(html) {
       if (hits.length) {
         log('    ' + c.split('/').pop() + ':');
         [...new Set(hits)].slice(0, 6).forEach(h => log('      ' + h));
+        // raw context around /api/sessions/ to reveal URL template construction
+        let ai = -1;
+        while ((ai = js.indexOf('/api/sessions/', ai + 1)) !== -1) {
+          log('      ctx: …' + js.slice(Math.max(0, ai - 120), ai + 160).replace(/\s+/g, ' ') + '…');
+        }
         apiHits++;
       }
     } catch (_) {}
