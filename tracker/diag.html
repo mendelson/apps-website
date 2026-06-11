@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tracker — diagnóstico</title>
+<style>
+  body { background:#0d1117; color:#c9d1d9; font:13px/1.5 monospace; margin:0; padding:12px; }
+  h1 { font-size:15px; }
+  pre { white-space:pre-wrap; word-break:break-all; background:#161b22; padding:10px; border-radius:8px; }
+  button { font:inherit; padding:8px 14px; border-radius:8px; border:0; background:#238636; color:#fff; }
+</style>
+</head>
+<body>
+<h1>Diagnóstico do tracker</h1>
+<button id="copy">Copiar resultado</button>
+<pre id="log"></pre>
+<script>
+const GAS = 'https://script.google.com/macros/s/AKfycbzB1GQU599Y_DIuBo5TjgeDBpp1HLnxs83XG51_yG7Kb4teL-yRy7PDO1pk--mkbCOr/exec';
+const logEl = document.getElementById('log');
+const log = m => { logEl.textContent += m + '\n'; };
+document.getElementById('copy').onclick = () =>
+  navigator.clipboard.writeText(logEl.textContent).then(() => alert('copiado'));
+
+const gas = u => fetch(GAS + '?url=' + encodeURIComponent(u)).then(r => r.text());
+
+(async () => {
+  const user = new URLSearchParams(location.search).get('user') || 'mendelson';
+  log('user: ' + user + ' | ' + new Date().toISOString());
+
+  // 1 ── session registry
+  let s;
+  try {
+    s = await (await fetch(GAS + '?action=session&user=' + user)).json();
+    log('1 registry: ' + JSON.stringify(s));
+  } catch (e) { return log('1 registry FALHOU: ' + e.message); }
+  if (!s.url) return log('>>> sem URL no registro — problema no watcher de e-mail');
+  const m = s.url.match(/session\/([^\/]+)\/token\/([^\/?#]+)/i);
+  if (!m) return log('>>> URL armazenada não bate com o padrão: ' + s.url);
+  const id = m[1], tok = m[2];
+  log('   id=' + id + '\n   token=' + tok);
+  log('   idade do registro: ' + Math.round((Date.now() - s.ts) / 60000) + ' min');
+
+  // 2 ── legacy REST endpoints via GAS
+  for (const [name, u] of [
+    ['session ', `https://livetrack.garmin.com/services/session/${id}/token/${tok}?requestTime=${Date.now()}`],
+    ['trackLog', `https://livetrack.garmin.com/services/trackLog/${id}/token/${tok}?requestTime=${Date.now()}&from=0`],
+  ]) {
+    try {
+      const t = await gas(u);
+      log('2 ' + name + ': len=' + t.length + ' :: ' + t.slice(0, 250).replace(/\s+/g, ' '));
+    } catch (e) { log('2 ' + name + ' FALHOU: ' + e.message); }
+  }
+
+  // 3 ── page fetch + look for API URLs in payload and JS chunks
+  let page = '';
+  try {
+    page = await gas(s.url);
+    log('3 page: len=' + page.length);
+  } catch (e) { return log('3 page FALHOU: ' + e.message); }
+
+  const inPage = page.match(/[^"'`\\]{0,50}(?:trackLog|track-points|trackpoints)[^"'`\\]{0,80}/gi);
+  if (inPage) log('3 na página:\n   ' + [...new Set(inPage)].slice(0, 8).join('\n   '));
+
+  const chunks = [...new Set([...page.matchAll(/\/_next\/static\/chunks\/[^"\\ ]+\.js/g)].map(x => x[0]))];
+  log('3 chunks JS: ' + chunks.length);
+  for (const c of chunks.slice(0, 30)) {
+    try {
+      const js = await gas('https://livetrack.garmin.com' + c);
+      const hits = js.match(/[^"'`\\]{0,60}(?:trackLog|track-points|trackpoints|services\/)[^"'`\\]{0,90}/g);
+      if (hits) log('   ' + c.split('/').pop() + ':\n      ' + [...new Set(hits)].slice(0, 12).join('\n      '));
+    } catch (e) { /* segue */ }
+  }
+  log('FIM');
+})();
+</script>
+</body>
+</html>
