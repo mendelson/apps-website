@@ -4,16 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Tracker — diagnóstico</title>
+<title>Tracker — diagnóstico v2</title>
 <style>
-  body { background:#0d1117; color:#c9d1d9; font:13px/1.5 monospace; margin:0; padding:12px; }
-  h1 { font-size:15px; }
-  pre { white-space:pre-wrap; word-break:break-all; background:#161b22; padding:10px; border-radius:8px; }
+  body { background:#0d1117; color:#c9d1d9; font:12px/1.5 monospace; margin:0; padding:12px; }
+  h1 { font-size:14px; margin-bottom:4px; }
+  pre { white-space:pre-wrap; word-break:break-all; background:#161b22; padding:10px; border-radius:8px; margin:4px 0 10px; }
   button { font:inherit; padding:8px 14px; border-radius:8px; border:0; background:#238636; color:#fff; }
+  .sec { color:#79c0ff; }
 </style>
 </head>
 <body>
-<h1>Diagnóstico do tracker</h1>
+<h1>Diagnóstico do tracker v2</h1>
 <button id="copy">Copiar resultado</button>
 <pre id="log"></pre>
 <script>
@@ -23,56 +24,137 @@ const log = m => { logEl.textContent += m + '\n'; };
 document.getElementById('copy').onclick = () =>
   navigator.clipboard.writeText(logEl.textContent).then(() => alert('copiado'));
 
-const gas = u => fetch(GAS + '?url=' + encodeURIComponent(u)).then(r => r.text());
+const gasProxy = u => fetch(GAS + '?url=' + encodeURIComponent(u)).then(r => r.text());
+
+function extractAllQueries(html) {
+  // Decode all type 1 and type 2 RSC chunks
+  const re = /self\.__next_f\.push\(\[(?:1|2),"((?:[^"\\]|\\.)*)"\]\)/g;
+  let payload = '';
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    try { payload += JSON.parse('"' + m[1] + '"'); } catch (_) {}
+  }
+  const marker = '"mutations":[],"queries":[';
+  const sections = [];
+  let searchFrom = 0;
+  let sectionIdx = 0;
+  while (true) {
+    const mi = payload.indexOf(marker, searchFrom);
+    if (mi === -1) break;
+    const arrStart = mi + marker.length - 1;
+    let depth = 0, i;
+    for (i = arrStart; i < payload.length; i++) {
+      if (payload[i] === '[') depth++;
+      else if (payload[i] === ']') { depth--; if (depth === 0) break; }
+    }
+    searchFrom = i + 1;
+    try {
+      const qs = JSON.parse(payload.substring(arrStart, i + 1).replace(/"\$undefined"/g, 'null'));
+      sections.push({ idx: sectionIdx++, queries: qs });
+    } catch (_) {}
+  }
+  return { payload, sections };
+}
 
 (async () => {
   const user = new URLSearchParams(location.search).get('user') || 'mendelson';
   log('user: ' + user + ' | ' + new Date().toISOString());
 
-  // 1 ── session registry
+  // 1 — session registry
   let s;
   try {
     s = await (await fetch(GAS + '?action=session&user=' + user)).json();
-    log('1 registry: ' + JSON.stringify(s));
-  } catch (e) { return log('1 registry FALHOU: ' + e.message); }
-  if (!s.url) return log('>>> sem URL no registro — problema no watcher de e-mail');
+    log('[1] registry: ' + JSON.stringify(s));
+  } catch (e) { return log('[1] registry FALHOU: ' + e.message); }
+  if (!s.url) return log('>>> sem URL no registro');
   const m = s.url.match(/session\/([^\/]+)\/token\/([^\/?#]+)/i);
-  if (!m) return log('>>> URL armazenada não bate com o padrão: ' + s.url);
+  if (!m) return log('>>> URL inválida: ' + s.url);
   const id = m[1], tok = m[2];
-  log('   id=' + id + '\n   token=' + tok);
-  log('   idade do registro: ' + Math.round((Date.now() - s.ts) / 60000) + ' min');
+  log('    id=' + id + '  tok=' + tok);
+  log('    idade: ' + Math.round((Date.now() - s.ts) / 60000) + ' min\n');
 
-  // 2 ── legacy REST endpoints via GAS
-  for (const [name, u] of [
-    ['session ', `https://livetrack.garmin.com/services/session/${id}/token/${tok}?requestTime=${Date.now()}`],
-    ['trackLog', `https://livetrack.garmin.com/services/trackLog/${id}/token/${tok}?requestTime=${Date.now()}&from=0`],
-  ]) {
-    try {
-      const t = await gas(u);
-      log('2 ' + name + ': len=' + t.length + ' :: ' + t.slice(0, 250).replace(/\s+/g, ' '));
-    } catch (e) { log('2 ' + name + ' FALHOU: ' + e.message); }
-  }
-
-  // 3 ── page fetch + look for API URLs in payload and JS chunks
+  // 2 — fetch Garmin page + extract all RSC queries
+  log('[2] buscando página…');
   let page = '';
   try {
-    page = await gas(s.url);
-    log('3 page: len=' + page.length);
-  } catch (e) { return log('3 page FALHOU: ' + e.message); }
+    page = await gasProxy(s.url);
+    log('    page len=' + page.length);
+  } catch (e) { return log('[2] FALHOU: ' + e.message); }
 
-  const inPage = page.match(/[^"'`\\]{0,50}(?:trackLog|track-points|trackpoints)[^"'`\\]{0,80}/gi);
-  if (inPage) log('3 na página:\n   ' + [...new Set(inPage)].slice(0, 8).join('\n   '));
+  const { payload, sections } = extractAllQueries(page);
+  log('    payload RSC len=' + payload.length);
+  log('    seções HydrationBoundary: ' + sections.length + '\n');
 
-  const chunks = [...new Set([...page.matchAll(/\/_next\/static\/chunks\/[^"\\ ]+\.js/g)].map(x => x[0]))];
-  log('3 chunks JS: ' + chunks.length);
-  for (const c of chunks.slice(0, 30)) {
-    try {
-      const js = await gas('https://livetrack.garmin.com' + c);
-      const hits = js.match(/[^"'`\\]{0,60}(?:trackLog|track-points|trackpoints|services\/)[^"'`\\]{0,90}/g);
-      if (hits) log('   ' + c.split('/').pop() + ':\n      ' + [...new Set(hits)].slice(0, 12).join('\n      '));
-    } catch (e) { /* segue */ }
+  // 3 — dump every queryKey from every section
+  log('[3] todas as queryKeys encontradas:');
+  let trackQuery = null;
+  sections.forEach(({ idx, queries }) => {
+    if (!queries.length) return;
+    log('  seção ' + idx + ' (' + queries.length + ' queries):');
+    queries.forEach(q => {
+      const k = q?.queryKey;
+      const d = q?.state?.data;
+      const dataDesc = d == null ? 'null' :
+        typeof d === 'object' && !Array.isArray(d) ? '{' + Object.keys(d).slice(0, 8).join(',') + '}' :
+        Array.isArray(d) ? '[array len=' + d.length + ']' : String(d);
+      log('    key=' + JSON.stringify(k) + '  data=' + dataDesc);
+      // capture any query whose key contains track-related words
+      if (k && JSON.stringify(k).toLowerCase().includes('track') && d) {
+        trackQuery = { key: k, data: d };
+      }
+    });
+  });
+
+  // 4 — show track query data structure in detail
+  if (trackQuery) {
+    log('\n[4] query de track encontrada!\n    key=' + JSON.stringify(trackQuery.key));
+    const d = trackQuery.data;
+    if (d?.pages) {
+      d.pages.forEach((pg, i) => {
+        const pts = pg?.trackPoints ?? pg?.points ?? pg?.data ?? [];
+        log('    página ' + i + ': ' + Array.isArray(pts) ? pts.length + ' pontos' : JSON.stringify(Object.keys(pg ?? {})));
+        if (Array.isArray(pts) && pts[0]) log('    primeiro ponto: ' + JSON.stringify(pts[0]));
+      });
+    } else {
+      log('    estrutura: ' + JSON.stringify(d).slice(0, 600));
+    }
+  } else {
+    log('\n[4] nenhuma query com "track" no key — track-points não está no RSC como query');
+    // search raw payload for trackPoints data
+    const tpIdx = payload.indexOf('"trackPoints"');
+    if (tpIdx !== -1) {
+      log('[4b] "trackPoints" encontrado no payload RSC em offset ' + tpIdx);
+      log('     contexto: ' + payload.slice(Math.max(0, tpIdx - 80), tpIdx + 300));
+    } else {
+      log('[4b] "trackPoints" NÃO encontrado no payload RSC');
+      // check in raw page HTML
+      const rawIdx = page.indexOf('trackPoints');
+      if (rawIdx !== -1) {
+        log('[4c] "trackPoints" está no HTML bruto em offset ' + rawIdx);
+        log('     contexto: ' + page.slice(Math.max(0, rawIdx - 80), rawIdx + 200));
+      }
+    }
   }
-  log('FIM');
+
+  // 5 — look for any livetrack API path in page or chunks
+  log('\n[5] buscando URLs de API nos chunks JS…');
+  const chunkUrls = [...new Set([...page.matchAll(/\/_next\/static\/chunks\/[^"'\\ ]+\.js/g)].map(x => x[0]))];
+  log('    chunks: ' + chunkUrls.length);
+  let apiHits = 0;
+  for (const c of chunkUrls) {
+    try {
+      const js = await gasProxy('https://livetrack.garmin.com' + c);
+      const hits = [...js.matchAll(/["'`]([^"'`]*(?:\/services\/|\/api\/|trackLog|track-points|trackpoints|trackPoint)[^"'`]{0,120})["'`]/g)].map(x => x[1]);
+      if (hits.length) {
+        log('    ' + c.split('/').pop() + ':');
+        [...new Set(hits)].slice(0, 6).forEach(h => log('      ' + h));
+        apiHits++;
+      }
+    } catch (_) {}
+  }
+  if (!apiHits) log('    nenhum hit de API nos chunks');
+
+  log('\nFIM');
 })();
 </script>
 </body>
