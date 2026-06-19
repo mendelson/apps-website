@@ -93,7 +93,7 @@
         activeUsers: 'Aktive Nutzer (7 Tage):'
       },
       featuredReasons: {
-        new:      { badge: { emoji: '✨', word: 'Neu gestartet',    class: 'fresh'     }, headline: '✨ Neu gestartet' },
+        new:      { badge: { emoji: '✨', word: 'Neu',    class: 'fresh'     }, headline: '✨ Neu gestartet' },
         installs: { badge: { emoji: '🔥', word: 'Im Trend',         class: 'trending'  }, headline: '🔥 Beliebt Diese Woche' },
         total:    { badge: { emoji: '🏆', word: 'Beliebt',          class: 'popular'   }, headline: '🏆 Aller-Zeiten-Favorit' },
         users:    { badge: { emoji: '💪', word: 'Regelmäßig',       class: 'consistent'}, headline: '💪 Athleten nutzen es weiterhin' },
@@ -191,7 +191,7 @@
         activeUsers: 'Active Users (7 days):'
       },
       featuredReasons: {
-        new:      { badge: { emoji: '✨', word: 'Newly launched', class: 'fresh'     }, headline: '✨ Newly launched' },
+        new:      { badge: { emoji: '✨', word: 'New', class: 'fresh'     }, headline: '✨ Newly launched' },
         installs: { badge: { emoji: '🔥', word: 'Trending',       class: 'trending'  }, headline: '🔥 Popular This Week' },
         total:    { badge: { emoji: '🏆', word: 'Popular',        class: 'popular'   }, headline: '🏆 All-Time Favorite' },
         users:    { badge: { emoji: '💪', word: 'Consistent',     class: 'consistent'}, headline: '💪 Athletes keep using it' },
@@ -289,7 +289,7 @@
         activeUsers: 'Usuarios activos (7 días):'
       },
       featuredReasons: {
-        new:      { badge: { emoji: '✨', word: 'Nuevo lanzamiento', class: 'fresh'     }, headline: '✨ Nuevo lanzamiento' },
+        new:      { badge: { emoji: '✨', word: 'Lanzamiento', class: 'fresh'     }, headline: '✨ Nuevo lanzamiento' },
         installs: { badge: { emoji: '🔥', word: 'Tendencia',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',           class: 'popular'   }, headline: '🏆 Favorito de Todos los Tiempos' },
         users:    { badge: { emoji: '💪', word: 'Constante',         class: 'consistent'}, headline: '💪 Los atletas siguen usándola' },
@@ -387,7 +387,7 @@
         activeUsers: 'Utilisateurs actifs (7 jours) :'
       },
       featuredReasons: {
-        new:      { badge: { emoji: '✨', word: 'Nouveau lancement',  class: 'fresh'     }, headline: '✨ Nouveau lancement' },
+        new:      { badge: { emoji: '✨', word: 'Lancement',  class: 'fresh'     }, headline: '✨ Nouveau lancement' },
         installs: { badge: { emoji: '🔥', word: 'Tendance',           class: 'trending'  }, headline: '🔥 Populaire Cette Semaine' },
         total:    { badge: { emoji: '🏆', word: 'Populaire',          class: 'popular'   }, headline: '🏆 Favori de Tous les Temps' },
         users:    { badge: { emoji: '💪', word: 'Régulier',           class: 'consistent'}, headline: "💪 Les athlètes continuent de l'utiliser" },
@@ -485,7 +485,7 @@
         activeUsers: 'Usuários ativos (7 dias):'
       },
       featuredReasons: {
-        new:      { badge: { emoji: '✨', word: 'Novo lançamento', class: 'fresh'     }, headline: '✨ Novo lançamento' },
+        new:      { badge: { emoji: '✨', word: 'Lançamento', class: 'fresh'     }, headline: '✨ Novo lançamento' },
         installs: { badge: { emoji: '🔥', word: 'Em alta',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',         class: 'popular'   }, headline: '🏆 Favorito de Todos os Tempos' },
         users:    { badge: { emoji: '💪', word: 'Consistente',     class: 'consistent'}, headline: '💪 Atletas continuam usando' },

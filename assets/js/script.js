@@ -345,7 +345,7 @@ const MAX_FEATURED_SLIDES = 4;
 /** Badge + carousel headline per slide reason (reason = why this app was chosen). */
 const FEATURED_REASON_COPY = window.FEATURED_REASON_COPY || {
   new: {
-    badge: { emoji: "✨", word: "Newly launched", class: "fresh" },
+    badge: { emoji: "✨", word: "New", class: "fresh" },
     headline: "✨ Newly launched"
   },
   installs: {
