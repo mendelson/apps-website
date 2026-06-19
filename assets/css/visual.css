@@ -253,142 +253,42 @@ nav a:hover {
 }
 
 /* ===========================
-   PAYMENT OPTIONS
+   PAYMENT: ALTERNATIVE LINK
 =========================== */
 
-.pay {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* Primary CTA stays the Connect IQ badge (links to the Garmin Pay
+   version). The alternative route (free trial / other payment
+   methods via KiezelPay) sits below as a subtle secondary link. */
+.pay-alt {
+  margin-top: 12px;
 }
 
-.pay-label {
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  opacity: 0.55;
-}
-
-.pay-opt {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  padding: 13px 14px;
-  border-radius: 14px;
-  background: #1f1f1f;
-  border: 1px solid #333;
-  color: #eee;
-  text-decoration: none;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-
-.pay-opt:hover {
-  transform: translateY(-1px);
-  border-color: #4a4a4a;
-  background: #242424;
-}
-
-.pay-opt--primary {
-  background: linear-gradient(180deg, #14422c 0%, #0e2a1d 100%);
-  border-color: #2f9c63;
-}
-
-.pay-opt--primary:hover {
-  border-color: #4cd964;
-  background: linear-gradient(180deg, #185034 0%, #0e2a1d 100%);
-}
-
-.pay-opt__icon {
-  flex: none;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #cfcfcf;
-}
-
-.pay-opt--primary .pay-opt__icon {
-  color: #4cd964;
-}
-
-.pay-opt__text {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-  line-height: 1.3;
-}
-
-.pay-opt__row {
-  display: flex;
+.pay-alt__link {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #cfcfcf;
+  font-size: 13px;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-.pay-opt__title {
-  font-size: 15px;
-  font-weight: 600;
+.pay-alt__link:hover {
+  border-color: #4a4a4a;
+  background: #202020;
+  color: #fff;
 }
 
-.pay-opt__sub {
-  font-size: 12px;
-  opacity: 0.6;
-  margin-top: 2px;
-}
-
-.pay-opt__tag {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: #9aa0a6;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 2px 7px;
-  border-radius: 20px;
-}
-
-.pay-opt--primary .pay-opt__tag {
-  color: #4cd964;
-  background: rgba(76, 217, 100, 0.12);
-  border-color: rgba(76, 217, 100, 0.4);
-}
-
-.pay-opt__arrow {
+.pay-alt__icon {
   flex: none;
-  font-size: 22px;
-  line-height: 1;
-  opacity: 0.4;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-.pay-opt:hover .pay-opt__arrow {
-  opacity: 0.8;
-  transform: translateX(2px);
-}
-
-/* Single-method cards render as one clean CTA */
-.pay.pay--single .pay-label {
-  display: none;
-}
-
-.pay.pay--single .pay-opt {
-  border-color: #2f9c63;
-}
-
-/* The Connect IQ badge becomes a small, muted trust mark
-   (not a button) when payment options are shown */
-.ciq-badge--mark {
-  display: block;
-  opacity: 0.7;
-}
-
-.ciq-badge--mark img {
-  width: 120px;
-  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  opacity: 0.85;
 }
 
 /* ===========================

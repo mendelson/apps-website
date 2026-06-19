@@ -32,25 +32,18 @@ document.addEventListener("click", e => {
 });
 
 /* ==========================================================
-   PAYMENT OPTIONS (Garmin Pay / KiezelPay)
+   PAYMENT: alternative method link (KiezelPay free trial, etc.)
 ========================================================== */
-document.querySelectorAll(".pay").forEach(block => {
-  const opts = block.querySelectorAll(".pay-opt");
-
-  // A single method collapses into one clean CTA (no chooser label)
-  if (opts.length <= 1) block.classList.add("pay--single");
-
-  opts.forEach(opt => {
-    opt.addEventListener("click", () => {
-      const card = opt.closest(".card");
-      if (typeof gtag === "function") {
-        gtag("event", "payment_method_click", {
-          app_name: card?.dataset.name || "unknown",
-          method: opt.dataset.method || "unknown",
-          url: opt.href
-        });
-      }
-    });
+document.querySelectorAll(".pay-alt__link").forEach(link => {
+  link.addEventListener("click", () => {
+    const card = link.closest(".card");
+    if (typeof gtag === "function") {
+      gtag("event", "payment_method_click", {
+        app_name: card?.dataset.name || "unknown",
+        method: link.dataset.method || "alt",
+        url: link.href
+      });
+    }
   });
 });
 
