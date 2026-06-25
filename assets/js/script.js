@@ -48,6 +48,51 @@ document.querySelectorAll(".pay-alt__link").forEach(link => {
 });
 
 /* ==========================================================
+   PRELOADER 8 — medley swimmers race
+   Vanilla port of the pen's jQuery logic: each lane swims the
+   full medley (back → breast → fly → free), one pool length per
+   stroke, alternating direction, with a random per-length speed
+   scaled by lane "power". Loops for as long as the preloader is up.
+========================================================== */
+window.startSwimRace = function (container) {
+  const STROKES = ["backstroke", "breaststroke", "butterfly", "free"];
+  const ALL = ["ready", "win", "lose"].concat(STROKES);
+  const POOL = 600;            // travel distance (px), as in the original
+  const POWER = [1.5, 1.2, 1.7, 1.8];
+
+  container.querySelectorAll(".swimmer").forEach((sw, i) => {
+    const pow = POWER[i % POWER.length];
+    let leg = 0;
+    let x = 0;
+    sw.style.transform = "translateX(0px)";
+
+    function swim() {
+      const pre = document.getElementById("preloader");
+      if (!sw.isConnected || (pre && pre.classList.contains("hide"))) return;
+
+      sw.classList.remove.apply(sw.classList, ALL);
+      sw.classList.add(STROKES[leg % STROKES.length]);
+
+      const target = leg % 2 === 0 ? POOL : 0;
+      const speed = Math.floor((Math.random() * 1000) / pow) + 2000;
+
+      const anim = sw.animate(
+        [{ transform: "translateX(" + x + "px)" }, { transform: "translateX(" + target + "px)" }],
+        { duration: speed, easing: "linear", fill: "forwards" }
+      );
+      anim.onfinish = () => {
+        x = target;
+        sw.style.transform = "translateX(" + target + "px)";
+        leg++;
+        swim();
+      };
+    }
+
+    swim();
+  });
+};
+
+/* ==========================================================
    EXTERNAL LINKS → NEW TAB
 ========================================================== */
 function initExternalLinks() {
