@@ -2232,6 +2232,21 @@ nav.open .nav-hamburger span:nth-child(3) {
 .loader-8 .free .leg  { left: 30px; animation: sw-kick3 0.15s linear infinite; }
 .loader-8 .free .leg:before { left: 80px; }
 
+/* Lap travel: each lane starts at the wall, swims to the far end and
+   back, flipping to face the swim direction at each turn. Different
+   durations make the lanes drift apart like an actual race. */
+.loader-8 .backstroke   { animation: sw-lap 5s ease-in-out infinite; }
+.loader-8 .breaststroke { animation: sw-lap 4.4s ease-in-out infinite; }
+.loader-8 .butterfly    { animation: sw-lap 4.8s ease-in-out infinite; }
+.loader-8 .free         { animation: sw-lap 3.6s ease-in-out infinite; }
+
+@keyframes sw-lap {
+  0%, 100% { transform: translateX(-300px) scaleX(1); }
+  48%      { transform: translateX(300px) scaleX(1); }
+  52%      { transform: translateX(300px) scaleX(-1); }
+  98%      { transform: translateX(-300px) scaleX(-1); }
+}
+
 @keyframes sw-backstrokeHead {
   0% { transform: rotate(150deg); }
   50% { transform: rotate(150deg); top: -35px; }
