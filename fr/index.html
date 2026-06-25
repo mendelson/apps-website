@@ -469,10 +469,41 @@
         </div>
     </div>
 </div>
-    `
+    `,
+    7: `
+      <div class="loader-7">
+        <div class="treadmill-animation">
+          <div class="treadmill">
+            <div class="base"></div>
+            <div class="legs"></div>
+            <div class="legs-behind"></div>
+            <div class="panel"></div>
+          </div>
+          <div class="runner">
+            <div class="runner-body"></div>
+            <div class="right-arm"></div>
+            <div class="left-arm"></div>
+            <div class="runner-legs">
+              <div class="right-leg">
+                <div class="right-calf">
+                  <div class="right-shoe"></div>
+                </div>
+              </div>
+              <div class="left-leg">
+                <div class="left-calf">
+                  <div class="left-shoe"></div>
+                </div>
+              </div>
+            </div>
+            <div class="runner-face">
+              <div class="hair"></div>
+            </div>
+          </div>
+        </div>
+      </div>`
   };
 
-  const desiredLoaders = [1, 4, 6];
+  const desiredLoaders = [1, 4, 6, 7];
   const randomPick = desiredLoaders[Math.floor(Math.random() * desiredLoaders.length)];
 
   container.innerHTML = loaders[randomPick];

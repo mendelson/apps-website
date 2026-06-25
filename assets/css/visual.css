@@ -1640,3 +1640,447 @@ nav.open .nav-hamburger span:nth-child(3) {
     font-size: 16px;
   }
 }
+
+/* ============================================
+   PRELOADER 7 (treadmill runner)
+   All selectors scoped under .loader-7 and
+   keyframes prefixed tm-* to avoid collisions.
+============================================ */
+.loader-7 {
+  position: relative;
+  transform: scale(0.75);
+}
+
+.loader-7 .treadmill-animation {
+  position: relative;
+  top: -50px;
+  left: -50px;
+}
+
+.loader-7 .runner {
+  position: absolute;
+  left: -50px;
+  top: 7px;
+  animation: tm-jump 0.25s linear infinite;
+}
+
+@keyframes tm-jump {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.loader-7 .runner-body {
+  position: absolute;
+  z-index: 5;
+  width: 50px;
+  height: 30px;
+  border-radius: 0 0 50px 50px;
+  background-color: #119da4;
+  top: -10px;
+  left: -20px;
+  transform: rotate(10deg);
+}
+
+.loader-7 .runner-body:before {
+  content: "";
+  position: absolute;
+  background-color: #1d4e89;
+  border-radius: 50px 50px 0 0;
+  width: 50px;
+  height: 80px;
+  top: -80px;
+}
+
+.loader-7 .runner-body:after {
+  content: "";
+  position: absolute;
+  background-color: #e6b8a2;
+  width: 25px;
+  height: 40px;
+  border-radius: 30px;
+  left: 15px;
+  top: -107px;
+}
+
+.loader-7 .right-arm,
+.loader-7 .left-arm,
+.loader-7 .right-arm:before,
+.loader-7 .left-arm:before {
+  position: absolute;
+  width: 20px;
+  height: 60px;
+  border-radius: 30px;
+  transform-origin: top;
+}
+
+.loader-7 .right-arm,
+.loader-7 .left-arm {
+  top: -75px;
+  left: 0;
+  animation: tm-move 0.5s linear infinite;
+}
+
+.loader-7 .right-arm {
+  background-color: #edc4b3;
+  z-index: 7;
+}
+
+.loader-7 .left-arm {
+  background-color: #deab90;
+  z-index: -3;
+  animation-delay: 0.25s;
+}
+
+.loader-7 .right-arm:after,
+.loader-7 .left-arm:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  top: 75px;
+  left: 35px;
+}
+
+.loader-7 .right-arm:before,
+.loader-7 .right-arm:after {
+  background-color: #edc4b3;
+}
+
+.loader-7 .left-arm:before,
+.loader-7 .left-arm:after {
+  background-color: #deab90;
+}
+
+.loader-7 .right-arm:before,
+.loader-7 .left-arm:before {
+  content: "";
+  top: 45px;
+  left: -5px;
+  transform: rotate(-45deg);
+}
+
+@keyframes tm-move {
+  0%, 100% { transform: rotate(65deg); }
+  15% { transform: rotate(55deg); }
+  50% { transform: rotate(-35deg); }
+  75% { transform: rotate(-45deg); }
+}
+
+.loader-7 .runner-legs {
+  position: absolute;
+  transform: rotate(20deg);
+  z-index: 4;
+}
+
+.loader-7 .right-leg,
+.loader-7 .left-leg,
+.loader-7 .right-calf,
+.loader-7 .left-calf,
+.loader-7 .right-shoe,
+.loader-7 .left-shoe {
+  position: absolute;
+  transform-origin: top;
+}
+
+.loader-7 .right-leg,
+.loader-7 .left-leg,
+.loader-7 .right-calf,
+.loader-7 .left-calf {
+  width: 22px;
+  height: 70px;
+}
+
+.loader-7 .right-leg,
+.loader-7 .left-leg {
+  border-radius: 0 0 20px 20px;
+  animation: tm-run 0.5s linear infinite;
+}
+
+.loader-7 .right-leg {
+  background-color: #edc4b3;
+  z-index: 5;
+  box-shadow: inset 0 40px #119da4;
+}
+
+.loader-7 .left-leg {
+  background-color: #deab90;
+  box-shadow: inset 0 40px #19647e;
+  animation-delay: 0.25s;
+  z-index: 2;
+}
+
+.loader-7 .right-calf,
+.loader-7 .left-calf {
+  top: 57px;
+  animation: tm-calf 0.5s linear infinite;
+  transform: rotate(75deg);
+}
+
+.loader-7 .right-calf {
+  background-color: #edc4b3;
+}
+
+.loader-7 .left-calf {
+  background-color: #deab90;
+  animation-delay: 0.25s;
+}
+
+.loader-7 .right-shoe,
+.loader-7 .left-shoe {
+  width: 50px;
+  height: 20px;
+  border-radius: 0 30px 0 0;
+  overflow: hidden;
+  top: 50px;
+}
+
+.loader-7 .right-shoe {
+  background-color: #e6dcd7;
+  box-shadow: inset 0 -7px #b8475d;
+}
+
+.loader-7 .left-shoe {
+  background-color: #cdb9ae;
+  box-shadow: inset 0 -7px #83203e;
+}
+
+.loader-7 .right-shoe:before,
+.loader-7 .left-shoe:before {
+  content: "";
+  position: absolute;
+  background-color: #333;
+  height: 2px;
+  width: 10px;
+  top: 0;
+  left: 37px;
+  box-shadow: -3px -5px #333, -6px -10px #333;
+  transform: rotate(-75deg);
+}
+
+@keyframes tm-run {
+  0%, 100% { transform: rotate(-65deg); }
+  15% { transform: rotate(-55deg); }
+  50% { transform: rotate(35deg); }
+  75% { transform: rotate(45deg); }
+}
+
+@keyframes tm-calf {
+  0%, 100% { transform: rotate(75deg); }
+  15% { transform: rotate(0deg); }
+  50% { transform: rotate(0); }
+  75% { transform: rotate(55deg); }
+}
+
+.loader-7 .runner-face {
+  position: absolute;
+  background-color: #edc4b3;
+  z-index: 8;
+  width: 45px;
+  height: 50px;
+  top: -145px;
+  left: 12px;
+  border-radius: 0 0 20px 5px;
+  transform: rotate(5deg);
+}
+
+.loader-7 .runner-face:before,
+.loader-7 .runner-face:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.loader-7 .runner-face:before {
+  width: 5px;
+  height: 10px;
+  top: 15px;
+  left: 25px;
+  background-color: #333;
+  box-shadow: 10px 0 #333;
+}
+
+.loader-7 .runner-face:after {
+  width: 10px;
+  height: 10px;
+  left: 27px;
+  top: 30px;
+  background-color: #c38e70;
+  animation: tm-scale 0.25s linear infinite;
+}
+
+@keyframes tm-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.7); }
+}
+
+.loader-7 .hair {
+  position: absolute;
+  z-index: 5;
+  background-color: #774936;
+  width: 57px;
+  height: 17px;
+  border-radius: 10px 0 20px 0;
+  top: -5px;
+  left: -2px;
+}
+
+.loader-7 .hair:before,
+.loader-7 .hair:after {
+  content: "";
+  position: absolute;
+}
+
+.loader-7 .hair:before {
+  background-color: #774936;
+  width: 12px;
+  height: 20px;
+  border-radius: 0 0 15px 0;
+  top: 15px;
+}
+
+.loader-7 .treadmill {
+  position: relative;
+}
+
+.loader-7 .base {
+  position: absolute;
+  overflow: hidden;
+  width: 500px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: #6c757d;
+  top: 135px;
+  left: -200px;
+  border: 5px solid #333;
+}
+
+.loader-7 .base:before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 5px;
+  top: 70px;
+  background-color: #333;
+  box-shadow: 0 0 #333, 0 -7px #333, 0 -14px #333, 0 -21px #333, 0 -28px #333, 0 -35px #333, 0 -42px #333, 0 -49px #333, 0 -56px #333, 0 -63px #333, 0 -70px #333, 0 -77px #333, 0 -84px #333, 0 -91px #333, 0 -98px #333, 0 -105px #333;
+  animation: tm-mill 0.25s linear infinite;
+}
+
+.loader-7 .base:after {
+  content: "";
+  position: absolute;
+  border: 5px solid #333;
+  top: -5px;
+  left: -5px;
+  width: 380px;
+  height: 50px;
+  background-color: #343a40;
+  border-radius: 50px;
+}
+
+@keyframes tm-mill {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(35px); }
+}
+
+.loader-7 .legs,
+.loader-7 .legs:before,
+.loader-7 .legs-behind:before,
+.loader-7 .legs-behind:after {
+  position: absolute;
+  width: 25px;
+}
+
+.loader-7 .legs,
+.loader-7 .legs-behind:before {
+  height: 180px;
+  transform: skew(15deg);
+}
+
+.loader-7 .legs {
+  background-color: #212529;
+  top: 25px;
+  z-index: 7;
+  left: 115px;
+}
+
+.loader-7 .legs:before,
+.loader-7 .legs-behind:after {
+  height: 10px;
+}
+
+.loader-7 .legs:before {
+  content: "";
+  background-color: #212529;
+  left: -280px;
+  top: 170px;
+}
+
+.loader-7 .legs-behind {
+  position: absolute;
+  width: 500px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  top: 170px;
+  z-index: -4;
+  left: -200px;
+}
+
+.loader-7 .legs-behind:before {
+  content: "";
+  background-color: #adb5bd;
+  top: -150px;
+  left: 400px;
+}
+
+.loader-7 .legs-behind:after {
+  content: "";
+  background-color: #adb5bd;
+  left: 120px;
+  transform: skew(15deg);
+  top: 20px;
+}
+
+.loader-7 .panel {
+  position: absolute;
+  width: 200px;
+  height: 25px;
+  background-color: #adb5bd;
+  z-index: 8;
+  border-radius: 30px;
+  left: 40px;
+  box-shadow: inset -100px 0 #6c757d;
+}
+
+.loader-7 .panel:before,
+.loader-7 .panel:after {
+  content: "";
+  position: absolute;
+}
+
+.loader-7 .panel:before {
+  width: 60px;
+  height: 25px;
+  background-color: #343a40;
+  top: -25px;
+  left: 90px;
+  border-radius: 0 25px 0 0;
+}
+
+.loader-7 .panel:after {
+  border-style: solid;
+  border-width: 30px 0 25px 30px;
+  border-color: transparent transparent #343a40 transparent;
+  height: 0;
+  width: 0;
+  top: -55px;
+  left: 60px;
+}
+
+/* keep the wide treadmill inside the overlay on small screens */
+@media (max-width: 520px) {
+  .loader-7 {
+    transform: scale(0.5);
+  }
+}
