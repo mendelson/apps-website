@@ -500,10 +500,26 @@
             </div>
           </div>
         </div>
+      </div>`,
+    8: `
+      <div class="loader-8">
+        <div class="pool">
+          <div class="water">
+            <hr class="rope">
+            <ul class="swimmer backstroke"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer breaststroke"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer butterfly"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer free"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+          </div>
+        </div>
       </div>`
   };
 
-  const desiredLoaders = [1, 4, 6, 7];
+  const desiredLoaders = [1, 4, 6, 7, 8];
   const randomPick = desiredLoaders[Math.floor(Math.random() * desiredLoaders.length)];
 
   container.innerHTML = loaders[randomPick];

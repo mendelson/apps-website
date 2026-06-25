@@ -2084,3 +2084,208 @@ nav.open .nav-hamburger span:nth-child(3) {
     transform: scale(0.5);
   }
 }
+
+/* ============================================
+   PRELOADER 8 (medley swimmers)
+   Scoped under .loader-8, keyframes prefixed
+   sw-*. Swimmers start mid-stroke (no title,
+   no start button). Self-contained pool bg so
+   it reads on both light and dark overlays.
+============================================ */
+.loader-8 {
+  transform: scale(0.6);
+}
+
+.loader-8 .pool {
+  margin: 0 auto;
+  width: 800px;
+  position: relative;
+}
+
+.loader-8 .water {
+  background: #a5dee9;
+  padding: 22px 0 2px;
+  border-radius: 16px;
+}
+
+.loader-8 .rope {
+  border: 0;
+  width: 100%;
+  height: 20px;
+  background: #ee4536;
+  margin-bottom: 30px;
+}
+
+.loader-8 .rope:before {
+  margin: 0 10%;
+  display: block;
+  content: "";
+  position: relative;
+  border-top: 20px dotted #efe429;
+}
+
+.loader-8 .rope:after {
+  margin: 0 10%;
+  display: block;
+  content: "";
+  position: relative;
+  left: 20px;
+  top: -20px;
+  border-top: 20px dotted #242980;
+}
+
+.loader-8 .swimmer {
+  width: 200px;
+  height: 80px;
+  position: relative;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.loader-8 .swimmer li {
+  position: absolute;
+}
+
+.loader-8 .swimmer li:before {
+  content: "";
+  display: block;
+  background: #fccd9f;
+  border: 5px solid #000;
+  border-radius: 50px;
+  position: relative;
+}
+
+.loader-8 .swimmer .head {
+  width: 55px;
+  height: 55px;
+  top: -30px;
+  left: 140px;
+}
+
+.loader-8 .swimmer .head:after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 25px;
+  border: 5px solid #000;
+  border-radius: 0 0 50px 50px;
+  position: relative;
+  top: -5px;
+  left: 0;
+  background: #fccd9f;
+}
+
+.loader-8 .swimmer .head:before {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 25px;
+  border: 5px solid #000;
+  border-radius: 50px 50px 0 0;
+  position: relative;
+  top: 0;
+  left: 0;
+  background: #000;
+}
+
+.loader-8 .swimmer .arm {
+  top: 0;
+  left: 30px;
+  width: 200px;
+  height: 20px;
+}
+
+.loader-8 .swimmer .arm:before {
+  width: 100px;
+  height: 20px;
+}
+
+.loader-8 .swimmer .leg {
+  top: 0;
+  left: 0;
+  width: 160px;
+  height: 20px;
+}
+
+.loader-8 .swimmer .leg:before {
+  width: 80px;
+  height: 20px;
+}
+
+/* Strokes (each lane starts swimming immediately) */
+.loader-8 .backstroke .head { animation: sw-backstrokeHead 2s linear infinite; }
+.loader-8 .backstroke .arm  { animation: sw-role 0.75s linear infinite; }
+.loader-8 .backstroke .leg  { animation: sw-kick 0.5s linear infinite; }
+
+.loader-8 .breaststroke .head { left: 0; animation: sw-breaststrokeHead 0.5s linear infinite; }
+.loader-8 .breaststroke .arm  { left: -30px; animation: sw-role2 1s linear infinite; }
+.loader-8 .breaststroke .leg  { left: 40px; animation: sw-kick2 1s linear infinite; }
+.loader-8 .breaststroke .leg:before { left: 80px; }
+
+.loader-8 .butterfly .head { animation: sw-butterflyHead 0.75s linear infinite; }
+.loader-8 .butterfly .arm  { animation: sw-role 0.75s linear infinite; }
+.loader-8 .butterfly .leg  { animation: sw-kick 0.75s linear infinite; }
+
+.loader-8 .free .head { left: 0; animation: sw-butterflyHead 0.3s linear infinite; }
+.loader-8 .free .arm  { left: -30px; animation: sw-role3 0.3s linear infinite; }
+.loader-8 .free .leg  { left: 30px; animation: sw-kick3 0.15s linear infinite; }
+.loader-8 .free .leg:before { left: 80px; }
+
+@keyframes sw-backstrokeHead {
+  0% { transform: rotate(150deg); }
+  50% { transform: rotate(150deg); top: -35px; }
+  100% { transform: rotate(150deg); }
+}
+@keyframes sw-breaststrokeHead {
+  0% { transform: rotate(30deg); }
+  50% { transform: rotate(40deg); top: -40px; }
+  100% { transform: rotate(30deg); }
+}
+@keyframes sw-butterflyHead {
+  0% { transform: rotate(-30deg); }
+  50% { transform: rotate(-40deg); top: -50px; }
+  100% { transform: rotate(-30deg); }
+}
+@keyframes sw-role {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes sw-role2 {
+  0% { transform: rotateY(0deg); }
+  25% { transform: rotateY(60deg); }
+  50% { transform: rotateY(0deg); }
+  75% { transform: rotateY(-30deg); }
+  100% { transform: rotateY(0deg); }
+}
+@keyframes sw-role3 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+@keyframes sw-kick {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(30deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-30deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes sw-kick2 {
+  0% { transform: rotateY(0deg); }
+  25% { transform: rotateY(60deg); }
+  50% { transform: rotateY(0deg); }
+  75% { transform: rotateY(-30deg); }
+  100% { transform: rotateY(0deg); }
+}
+@keyframes sw-kick3 {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(30deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-30deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@media (max-width: 860px) {
+  .loader-8 {
+    transform: scale(0.42);
+  }
+}
