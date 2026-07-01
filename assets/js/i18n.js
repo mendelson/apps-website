@@ -93,6 +93,7 @@
         activeUsers: 'Aktive Nutzer (7 Tage):'
       },
       featuredReasons: {
+        premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — kostenlos testen' },
         new:      { badge: { emoji: '✨', word: 'Neu',    class: 'fresh'     }, headline: '✨ Neu gestartet' },
         installs: { badge: { emoji: '🔥', word: 'Im Trend',         class: 'trending'  }, headline: '🔥 Beliebt Diese Woche' },
         total:    { badge: { emoji: '🏆', word: 'Beliebt',          class: 'popular'   }, headline: '🏆 Aller-Zeiten-Favorit' },
@@ -191,6 +192,7 @@
         activeUsers: 'Active Users (7 days):'
       },
       featuredReasons: {
+        premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — free trial' },
         new:      { badge: { emoji: '✨', word: 'New', class: 'fresh'     }, headline: '✨ Newly launched' },
         installs: { badge: { emoji: '🔥', word: 'Trending',       class: 'trending'  }, headline: '🔥 Popular This Week' },
         total:    { badge: { emoji: '🏆', word: 'Popular',        class: 'popular'   }, headline: '🏆 All-Time Favorite' },
@@ -289,6 +291,7 @@
         activeUsers: 'Usuarios activos (7 días):'
       },
       featuredReasons: {
+        premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — prueba gratis' },
         new:      { badge: { emoji: '✨', word: 'Lanzamiento', class: 'fresh'     }, headline: '✨ Nuevo lanzamiento' },
         installs: { badge: { emoji: '🔥', word: 'Tendencia',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',           class: 'popular'   }, headline: '🏆 Favorito de Todos los Tiempos' },
@@ -387,6 +390,7 @@
         activeUsers: 'Utilisateurs actifs (7 jours) :'
       },
       featuredReasons: {
+        premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — essai gratuit' },
         new:      { badge: { emoji: '✨', word: 'Lancement',  class: 'fresh'     }, headline: '✨ Nouveau lancement' },
         installs: { badge: { emoji: '🔥', word: 'Tendance',           class: 'trending'  }, headline: '🔥 Populaire Cette Semaine' },
         total:    { badge: { emoji: '🏆', word: 'Populaire',          class: 'popular'   }, headline: '🏆 Favori de Tous les Temps' },
@@ -485,6 +489,7 @@
         activeUsers: 'Usuários ativos (7 dias):'
       },
       featuredReasons: {
+        premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — teste grátis' },
         new:      { badge: { emoji: '✨', word: 'Lançamento', class: 'fresh'     }, headline: '✨ Novo lançamento' },
         installs: { badge: { emoji: '🔥', word: 'Em alta',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',         class: 'popular'   }, headline: '🏆 Favorito de Todos os Tempos' },

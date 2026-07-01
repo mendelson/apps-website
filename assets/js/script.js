@@ -386,9 +386,17 @@ function adaptTooltipPosition(tag, tip) {
 ========================================================== */
 
 const MAX_FEATURED_SLIDES = 4;
+/** "🔥 Trending" floor — mirrors the momentum-tag threshold in loadMetrics. */
+const MIN_TRENDING_INSTALLS = 50;
+/** An app only earns the "✨ New" badge while it is at most this old (days). */
+const MAX_NEW_AGE_DAYS = 90;
 
 /** Badge + carousel headline per slide reason (reason = why this app was chosen). */
 const FEATURED_REASON_COPY = window.FEATURED_REASON_COPY || {
+  premium: {
+    badge: { emoji: "💎", word: "Premium", class: "premium" },
+    headline: "💎 Premium — free trial"
+  },
   new: {
     badge: { emoji: "✨", word: "New", class: "fresh" },
     headline: "✨ Newly launched"
@@ -423,12 +431,20 @@ function buildFeaturedCarousel(data) {
 
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
-  const byUsers = cards.slice().sort((a, b) => get(b, "users") - get(a, "users"));
 
+  /* A card is "paid" if it advertises a free trial and/or the premium
+     (Garmin Pay) purchase path — these are the apps we merchandise first. */
+  const isPaid = c =>
+    !!c.querySelector('.badge-slot .trial, .pay-alt, [data-method="garmin-pay"]');
+
+  /* Youngest app and its age in days, so "new" is only ever shown when true. */
   const newcomer =
     data && typeof data === "object"
       ? getYoungestAppCardByAge(cards, data)
       : null;
+  const newcomerDays = newcomer
+    ? getApproxDaysFromApi(data[newcomer.dataset.name])
+    : null;
 
   /** @type {{ card: Element, reason: keyof typeof FEATURED_REASON_COPY }[]} */
   const entries = [];
@@ -438,19 +454,32 @@ function buildFeaturedCarousel(data) {
     entries.push({ card, reason });
   };
 
-  if (newcomer) pushEntry(newcomer, "new");
+  /* Slots fill in priority order, and every badge is guaranteed truthful: a
+     slot is skipped (never relabelled) when its claim no longer holds, so the
+     carousel shrinks to as few as one slide rather than padding with filler. */
 
-  const topInstalls = byInstalls.find(c => !hasCard(c));
-  if (topInstalls) pushEntry(topInstalls, "installs");
+  /* 1. COMMERCIAL — lead with the strongest paid app (revenue first),
+        ranked by total downloads among paid apps. */
+  const topPaid = byTotal.find(isPaid);
+  if (topPaid) pushEntry(topPaid, "premium");
 
-  const topTotal = byTotal.find(c => !hasCard(c));
-  if (topTotal) pushEntry(topTotal, "total");
+  /* 2. ALL-TIME FAVORITE — only the genuine #1 by total downloads; if it is
+        already featured above, skip rather than mislabel the runner-up. */
+  if (byTotal[0] && !hasCard(byTotal[0])) pushEntry(byTotal[0], "total");
 
-  const topUsers = byUsers.find(c => !hasCard(c));
-  if (topUsers) pushEntry(topUsers, "users");
+  /* 3. TRENDING — the genuine #1 by weekly installs, and only once it clears
+        the same floor as the "🔥 Trending" momentum tag. */
+  if (
+    byInstalls[0] &&
+    !hasCard(byInstalls[0]) &&
+    get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS
+  ) {
+    pushEntry(byInstalls[0], "installs");
+  }
 
-  for (let i = 0; i < byInstalls.length && entries.length < MAX_FEATURED_SLIDES; i++) {
-    pushEntry(byInstalls[i], "spotlight");
+  /* 4. NEW — the youngest app, only while it is genuinely recent. */
+  if (newcomer && newcomerDays !== null && newcomerDays <= MAX_NEW_AGE_DAYS) {
+    pushEntry(newcomer, "new");
   }
 
   if (entries.length === 0) return;

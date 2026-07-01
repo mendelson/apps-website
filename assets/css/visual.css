@@ -691,6 +691,7 @@ nav a:hover {
 .card-badge.fresh     { color: #5ac8f5; border-color: #5ac8f5; }
 .card-badge.favorite  { color: #ffd60a; border-color: #ffd60a; }
 .card-badge.engaged   { color: #4cd964; border-color: #4cd964; }
+.card-badge.premium   { color: #bf5af2; border-color: #bf5af2; }
 
 /* ============================================
    PRELOADER OVERLAY (tema adaptável + transição premium)
