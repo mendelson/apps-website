@@ -468,6 +468,12 @@ nav a:hover {
    MOMENTUM TAG
 =========================== */
 
+/* Anchors the stats tooltip to the tag itself (not the whole card), so the
+   box opens right next to the click instead of at the bottom of the card. */
+.momentum {
+  position: relative;
+}
+
 .momentum-tag {
   font-size: 17px;
   font-weight: 600;
