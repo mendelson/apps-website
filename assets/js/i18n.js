@@ -50,10 +50,8 @@
       momentumTags: {
         trending: '🔥 Trend Diese Woche',
         popular: '🏆 Beliebt und Weit Verbreitet',
-        consistent: '💪 Regelmäßig Genutzt',
-        discovered: '📈 Neu Entdeckt',
-        trusted: '👍 Von Athleten Vertraut',
-        niche: '✨ Nischen-App'
+        consistent: '💪 Aktiv Genutzt',
+        discovered: '📈 Neu Entdeckt'
       },
       tooltips: {
         trending: {
@@ -67,24 +65,14 @@
           note: 'Spiegelt sowohl Gesamtinstallationen als auch aktive Athleten wider.'
         },
         consistent: {
-          title: '💪 Regelmäßig von Athleten Genutzt',
-          message: 'Athleten verlassen sich regelmäßig auf diese App und halten eine stabile 7-Tage-Nutzung aufrecht.',
-          note: 'Bindungsorientierter Einblick.'
+          title: '💪 Aktiv Genutzt',
+          message: 'Eine solide Gruppe von Athleten nutzt diese App diese Woche.',
+          note: 'Basierend auf aktiven Nutzern der letzten 7 Tage.'
         },
         discovered: {
-          title: '📈 Neu von Athleten Entdeckt',
-          message: 'Eine solide Anzahl neuer Athleten hat diese App in den letzten 7 Tagen entdeckt und installiert.',
+          title: '📈 Neu Entdeckt',
+          message: 'Gewinnt in den letzten 7 Tagen neue Installationen.',
           note: 'Basierend auf aktuellen Installationen.'
-        },
-        trusted: {
-          title: '👍 Von einer Kerngruppe Vertraut',
-          message: 'Eine zuverlässige Gruppe von Athleten nutzt diese App über die letzten 7 Tage weiterhin.',
-          note: 'Stabile Nutzung über die Zeit.'
-        },
-        niche: {
-          title: '✨ Neue oder Nischen-App',
-          message: 'Diese App hat ein großes Gesamtpublikum und starke 7-Tage-Nutzung.',
-          note: 'Fokussiertes oder frühes Nutzungsmuster.'
         }
       },
       metrics: {
@@ -149,10 +137,8 @@
       momentumTags: {
         trending: '🔥 Trending This Week',
         popular: '🏆 Popular and Widely Used',
-        consistent: '💪 Consistently Used',
-        discovered: '📈 Newly Discovered',
-        trusted: '👍 Trusted by Athletes',
-        niche: '✨ Niche App'
+        consistent: '💪 Actively Used',
+        discovered: '📈 Newly Discovered'
       },
       tooltips: {
         trending: {
@@ -166,24 +152,14 @@
           note: 'Reflects both total installs and active athletes.'
         },
         consistent: {
-          title: '💪 Consistently Used by Athletes',
-          message: 'Athletes rely on this app regularly, maintaining steady 7-day usage.',
-          note: 'Retention-focused insight.'
+          title: '💪 Actively Used',
+          message: 'A solid group of athletes is using this app this week.',
+          note: 'Based on active users over the last 7 days.'
         },
         discovered: {
-          title: '📈 Newly Discovered by Athletes',
-          message: 'A solid number of new athletes have discovered and installed this app in the last 7 days.',
+          title: '📈 Newly Discovered',
+          message: 'Picking up new installs over the last 7 days.',
           note: 'Based on recent installs.'
-        },
-        trusted: {
-          title: '👍 Trusted by a Core Group',
-          message: 'A reliable group of athletes keeps using this app over the last 7 days.',
-          note: 'Stable usage over time.'
-        },
-        niche: {
-          title: '✨ New or Niche App',
-          message: 'This app has a large overall audience and strong 7-day usage.',
-          note: 'Focused or early-stage usage pattern.'
         }
       },
       metrics: {
@@ -248,10 +224,8 @@
       momentumTags: {
         trending: '🔥 Tendencia Esta Semana',
         popular: '🏆 Popular y Ampliamente Usada',
-        consistent: '💪 Usada Consistentemente',
-        discovered: '📈 Recién Descubierta',
-        trusted: '👍 Confiada por Atletas',
-        niche: '✨ App de Nicho'
+        consistent: '💪 Usada Activamente',
+        discovered: '📈 Recién Descubierta'
       },
       tooltips: {
         trending: {
@@ -265,24 +239,14 @@
           note: 'Refleja tanto las instalaciones totales como los atletas activos.'
         },
         consistent: {
-          title: '💪 Usada Consistentemente por Atletas',
-          message: 'Los atletas dependen de esta app regularmente, manteniendo un uso estable de 7 días.',
-          note: 'Enfoque en retención.'
+          title: '💪 Usada Activamente',
+          message: 'Un grupo sólido de atletas está usando esta app esta semana.',
+          note: 'Basado en usuarios activos de los últimos 7 días.'
         },
         discovered: {
-          title: '📈 Recién Descubierta por Atletas',
-          message: 'Un número sólido de nuevos atletas ha descubierto e instalado esta app en los últimos 7 días.',
+          title: '📈 Recién Descubierta',
+          message: 'Ganando nuevas instalaciones en los últimos 7 días.',
           note: 'Basado en instalaciones recientes.'
-        },
-        trusted: {
-          title: '👍 Confiada por un Grupo Central',
-          message: 'Un grupo confiable de atletas sigue usando esta app durante los últimos 7 días.',
-          note: 'Uso estable a lo largo del tiempo.'
-        },
-        niche: {
-          title: '✨ App Nueva o de Nicho',
-          message: 'Esta app tiene una gran audiencia general y un fuerte uso de 7 días.',
-          note: 'Patrón de uso enfocado o en fase inicial.'
         }
       },
       metrics: {
@@ -347,10 +311,8 @@
       momentumTags: {
         trending: '🔥 Tendance Cette Semaine',
         popular: '🏆 Populaire et Largement Utilisée',
-        consistent: '💪 Utilisée Régulièrement',
-        discovered: '📈 Nouvellement Découverte',
-        trusted: '👍 Approuvée par les Athlètes',
-        niche: '✨ App de Niche'
+        consistent: '💪 Activement Utilisée',
+        discovered: '📈 Nouvellement Découverte'
       },
       tooltips: {
         trending: {
@@ -364,24 +326,14 @@
           note: 'Reflète à la fois les installations totales et les athlètes actifs.'
         },
         consistent: {
-          title: '💪 Utilisée Régulièrement par les Athlètes',
-          message: "Les athlètes s'appuient régulièrement sur cette app, maintenant une utilisation stable sur 7 jours.",
-          note: 'Indicateur de rétention.'
+          title: '💪 Activement Utilisée',
+          message: "Un groupe solide d'athlètes utilise cette app cette semaine.",
+          note: 'Basé sur les utilisateurs actifs des 7 derniers jours.'
         },
         discovered: {
-          title: '📈 Nouvellement Découverte par les Athlètes',
-          message: 'Un nombre solide de nouveaux athlètes ont découvert et installé cette app au cours des 7 derniers jours.',
+          title: '📈 Nouvellement Découverte',
+          message: 'Gagne de nouvelles installations au cours des 7 derniers jours.',
           note: 'Basé sur les installations récentes.'
-        },
-        trusted: {
-          title: '👍 Approuvée par un Groupe Central',
-          message: "Un groupe fiable d'athlètes continue d'utiliser cette app au cours des 7 derniers jours.",
-          note: 'Utilisation stable dans le temps.'
-        },
-        niche: {
-          title: '✨ App Nouvelle ou de Niche',
-          message: 'Cette app a un large public global et une forte utilisation sur 7 jours.',
-          note: "Schéma d'utilisation focalisé ou en phase précoce."
         }
       },
       metrics: {
@@ -446,10 +398,8 @@
       momentumTags: {
         trending: '🔥 Em Alta Esta Semana',
         popular: '🏆 Popular e Amplamente Usado',
-        consistent: '💪 Usado Consistentemente',
-        discovered: '📈 Recém-Descoberto',
-        trusted: '👍 Confiado por Atletas',
-        niche: '✨ App de Nicho'
+        consistent: '💪 Usado Ativamente',
+        discovered: '📈 Recém-Descoberto'
       },
       tooltips: {
         trending: {
@@ -463,24 +413,14 @@
           note: 'Reflete tanto as instalações totais quanto atletas ativos.'
         },
         consistent: {
-          title: '💪 Usado Consistentemente por Atletas',
-          message: 'Os atletas dependem deste app regularmente, mantendo uso estável de 7 dias.',
-          note: 'Foco em retenção.'
+          title: '💪 Usado Ativamente',
+          message: 'Um grupo sólido de atletas está usando este app esta semana.',
+          note: 'Com base em usuários ativos dos últimos 7 dias.'
         },
         discovered: {
-          title: '📈 Recém-Descoberto por Atletas',
-          message: 'Um número sólido de novos atletas descobriu e instalou este app nos últimos 7 dias.',
+          title: '📈 Recém-Descoberto',
+          message: 'Ganhando novas instalações nos últimos 7 dias.',
           note: 'Com base em instalações recentes.'
-        },
-        trusted: {
-          title: '👍 Confiado por um Grupo Central',
-          message: 'Um grupo confiável de atletas continua usando este app nos últimos 7 dias.',
-          note: 'Uso estável ao longo do tempo.'
-        },
-        niche: {
-          title: '✨ App Novo ou de Nicho',
-          message: 'Este app tem um grande público geral e forte uso de 7 dias.',
-          note: 'Padrão de uso focado ou em estágio inicial.'
         }
       },
       metrics: {

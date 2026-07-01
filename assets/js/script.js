@@ -207,36 +207,41 @@ document.addEventListener("DOMContentLoaded", () => {
    TOOLTIP TEXT
 ========================================================== */
 
+/* Momentum-tag thresholds (weekly installs, all-time downloads, weekly users).
+   Named so they are easy to calibrate; the trending floor is shared with the
+   featured carousel so "🔥 Trending" means the same thing in both places. */
+const MOMENTUM_TRENDING_INSTALLS = 50;  // 🔥 weekly installs
+const MOMENTUM_POPULAR_TOTAL     = 500; // 🏆 all-time downloads that earn "popular" on their own
+const MOMENTUM_ACTIVE_USERS      = 10;  // 💪 weekly active users
+const MOMENTUM_GROWING_INSTALLS  = 10;  // 📈 weekly installs
+
+const MOMENTUM_LEVELS = {
+  trending:   { fallback: "🔥 Trending This Week",       cls: "momentum-hot" },
+  popular:    { fallback: "🏆 Popular and Widely Used",  cls: "momentum-strong" },
+  consistent: { fallback: "💪 Actively Used",            cls: "momentum-positive" },
+  discovered: { fallback: "📈 Newly Discovered",         cls: "momentum-positive" }
+};
+
 const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
   trending: {
     title: "🔥 Trending This Week",
-    message: "Many athletes have chosen this app recently, making it one of the most active picks this week.",
+    message: "One of the most installed apps over the last 7 days.",
     note: "Based on fresh weekly installs."
   },
   popular: {
     title: "🏆 Popular and Widely Used",
-    message: "This app has a large long-term audience and strong weekly usage among athletes.",
-    note: "Reflects both total installs and active athletes."
+    message: "A large all-time audience with solid weekly usage among athletes.",
+    note: "Based on total downloads and weekly active users."
   },
   consistent: {
-    title: "💪 Consistently Used by Athletes",
-    message: "Athletes rely on this app regularly, maintaining steady 7-day usage.",
-    note: "Retention-focused insight."
+    title: "💪 Actively Used",
+    message: "A solid group of athletes is using this app this week.",
+    note: "Based on active users over the last 7 days."
   },
   discovered: {
-    title: "📈 Newly Discovered by Athletes",
-    message: "A solid number of new athletes have discovered and installed this app in the last 7 days.",
+    title: "📈 Newly Discovered",
+    message: "Picking up new installs over the last 7 days.",
     note: "Based on recent installs."
-  },
-  trusted: {
-    title: "👍 Trusted by a Core Group",
-    message: "A reliable group of athletes keeps using this app over the last 7 days.",
-    note: "Stable usage over time."
-  },
-  niche: {
-    title: "✨ New or Niche App",
-    message: "This app has a large overall audience and strong 7-day usage.",
-    note: "Focused or early-stage usage pattern."
   }
 };
 
@@ -275,59 +280,39 @@ function loadMetrics() {
 
         metrics.style.display = "none"; // raw numbers hidden
 
-        /* === MOMENTUM TAG === */
+        /* === MOMENTUM TAG ===
+           Four honest tiers. Below the lowest floor the app shows no tag at
+           all (no filler) — same philosophy as the featured carousel. Every
+           tooltip line states only what the raw 7-day / all-time numbers show,
+           with no retention/trend claims we can't back. */
+        tag.classList.remove("momentum-hot", "momentum-strong", "momentum-positive");
+
         let level = null;
-
-        tag.classList.remove(
-          "momentum-hot",
-          "momentum-strong",
-          "momentum-positive"
-        );
-
-        const _mt = window._T?.momentumTags || {};
-        if (installs >= 50) {
+        if (installs >= MOMENTUM_TRENDING_INSTALLS) {
           level = "trending";
-          tag.innerHTML = `${_mt.trending || "🔥 Trending This Week"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-hot");
-
-        } else if (total >= 100 && users >= 20) {
+        } else if (total >= MOMENTUM_POPULAR_TOTAL || (total >= 100 && users >= 20)) {
           level = "popular";
-          tag.innerHTML = `${_mt.popular || "🏆 Popular and Widely Used"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-strong");
-
-        } else if (users >= 10) {
+        } else if (users >= MOMENTUM_ACTIVE_USERS) {
           level = "consistent";
-          tag.innerHTML = `${_mt.consistent || "💪 Consistently Used"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-positive");
-
-        } else if (installs >= 10) {
+        } else if (installs >= MOMENTUM_GROWING_INSTALLS) {
           level = "discovered";
-          tag.innerHTML = `${_mt.discovered || "📈 Newly Discovered"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-positive");
-
-        } else if (users >= 3) {
-          level = "trusted";
-          tag.innerHTML = `${_mt.trusted || "👍 Trusted by Athletes"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-positive");
-
-        } else {
-          level = "niche";
-          tag.innerHTML = `${_mt.niche || "✨ Niche App"} <span class="info-icon">ⓘ</span>`;
-          tag.classList.add("momentum-positive");
         }
 
-        tip.dataset.level = level;
+        if (!level) {
+          tag.classList.add("hidden");
+          tip.classList.add("hidden");
+          return; // long-tail app: show no momentum tag at all
+        }
+
+        const _mt = window._T?.momentumTags || {};
+        const meta = MOMENTUM_LEVELS[level];
+        tag.innerHTML = `${_mt[level] || meta.fallback} <span class="info-icon">ⓘ</span>`;
+        tag.classList.add(meta.cls);
         tag.classList.remove("hidden");
+        tip.dataset.level = level;
 
-        /* === Tooltip content (stats ≥ 7 only) === */
-        const tipLevel = tip.dataset.level;
-        let stats = "";
-
-        if (total >= 7) stats += `<div>Downloads: <strong>${total}</strong></div>`;
-        if (installs >= 7) stats += `<div>Installs (week): <strong>${installs}</strong></div>`;
-        if (users >= 7) stats += `<div>Active users: <strong>${users}</strong></div>`;
-
-        const tt = TOOLTIP_TEXT[tipLevel];
+        /* === Tooltip content (each stat shown only when ≥ 7) === */
+        const tt = TOOLTIP_TEXT[level];
 
         tip.innerHTML = `
           <div class="tip-title">${tt.title}</div>
@@ -359,6 +344,22 @@ function loadMetrics() {
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
       });
 
+      /* Dynamic ordering inside each app section: strongest first, by
+         all-time downloads → weekly installs → weekly users. The section
+         order itself (Data Fields before Watch Faces) stays authored;
+         only the cards within a section reflow as the live stats change. */
+      const metricOf = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
+      ["#data-fields .grid", "#watch-faces .grid"].forEach(sel => {
+        const grid = document.querySelector(sel);
+        if (!grid) return;
+        [...grid.querySelectorAll(":scope > .card")]
+          .sort((a, b) =>
+            metricOf(b, "total") - metricOf(a, "total") ||
+            metricOf(b, "installs") - metricOf(a, "installs") ||
+            metricOf(b, "users") - metricOf(a, "users"))
+          .forEach(card => grid.appendChild(card));
+      });
+
       buildFeaturedCarousel(data);
 
     } catch (err) {
@@ -386,8 +387,8 @@ function adaptTooltipPosition(tag, tip) {
 ========================================================== */
 
 const MAX_FEATURED_SLIDES = 4;
-/** "🔥 Trending" floor — mirrors the momentum-tag threshold in loadMetrics. */
-const MIN_TRENDING_INSTALLS = 50;
+/** "🔥 Trending" floor — shared with the momentum-tag threshold above. */
+const MIN_TRENDING_INSTALLS = MOMENTUM_TRENDING_INSTALLS;
 /** An app only earns the "✨ New" badge while it is at most this old (days). */
 const MAX_NEW_AGE_DAYS = 90;
 
