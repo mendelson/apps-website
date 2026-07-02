@@ -105,6 +105,126 @@ def sort_key_model(entry):
     return (name, entry["partNumber"])
 
 
+def add_event(entry, event):
+    """Append a dated change event, keeping the list free of exact duplicates."""
+    events = entry.setdefault("events", [])
+    if event not in events:
+        events.append(event)
+
+
+def reconcile(state, scraped, today):
+    """Fold today's scrape into the persistent state, recording dated events.
+
+    Events (besides the first sighting, which is derived from firstSeen):
+      renamed   Garmin changed the model name for a part number
+      removed   a part number dropped off Garmin's site
+      relisted  a previously removed part number came back
+    """
+    scraped_by_pn = {e["partNumber"]: e for e in scraped}
+
+    for pn, e in scraped_by_pn.items():
+        prev = state.get(pn)
+        if prev is None:
+            state[pn] = {**e, "firstSeen": today, "lastSeen": today}
+            continue
+        if prev["deviceName"] != e["deviceName"]:
+            add_event(
+                prev,
+                {"date": today, "type": "renamed",
+                 "from": prev["deviceName"], "to": e["deviceName"]},
+            )
+        if prev.pop("removedOn", None):
+            add_event(prev, {"date": today, "type": "relisted"})
+        prev.update(e)  # deviceName / deviceId / slug may have changed
+        prev["lastSeen"] = today
+
+    # Anything in state but absent from today's scrape just left Garmin's site.
+    for pn, entry in state.items():
+        if pn not in scraped_by_pn and not entry.get("removedOn"):
+            entry["removedOn"] = today
+            add_event(entry, {"date": today, "type": "removed"})
+
+
+def build_changelog(entries):
+    """date -> {'added': [...], 'renamed': [...], 'removed': [...], 'relisted': [...]}"""
+    log = {}
+
+    def slot(date, kind):
+        return log.setdefault(
+            date, {"added": [], "renamed": [], "removed": [], "relisted": []}
+        )[kind]
+
+    for e in entries:
+        slot(e["firstSeen"], "added").append(e)
+        for ev in e.get("events", []):
+            slot(ev["date"], ev["type"]).append((e, ev))
+    return log
+
+
+def render_readme(entries, changelog, today, listed_today):
+    lines = [
+        "# Garmin Connect IQ — Part Number → Device",
+        "",
+        "Mapeamento extraído automaticamente da "
+        "[referência de dispositivos do Connect IQ]"
+        "(https://developer.garmin.com/connect-iq/device-reference/).",
+        "",
+        f"- **Part numbers:** {len(entries)} "
+        f"({len(listed_today)} listados hoje no site da Garmin)",
+        f"- **Última atualização:** {today}",
+        "- Arquivo para copiar/colar em planilha: "
+        "[`garmin-pn-map.tsv`](garmin-pn-map.tsv)",
+        "- Cada seção abaixo é um dia em que algo mudou (mais recente no topo): "
+        "dispositivos vistos pela 1ª vez, renomeados, removidos do site ou "
+        "que voltaram a aparecer. Part numbers removidos são mantidos como "
+        "registro histórico.",
+        "",
+        "## Histórico de alterações",
+    ]
+
+    for date in sorted(changelog, reverse=True):
+        day = changelog[date]
+        added = sorted(day["added"], key=sort_key_model)
+        renamed = sorted(day["renamed"], key=lambda x: sort_key_model(x[0]))
+        removed = sorted(day["removed"], key=lambda x: sort_key_model(x[0]))
+        relisted = sorted(day["relisted"], key=lambda x: sort_key_model(x[0]))
+
+        counts = []
+        if added:
+            counts.append(f"{len(added)} novo(s)")
+        if renamed:
+            counts.append(f"{len(renamed)} renomeado(s)")
+        if removed:
+            counts.append(f"{len(removed)} removido(s)")
+        if relisted:
+            counts.append(f"{len(relisted)} reincluído(s)")
+        lines += ["", f"### {date} — {', '.join(counts)}"]
+
+        if added:
+            lines += [
+                "",
+                "**Vistos pela primeira vez**",
+                "",
+                "| Part number | Device |",
+                "|---|---|",
+            ]
+            lines += [f"| {e['partNumber']} | {e['deviceName']} |" for e in added]
+        if renamed:
+            lines += ["", "**Renomeados**", ""]
+            lines += [
+                f"- `{e['partNumber']}`: \"{ev['from']}\" → \"{ev['to']}\""
+                for e, ev in renamed
+            ]
+        if removed:
+            lines += ["", "**Removidos do site da Garmin**", ""]
+            lines += [f"- `{e['partNumber']}`: {e['deviceName']}" for e, ev in removed]
+        if relisted:
+            lines += ["", "**Voltaram a ser listados**", ""]
+            lines += [f"- `{e['partNumber']}`: {e['deviceName']}" for e, ev in relisted]
+
+    return "\n".join(lines) + "\n"
+
+
 def main():
     today = datetime.now(timezone.utc).date().isoformat()
 
@@ -114,13 +234,7 @@ def main():
             state[e["partNumber"]] = e
 
     scraped = scrape()
-    for e in scraped:
-        prev = state.get(e["partNumber"])
-        if prev:
-            prev.update(e)  # names occasionally change on Garmin's side
-            prev["lastSeen"] = today
-        else:
-            state[e["partNumber"]] = {**e, "firstSeen": today, "lastSeen": today}
+    reconcile(state, scraped, today)
 
     entries = sorted(state.values(), key=sort_key_model)
 
@@ -135,37 +249,10 @@ def main():
             f.write(f"{e['partNumber']}\t{e['deviceName']}\n")
 
     listed_today = {e["partNumber"] for e in scraped}
-    # newest firstSeen on top; alphabetical by model within the same date
-    by_first_seen = sorted(
-        entries,
-        key=lambda e: tuple(-int(p) for p in e.get("firstSeen", "0-0-0").split("-"))
-        + sort_key_model(e),
+    changelog = build_changelog(entries)
+    README_FILE.write_text(
+        render_readme(entries, changelog, today, listed_today), encoding="utf-8"
     )
-
-    lines = [
-        "# Garmin Connect IQ — Part Number → Device",
-        "",
-        "Mapeamento extraído automaticamente da "
-        "[referência de dispositivos do Connect IQ]"
-        "(https://developer.garmin.com/connect-iq/device-reference/).",
-        "",
-        f"- **Part numbers:** {len(entries)}",
-        f"- **Última atualização:** {today}",
-        "- Part numbers removidos do site da Garmin são mantidos aqui como "
-        "registro histórico (coluna *Listado hoje?*).",
-        "",
-        "Arquivo para copiar/colar em planilha: "
-        "[`garmin-pn-map.tsv`](garmin-pn-map.tsv)",
-        "",
-        "| Part number | Device | Visto pela 1ª vez | Listado hoje? |",
-        "|---|---|---|---|",
-    ]
-    for e in by_first_seen:
-        listed = "sim" if e["partNumber"] in listed_today else "não"
-        lines.append(
-            f"| {e['partNumber']} | {e['deviceName']} | {e.get('firstSeen', '?')} | {listed} |"
-        )
-    README_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     new_today = [e for e in entries if e.get("firstSeen") == today]
     print(f"{len(entries)} part numbers total; {len(new_today)} first seen today")
