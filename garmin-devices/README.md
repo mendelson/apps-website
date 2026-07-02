@@ -1,0 +1,330 @@
+# Garmin Connect IQ — Part Number → Device
+
+Mapeamento extraído automaticamente da [referência de dispositivos do Connect IQ](https://developer.garmin.com/connect-iq/device-reference/).
+
+- **Part numbers:** 318
+- **Última atualização:** 2026-07-02
+- Part numbers removidos do site da Garmin são mantidos aqui como registro histórico (coluna *Listado hoje?*).
+
+Arquivo para copiar/colar em planilha: [`garmin-pn-map.tsv`](garmin-pn-map.tsv)
+
+| Part number | Device | Visto pela 1ª vez | Listado hoje? |
+|---|---|---|---|
+| 006-B4656-00 | Approach® S50 | 2026-07-02 | sim |
+| 006-B2656-00 | Approach® S60 | 2026-07-02 | sim |
+| 006-B2907-00 | Approach® S60 | 2026-07-02 | sim |
+| 006-B3393-00 | Approach® S62 | 2026-07-02 | sim |
+| 006-B3700-00 | Approach® S62 | 2026-07-02 | sim |
+| 006-B4233-00 | Approach® S70 42mm | 2026-07-02 | sim |
+| 006-B4234-00 | Approach® S70 47mm | 2026-07-02 | sim |
+| 006-B3500-00 | Captain Marvel | 2026-07-02 | sim |
+| 006-B3535-00 | Captain Marvel | 2026-07-02 | sim |
+| 006-B2187-00 | D2™ Air | 2026-07-02 | sim |
+| 006-B4125-00 | D2™ Air X10 | 2026-07-02 | sim |
+| 006-B2262-00 | D2™ Bravo | 2026-07-02 | sim |
+| 006-B2467-00 | D2™ Bravo | 2026-07-02 | sim |
+| 006-B2547-00 | D2™ Bravo Titanium | 2026-07-02 | sim |
+| 006-B2819-00 | D2™ Charlie | 2026-07-02 | sim |
+| 006-B2994-00 | D2™ Charlie | 2026-07-02 | sim |
+| 006-B3197-00 | D2™ Delta | 2026-07-02 | sim |
+| 006-B3198-00 | D2™ Delta PX | 2026-07-02 | sim |
+| 006-B3324-00 | D2™ Delta PX | 2026-07-02 | sim |
+| 006-B3196-00 | D2™ Delta S | 2026-07-02 | sim |
+| 006-B4079-00 | D2™ Mach 1 | 2026-07-02 | sim |
+| 006-B4879-00 | D2™ Mach 2 | 2026-07-02 | sim |
+| 006-B5056-00 | D2™ Mach 2 Pro | 2026-07-02 | sim |
+| 006-B3499-00 | Darth Vader™ | 2026-07-02 | sim |
+| 006-B3538-00 | Darth Vader™ | 2026-07-02 | sim |
+| 006-B4005-00 | Descent™ G1 / G1 Solar | 2026-07-02 | sim |
+| 006-B4132-00 | Descent™ G1 / G1 Solar | 2026-07-02 | sim |
+| 006-B4588-00 | Descent™ G2 | 2026-07-02 | sim |
+| 006-B2859-00 | Descent™ Mk1 | 2026-07-02 | sim |
+| 006-B2991-00 | Descent™ Mk1 | 2026-07-02 | sim |
+| 006-B3258-00 | Descent™ Mk2 / Mk2i | 2026-07-02 | sim |
+| 006-B3702-00 | Descent™ Mk2 / Mk2i | 2026-07-02 | sim |
+| 006-B3542-00 | Descent™ Mk2 S | 2026-07-02 | sim |
+| 006-B3930-00 | Descent™ Mk2 S | 2026-07-02 | sim |
+| 006-B4222-00 | Descent™ Mk3 43mm / Mk3i 43mm | 2026-07-02 | sim |
+| 006-B4223-00 | Descent™ Mk3i 51mm | 2026-07-02 | sim |
+| 006-B1836-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2052-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2053-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2070-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2100-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2204-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2274-00 | Edge® 1000 / Explore | 2026-07-02 | sim |
+| 006-B2713-00 | Edge® 1030 | 2026-07-02 | sim |
+| 006-B2924-00 | Edge® 1030 | 2026-07-02 | sim |
+| 006-B3095-00 | Edge® 1030 / Bontrager | 2026-07-02 | sim |
+| 006-B3570-00 | Edge® 1030 Plus | 2026-07-02 | sim |
+| 006-B3812-00 | Edge® 1030 Plus | 2026-07-02 | sim |
+| 006-B3843-00 | Edge® 1040 / 1040 Solar | 2026-07-02 | sim |
+| 006-B4305-00 | Edge® 1040 / 1040 Solar | 2026-07-02 | sim |
+| 006-B4440-00 | Edge® 1050 | 2026-07-02 | sim |
+| 006-B2909-00 | Edge® 130 | 2026-07-02 | sim |
+| 006-B3092-00 | Edge® 130 | 2026-07-02 | sim |
+| 006-B3558-00 | Edge® 130 Plus | 2026-07-02 | sim |
+| 006-B3813-00 | Edge® 130 Plus | 2026-07-02 | sim |
+| 006-B2067-00 | Edge® 520 | 2026-07-02 | sim |
+| 006-B2260-00 | Edge® 520 | 2026-07-02 | sim |
+| 006-B2261-00 | Edge® 520 | 2026-07-02 | sim |
+| 006-B3112-00 | Edge® 520 Plus | 2026-07-02 | sim |
+| 006-B3142-00 | Edge® 520 Plus | 2026-07-02 | sim |
+| 006-B3121-00 | Edge® 530 | 2026-07-02 | sim |
+| 006-B3349-00 | Edge® 530 | 2026-07-02 | sim |
+| 006-B4061-00 | Edge® 540 / 540 Solar | 2026-07-02 | sim |
+| 006-B4633-00 | Edge® 550 | 2026-07-02 | sim |
+| 006-B2530-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2531-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2599-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2600-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2628-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2629-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B2630-00 | Edge® 820 / Explore | 2026-07-02 | sim |
+| 006-B3122-00 | Edge® 830 | 2026-07-02 | sim |
+| 006-B3350-00 | Edge® 830 | 2026-07-02 | sim |
+| 006-B4062-00 | Edge® 840 / 840 Solar | 2026-07-02 | sim |
+| 006-B4634-00 | Edge® 850 | 2026-07-02 | sim |
+| 006-B3011-00 | Edge® Explore | 2026-07-02 | sim |
+| 006-B4169-00 | Edge® Explore 2 | 2026-07-02 | sim |
+| 006-B4655-00 | Edge® MTB | 2026-07-02 | sim |
+| 006-B3638-00 | Enduro™ | 2026-07-02 | sim |
+| 006-B3872-00 | Enduro™ | 2026-07-02 | sim |
+| 006-B4575-00 | Enduro™ 3 | 2026-07-02 | sim |
+| 006-B1988-00 | epix™ | 2026-07-02 | sim |
+| 006-B2332-00 | epix™ | 2026-07-02 | sim |
+| 006-B3943-00 | epix™ (Gen 2) / quatix® 7 Sapphire | 2026-07-02 | sim |
+| 006-B3944-00 | epix™ (Gen 2) / quatix® 7 Sapphire | 2026-07-02 | sim |
+| 006-B4312-00 | epix™ Pro (Gen 2) 42mm | 2026-07-02 | sim |
+| 006-B4313-00 | epix™ Pro (Gen 2) 47mm / quatix® 7 Pro | 2026-07-02 | sim |
+| 006-B4314-00 | epix™ Pro (Gen 2) 51mm / D2™ Mach 1 Pro / tactix® 7 – AMOLED Edition | 2026-07-02 | sim |
+| 006-B4542-00 | epix™ Pro (Gen 2) 51mm / D2™ Mach 1 Pro / tactix® 7 – AMOLED Edition | 2026-07-02 | sim |
+| 006-B4556-00 | epix™ Pro (Gen 2) 51mm / D2™ Mach 1 Pro / tactix® 7 – AMOLED Edition | 2026-07-02 | sim |
+| 006-B4522-00 | eTrex® Touch | 2026-07-02 | sim |
+| 006-B2050-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2188-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2189-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2293-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2407-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2408-00 | fēnix® 3 / tactix® Bravo / quatix® 3 | 2026-07-02 | sim |
+| 006-B2413-00 | fēnix® 3 HR | 2026-07-02 | sim |
+| 006-B2473-00 | fēnix® 3 HR | 2026-07-02 | sim |
+| 006-B2697-00 | fēnix® 5 / quatix® 5 | 2026-07-02 | sim |
+| 006-B2796-00 | fēnix® 5 / quatix® 5 | 2026-07-02 | sim |
+| 006-B3089-00 | fēnix® 5 Plus | 2026-07-02 | sim |
+| 006-B3110-00 | fēnix® 5 Plus | 2026-07-02 | sim |
+| 006-B2544-00 | fēnix® 5S | 2026-07-02 | sim |
+| 006-B2797-00 | fēnix® 5S | 2026-07-02 | sim |
+| 006-B2900-00 | fēnix® 5S Plus | 2026-07-02 | sim |
+| 006-B3134-00 | fēnix® 5S Plus | 2026-07-02 | sim |
+| 006-B2604-00 | fēnix® 5X / tactix® Charlie | 2026-07-02 | sim |
+| 006-B2798-00 | fēnix® 5X / tactix® Charlie | 2026-07-02 | sim |
+| 006-B3111-00 | fēnix® 5X Plus | 2026-07-02 | sim |
+| 006-B3135-00 | fēnix® 5X Plus | 2026-07-02 | sim |
+| 006-B3289-00 | fēnix® 6 / 6 Solar / 6 Dual Power | 2026-07-02 | sim |
+| 006-B3514-00 | fēnix® 6 / 6 Solar / 6 Dual Power | 2026-07-02 | sim |
+| 006-B3766-00 | fēnix® 6 / 6 Solar / 6 Dual Power | 2026-07-02 | sim |
+| 006-B3770-00 | fēnix® 6 / 6 Solar / 6 Dual Power | 2026-07-02 | sim |
+| 006-B3290-00 | fēnix® 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix® 6 | 2026-07-02 | sim |
+| 006-B3515-00 | fēnix® 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix® 6 | 2026-07-02 | sim |
+| 006-B3767-00 | fēnix® 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix® 6 | 2026-07-02 | sim |
+| 006-B3771-00 | fēnix® 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix® 6 | 2026-07-02 | sim |
+| 006-B3782-00 | fēnix® 6 Pro / 6 Sapphire / 6 Pro Solar / 6 Pro Dual Power / quatix® 6 | 2026-07-02 | sim |
+| 006-B3287-00 | fēnix® 6S / 6S Solar / 6S Dual Power | 2026-07-02 | sim |
+| 006-B3512-00 | fēnix® 6S / 6S Solar / 6S Dual Power | 2026-07-02 | sim |
+| 006-B3764-00 | fēnix® 6S / 6S Solar / 6S Dual Power | 2026-07-02 | sim |
+| 006-B3768-00 | fēnix® 6S / 6S Solar / 6S Dual Power | 2026-07-02 | sim |
+| 006-B3288-00 | fēnix® 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power | 2026-07-02 | sim |
+| 006-B3513-00 | fēnix® 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power | 2026-07-02 | sim |
+| 006-B3765-00 | fēnix® 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power | 2026-07-02 | sim |
+| 006-B3769-00 | fēnix® 6S Pro / 6S Sapphire / 6S Pro Solar / 6S Pro Dual Power | 2026-07-02 | sim |
+| 006-B3291-00 | fēnix® 6X Pro / 6X Sapphire / 6X Pro Solar / tactix® Delta Sapphire / Delta Solar / Delta Solar - Ballistics Edition / quatix® 6X / 6X Solar / 6X Dual Power | 2026-07-02 | sim |
+| 006-B3516-00 | fēnix® 6X Pro / 6X Sapphire / 6X Pro Solar / tactix® Delta Sapphire / Delta Solar / Delta Solar - Ballistics Edition / quatix® 6X / 6X Solar / 6X Dual Power | 2026-07-02 | sim |
+| 006-B3783-00 | fēnix® 6X Pro / 6X Sapphire / 6X Pro Solar / tactix® Delta Sapphire / Delta Solar / Delta Solar - Ballistics Edition / quatix® 6X / 6X Solar / 6X Dual Power | 2026-07-02 | sim |
+| 006-B3906-00 | fēnix® 7 / quatix® 7 | 2026-07-02 | sim |
+| 006-B3909-00 | fēnix® 7 / quatix® 7 | 2026-07-02 | sim |
+| 006-B4375-00 | fēnix® 7 Pro | 2026-07-02 | sim |
+| 006-B4595-00 | fēnix® 7 Pro - Solar Edition (no Wi-Fi) | 2026-07-02 | sim |
+| 006-B3905-00 | fēnix® 7S | 2026-07-02 | sim |
+| 006-B3908-00 | fēnix® 7S | 2026-07-02 | sim |
+| 006-B4374-00 | fēnix® 7S Pro | 2026-07-02 | sim |
+| 006-B3907-00 | fēnix® 7X / tactix® 7 / quatix® 7X Solar / Enduro™ 2 | 2026-07-02 | sim |
+| 006-B3910-00 | fēnix® 7X / tactix® 7 / quatix® 7X Solar / Enduro™ 2 | 2026-07-02 | sim |
+| 006-B4135-00 | fēnix® 7X / tactix® 7 / quatix® 7X Solar / Enduro™ 2 | 2026-07-02 | sim |
+| 006-B4341-00 | fēnix® 7X / tactix® 7 / quatix® 7X Solar / Enduro™ 2 | 2026-07-02 | sim |
+| 006-B4376-00 | fēnix® 7X Pro | 2026-07-02 | sim |
+| 006-B4596-00 | fēnix® 7X Pro - Solar Edition (no Wi-Fi) | 2026-07-02 | sim |
+| 006-B4534-00 | fēnix® 8 43mm | 2026-07-02 | sim |
+| 006-B4536-00 | fēnix® 8 47mm / 51mm / tactix® 8 47mm / 51mm / quatix® 8 47mm / 51mm | 2026-07-02 | sim |
+| 006-B4775-00 | fēnix® 8 47mm / 51mm / tactix® 8 47mm / 51mm / quatix® 8 47mm / 51mm | 2026-07-02 | sim |
+| 006-B4631-00 | fēnix® 8 Pro 47mm / 51mm / MicroLED / quatix® 8 Pro 47mm / 51mm | 2026-07-02 | sim |
+| 006-B4532-00 | fēnix® 8 Solar 47mm | 2026-07-02 | sim |
+| 006-B4533-00 | fēnix® 8 Solar 51mm / tactix® 8 Solar 51mm | 2026-07-02 | sim |
+| 006-B4776-00 | fēnix® 8 Solar 51mm / tactix® 8 Solar 51mm | 2026-07-02 | sim |
+| 006-B2432-00 | fēnix® Chronos | 2026-07-02 | sim |
+| 006-B2675-00 | fēnix® Chronos | 2026-07-02 | sim |
+| 006-B4666-00 | fēnix® E | 2026-07-02 | sim |
+| 006-B3501-00 | First Avenger | 2026-07-02 | sim |
+| 006-B3536-00 | First Avenger | 2026-07-02 | sim |
+| 006-B4432-00 | Forerunner® 165 | 2026-07-02 | sim |
+| 006-B4433-00 | Forerunner® 165 Music | 2026-07-02 | sim |
+| 006-B4815-00 | Forerunner® 170 | 2026-07-02 | sim |
+| 006-B4814-00 | Forerunner® 170 Music | 2026-07-02 | sim |
+| 006-B2157-00 | Forerunner® 230 | 2026-07-02 | sim |
+| 006-B2313-00 | Forerunner® 230 | 2026-07-02 | sim |
+| 006-B2396-00 | Forerunner® 235 | 2026-07-02 | sim |
+| 006-B2397-00 | Forerunner® 235 | 2026-07-02 | sim |
+| 006-B2431-00 | Forerunner® 235 | 2026-07-02 | sim |
+| 006-B2653-00 | Forerunner® 235 | 2026-07-02 | sim |
+| 006-B2733-00 | Forerunner® 235 | 2026-07-02 | sim |
+| 006-B3076-00 | Forerunner® 245 | 2026-07-02 | sim |
+| 006-B3145-00 | Forerunner® 245 | 2026-07-02 | sim |
+| 006-B3914-00 | Forerunner® 245 | 2026-07-02 | sim |
+| 006-B3077-00 | Forerunner® 245 Music | 2026-07-02 | sim |
+| 006-B3321-00 | Forerunner® 245 Music | 2026-07-02 | sim |
+| 006-B3913-00 | Forerunner® 245 Music | 2026-07-02 | sim |
+| 006-B3992-00 | Forerunner® 255 | 2026-07-02 | sim |
+| 006-B3990-00 | Forerunner® 255 Music | 2026-07-02 | sim |
+| 006-B3993-00 | Forerunner® 255s | 2026-07-02 | sim |
+| 006-B3991-00 | Forerunner® 255s Music | 2026-07-02 | sim |
+| 006-B4257-00 | Forerunner® 265 | 2026-07-02 | sim |
+| 006-B4258-00 | Forerunner® 265s | 2026-07-02 | sim |
+| 006-B3282-00 | Forerunner® 45 | 2026-07-02 | sim |
+| 006-B3469-00 | Forerunner® 45 | 2026-07-02 | sim |
+| 006-B3847-00 | Forerunner® 45 | 2026-07-02 | sim |
+| 006-B3869-00 | Forerunner® 55 | 2026-07-02 | sim |
+| 006-B4033-00 | Forerunner® 55 | 2026-07-02 | sim |
+| 006-B4838-00 | Forerunner® 55 | 2026-07-02 | sim |
+| 006-B4574-00 | Forerunner® 570 42mm | 2026-07-02 | sim |
+| 006-B4570-00 | Forerunner® 570 47mm | 2026-07-02 | sim |
+| 006-B2156-00 | Forerunner® 630 | 2026-07-02 | sim |
+| 006-B2310-00 | Forerunner® 630 | 2026-07-02 | sim |
+| 006-B2311-00 | Forerunner® 630 | 2026-07-02 | sim |
+| 006-B2886-00 | Forerunner® 645 | 2026-07-02 | sim |
+| 006-B3003-00 | Forerunner® 645 | 2026-07-02 | sim |
+| 006-B2888-00 | Forerunner® 645 Music | 2026-07-02 | sim |
+| 006-B3004-00 | Forerunner® 645 Music | 2026-07-02 | sim |
+| 006-B4916-00 | Forerunner® 70 | 2026-07-02 | sim |
+| 006-B5214-00 | Forerunner® 70 | 2026-07-02 | sim |
+| 006-B2158-00 | Forerunner® 735xt | 2026-07-02 | sim |
+| 006-B2533-00 | Forerunner® 735xt | 2026-07-02 | sim |
+| 006-B2534-00 | Forerunner® 735xt | 2026-07-02 | sim |
+| 006-B3589-00 | Forerunner® 745 | 2026-07-02 | sim |
+| 006-B3794-00 | Forerunner® 745 | 2026-07-02 | sim |
+| 006-B1765-00 | Forerunner® 920XT | 2026-07-02 | sim |
+| 006-B2130-00 | Forerunner® 920XT | 2026-07-02 | sim |
+| 006-B2131-00 | Forerunner® 920XT | 2026-07-02 | sim |
+| 006-B2132-00 | Forerunner® 920XT | 2026-07-02 | sim |
+| 006-B2691-00 | Forerunner® 935 | 2026-07-02 | sim |
+| 006-B2833-00 | Forerunner® 935 | 2026-07-02 | sim |
+| 006-B3113-00 | Forerunner® 945 | 2026-07-02 | sim |
+| 006-B3441-00 | Forerunner® 945 | 2026-07-02 | sim |
+| 006-B3652-00 | Forerunner® 945 LTE | 2026-07-02 | sim |
+| 006-B4024-00 | Forerunner® 955 / Solar | 2026-07-02 | sim |
+| 006-B4315-00 | Forerunner® 965 | 2026-07-02 | sim |
+| 006-B4565-00 | Forerunner® 970 | 2026-07-02 | sim |
+| 006-B3405-00 | Garmin Swim™ 2 | 2026-07-02 | sim |
+| 006-B3639-00 | Garmin Swim™ 2 | 2026-07-02 | sim |
+| 006-B3028-00 | GPSMAP® 66s / 66i / 66sr / 66st | 2026-07-02 | sim |
+| 006-B3284-00 | GPSMAP® 66s / 66i / 66sr / 66st | 2026-07-02 | sim |
+| 006-B3657-00 | GPSMAP® 66s / 66i / 66sr / 66st | 2026-07-02 | sim |
+| 006-B3658-00 | GPSMAP® 66s / 66i / 66sr / 66st | 2026-07-02 | sim |
+| 006-B3694-00 | GPSMAP® 66s / 66i / 66sr / 66st | 2026-07-02 | sim |
+| 006-B4336-00 | GPSMAP® 67 / 67i | 2026-07-02 | sim |
+| 006-B4473-00 | GPSMAP® 67 / 67i | 2026-07-02 | sim |
+| 006-B3452-00 | GPSMAP® 86s / 86sc / 86i / 86sci | 2026-07-02 | sim |
+| 006-B3453-00 | GPSMAP® 86s / 86sc / 86i / 86sci | 2026-07-02 | sim |
+| 006-B3454-00 | GPSMAP® 86s / 86sc / 86i / 86sci | 2026-07-02 | sim |
+| 006-B3455-00 | GPSMAP® 86s / 86sc / 86i / 86sci | 2026-07-02 | sim |
+| 006-B4720-00 | GPSMAP® 86s / 86sc / 86i / 86sci | 2026-07-02 | sim |
+| 006-B4552-00 | GPSMAP® H1 / H1i Plus | 2026-07-02 | sim |
+| 006-B3888-00 | Instinct® 2 / Solar / Dual Power / dēzl Edition | 2026-07-02 | sim |
+| 006-B4071-00 | Instinct® 2 / Solar / Dual Power / dēzl Edition | 2026-07-02 | sim |
+| 006-B3889-00 | Instinct® 2S / Solar / Dual Power | 2026-07-02 | sim |
+| 006-B4091-00 | Instinct® 2S / Solar / Dual Power | 2026-07-02 | sim |
+| 006-B4394-00 | Instinct® 2X Solar | 2026-07-02 | sim |
+| 006-B4586-00 | Instinct® 3 AMOLED 45mm | 2026-07-02 | sim |
+| 006-B4587-00 | Instinct® 3 AMOLED 50mm | 2026-07-02 | sim |
+| 006-B4585-00 | Instinct® 3 Solar 45mm / 50mm | 2026-07-02 | sim |
+| 006-B4759-00 | Instinct® 3 Solar 45mm / 50mm | 2026-07-02 | sim |
+| 006-B4155-00 | Instinct® Crossover | 2026-07-02 | sim |
+| 006-B4678-00 | Instinct® Crossover AMOLED | 2026-07-02 | sim |
+| 006-B4583-00 | Instinct® E 40mm | 2026-07-02 | sim |
+| 006-B4584-00 | Instinct® E 45mm | 2026-07-02 | sim |
+| 006-B4105-00 | MARQ® (Gen 2) Athlete / Adventurer / Captain / Golfer / Carbon Edition / Commander - Carbon Edition | 2026-07-02 | sim |
+| 006-B4472-00 | MARQ® (Gen 2) Athlete / Adventurer / Captain / Golfer / Carbon Edition / Commander - Carbon Edition | 2026-07-02 | sim |
+| 006-B4124-00 | MARQ® (Gen 2) Aviator | 2026-07-02 | sim |
+| 006-B3624-00 | MARQ® Adventurer | 2026-07-02 | sim |
+| 006-B3648-00 | MARQ® Adventurer | 2026-07-02 | sim |
+| 006-B3251-00 | MARQ® Athlete | 2026-07-02 | sim |
+| 006-B3451-00 | MARQ® Athlete | 2026-07-02 | sim |
+| 006-B3247-00 | MARQ® Aviator | 2026-07-02 | sim |
+| 006-B3421-00 | MARQ® Aviator | 2026-07-02 | sim |
+| 006-B3248-00 | MARQ® Captain / MARQ® Captain: American Magic Edition | 2026-07-02 | sim |
+| 006-B3448-00 | MARQ® Captain / MARQ® Captain: American Magic Edition | 2026-07-02 | sim |
+| 006-B3249-00 | MARQ® Commander | 2026-07-02 | sim |
+| 006-B3449-00 | MARQ® Commander | 2026-07-02 | sim |
+| 006-B3246-00 | MARQ® Driver | 2026-07-02 | sim |
+| 006-B3420-00 | MARQ® Driver | 2026-07-02 | sim |
+| 006-B3250-00 | MARQ® Expedition | 2026-07-02 | sim |
+| 006-B3450-00 | MARQ® Expedition | 2026-07-02 | sim |
+| 006-B3739-00 | MARQ® Golfer | 2026-07-02 | sim |
+| 006-B3850-00 | MARQ® Golfer | 2026-07-02 | sim |
+| 006-B3459-00 | Montana® 7 Series | 2026-07-02 | sim |
+| 006-B4415-00 | Montana® 7 Series | 2026-07-02 | sim |
+| 006-B5015-00 | Montana® 7 Series | 2026-07-02 | sim |
+| 006-B2512-00 | Oregon® 7 Series | 2026-07-02 | sim |
+| 006-B2681-00 | Oregon® 7 Series | 2026-07-02 | sim |
+| 006-B2692-00 | Oregon® 7 Series | 2026-07-02 | sim |
+| 006-B3498-00 | Rey™ | 2026-07-02 | sim |
+| 006-B3537-00 | Rey™ | 2026-07-02 | sim |
+| 006-B2444-00 | Rino® 7 Series | 2026-07-02 | sim |
+| 006-B3187-00 | Rino® 7 Series | 2026-07-02 | sim |
+| 006-B3226-00 | Venu® | 2026-07-02 | sim |
+| 006-B3389-00 | Venu® | 2026-07-02 | sim |
+| 006-B3703-00 | Venu® 2 | 2026-07-02 | sim |
+| 006-B3950-00 | Venu® 2 | 2026-07-02 | sim |
+| 006-B4171-00 | Venu® 2 | 2026-07-02 | sim |
+| 006-B4180-00 | Venu® 2 | 2026-07-02 | sim |
+| 006-B3851-00 | Venu® 2 Plus | 2026-07-02 | sim |
+| 006-B4017-00 | Venu® 2 Plus | 2026-07-02 | sim |
+| 006-B3704-00 | Venu® 2S | 2026-07-02 | sim |
+| 006-B3949-00 | Venu® 2S | 2026-07-02 | sim |
+| 006-B4175-00 | Venu® 2S | 2026-07-02 | sim |
+| 006-B4181-00 | Venu® 2S | 2026-07-02 | sim |
+| 006-B4260-00 | Venu® 3 | 2026-07-02 | sim |
+| 006-B4261-00 | Venu® 3S | 2026-07-02 | sim |
+| 006-B4644-00 | Venu® 4 41mm | 2026-07-02 | sim |
+| 006-B4643-00 | Venu® 4 45mm / D2™ Air X15 | 2026-07-02 | sim |
+| 006-B4944-00 | Venu® 4 45mm / D2™ Air X15 | 2026-07-02 | sim |
+| 006-B3737-00 | Venu® Mercedes-Benz® Collection | 2026-07-02 | sim |
+| 006-B3740-00 | Venu® Mercedes-Benz® Collection | 2026-07-02 | sim |
+| 006-B3600-00 | Venu® Sq | 2026-07-02 | sim |
+| 006-B3603-00 | Venu® Sq | 2026-07-02 | sim |
+| 006-B3837-00 | Venu® Sq | 2026-07-02 | sim |
+| 006-B4118-00 | Venu® Sq | 2026-07-02 | sim |
+| 006-B4115-00 | Venu® Sq 2 | 2026-07-02 | sim |
+| 006-B4116-00 | Venu® Sq 2 Music | 2026-07-02 | sim |
+| 006-B3596-00 | Venu® Sq. Music Edition | 2026-07-02 | sim |
+| 006-B3599-00 | Venu® Sq. Music Edition | 2026-07-02 | sim |
+| 006-B3838-00 | Venu® Sq. Music Edition | 2026-07-02 | sim |
+| 006-B4119-00 | Venu® Sq. Music Edition | 2026-07-02 | sim |
+| 006-B4603-00 | Venu® X1 | 2026-07-02 | sim |
+| 006-B1907-00 | vívoactive® | 2026-07-02 | sim |
+| 006-B2160-00 | vívoactive® | 2026-07-02 | sim |
+| 006-B2700-00 | vívoactive® 3 | 2026-07-02 | sim |
+| 006-B2976-00 | vívoactive® 3 | 2026-07-02 | sim |
+| 006-B3446-00 | vívoactive® 3 | 2026-07-02 | sim |
+| 006-B3473-00 | vívoactive® 3 Mercedes-Benz® Collection | 2026-07-02 | sim |
+| 006-B3477-00 | vívoactive® 3 Mercedes-Benz® Collection | 2026-07-02 | sim |
+| 006-B2988-00 | vívoactive® 3 Music | 2026-07-02 | sim |
+| 006-B3163-00 | vívoactive® 3 Music | 2026-07-02 | sim |
+| 006-B3066-00 | vívoactive® 3 Music LTE | 2026-07-02 | sim |
+| 006-B3225-00 | vívoactive® 4 | 2026-07-02 | sim |
+| 006-B3388-00 | vívoactive® 4 | 2026-07-02 | sim |
+| 006-B3224-00 | vívoactive® 4S | 2026-07-02 | sim |
+| 006-B3387-00 | vívoactive® 4S | 2026-07-02 | sim |
+| 006-B4426-00 | vívoactive® 5 | 2026-07-02 | sim |
+| 006-B4625-00 | vívoactive® 6 | 2026-07-02 | sim |
+| 006-B2337-00 | vívoactive® HR | 2026-07-02 | sim |
+| 006-B2497-00 | vívoactive® HR | 2026-07-02 | sim |
