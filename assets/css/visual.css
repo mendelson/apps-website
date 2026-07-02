@@ -1112,14 +1112,24 @@ nav a:hover {
     align-items: center;
 }
 
-/* Responsive scaling preserving exact 800x600 geometry */
+/* Responsive scaling preserving exact 800x600 geometry.
+   scale() needs a plain number, so lengths are turned into ratios via
+   tan(atan2(len, len)). Scaling from the center keeps the drawing centered
+   (the 800x600 layout box is flex-centered; transforms don't move it). */
 .gym-container {
     width: 800px;
     height: 600px;
     position: relative;
-    transform-origin: top left;
-    transform: scale(calc(min(90vw / 800, 70vh / 600)));
+    transform-origin: center center;
+    transform: scale(min(tan(atan2(90vw, 800px)), tan(atan2(70vh, 600px))));
     overflow: visible;
+}
+
+/* Mobile: size against the small viewport so the browser UI never covers it */
+@supports (height: 100svh) {
+    .gym-container {
+        transform: scale(min(tan(atan2(90vw, 800px)), tan(atan2(70svh, 600px))));
+    }
 }
 
 /* ROOT CANVAS */
