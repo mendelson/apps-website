@@ -1167,8 +1167,8 @@ nav a:hover {
 /* MAN */
 .loader-gym .man {
     position: absolute;
-    top: 42%;
-    left: 23%;
+    top: 40%;
+    left: 25%;
     width: 55%;
     height: 45%;
     z-index: 3;
@@ -1254,7 +1254,7 @@ nav a:hover {
     top: 15%;
 }
 
-.loader-gym .upper {
+.loader-gym .main-parts .upper {
     position: absolute;
     height: 30%;
     width: 48%;
@@ -1264,7 +1264,7 @@ nav a:hover {
     transform: rotate(-5deg);
 }
 
-.loader-gym .upper .above {
+.loader-gym .main-parts .upper .above {
     position: absolute;
     right: -104%;
     top: -92%;
@@ -1274,7 +1274,7 @@ nav a:hover {
     border-radius: 50%;
 }
 
-.loader-gym .lower {
+.loader-gym .main-parts .lower {
     position: absolute;
     height: 40%;
     width: 100%;
@@ -1283,7 +1283,7 @@ nav a:hover {
     z-index: 2;
 }
 
-.loader-gym .lower::after {
+.loader-gym .main-parts .lower::after {
     content: "";
     position: absolute;
     height: 201%;
@@ -1294,34 +1294,45 @@ nav a:hover {
     background: var(--gym-shirt-2);
 }
 
+/* Upper arm stays fixed at the shoulder; only hand + weight animate */
 .loader-gym .arm {
-    position: absolute;              
-    right: 18%;                      
-    top: 25%;                        
-    width: 16%;                      
-    height: 8%;                      
-    z-index: 8;                      
-    background: var(--gym-skin-2);   
-    border-radius: 4px 20px 20px 4px; 
-    animation: gym-hand 2s infinite;  
-    transform-origin: right center;   
+    position: absolute;
+    right: 28%;
+    width: 10%;
+    height: 10%;
+    z-index: 5;
+    top: 88px;
+    background: var(--gym-skin-2);
+    border-radius: 30px 5px 5px 30px;
 }
 
-/* WEIGHT — VERSÃO CORRIGIDA (OPCIONAL) */
+/* HAND (forearm holding the weight) */
+.loader-gym .hand {
+    position: absolute;
+    right: 28%;
+    height: 40%;
+    width: 9%;
+    border-radius: 20px;
+    background: var(--gym-skin-1);
+    z-index: 5;
+    top: 12%;
+    animation: gym-hand 2s infinite;
+}
+
+/* WEIGHT */
 .loader-gym .weight {
     position: absolute;
-    height: 25%;       /* CORRIGIDO: era 30% */
-    width: 16%;        /* CORRIGIDO: era 18% */
+    height: 30%;
+    width: 18%;
     border-radius: 50%;
-    border: 4px solid var(--gym-hair);
-    left: 60%;         /* CORRIGIDO: era 57% */
-    top: 5%;           /* CORRIGIDO: era -10% - IMPORTANTE! */
+    border: 4px solid black;
+    left: 57%;
+    top: -10%;
     background: var(--gym-weight-outer);
     z-index: 10;
     animation: gym-hand 2s infinite;
 }
 
-/* Mantenha os ::after e ::before do weight como estão */
 .loader-gym .weight::after {
     content: "";
     background-color: var(--gym-weight-middle);
@@ -1412,6 +1423,16 @@ nav a:hover {
     height: 33%;
     background: var(--gym-hair);
     border-radius: 4px;
+    border-bottom-right-radius: 20%;
+}
+
+.loader-gym .hairs .lower::after {
+    content: "";
+    position: absolute;
+    width: 24%;
+    height: 40%;
+    border-radius: 50%;
+    background: var(--gym-skin-1);
 }
 
 .loader-gym .hairs .upper {
