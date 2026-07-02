@@ -930,8 +930,10 @@ nav a:hover {
   /* Garante que nada seja cortado */
   overflow: visible;
 
-  /* Scale maior, mas COM compensação vertical */
-  transform: scale(2.8) translateY(25px);
+  /* Scale maior, mas COM compensação vertical.
+     Limitado pela viewport para caber em telas pequenas
+     (tan(atan2()) converte comprimento em número). */
+  transform: scale(min(2.8, tan(atan2(85vw, 120px)), tan(atan2(75vh, 180px)))) translateY(25px);
 
   /* Centraliza o conteúdo interno */
   display: flex;
@@ -2130,8 +2132,9 @@ nav.open .nav-hamburger span:nth-child(3) {
    no start button). Self-contained pool bg so
    it reads on both light and dark overlays.
 ============================================ */
+/* Escala contínua limitada pela viewport (pool tem ~820px de largura natural) */
 .loader-8 {
-  transform: scale(0.6);
+  transform: scale(min(0.6, tan(atan2(88vw, 820px)), tan(atan2(70vh, 640px))));
 }
 
 .loader-8 .pool {
@@ -2322,8 +2325,3 @@ nav.open .nav-hamburger span:nth-child(3) {
   100% { transform: rotate(0deg); }
 }
 
-@media (max-width: 860px) {
-  .loader-8 {
-    transform: scale(0.42);
-  }
-}
