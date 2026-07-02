@@ -128,7 +128,8 @@ def main():
         json.dumps(entries, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
-    with TSV_FILE.open("w", encoding="utf-8") as f:
+    # utf-8-sig: the BOM makes Excel/LibreOffice detect UTF-8 when opening
+    with TSV_FILE.open("w", encoding="utf-8-sig") as f:
         f.write("Part number\tModel\n")
         for e in entries:
             f.write(f"{e['partNumber']}\t{e['deviceName']}\n")
