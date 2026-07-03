@@ -743,6 +743,14 @@ nav a:hover {
   filter: blur(3px);
 }
 
+/* Sem scroll enquanto o preloader está visível; libera quando o
+   fade-out (.hide) começa. Também bloqueia o gesto de toque. */
+html:has(#preloader:not(.hide)),
+html:has(#preloader:not(.hide)) body {
+  overflow: hidden;
+  touch-action: none;
+}
+
 /* ============================================
    VARIÁVEL DE COR (adapta loader ao tema)
 ============================================ */
