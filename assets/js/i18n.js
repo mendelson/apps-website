@@ -44,7 +44,7 @@
         'Live Pace Speed Calculator': 'Erforderliches Tempo oder Geschwindigkeit für benutzerdefinierte Ziele.',
         'Tracker Data Field': 'Teilen Sie Ihre Aktivität live mit einer einzigartigen Tracker-ID.',
         'Route Silhouette': 'Zeigt Ihre neueste GPS-basierte Strava-Aktivität auf Ihrer Uhr.',
-        'Premium Route Silhouette': 'Premium-Watchface: Ihre neueste Strava-Route mit Live-Distanz, -Pace, -Zeit und Körperwerten.',
+        'Premium Route Silhouette': 'Premium-Watchface: Ihre neueste Strava-Route mit Komplikationen und mehreren Hintergründen.',
         'Time Across The Galaxy': 'Kosmisch inspiriertes Zifferblatt, inspiriert von einer weit entfernten Galaxie.',
         'Solve for X': 'Lösen Sie ein Rätsel, um die Uhrzeit zu enthüllen.'
       },
@@ -132,7 +132,7 @@
         'Live Pace Speed Calculator': 'Required pace or speed for custom goals.',
         'Tracker Data Field': 'Share your activity live with a unique tracker ID.',
         'Route Silhouette': 'Shows your latest GPS-based Strava activity on your watch.',
-        'Premium Route Silhouette': 'Premium watch face: your latest Strava route with live distance, pace, time and body stats.',
+        'Premium Route Silhouette': 'Premium watch face: your latest Strava route with complications and multiple backgrounds.',
         'Time Across The Galaxy': 'Cosmic-themed watch face inspired by a galaxy far away.',
         'Solve for X': 'Solve a puzzle to reveal the time.'
       },
@@ -220,7 +220,7 @@
         'Live Pace Speed Calculator': 'Ritmo o velocidad requerida para objetivos personalizados.',
         'Tracker Data Field': 'Comparte tu actividad en vivo con un ID de seguimiento único.',
         'Route Silhouette': 'Muestra tu última actividad de Strava basada en GPS en tu reloj.',
-        'Premium Route Silhouette': 'Esfera premium: tu última ruta de Strava con distancia, ritmo, tiempo y métricas corporales en vivo.',
+        'Premium Route Silhouette': 'Esfera premium: tu última ruta de Strava con complicaciones y múltiples fondos.',
         'Time Across The Galaxy': 'Esfera con temática cósmica inspirada en una galaxia lejana.',
         'Solve for X': 'Resuelve un rompecabezas para revelar la hora.'
       },
@@ -308,7 +308,7 @@
         'Live Pace Speed Calculator': 'Allure ou vitesse requise pour des objectifs personnalisés.',
         'Tracker Data Field': 'Partagez votre activité en direct avec un identifiant de suivi unique.',
         'Route Silhouette': 'Affiche votre dernière activité Strava basée sur GPS sur votre montre.',
-        'Premium Route Silhouette': 'Cadran premium : votre dernier parcours Strava avec distance, allure, temps et données corporelles en direct.',
+        'Premium Route Silhouette': 'Cadran premium : votre dernier parcours Strava avec complications et plusieurs arrière-plans.',
         'Time Across The Galaxy': "Cadran à thème cosmique inspiré d'une galaxie lointaine.",
         'Solve for X': "Résolvez un puzzle pour révéler l'heure."
       },
@@ -396,7 +396,7 @@
         'Live Pace Speed Calculator': 'Ritmo ou velocidade necessária para objetivos personalizados.',
         'Tracker Data Field': 'Compartilhe sua atividade ao vivo com um ID de rastreamento único.',
         'Route Silhouette': 'Exibe sua última atividade do Strava baseada em GPS no seu relógio.',
-        'Premium Route Silhouette': 'Mostrador premium: sua última rota do Strava com distância, ritmo, tempo e métricas corporais ao vivo.',
+        'Premium Route Silhouette': 'Mostrador premium: sua última rota do Strava com complicações e múltiplos fundos.',
         'Time Across The Galaxy': 'Mostrador com tema cósmico inspirado em uma galáxia distante.',
         'Solve for X': 'Resolva um puzzle para revelar a hora.'
       },
