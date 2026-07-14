@@ -417,6 +417,14 @@ const FEATURED_REASON_COPY = window.FEATURED_REASON_COPY || {
   spotlight: {
     badge: { emoji: "⭐", word: "Featured", class: "trending" },
     headline: "⭐ Strong weekly installs"
+  },
+  topDataField: {
+    badge: { emoji: "📊", word: "Favorite", class: "popular" },
+    headline: "📊 Favorite Data Field"
+  },
+  topWatchFace: {
+    badge: { emoji: "⌚", word: "Favorite", class: "popular" },
+    headline: "⌚ Favorite Watch Face"
   }
 };
 
@@ -430,22 +438,13 @@ function buildFeaturedCarousel(data) {
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
 
-  const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
 
-  /* A card is "paid" if it advertises a free trial and/or the premium
-     (Garmin Pay) purchase path — these are the apps we merchandise first. */
-  const isPaid = c =>
-    !!c.querySelector('.badge-slot .trial, .pay-alt, [data-method="garmin-pay"]');
-
-  /* Youngest app and its age in days, so "new" is only ever shown when true. */
-  const newcomer =
-    data && typeof data === "object"
-      ? getYoungestAppCardByAge(cards, data)
-      : null;
-  const newcomerDays = newcomer
-    ? getApproxDaysFromApi(data[newcomer.dataset.name])
-    : null;
+  /* A card's category is decided by the authored section it lives in, so the
+     complementary featured pick always comes from the OTHER category. */
+  const categoryOf = c =>
+    c.closest("#watch-faces") ? "watch" :
+    c.closest("#data-fields") ? "data" : null;
 
   /** @type {{ card: Element, reason: keyof typeof FEATURED_REASON_COPY }[]} */
   const entries = [];
@@ -455,32 +454,29 @@ function buildFeaturedCarousel(data) {
     entries.push({ card, reason });
   };
 
-  /* Slots fill in priority order, and every badge is guaranteed truthful: a
-     slot is skipped (never relabelled) when its claim no longer holds, so the
-     carousel shrinks to as few as one slide rather than padding with filler. */
+  /* Exactly two slides, both driven purely by all-time downloads:
 
-  /* 1. COMMERCIAL — lead with the strongest paid app (revenue first),
-        ranked by total downloads among paid apps. */
-  const topPaid = byTotal.find(isPaid);
-  if (topPaid) pushEntry(topPaid, "premium");
+     1. THE all-time favorite — the genuine #1 across every app, whatever its
+        category. It carries the plain "All-Time Favorite" label (no category
+        qualifier): it is THE favorite, not merely its category's winner.
+     2. The favorite of the OTHER category — if the #1 is a watch face this is
+        the top data field, and vice-versa — so both categories are always
+        represented. It carries a category-specific "Favorite <category>" label.
 
-  /* 2. ALL-TIME FAVORITE — only the genuine #1 by total downloads; if it is
-        already featured above, skip rather than mislabel the runner-up. */
-  if (byTotal[0] && !hasCard(byTotal[0])) pushEntry(byTotal[0], "total");
+     Both transitions are automatic: whichever app leads total downloads on a
+     given load becomes the favorite, and the complementary card follows from
+     its category. */
 
-  /* 3. TRENDING — the genuine #1 by weekly installs, and only once it clears
-        the same floor as the "🔥 Trending" momentum tag. */
-  if (
-    byInstalls[0] &&
-    !hasCard(byInstalls[0]) &&
-    get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS
-  ) {
-    pushEntry(byInstalls[0], "installs");
-  }
+  const favorite = byTotal[0];
+  if (favorite) {
+    pushEntry(favorite, "total");
 
-  /* 4. NEW — the youngest app, only while it is genuinely recent. */
-  if (newcomer && newcomerDays !== null && newcomerDays <= MAX_NEW_AGE_DAYS) {
-    pushEntry(newcomer, "new");
+    const favCat = categoryOf(favorite);
+    if (favCat === "watch") {
+      pushEntry(byTotal.find(c => categoryOf(c) === "data"), "topDataField");
+    } else if (favCat === "data") {
+      pushEntry(byTotal.find(c => categoryOf(c) === "watch"), "topWatchFace");
+    }
   }
 
   if (entries.length === 0) return;

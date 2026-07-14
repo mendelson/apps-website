@@ -87,7 +87,9 @@
         installs: { badge: { emoji: '🔥', word: 'Im Trend',         class: 'trending'  }, headline: '🔥 Beliebt Diese Woche' },
         total:    { badge: { emoji: '🏆', word: 'Beliebt',          class: 'popular'   }, headline: '🏆 Aller-Zeiten-Favorit' },
         users:    { badge: { emoji: '💪', word: 'Regelmäßig',       class: 'consistent'}, headline: '💪 Athleten nutzen es weiterhin' },
-        spotlight:{ badge: { emoji: '⭐', word: 'Im Rampenlicht',   class: 'trending'  }, headline: '⭐ Starke wöchentliche Installationen' }
+        spotlight:{ badge: { emoji: '⭐', word: 'Im Rampenlicht',   class: 'trending'  }, headline: '⭐ Starke wöchentliche Installationen' },
+        topDataField: { badge: { emoji: '📊', word: 'Favorit', class: 'popular' }, headline: '📊 Lieblings-Datenfeld' },
+        topWatchFace: { badge: { emoji: '⌚', word: 'Favorit', class: 'popular' }, headline: '⌚ Lieblings-Watchface' }
       }
     },
 
@@ -175,7 +177,9 @@
         installs: { badge: { emoji: '🔥', word: 'Trending',       class: 'trending'  }, headline: '🔥 Popular This Week' },
         total:    { badge: { emoji: '🏆', word: 'Popular',        class: 'popular'   }, headline: '🏆 All-Time Favorite' },
         users:    { badge: { emoji: '💪', word: 'Consistent',     class: 'consistent'}, headline: '💪 Athletes keep using it' },
-        spotlight:{ badge: { emoji: '⭐', word: 'Featured',       class: 'trending'  }, headline: '⭐ Strong weekly installs' }
+        spotlight:{ badge: { emoji: '⭐', word: 'Featured',       class: 'trending'  }, headline: '⭐ Strong weekly installs' },
+        topDataField: { badge: { emoji: '📊', word: 'Favorite', class: 'popular' }, headline: '📊 Favorite Data Field' },
+        topWatchFace: { badge: { emoji: '⌚', word: 'Favorite', class: 'popular' }, headline: '⌚ Favorite Watch Face' }
       }
     },
 
@@ -263,7 +267,9 @@
         installs: { badge: { emoji: '🔥', word: 'Tendencia',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',           class: 'popular'   }, headline: '🏆 Favorito de Todos los Tiempos' },
         users:    { badge: { emoji: '💪', word: 'Constante',         class: 'consistent'}, headline: '💪 Los atletas siguen usándola' },
-        spotlight:{ badge: { emoji: '⭐', word: 'Destacado',         class: 'trending'  }, headline: '⭐ Muchas instalaciones semanales' }
+        spotlight:{ badge: { emoji: '⭐', word: 'Destacado',         class: 'trending'  }, headline: '⭐ Muchas instalaciones semanales' },
+        topDataField: { badge: { emoji: '📊', word: 'Favorito', class: 'popular' }, headline: '📊 Campo de Datos Favorito' },
+        topWatchFace: { badge: { emoji: '⌚', word: 'Favorita', class: 'popular' }, headline: '⌚ Esfera Favorita' }
       }
     },
 
@@ -351,7 +357,9 @@
         installs: { badge: { emoji: '🔥', word: 'Tendance',           class: 'trending'  }, headline: '🔥 Populaire Cette Semaine' },
         total:    { badge: { emoji: '🏆', word: 'Populaire',          class: 'popular'   }, headline: '🏆 Favori de Tous les Temps' },
         users:    { badge: { emoji: '💪', word: 'Régulier',           class: 'consistent'}, headline: "💪 Les athlètes continuent de l'utiliser" },
-        spotlight:{ badge: { emoji: '⭐', word: 'En vedette',         class: 'trending'  }, headline: '⭐ Installations hebdomadaires élevées' }
+        spotlight:{ badge: { emoji: '⭐', word: 'En vedette',         class: 'trending'  }, headline: '⭐ Installations hebdomadaires élevées' },
+        topDataField: { badge: { emoji: '📊', word: 'Favori', class: 'popular' }, headline: '📊 Champ de Données Favori' },
+        topWatchFace: { badge: { emoji: '⌚', word: 'Favori', class: 'popular' }, headline: '⌚ Cadran Favori' }
       }
     },
 
@@ -439,7 +447,9 @@
         installs: { badge: { emoji: '🔥', word: 'Em alta',         class: 'trending'  }, headline: '🔥 Popular Esta Semana' },
         total:    { badge: { emoji: '🏆', word: 'Popular',         class: 'popular'   }, headline: '🏆 Favorito de Todos os Tempos' },
         users:    { badge: { emoji: '💪', word: 'Consistente',     class: 'consistent'}, headline: '💪 Atletas continuam usando' },
-        spotlight:{ badge: { emoji: '⭐', word: 'Destaque',        class: 'trending'  }, headline: '⭐ Muitas instalações semanais' }
+        spotlight:{ badge: { emoji: '⭐', word: 'Destaque',        class: 'trending'  }, headline: '⭐ Muitas instalações semanais' },
+        topDataField: { badge: { emoji: '📊', word: 'Favorito', class: 'popular' }, headline: '📊 Campo de Dados Favorito' },
+        topWatchFace: { badge: { emoji: '⌚', word: 'Favorito', class: 'popular' }, headline: '⌚ Mostrador Favorito' }
       }
     }
   };
