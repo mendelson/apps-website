@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Privacy Policy – Garmin Apps by M. Mendelson</title>
 <meta name="description"
-      content="Privacy Policy for the Garmin Connect IQ apps (data fields and watch faces) and website by M. Mendelson, covering all current and future apps." />
+      content="Privacy Policy for the Garmin Connect IQ apps (data fields and watch faces) by M. Mendelson, covering all current and future apps." />
 <link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/" />
 <link rel="icon" type="image/jpeg" href="/assets/favicon.jpg" />
 <link rel="apple-touch-icon" href="/assets/favicon.jpg" />
@@ -77,19 +77,9 @@
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
-  h3 { font-size: 16px; margin: 24px 0 8px; color: #dcdcdc; }
   p, li { font-size: 15.5px; }
   ul { padding-left: 22px; }
   li { margin: 6px 0; }
-  code {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 1px 6px;
-    font-size: 13px;
-    color: #d1d5db;
-    word-break: break-word;
-  }
   .table-wrap { overflow-x: auto; margin: 14px 0; }
   table {
     border-collapse: collapse;
@@ -119,7 +109,7 @@
 
 <header class="page">
   <h1>Privacy Policy</h1>
-  <p class="sub">Garmin Connect IQ apps &amp; website by M. Mendelson</p>
+  <p class="sub">Garmin Connect IQ apps by M. Mendelson</p>
   <a class="home-link" href="/">&larr; Back to Apps</a>
 </header>
 
@@ -127,15 +117,14 @@
   <p class="meta">Last updated: 14 July 2026</p>
 
   <div class="intro">
-    <p style="margin:0;">This single Privacy Policy applies to <strong>all Garmin Connect IQ
-    applications</strong> published by M. Mendelson &mdash; data fields and watch faces alike,
-    including any apps released in the future &mdash; as well as to this website,
-    <a href="https://apps.mmendelson.com/">apps.mmendelson.com</a> (together, the &ldquo;Apps&rdquo;).
-    It explains what information the Apps collect, why, where it goes, and the choices you have.</p>
+    <p style="margin:0;">This Privacy Policy applies to <strong>all Garmin Connect IQ applications</strong>
+    published by M. Mendelson &mdash; data fields and watch faces alike, including any apps released in
+    the future (the &ldquo;Apps&rdquo;). It explains what usage information the Apps collect, why, and
+    the choices you have.</p>
   </div>
 
-  <p>The Apps are installed from the Garmin Connect IQ Store and run on your Garmin device.
-  Your use of the Garmin platform is also governed by
+  <p>The Apps are installed from the Garmin Connect IQ Store and run on your Garmin device. Your use of
+  the Garmin platform is also governed by
   <a href="https://www.garmin.com/en-US/privacy/connect/" target="_blank" rel="noopener">Garmin&rsquo;s own Privacy Policy</a>,
   which is separate from this one.</p>
 
@@ -145,129 +134,65 @@
   <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a>.</p>
 
   <h2>2. Information the Apps collect</h2>
-
-  <h3>2.1 Basic usage &amp; profile information (all Apps)</h3>
-  <p>To understand how the Apps are used across different devices and to improve them, most Apps
-  send a small usage record to my analytics endpoint when they run. This record can include:</p>
+  <p>To understand how the Apps are used across different devices and to improve them, the Apps send a
+  small usage record when they run. This record can include:</p>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Data</th><th>Source</th><th>Purpose</th></tr></thead>
     <tbody>
       <tr><td>Year of birth (i.e. approximate age)</td><td>Your Garmin user profile</td><td>Understand the audience and improve the Apps</td></tr>
       <tr><td>Gender</td><td>Your Garmin user profile</td><td>Understand the audience and improve the Apps</td></tr>
-      <tr><td>Device model / part number</td><td>Device settings</td><td>Diagnose device-specific issues, prioritise support</td></tr>
+      <tr><td>Device model</td><td>Device settings</td><td>Diagnose device-specific issues, prioritise support</td></tr>
       <tr><td>A device identifier (a per-installation unique identifier provided by Garmin)</td><td>Device settings</td><td>Count distinct devices and de-duplicate usage records</td></tr>
-      <tr><td>System language</td><td>Device settings</td><td>Localisation and translation priorities</td></tr>
-      <tr><td>Time zone offset &amp; timestamp of use</td><td>Device clock</td><td>Usage timing and statistics</td></tr>
+      <tr><td>System language</td><td>Device settings</td><td>Understand which languages to support</td></tr>
+      <tr><td>Time zone offset &amp; time of use</td><td>Device clock</td><td>Usage timing and statistics</td></tr>
       <tr><td>Current sport / activity profile (e.g. running, cycling)</td><td>Garmin activity profile</td><td>Understand how the Apps are used</td></tr>
-      <tr><td>Whether an activity is being recorded, and the App version</td><td>App state</td><td>Debugging and version adoption</td></tr>
+      <tr><td>Whether an activity is being recorded, and the App version</td><td>App state</td><td>Debugging and version statistics</td></tr>
     </tbody>
   </table>
   </div>
   <p class="note">The year of birth and gender are read from the profile you configured in Garmin
   Connect. If you have not set them, they are not available to the App.</p>
 
-  <h3>2.2 Activity &amp; fitness data</h3>
-  <p>Because these are training tools, the data fields read live activity information from your
-  device &mdash; such as heart rate, pace, speed, distance, steps and elapsed time &mdash; to calculate
-  and display metrics on your watch. For ordinary data fields and watch faces, this information is
-  <strong>processed on your device to show it to you and is not transmitted off the device.</strong>
-  The two exceptions are described below.</p>
-
-  <h3>2.3 Live Tracker</h3>
-  <p>If you use the <strong>Live Tracker</strong> data field, it streams your ongoing activity to
-  my server so that the activity can be viewed on a live web page. This transmitted data can include:
-  elapsed time, average pace and speed, distance, average heart rate, step count, activity status,
-  sport type, device model, time of day, and a track identifier used to build the shareable tracking
-  link. Anyone who has that tracking link can view the activity while it is live, so only share it
-  with people you trust.</p>
-
-  <h3>2.4 Route Silhouette watch face</h3>
-  <p>The <strong>Route Silhouette</strong> watch face pairs your watch with my backend using the
-  device identifier described above, then retrieves a summary of your most recent activity (its name,
-  distance, duration and sport type) and a rendered image of that activity&rsquo;s <strong>route
-  (derived from GPS location data)</strong> to display on the watch face.</p>
-
-  <h3>2.5 Website</h3>
-  <p>The website <a href="https://apps.mmendelson.com/">apps.mmendelson.com</a> uses
-  <strong>Google Analytics</strong>, which sets cookies and collects standard analytics information
-  (such as pages viewed, approximate location derived from IP address, browser and device type) to
-  measure traffic. This applies to the website only, not to the on-watch Apps.</p>
-
   <h2>3. How the information is used</h2>
   <ul>
-    <li>To operate and provide the Apps and their features (including live tracking and route display).</li>
-    <li>To understand which devices, languages and activity types the Apps are used with, so I can fix bugs and prioritise improvements.</li>
-    <li>To produce aggregate usage statistics.</li>
+    <li>To understand which devices, languages and activity types the Apps are used with.</li>
+    <li>To fix bugs, prioritise improvements, and produce aggregate usage statistics.</li>
   </ul>
   <p>I do <strong>not</strong> sell your personal information, and I do <strong>not</strong> use it for
   advertising or to build advertising profiles.</p>
 
-  <h2>4. Where your data goes (service providers)</h2>
-  <p>To provide the features above, some data is processed by third parties acting on my behalf or as
-  independent platforms:</p>
-  <ul>
-    <li><strong>Google</strong> &mdash; the usage records in section 2.1 are received and stored using
-      Google Apps Script and Google Sheets, and the website analytics in section 2.5 use Google
-      Analytics. See
-      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>.</li>
-    <li><strong>My own backend</strong> (<code>api.mmendelson.com</code>) &mdash; receives the Live
-      Tracker and Route Silhouette data described in sections 2.3 and 2.4.</li>
-    <li><strong>Garmin</strong> &mdash; the Apps run on the Garmin Connect IQ platform and read data
-      from it. Garmin&rsquo;s handling of your data is governed by
-      <a href="https://www.garmin.com/en-US/privacy/connect/" target="_blank" rel="noopener">Garmin&rsquo;s Privacy Policy</a>.</li>
-  </ul>
-  <p class="note">Paid features and in-app purchases, where offered, are processed by third-party
-  providers that operate under their own privacy policies; I do not receive or store your payment
-  card details.</p>
+  <h2>4. Data retention &amp; security</h2>
+  <p>Usage information is transmitted over encrypted (HTTPS) connections and retained only as long as
+  needed to operate the Apps and produce statistics, after which it is deleted or kept in aggregated
+  form. No method of transmission or storage is 100% secure, but I take reasonable measures to protect
+  the limited information collected.</p>
 
-  <h2>5. Data retention</h2>
-  <p>Usage and analytics records are retained only as long as needed to operate the Apps and produce
-  statistics, and are then deleted or kept in aggregated form. Live Tracker data is transient and used
-  to display an activity while it is in progress. You can ask me to delete data associated with your
-  device identifier at any time (see section 9).</p>
-
-  <h2>6. Security</h2>
-  <p>Data is transmitted over encrypted (HTTPS) connections. No method of transmission or storage is
-  100% secure, but I take reasonable measures to protect the limited information collected.</p>
-
-  <h2>7. Children&rsquo;s privacy</h2>
+  <h2>5. Children&rsquo;s privacy</h2>
   <p>The Apps are general-purpose fitness tools and are not directed to children. I do not knowingly
   collect personal information from children under the age required by local law. If you believe a
   child has provided such information, contact me and I will delete it.</p>
 
-  <h2>8. International users, legal bases &amp; your rights</h2>
-  <p>The Apps may be used worldwide, and data may be processed in countries other than your own. Where
-  the GDPR or similar laws apply, the legal bases for processing are my legitimate interest in
-  operating and improving the Apps and, where you enable an optional feature (such as Live Tracker or
-  the Route Silhouette pairing), your choice to use that feature.</p>
-  <p>Depending on where you live, you may have the right to access, correct, delete, or restrict the
-  processing of your personal information, to object to processing, or to data portability. To exercise
-  any of these rights, contact me at the address below. You also have the right to lodge a complaint
-  with your local data-protection authority.</p>
-
-  <h2>9. Your choices</h2>
+  <h2>6. Your rights &amp; choices</h2>
   <ul>
     <li>The age and gender data come from your Garmin profile; you can edit or clear those fields in
-      Garmin Connect.</li>
-    <li>You can uninstall an App at any time to stop it from running and sending data.</li>
-    <li>Only share Live Tracker links with people you want to have access.</li>
-    <li>You can disable cookies for the website through your browser or opt out of Google Analytics
-      using Google&rsquo;s tools.</li>
-    <li>You can request deletion of data linked to your device by emailing me.</li>
+      Garmin Connect at any time.</li>
+    <li>You can uninstall an App at any time to stop it from running and sending any usage information.</li>
+    <li>Depending on where you live, you may have the right to access, correct, or request deletion of
+      the information associated with your device. To do so, email me at the address below.</li>
   </ul>
 
-  <h2>10. Changes to this policy</h2>
+  <h2>7. Changes to this policy</h2>
   <p>I may update this Privacy Policy from time to time. The &ldquo;Last updated&rdquo; date at the top
   reflects the latest version. Material changes will be reflected on this page.</p>
 
-  <h2>11. Contact</h2>
+  <h2>8. Contact</h2>
   <p>Questions, requests, or concerns about this policy or your data:<br />
   <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
 </main>
 
 <footer class="page">
-  <p>&copy; 2026 M. Mendelson &mdash; Garmin Apps &middot; <a href="/">apps.mmendelson.com</a></p>
+  <p>&copy; 2026 M. Mendelson &mdash; Garmin Apps</p>
 </footer>
 
 </body>
