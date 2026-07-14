@@ -386,7 +386,7 @@ function adaptTooltipPosition(tag, tip) {
    FEATURED CAROUSEL
 ========================================================== */
 
-const MAX_FEATURED_SLIDES = 4;
+const MAX_FEATURED_SLIDES = 5;
 /** "🔥 Trending" floor — shared with the momentum-tag threshold above. */
 const MIN_TRENDING_INSTALLS = MOMENTUM_TRENDING_INSTALLS;
 /** An app only earns the "✨ New" badge while it is at most this old (days). */
@@ -438,13 +438,28 @@ function buildFeaturedCarousel(data) {
   const cards = [...document.querySelectorAll(".card")];
   const get = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
 
+  const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
 
-  /* A card's category is decided by the authored section it lives in, so the
-     complementary featured pick always comes from the OTHER category. */
+  /* A card's category is decided by the authored section it lives in, used to
+     pair the all-time favorite with the top app of the OTHER category. */
   const categoryOf = c =>
     c.closest("#watch-faces") ? "watch" :
     c.closest("#data-fields") ? "data" : null;
+
+  /* A card is "paid" if it advertises a free trial and/or the premium
+     (Garmin Pay) purchase path — these are the apps we merchandise first. */
+  const isPaid = c =>
+    !!c.querySelector('.badge-slot .trial, .pay-alt, [data-method="garmin-pay"]');
+
+  /* Youngest app and its age in days, so "new" is only ever shown when true. */
+  const newcomer =
+    data && typeof data === "object"
+      ? getYoungestAppCardByAge(cards, data)
+      : null;
+  const newcomerDays = newcomer
+    ? getApproxDaysFromApi(data[newcomer.dataset.name])
+    : null;
 
   /** @type {{ card: Element, reason: keyof typeof FEATURED_REASON_COPY }[]} */
   const entries = [];
@@ -454,29 +469,46 @@ function buildFeaturedCarousel(data) {
     entries.push({ card, reason });
   };
 
-  /* Exactly two slides, both driven purely by all-time downloads:
+  /* Slots fill in priority order, and every badge is guaranteed truthful: a
+     slot is skipped (never relabelled) when its claim no longer holds, so the
+     carousel shrinks to as few as one slide rather than padding with filler. */
 
-     1. THE all-time favorite — the genuine #1 across every app, whatever its
-        category. It carries the plain "All-Time Favorite" label (no category
-        qualifier): it is THE favorite, not merely its category's winner.
-     2. The favorite of the OTHER category — if the #1 is a watch face this is
-        the top data field, and vice-versa — so both categories are always
-        represented. It carries a category-specific "Favorite <category>" label.
+  /* 1. COMMERCIAL — lead with the strongest paid app (revenue first),
+        ranked by total downloads among paid apps. */
+  const topPaid = byTotal.find(isPaid);
+  if (topPaid) pushEntry(topPaid, "premium");
 
-     Both transitions are automatic: whichever app leads total downloads on a
-     given load becomes the favorite, and the complementary card follows from
-     its category. */
+  /* 2. ALL-TIME FAVORITE — only the genuine #1 by total downloads; if it is
+        already featured above, skip rather than mislabel the runner-up. */
+  if (byTotal[0] && !hasCard(byTotal[0])) pushEntry(byTotal[0], "total");
 
-  const favorite = byTotal[0];
-  if (favorite) {
-    pushEntry(favorite, "total");
-
-    const favCat = categoryOf(favorite);
+  /* 2b. OTHER-CATEGORY FAVORITE — pair the all-time favorite with the top app
+        of the OTHER category so both categories are always represented: if the
+        #1 is a watch face, feature the top data field, and vice-versa.
+        Automatic from live totals; additive — never displaces a slot above. */
+  const favoriteCard = byTotal[0];
+  if (favoriteCard) {
+    const favCat = categoryOf(favoriteCard);
     if (favCat === "watch") {
       pushEntry(byTotal.find(c => categoryOf(c) === "data"), "topDataField");
     } else if (favCat === "data") {
       pushEntry(byTotal.find(c => categoryOf(c) === "watch"), "topWatchFace");
     }
+  }
+
+  /* 3. TRENDING — the genuine #1 by weekly installs, and only once it clears
+        the same floor as the "🔥 Trending" momentum tag. */
+  if (
+    byInstalls[0] &&
+    !hasCard(byInstalls[0]) &&
+    get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS
+  ) {
+    pushEntry(byInstalls[0], "installs");
+  }
+
+  /* 4. NEW — the youngest app, only while it is genuinely recent. */
+  if (newcomer && newcomerDays !== null && newcomerDays <= MAX_NEW_AGE_DAYS) {
+    pushEntry(newcomer, "new");
   }
 
   if (entries.length === 0) return;
