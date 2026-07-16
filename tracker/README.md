@@ -1,31 +1,15 @@
-# Garmin Live Track
+# Garmin Tracker Data Field — web companion
 
-A single-page web app for following a Garmin LiveTrack session in real time — with map tracking, pace/distance calculations, and navigation to the athlete.
+A single static page that reads a **Track ID** (from the `?trackId=` query
+parameter or the input box) and shows the latest records shared by the
+[Garmin Tracker Data Field](https://apps.mmendelson.com/#data-fields) app,
+auto-refreshing every 5 minutes.
 
-## Stack
+- Runtime: static HTML/CSS/JS, no build step. Everything is in `index.html`.
+- Data: a Google Apps Script endpoint (`?trackId=<id>` → latest rows).
+- Countdown: driven by an absolute target timestamp, so it stays correct when
+  the tab is backgrounded (re-evaluated on `visibilitychange`).
 
-| Layer | Technology |
-|---|---|
-| Runtime | Static HTML/CSS/JS — no build step, no framework |
-| Map | [Leaflet](https://leafletjs.com/) 1.9.4 with OpenStreetMap tiles |
-| Hosting | GitHub Pages |
-| Data | Garmin LiveTrack public session URL (polled via `fetch`) |
-| CORS proxy | Google Apps Script (primary) + public fallbacks — bypasses Garmin's cross-origin restrictions |
-| Favicon | PNG + multi-size ICO (converted from source image) |
-
-## Features
-
-- Real-time athlete position on an interactive map
-- Auto-follow modes: athlete, my location, route, or all
-- Pace / distance / time / speed calculator (bottom-sheet modal)
-  - Per-field unit selection: km, m, mi / /km, /mi / km/h, mi/h
-  - Smart recalculation based on the last two fields edited
-- One-tap navigation to athlete via Google Maps (FAB button)
-- Multilingual: Português, English, Español, Français, Deutsch
-- Dark theme, mobile-first layout with safe-area support
-
-## Usage
-
-Open `index.html` directly in a browser, or visit the GitHub Pages URL. Paste a Garmin LiveTrack session URL (or share link) into the input field to start tracking.
-
-To test with mock data, append `?mock=true` to the URL.
+Migrated from `mmendelson.com/tracker` (that path now redirects here,
+preserving the `?trackId=` parameter). Not to be confused with the real-time
+map follower at [`/live_tracker/`](../live_tracker/).

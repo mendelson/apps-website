@@ -2,7 +2,7 @@
 <html><head><meta charset="utf-8"><title>Garmin Apps</title></head>
 <script>
   (function () {
-    var APPS = ['tracker'];
+    var APPS = ['live_tracker'];
     var segments = window.location.pathname.split('/').filter(Boolean);
 
     if (segments.length === 0) {
@@ -11,6 +11,16 @@
     }
 
     var first = segments[0];
+
+    // Back-compat: the live tracker moved from /tracker/<user> to
+    // /live_tracker/<user>. Keep old shared per-user links working.
+    // (Bare /tracker/ is now a different app — the Tracker Data Field companion
+    // — served as a real page, so only /tracker/<sub> paths reach here.)
+    if (first === 'tracker' && segments.length > 1) {
+      window.location.replace('/live_tracker/?user=' + encodeURIComponent(segments[segments.length - 1]));
+      return;
+    }
+
     if (APPS.indexOf(first) !== -1) {
       var user = segments.length > 1 ? segments[segments.length - 1] : null;
       var dest = '/' + first + '/' + (user ? '?user=' + encodeURIComponent(user) : '');
