@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Garmin Live Track</title>
+  <link rel="icon" type="image/jpeg" href="/assets/favicon.jpg">
+  <link rel="apple-touch-icon" href="/assets/favicon.jpg">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: rgba(255,255,255,0.08);
+      --primary: #3b82f6;
+      --primary-dim: rgba(59,130,246,0.15);
+      --accent: #f97316;
+      --accent-dim: rgba(249,115,22,0.15);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── Landing ── */
+    #landing {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 60%, #0f3460 0%, #16213e 40%, #0f1117 100%);
+      z-index: 1000;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    #landing.hidden { opacity: 0; pointer-events: none; transform: scale(0.97); }
+
+    .landing-card {
+      width: 100%;
+      max-width: 520px;
+      padding: 2.5rem 2rem;
+      margin: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow), 0 0 80px rgba(59,130,246,0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .brand-icon svg { width: 22px; height: 22px; fill: white; }
+    .brand h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+    .brand-sub { color: var(--muted); font-size: 0.875rem; margin-bottom: 2rem; line-height: 1.5; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    input[type="url"], input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+    input::placeholder { color: var(--muted); }
+    input.error-field { border-color: var(--red); }
+
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: #2563eb; box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+    .btn-primary:disabled { background: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); }
+    .btn-nav {
+      background: #16a34a;
+      color: white;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-nav:hover { background: #15803d; box-shadow: 0 4px 12px rgba(22,163,74,0.4); }
+
+    .error-msg {
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      color: var(--red);
+      min-height: 1.2em;
+    }
+
+    .hint {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--primary-dim);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      line-height: 1.5;
+    }
+    .hint code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: rgba(59,130,246,0.2);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    #user-banner {
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    .user-banner-name { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+    #user-banner.hidden { display: none; }
+    .user-banner-status { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+    .user-banner-countdown { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; opacity: 0.6; }
+
+    #landing { overflow-y: auto; align-items: flex-start; }
+    .landing-card { margin: 2rem auto; }
+
+    /* ── Two-path layout ── */
+    .path-sep {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin: 1.25rem 0; color: var(--muted); font-size: 0.78rem;
+    }
+    .path-sep::before, .path-sep::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .url-builder {
+      display: flex; align-items: stretch;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .url-builder:focus-within {
+      border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+    .url-builder-base {
+      padding: 0.75rem 0.6rem 0.75rem 1rem;
+      font-size: 0.78rem; color: var(--muted);
+      white-space: nowrap; flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .url-builder input[type="text"] {
+      flex: 1; border: none; border-radius: 0; background: transparent;
+      padding: 0.75rem 0.75rem; font-size: 0.9rem; min-width: 0;
+    }
+    .url-builder input[type="text"]:focus { box-shadow: none; border-color: transparent; }
+    .hint code { word-break: break-all; }
+    #email-reveal { display: none; }
+    .email-reveal {
+      background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 0.75rem; font-size: 0.82rem;
+    }
+    .email-reveal-label { color: var(--muted); margin-bottom: 0.5rem; line-height: 1.4; }
+    .email-copy-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .email-display {
+      flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+      color: var(--accent); background: rgba(249,115,22,0.1);
+      padding: 0.3em 0.6em; border-radius: 5px; word-break: break-all;
+    }
+    .btn-copy {
+      background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 6px; color: var(--accent); font-size: 0.75rem; font-weight: 600;
+      font-family: inherit; cursor: pointer; padding: 0.3rem 0.65rem; flex-shrink: 0;
+      transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-copy:hover { background: rgba(249,115,22,0.25); }
+    .path2-steps { display: flex; flex-direction: column; gap: 0.45rem; }
+    .step { display: flex; align-items: flex-start; gap: 0.5rem; color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
+    .step-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(249,115,22,0.15); color: var(--accent);
+      font-size: 0.68rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 0.1rem;
+    }
+
+    /* ── App ── */
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    #app.visible { opacity: 1; pointer-events: all; }
+
+    /* Top bar */
+    #topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      background: linear-gradient(to bottom, rgba(15,17,23,0.97) 60%, transparent);
+      pointer-events: none;
+    }
+    #topbar > * { pointer-events: all; }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .topbar-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    .topbar-dot.active {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: livePulse 2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { box-shadow: 0 0 4px var(--green); }
+      50%       { box-shadow: 0 0 10px var(--green), 0 0 20px rgba(34,197,94,0.4); }
+    }
+    .topbar-dot.cached { background: var(--yellow); }
+    .topbar-dot.expired { background: var(--muted); }
+    #live-badge {
+      display: none;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 4px;
+      padding: 0.1em 0.4em;
+    }
+    #live-badge.visible { display: inline-block; }
+    .topbar-spacer { flex: 1; }
+    #last-update {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── No-data info strip ── */
+    #nodata-bar {
+      display: none;
+      position: absolute;
+      top: 48px; left: 0; right: 0;
+      z-index: 490;
+      background: rgba(234,179,8,0.12);
+      border-bottom: 1px solid rgba(234,179,8,0.25);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.78rem;
+      color: #fde68a;
+      align-items: center;
+      gap: 0.6rem;
+      pointer-events: none;
+    }
+    #nodata-bar.visible { display: flex; }
+    #nodata-bar > * { pointer-events: all; }
+    #nodata-bar a {
+      color: #fbbf24;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .nodata-spacer { flex: 1; }
+
+    /* Map */
+    #map {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* Info panel */
+    #info-panel {
+      position: absolute;
+      bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+      left: max(1rem, env(safe-area-inset-left, 0px));
+      z-index: 500;
+      width: 220px;
+      background: rgba(26, 29, 39, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    #panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface2);
+      cursor: pointer;
+      user-select: none;
+    }
+    #panel-header span { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    #panel-toggle { color: var(--muted); font-size: 0.9rem; transition: transform 0.2s; }
+    #panel-toggle.collapsed { transform: rotate(-90deg); }
+
+    #panel-body { padding: 0.6rem 0.9rem 0.8rem; }
+    #panel-body.hidden { display: none; }
+
+    .metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .metric:last-child { border-bottom: none; }
+    .metric-label { font-size: 0.72rem; color: var(--muted); }
+    .metric-value { font-size: 0.95rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .metric-value.pace-val { color: #38bdf8; }
+    .metric-value.speed-val { color: #a78bfa; }
+    .metric-value.dist-val { color: #34d399; }
+    .metric-value.dur-val { color: var(--text); }
+    .metric-value.activity-val { color: #f472b6; font-size: 0.8rem; }
+
+    /* Location panel */
+    #location-panel {
+      display: none;
+      position: absolute;
+      bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+      right: max(1rem, env(safe-area-inset-right, 0px));
+      z-index: 500;
+      background: rgba(26, 29, 39, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.6rem 0.9rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 160px;
+    }
+    .loc-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; }
+    .loc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .loc-dot.tracker { background: var(--accent); }
+    .loc-dot.user { background: var(--primary); }
+    .loc-dot.off { background: var(--muted); }
+    .loc-text { color: var(--muted); }
+    .loc-coords { color: var(--text); font-variant-numeric: tabular-nums; font-family: 'SF Mono', monospace; font-size: 0.72rem; }
+
+    /* Map control button panel */
+    #map-controls {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .map-btn {
+      height: 28px;
+      min-width: 110px;
+      background: rgba(26,29,39,0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 9px 0 7px;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+      font-size: 0.71rem;
+      font-weight: 600;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .map-btn:hover  { background: var(--surface2); }
+    .map-btn:active { transform: scale(0.95); }
+    .map-btn svg    { width: 13px; height: 13px; pointer-events: none; flex-shrink: 0; }
+    .map-btn.btn-tracker { color: var(--accent); }
+    .map-btn.btn-user    { color: var(--primary); }
+    .map-btn-sep { height: 4px; }
+    .map-btn.on { background: rgba(34,197,94,0.15); color: var(--green); border-color: rgba(34,197,94,0.4); }
+    .map-btn.btn-tracker.on { background: rgba(249,115,22,0.12); color: var(--accent); border-color: rgba(249,115,22,0.4); }
+    .map-btn.btn-user.on    { background: rgba(59,130,246,0.12); color: var(--primary); border-color: rgba(59,130,246,0.4); }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      z-index: 9999;
+      box-shadow: var(--shadow);
+      transition: opacity 0.25s, transform 0.25s;
+      max-width: calc(100vw - 2rem);
+      text-align: center;
+    }
+    #toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+    #toast.toast-warn { border-color: rgba(234,179,8,0.3); color: #fde68a; }
+    #toast.toast-error { border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+    #toast.toast-info { border-color: rgba(59,130,246,0.3); color: #93c5fd; }
+
+    /* Loading overlay */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 800;
+      transition: opacity 0.3s;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    #loading-msg { color: var(--muted); font-size: 0.9rem; }
+
+    /* Leaflet custom markers */
+    .tracker-marker-outer {
+      position: relative;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tracker-pulse {
+      position: absolute;
+      width: 28px; height: 28px;
+      background: rgba(249,115,22,0.3);
+      border-radius: 50%;
+      animation: ripple 2s ease-out infinite;
+    }
+    .tracker-dot {
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border: 2.5px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(249,115,22,0.6);
+      position: relative;
+      z-index: 1;
+    }
+
+    .user-marker-outer {
+      position: relative;
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .user-pulse {
+      position: absolute;
+      width: 24px; height: 24px;
+      background: rgba(59,130,246,0.25);
+      border-radius: 50%;
+      animation: ripple 2.5s ease-out infinite;
+    }
+    .user-dot {
+      width: 12px; height: 12px;
+      background: var(--primary);
+      border: 2.5px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.6);
+      position: relative;
+      z-index: 1;
+    }
+
+    .start-marker {
+      width: 10px; height: 10px;
+      background: #22c55e;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(34,197,94,0.5);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes ripple {
+      0% { transform: scale(0.6); opacity: 0.8; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* Language selector */
+    #lang-selector { position: relative; }
+    #menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.15rem;
+      padding: 0.3rem 0.45rem;
+      cursor: pointer;
+      border-radius: 8px;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    #menu-btn:hover { background: var(--surface2); }
+    #app-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      min-width: 210px;
+      overflow: hidden;
+    }
+    #app-menu.open { display: block; }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:hover { background: var(--surface2); }
+    .menu-item-icon { font-size: 1rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
+    .menu-item-label { display: flex; flex-direction: column; gap: 1px; }
+    .menu-item-title { font-weight: 600; }
+    .menu-item-desc { font-size: 0.72rem; color: var(--muted); }
+    .menu-separator { height: 1px; background: var(--border); }
+    #nav-fab {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      padding: 0.3rem 0.7rem 0.3rem 0.5rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+      font-family: inherit;
+      text-decoration: none;
+      white-space: nowrap;
+      opacity: 0.35;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    #nav-fab.ready { opacity: 1; pointer-events: auto; }
+    #nav-fab.ready:hover  { transform: scale(1.04); }
+    #nav-fab.ready:active { transform: scale(0.96); }
+    #nav-fab svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      z-index: 9999;
+      min-width: 130px;
+    }
+    .lang-dropdown.open { display: block; }
+    .lang-option {
+      display: block;
+      width: 100%;
+      padding: 0.55rem 1rem;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+    }
+    .lang-option:hover  { background: var(--surface2); }
+    .lang-option.active { color: var(--accent); font-weight: 700; }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      #info-panel { width: calc(50vw - 1.5rem); bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px)); left: 0.75rem; }
+      #map-controls { top: 60px; left: 8px; right: auto; }
+      #map-controls .map-btn { min-width: 92px; height: 26px; font-size: 0.66rem; gap: 4px; padding: 0 6px 0 5px; }
+      #info-panel .metric-value { font-size: 0.85rem; }
+      .topbar-brand { font-size: 0.85rem; }
+      #last-update { font-size: 0.68rem; }
+    }
+
+    /* ── Pace Calculator modal ──────────────────────────────────────────────── */
+    #calc-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,0);
+      pointer-events: none;
+      transition: background 0.25s, backdrop-filter 0.25s;
+    }
+    #calc-overlay.open {
+      background: rgba(0,0,0,0.55);
+      pointer-events: all;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+    #calc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      padding: 0 1.3rem calc(1.8rem + env(safe-area-inset-bottom, 0px));
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    #calc-overlay.open #calc-card { transform: translateY(0); }
+    .calc-handle {
+      width: 36px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0.8rem auto 0;
+    }
+    .calc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 0 0.3rem;
+    }
+    #calc-title { font-size: 1.05rem; font-weight: 700; }
+    .calc-close {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .calc-close:hover { background: var(--border); color: var(--text); }
+    #calc-hint { font-size: 0.78rem; color: var(--muted); margin: 0 0 1rem; }
+    .calc-row { margin-bottom: 0.8rem; }
+    .calc-lbl {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.3rem;
+    }
+    .calc-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      gap: 0.5rem;
+      transition: border-color 0.15s;
+    }
+    .calc-wrap:focus-within { border-color: var(--primary); }
+    .calc-inp {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-family: inherit;
+      outline: none;
+      min-width: 0;
+    }
+    .calc-inp::placeholder { color: var(--border); font-weight: 400; }
+    .calc-wrap--computed {
+      background: rgba(59,130,246,0.07);
+      border-color: rgba(59,130,246,0.35);
+    }
+    .calc-inp--computed {
+      color: var(--primary);
+      -webkit-text-fill-color: var(--primary);
+      opacity: 1;
+      cursor: default;
+    }
+    .calc-unit-sel {
+      background: rgba(59,130,246,0.1);
+      border: 1.5px solid rgba(59,130,246,0.35);
+      border-radius: 6px;
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 3px 6px;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+      outline: none;
+    }
+    .calc-unit-sel:hover  { background: rgba(59,130,246,0.22); border-color: var(--primary); }
+    .calc-unit-sel:focus  { border-color: var(--primary); }
+    .calc-unit-sel option { background: var(--bg, #fff); color: var(--text, #111); font-weight: 500; }
+    .calc-fill-btn {
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(251,146,60,0.12);
+      border: 1.5px solid rgba(251,146,60,0.35);
+      border-radius: 6px;
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 3px 6px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      opacity: 0.4;
+      pointer-events: none;
+      transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+      outline: none;
+    }
+    .calc-fill-btn.live { opacity: 1; pointer-events: auto; }
+    .calc-fill-btn.live:hover  { background: rgba(251,146,60,0.25); border-color: var(--accent); }
+    .calc-fill-btn.live:active { background: rgba(251,146,60,0.38); }
+    .calc-wrap--computed .calc-fill-btn { display: none; }
+    .calc-divider { height: 1px; background: var(--border); margin: 0.3rem 0 0.9rem; opacity: 0.5; }
+    #calc-reset-btn {
+      width: 100%;
+      margin-top: 0.6rem;
+      padding: 0.7rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #calc-reset-btn:hover { background: var(--border); color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ── Landing Screen ── -->
+<div id="landing" class="hidden">
+  <div class="landing-card">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      </div>
+      <h1>Garmin Live Track</h1>
+      <div style="margin-left:auto;position:relative" id="landing-lang-selector">
+        <button class="btn btn-ghost" style="font-size:1rem;padding:0.35rem 0.55rem"
+          title="Language / Idioma" onclick="toggleLandingLang()">🌐</button>
+        <div class="lang-dropdown" id="landing-lang-dropdown">
+          <button class="lang-option" data-lang="pt" onclick="setLanguage('pt')">Português</button>
+          <button class="lang-option" data-lang="de" onclick="setLanguage('de')">Deutsch</button>
+          <button class="lang-option" data-lang="en" onclick="setLanguage('en')">English</button>
+          <button class="lang-option" data-lang="es" onclick="setLanguage('es')">Español</button>
+          <button class="lang-option" data-lang="fr" onclick="setLanguage('fr')">Français</button>
+        </div>
+      </div>
+    </div>
+    <p class="brand-sub">Visualize uma sessão Garmin LiveTrack no mapa junto com sua própria localização em tempo real.</p>
+
+    <div id="user-banner" class="hidden">
+      <div class="user-banner-name" id="user-banner-name"></div>
+      <div class="user-banner-status" id="user-banner-status"></div>
+      <div class="user-banner-countdown" id="user-banner-countdown"></div>
+    </div>
+
+    <!-- Option 2: username URL builder -->
+    <label id="opt2-lbl">Escolha a URL que deseja usar:</label>
+    <div class="url-builder">
+      <span class="url-builder-base">apps.mmendelson.com/live_tracker/</span>
+      <input type="text" id="name-input" placeholder="seunome"
+        autocomplete="off" spellcheck="false"
+        oninput="onNameInput()"
+        onkeydown="if(event.key==='Enter')goToUser()">
+    </div>
+    <div class="email-reveal" id="email-reveal">
+      <p class="email-reveal-label" id="email-lbl">Adicione este e-mail no app Garmin LiveTrack:</p>
+      <div class="email-copy-row">
+        <code class="email-display">mendelson.mateus+<span id="email-name"></span>@gmail.com</code>
+        <button class="btn-copy" id="copy-email-btn" onclick="copyTrackerEmail()">Copiar</button>
+      </div>
+      <div class="path2-steps">
+        <div class="step"><span class="step-num">1</span><span id="step1">Adicione o e-mail acima como destinatário nas configurações de LiveTrack</span></div>
+        <div class="step"><span class="step-num">2</span><span id="step2">Inicie uma atividade no relógio</span></div>
+        <div class="step"><span class="step-num">3</span><span id="step3">Acesse a URL acima para acompanhar</span></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="name-go-btn" onclick="goToUser()" disabled style="width:100%;margin-bottom:0.25rem">Acompanhar</button>
+
+    <!-- Divider -->
+    <div class="path-sep"><span id="path-or">ou</span></div>
+
+    <!-- Option 1: direct URL -->
+    <label for="url-input" id="opt1-lbl">Cole a URL da sessão Garmin LiveTrack</label>
+    <div class="input-row">
+      <input type="url" id="url-input"
+        placeholder="https://livetrack.garmin.com/session/…/token/…"
+        autocomplete="off" spellcheck="false">
+      <button class="btn btn-primary" id="submit-btn">Acompanhar</button>
+    </div>
+    <div class="error-msg" id="url-error"></div>
+
+    <div class="hint">
+      <span id="hint-pre">Cole uma URL como:</span><br>
+      <code>https://livetrack.garmin.com/session/{id}/token/{token}</code><br><br>
+      <span id="hint-post">Funciona para atividades ao vivo e sessões recentes.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Loading Screen ── -->
+<div id="loading" class="hidden">
+  <div class="spinner"></div>
+  <div id="loading-msg">Conectando à sessão…</div>
+</div>
+
+<!-- ── App Screen ── -->
+<div id="app">
+  <div id="map"></div>
+
+  <!-- Top bar -->
+  <div id="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-dot" id="status-dot"></div>
+      <span id="live-badge">LIVE</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <span id="last-update"></span>
+    <a id="nav-fab" href="#" target="_blank" rel="noopener" title="Navegar até o atleta">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C7.24 2 5 4.24 5 7c0 4.25 5 10 5 10s5-5.75 5-10c0-2.76-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      <span id="nav-fab-label">Navegar</span>
+    </a>
+    <div id="lang-selector">
+      <button class="btn btn-ghost" id="lang-btn"
+        style="font-size:1rem;padding:0.35rem 0.55rem"
+        title="Language / Idioma"
+        onclick="toggleLangDropdown()">🌐</button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-option" data-lang="pt" onclick="setLanguage('pt')">Português</button>
+        <button class="lang-option" data-lang="de"    onclick="setLanguage('de')">Deutsch</button>
+        <button class="lang-option" data-lang="en"    onclick="setLanguage('en')">English</button>
+        <button class="lang-option" data-lang="es"    onclick="setLanguage('es')">Español</button>
+        <button class="lang-option" data-lang="fr"    onclick="setLanguage('fr')">Français</button>
+      </div>
+    </div>
+    <div style="position:relative">
+      <button id="menu-btn" onclick="toggleAppMenu()" title="Menu">☰</button>
+      <div id="app-menu">
+        <button class="menu-item" onclick="toggleCalc();toggleAppMenu()">
+          <span class="menu-item-icon">🧮</span>
+          <span class="menu-item-label">
+            <span class="menu-item-title" id="menu-calc-title">Calculadora</span>
+            <span class="menu-item-desc" id="menu-calc-desc">Pace, distância e tempo</span>
+          </span>
+        </button>
+        <button class="menu-item" id="menu-copy-btn" onclick="copyShareLink();toggleAppMenu()">
+          <span class="menu-item-icon">🔗</span>
+          <span class="menu-item-label">
+            <span class="menu-item-title" id="menu-copy-title">Copiar link</span>
+            <span class="menu-item-desc" id="menu-copy-desc">Compartilhar esta sessão</span>
+          </span>
+        </button>
+        <button class="menu-item" id="menu-garmin-btn" onclick="openOnGarmin();toggleAppMenu()">
+          <span class="menu-item-icon">🏃</span>
+          <span class="menu-item-label">
+            <span class="menu-item-title" id="menu-garmin-title">Ver no Garmin</span>
+            <span class="menu-item-desc" id="menu-garmin-desc">Abrir sessão no site oficial</span>
+          </span>
+        </button>
+        <button class="menu-item" onclick="resetToLanding();toggleAppMenu()">
+          <span class="menu-item-icon">↩</span>
+          <span class="menu-item-label">
+            <span class="menu-item-title" id="menu-change-title">Trocar URL</span>
+            <span class="menu-item-desc" id="menu-change-desc">Abrir outra sessão</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No-data info strip (shown when track data is unavailable cross-origin) -->
+  <div id="nodata-bar">
+    <span id="nodata-text">Dados da rota indisponíveis —</span>
+    <a id="garmin-direct-link" target="_blank" rel="noopener"><span id="nodata-garmin">Abrir no Garmin ↗</span></a>
+    <span class="nodata-spacer"></span>
+    <span id="nodata-my-loc" style="opacity:0.6">Sua localização está visível no mapa</span>
+  </div>
+
+  <!-- Info panel -->
+  <div id="info-panel">
+    <div id="panel-header" onclick="togglePanel()">
+      <span id="panel-title">Detalhes</span>
+      <span id="panel-toggle" class="collapsed">▾</span>
+    </div>
+    <div id="panel-body" class="hidden">
+      <div class="metric">
+        <span class="metric-label" id="lbl-status">Status</span>
+        <span class="metric-value" id="m-status">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-act">Modalidade</span>
+        <span class="metric-value activity-val" id="m-act">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-pace">Ritmo</span>
+        <span class="metric-value pace-val" id="m-pace">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-speed">Velocidade</span>
+        <span class="metric-value speed-val" id="m-speed">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-dist">Distância</span>
+        <span class="metric-value dist-val" id="m-dist">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-dur">Duração</span>
+        <span class="metric-value dur-val" id="m-dur">—</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" id="lbl-updated">Atualizado</span>
+        <span class="metric-value" id="m-updated" style="font-size:0.75rem;color:var(--muted)">—</span>
+      </div>
+      <div class="metric" id="countdown-row" style="display:none">
+        <span class="metric-label" id="lbl-countdown">Próxima</span>
+        <span id="m-countdown" style="font-size:0.8rem;color:var(--muted)">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location panel -->
+
+  <!-- Map control buttons (each is an auto-follow toggle) -->
+  <div id="map-controls">
+    <button class="map-btn btn-tracker" data-af="tracker" onclick="setAutoFollow('tracker')" title="Acompanhar atleta — clique no mapa para cancelar">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="2.5" fill="currentColor" stroke="none"/><line x1="10" y1="1" x2="10" y2="5"/><line x1="10" y1="15" x2="10" y2="19"/><line x1="1" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="19" y2="10"/></svg>
+      <span id="af-txt-tracker">Atleta</span>
+    </button>
+    <button class="map-btn btn-user" data-af="user" onclick="setAutoFollow('user')" title="Acompanhar minha localização — clique no mapa para cancelar">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2C7.24 2 5 4.24 5 7c0 4.25 5 10 5 10s5-5.75 5-10c0-2.76-2.24-5-5-5zm0 7.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      <span id="af-txt-user">Eu</span>
+    </button>
+    <button class="map-btn" data-af="route" onclick="setAutoFollow('route')" title="Manter percurso visível — clique no mapa para cancelar">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2 6 2 2 6 2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 18 2 18 6" stroke-linecap="round" stroke-linejoin="round"/><polyline points="18 14 18 18 14 18" stroke-linecap="round" stroke-linejoin="round"/><polyline points="6 18 2 18 2 14" stroke-linecap="round" stroke-linejoin="round"/><polyline points="5 10 8 7 12 13 15 10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="af-txt-route">Percurso</span>
+    </button>
+    <button class="map-btn" data-af="all" onclick="setAutoFollow('all')" title="Manter percurso e minha localização visíveis — clique no mapa para cancelar">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2 6 2 2 6 2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 18 2 18 6" stroke-linecap="round" stroke-linejoin="round"/><polyline points="18 14 18 18 14 18" stroke-linecap="round" stroke-linejoin="round"/><polyline points="6 18 2 18 2 14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="10" r="2" fill="#f97316" stroke="none"/><circle cx="14" cy="10" r="2" fill="#3b82f6" stroke="none"/></svg>
+      <span id="af-txt-all">Tudo</span>
+    </button>
+  </div>
+
+  <!-- Location panel -->
+  <div id="location-panel">
+    <div class="loc-row">
+      <div class="loc-dot tracker" id="tracker-dot"></div>
+      <div>
+        <div class="loc-text" id="lbl-tracker">Atleta</div>
+        <div class="loc-coords" id="tracker-coords">—</div>
+      </div>
+    </div>
+    <div class="loc-row">
+      <div class="loc-dot user off" id="user-loc-dot"></div>
+      <div>
+        <div class="loc-text" id="lbl-my-loc">Minha localização</div>
+        <div class="loc-coords" id="user-coords">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pace Calculator modal -->
+<div id="calc-overlay" onclick="handleCalcOverlayClick(event)">
+  <div id="calc-card">
+    <div class="calc-handle"></div>
+    <div class="calc-header">
+      <span id="calc-title">Calculadora de Pace</span>
+      <button class="calc-close" onclick="toggleCalc()" aria-label="Fechar">✕</button>
+    </div>
+    <p id="calc-hint">Preencha dois campos para calcular o terceiro</p>
+
+    <div class="calc-row">
+      <label class="calc-lbl" id="calc-lbl-dist">Distância</label>
+      <div class="calc-wrap">
+        <input class="calc-inp" id="calc-dist" type="text" inputmode="numeric"
+               placeholder="0.000" autocomplete="off"
+               onfocus="this.select()" oninput="calcMaskDist(this)">
+        <button class="calc-fill-btn" id="calc-fill-dist" onclick="_calcFillFromRace('dist')">&#9654; corrida</button>
+        <select class="calc-unit-sel" id="calc-dist-unit" onchange="calcSetUnit('dist', this.value)">
+          <option value="km">km</option>
+          <option value="m">m</option>
+          <option value="mi">mi</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-row">
+      <label class="calc-lbl" id="calc-lbl-dur">Tempo</label>
+      <div class="calc-wrap">
+        <input class="calc-inp" id="calc-dur" type="text" inputmode="numeric"
+               placeholder="h:mm:ss" autocomplete="off"
+               onfocus="this.select()" oninput="calcMaskDur(this)">
+        <button class="calc-fill-btn" id="calc-fill-dur" onclick="_calcFillFromRace('dur')">&#9654; corrida</button>
+      </div>
+    </div>
+
+    <div class="calc-divider"></div>
+
+    <div class="calc-row">
+      <label class="calc-lbl" id="calc-lbl-pace">Ritmo (pace)</label>
+      <div class="calc-wrap">
+        <input class="calc-inp" id="calc-pace" type="text" inputmode="numeric"
+               placeholder="mm:ss" autocomplete="off"
+               onfocus="this.select()" oninput="calcMaskPace(this)">
+        <button class="calc-fill-btn" id="calc-fill-pace" onclick="_calcFillFromRace('pace')">&#9654; corrida</button>
+        <select class="calc-unit-sel" id="calc-pace-unit" onchange="calcSetUnit('pace', this.value)">
+          <option value="km">/km</option>
+          <option value="mi">/mi</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="calc-row">
+      <label class="calc-lbl" id="calc-lbl-speed">Velocidade</label>
+      <div class="calc-wrap">
+        <input class="calc-inp" id="calc-speed" type="text" inputmode="numeric"
+               placeholder="0.0" autocomplete="off"
+               onfocus="this.select()" oninput="calcMaskSpeed(this)">
+        <select class="calc-unit-sel" id="calc-speed-unit" onchange="calcSetUnit('speed', this.value)">
+          <option value="kmh">km/h</option>
+          <option value="mph">mi/h</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="calc-reset-btn" onclick="calcReset()">Limpar tudo</button>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// Constants & State
+// ─────────────────────────────────────────────────────────────────────────────
+const API_BASE = 'https://livetrack.garmin.com/services';
+const REFRESH_MS = 30_000;
+
+const state = {
+  sessionId: null,
+  token: null,
+  sessionInfo: null,
+  trackpoints: [],
+  lastPointTimestamp: 0,
+  proxyIndex: 0,
+  refreshTimer: null,
+  countdownInterval: null,
+  watchId: null,
+  userLatLng: null,
+  autoFollow: 'all',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// i18n
+// ─────────────────────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  'pt': {
+    name:'Português',
+    subtitle:'Visualize uma sessão Garmin LiveTrack no mapa junto com sua própria localização em tempo real.',
+    urlLabel:'URL da sessão Garmin LiveTrack',trackBtn:'Acompanhar',
+    hintPre:'Cole uma URL como:',hintPost:'Funciona para atividades ao vivo e sessões recentes.',
+    navBtn:'Navegar até o atleta',menuNavDesc:'Abrir no Google Maps',
+    copyLinkBtn:'Copiar link',menuCopyDesc:'Compartilhar esta sessão',
+    menuGarminTitle:'Ver no Garmin',menuGarminDesc:'Abrir sessão no site oficial',
+    changeUrlBtn:'Trocar URL',menuChangeDesc:'Abrir outra sessão',
+    nodataText:'Dados da rota indisponíveis —',nodataGarmin:'Abrir no Garmin ↗',
+    nodataMyLoc:'Sua localização está visível no mapa',
+    panelTitle:'Detalhes',status:'Status',statusActive:'Em andamento',statusEnded:'Encerrada',
+    pace:'Ritmo',speed:'Velocidade',distance:'Distância',
+    duration:'Duração',activity:'Modalidade',updated:'Atualizado',countdown:'Próxima',
+    tracker:'Atleta',myLocation:'Minha localização',
+    btnTracker:'Atleta',btnUser:'Eu',btnRoute:'Percurso',btnAll:'Tudo',
+    titleTracker:'Acompanhar atleta — clique no mapa para cancelar',
+    titleUser:'Acompanhar minha localização — clique no mapa para cancelar',
+    titleRoute:'Manter percurso visível — clique no mapa para cancelar',
+    titleAll:'Manter percurso e minha localização visíveis — clique no mapa para cancelar',
+    trackerPopup:'Posição do atleta',userPopup:'Minha localização',startTooltip:'Início',
+    connecting:'Conectando à sessão…',resolvingUser:'Buscando a sessão mais recente…',tryingAlt:'Tentando endpoints alternativos…',
+    fetchingGarmin:'Buscando página da Garmin…',loadingTest:'Carregando sessão de teste…',
+    connectedViaProxy:'Conectado via proxy',
+    trackerNotAvail:'Localização do atleta ainda não disponível',
+    userNotAvail:'Sua localização ainda não está disponível',
+    activityFinished:'Atividade encerrada — exibindo rota gravada',
+    altEndpointOk:'Rota carregada via endpoint alternativo',
+    scrapedOk:'Rota extraída da página Garmin',
+    cacheOk:'Exibindo rota em cache — API indisponível para sessão encerrada',
+    geoNotSupported:'Geolocalização não suportada por este navegador',
+    permDenied:'Permissão negada',
+    invalidUrl:'URL inválida. Esperado: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'Não foi possível copiar — selecione a barra de endereço manualmente',
+    copied:'✓ Copiado!',refreshing:'Atualizando…',
+    testModeToast:'MODO TESTE — sessão ao vivo simulada',testModeEnd:'Atividade de teste encerrada',
+    nextUpdate:'em {s}s',
+    menuCalcTitle:'Calculadora',menuCalcDesc:'Pace, distância e tempo',
+    calcTitle:'Calculadora de Pace',calcHint:'Preencha dois campos para calcular o terceiro',
+    calcLblDist:'Distância',calcLblDur:'Tempo',calcLblPace:'Ritmo (pace)',calcLblSpeed:'Velocidade',
+    calcReset:'Limpar tudo',
+    lastActivityMins:'Última atividade: {mins} min atrás',
+    lastActivityHours:'Última atividade: {hours}h atrás',
+    noActivity:'Nenhuma atividade registrada',
+    checkingIn:'Verificando em {time}',
+    checking:'Verificando…',
+    opt2Label:'Escolha a URL que deseja usar:',
+    opt2Placeholder:'seunome',
+    emailLabel:'Adicione este e-mail no app Garmin LiveTrack:',
+    emailCopy:'Copiar',
+    pathOr:'ou',
+    step1:'Adicione o e-mail acima como destinatário nas configurações de LiveTrack',
+    step2:'Inicie uma atividade no relógio',
+    step3:'Acesse a URL acima para acompanhar',
+    opt1Label:'Cole a URL da sessão Garmin LiveTrack',
+  },
+  'en': {
+    name:'English',
+    subtitle:'View a Garmin LiveTrack session on an interactive map alongside your own location.',
+    urlLabel:'Garmin LiveTrack Session URL',trackBtn:'Track',
+    hintPre:'Paste a URL like:',hintPost:'Works for live activities and recently-finished sessions.',
+    navBtn:'Navigate to athlete',menuNavDesc:'Open in Google Maps',
+    copyLinkBtn:'Copy link',menuCopyDesc:'Share this session',
+    menuGarminTitle:'View on Garmin',menuGarminDesc:'Open session on official site',
+    changeUrlBtn:'Change URL',menuChangeDesc:'Open another session',
+    nodataText:'Track data unavailable —',nodataGarmin:'Open on Garmin ↗',
+    nodataMyLoc:'Your location is shown on the map',
+    panelTitle:'Details',status:'Status',statusActive:'In progress',statusEnded:'Ended',
+    pace:'Pace',speed:'Speed',distance:'Distance',
+    duration:'Duration',activity:'Activity',updated:'Updated',countdown:'Next',
+    tracker:'Tracker',myLocation:'My Location',
+    btnTracker:'Tracker',btnUser:'Me',btnRoute:'Route',btnAll:'All',
+    titleTracker:'Follow tracker — click map to cancel',
+    titleUser:'Follow my location — click map to cancel',
+    titleRoute:'Keep full route visible — click map to cancel',
+    titleAll:'Keep route and my location visible — click map to cancel',
+    trackerPopup:'Tracker position',userPopup:'My location',startTooltip:'Start',
+    connecting:'Connecting to session…',resolvingUser:'Finding the latest session…',tryingAlt:'Trying alternative endpoints…',
+    fetchingGarmin:'Fetching Garmin page…',loadingTest:'Loading test session…',
+    connectedViaProxy:'Connected via proxy',
+    trackerNotAvail:'Tracker location not yet available',
+    userNotAvail:'Your location not yet available',
+    activityFinished:'Activity finished — showing recorded track',
+    altEndpointOk:'Track loaded via alternative endpoint',
+    scrapedOk:'Track extracted from Garmin page',
+    cacheOk:'Showing cached track — API unavailable for finished session',
+    geoNotSupported:'Geolocation not supported by this browser',
+    permDenied:'Permission denied',
+    invalidUrl:'Invalid URL. Expected: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'Could not copy — select the address bar manually',
+    copied:'✓ Copied!',refreshing:'Refreshing…',
+    testModeToast:'TEST MODE — simulated live session',testModeEnd:'Test activity finished',
+    nextUpdate:'in {s}s',
+    menuCalcTitle:'Calculator',menuCalcDesc:'Pace, distance and time',
+    calcTitle:'Pace Calculator',calcHint:'Fill in two fields to calculate the third',
+    calcLblDist:'Distance',calcLblDur:'Duration',calcLblPace:'Pace',calcLblSpeed:'Speed',
+    calcReset:'Clear all',
+    lastActivityMins:'Last activity: {mins} min ago',
+    lastActivityHours:'Last activity: {hours}h ago',
+    noActivity:'No activity recorded',
+    checkingIn:'Checking in {time}',
+    checking:'Checking…',
+    opt2Label:'Choose the URL you want to use:',
+    opt2Placeholder:'yourname',
+    emailLabel:'Add this email in the Garmin LiveTrack settings:',
+    emailCopy:'Copy',
+    pathOr:'or',
+    step1:'Add the email above as a recipient in LiveTrack settings',
+    step2:'Start an activity on your watch',
+    step3:'Open the URL above to follow along',
+    opt1Label:'Paste a Garmin LiveTrack session URL',
+  },
+  'es': {
+    name:'Español',
+    subtitle:'Visualiza una sesión Garmin LiveTrack en el mapa junto con tu ubicación.',
+    urlLabel:'URL de sesión Garmin LiveTrack',trackBtn:'Seguir',
+    hintPre:'Pega una URL como:',hintPost:'Funciona para actividades en vivo y sesiones recientes.',
+    navBtn:'Navegar al atleta',menuNavDesc:'Abrir en Google Maps',
+    copyLinkBtn:'Copiar enlace',menuCopyDesc:'Compartir esta sesión',
+    menuGarminTitle:'Ver en Garmin',menuGarminDesc:'Abrir sesión en el sitio oficial',
+    changeUrlBtn:'Cambiar URL',menuChangeDesc:'Abrir otra sesión',
+    nodataText:'Datos de ruta no disponibles —',nodataGarmin:'Abrir en Garmin ↗',
+    nodataMyLoc:'Tu ubicación se muestra en el mapa',
+    panelTitle:'Detalles',status:'Estado',statusActive:'En curso',statusEnded:'Finalizada',
+    pace:'Ritmo',speed:'Velocidad',distance:'Distancia',
+    duration:'Duración',activity:'Modalidad',updated:'Actualizado',countdown:'Siguiente',
+    tracker:'Atleta',myLocation:'Mi ubicación',
+    btnTracker:'Atleta',btnUser:'Yo',btnRoute:'Ruta',btnAll:'Todo',
+    titleTracker:'Seguir atleta — toca el mapa para cancelar',
+    titleUser:'Seguir mi ubicación — toca el mapa para cancelar',
+    titleRoute:'Mantener ruta visible — toca el mapa para cancelar',
+    titleAll:'Mantener ruta y mi ubicación visibles — toca el mapa para cancelar',
+    trackerPopup:'Posición del atleta',userPopup:'Mi ubicación',startTooltip:'Inicio',
+    connecting:'Conectando a la sesión…',resolvingUser:'Buscando la sesión más reciente…',tryingAlt:'Probando endpoints alternativos…',
+    fetchingGarmin:'Buscando página de Garmin…',loadingTest:'Cargando sesión de prueba…',
+    connectedViaProxy:'Conectado vía proxy',
+    trackerNotAvail:'Ubicación del atleta aún no disponible',
+    userNotAvail:'Tu ubicación aún no está disponible',
+    activityFinished:'Actividad finalizada — mostrando ruta grabada',
+    altEndpointOk:'Ruta cargada vía endpoint alternativo',
+    scrapedOk:'Ruta extraída de la página Garmin',
+    cacheOk:'Mostrando ruta en caché — API no disponible para sesión finalizada',
+    geoNotSupported:'Geolocalización no compatible con este navegador',
+    permDenied:'Permiso denegado',
+    invalidUrl:'URL inválida. Esperado: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'No se pudo copiar — selecciona la barra de direcciones manualmente',
+    copied:'✓ ¡Copiado!',refreshing:'Actualizando…',
+    testModeToast:'MODO TEST — sesión en vivo simulada',testModeEnd:'Actividad de prueba finalizada',
+    nextUpdate:'en {s}s',
+    menuCalcTitle:'Calculadora',menuCalcDesc:'Paso, distancia y tiempo',
+    calcTitle:'Calculadora de Paso',calcHint:'Rellena dos campos para calcular el tercero',
+    calcLblDist:'Distancia',calcLblDur:'Tiempo',calcLblPace:'Ritmo (pace)',calcLblSpeed:'Velocidad',
+    calcReset:'Limpiar todo',
+    lastActivityMins:'Última actividad: hace {mins} min',
+    lastActivityHours:'Última actividad: hace {hours}h',
+    noActivity:'No hay actividad registrada',
+    checkingIn:'Verificando en {time}',
+    checking:'Verificando…',
+    opt2Label:'Elige la URL que quieres usar:',
+    opt2Placeholder:'tunombre',
+    emailLabel:'Añade este correo en los ajustes de Garmin LiveTrack:',
+    emailCopy:'Copiar',
+    pathOr:'o',
+    step1:'Añade el correo de arriba como destinatario en los ajustes de LiveTrack',
+    step2:'Inicia una actividad en el reloj',
+    step3:'Accede a la URL de arriba para seguir la actividad',
+    opt1Label:'Pega la URL de sesión Garmin LiveTrack',
+  },
+  'fr': {
+    name:'Français',
+    subtitle:'Visualisez une session Garmin LiveTrack sur une carte interactive avec votre position.',
+    urlLabel:'URL de session Garmin LiveTrack',trackBtn:'Suivre',
+    hintPre:'Collez une URL comme :',hintPost:'Fonctionne pour les activités en direct et les sessions récentes.',
+    navBtn:"Naviguer vers l'athlète",menuNavDesc:'Ouvrir dans Google Maps',
+    copyLinkBtn:'Copier le lien',menuCopyDesc:'Partager cette session',
+    menuGarminTitle:'Voir sur Garmin',menuGarminDesc:'Ouvrir la session sur le site officiel',
+    changeUrlBtn:"Changer l'URL",menuChangeDesc:'Ouvrir une autre session',
+    nodataText:'Données de parcours indisponibles —',nodataGarmin:'Ouvrir sur Garmin ↗',
+    nodataMyLoc:'Votre position est affichée sur la carte',
+    panelTitle:'Détails',status:'Statut',statusActive:'En cours',statusEnded:'Terminée',
+    pace:'Allure',speed:'Vitesse',distance:'Distance',
+    duration:'Durée',activity:'Activité',updated:'Mis à jour',countdown:'Suivant',
+    tracker:'Athlète',myLocation:'Ma position',
+    btnTracker:'Athlète',btnUser:'Moi',btnRoute:'Parcours',btnAll:'Tout',
+    titleTracker:"Suivre l'athlète — cliquez sur la carte pour annuler",
+    titleUser:'Suivre ma position — cliquez sur la carte pour annuler',
+    titleRoute:'Maintenir le parcours visible — cliquez sur la carte pour annuler',
+    titleAll:'Maintenir le parcours et ma position visibles — cliquez sur la carte pour annuler',
+    trackerPopup:"Position de l'athlète",userPopup:'Ma position',startTooltip:'Départ',
+    connecting:'Connexion à la session…',resolvingUser:'Recherche de la dernière session…',tryingAlt:"Essai d'endpoints alternatifs…",
+    fetchingGarmin:'Récupération de la page Garmin…',loadingTest:'Chargement de la session de test…',
+    connectedViaProxy:'Connecté via proxy',
+    trackerNotAvail:"Position de l'athlète pas encore disponible",
+    userNotAvail:"Votre position n'est pas encore disponible",
+    activityFinished:'Activité terminée — affichage du parcours enregistré',
+    altEndpointOk:'Parcours chargé via endpoint alternatif',
+    scrapedOk:'Parcours extrait de la page Garmin',
+    cacheOk:'Parcours en cache — API indisponible pour session terminée',
+    geoNotSupported:'Géolocalisation non supportée par ce navigateur',
+    permDenied:'Permission refusée',
+    invalidUrl:"URL invalide. Attendu : livetrack.garmin.com/session/{id}/token/{token}",
+    copyFailed:"Impossible de copier — sélectionnez la barre d'adresse manuellement",
+    copied:'✓ Copié !',refreshing:'Actualisation…',
+    testModeToast:'MODE TEST — session en direct simulée',testModeEnd:'Activité de test terminée',
+    nextUpdate:'dans {s}s',
+    menuCalcTitle:'Calculatrice',menuCalcDesc:'Allure, distance et temps',
+    calcTitle:"Calculateur d'allure",calcHint:'Remplissez deux champs pour calculer le troisième',
+    calcLblDist:'Distance',calcLblDur:'Durée',calcLblPace:'Allure',calcLblSpeed:'Vitesse',
+    calcReset:'Tout effacer',
+    lastActivityMins:'Dernière activité : il y a {mins} min',
+    lastActivityHours:'Dernière activité : il y a {hours}h',
+    noActivity:'Aucune activité enregistrée',
+    checkingIn:'Vérification dans {time}',
+    checking:'Vérification…',
+    opt2Label:'Choisissez l\'URL que vous souhaitez utiliser :',
+    opt2Placeholder:'votrenom',
+    emailLabel:'Ajoutez cet e-mail dans les paramètres Garmin LiveTrack :',
+    emailCopy:'Copier',
+    pathOr:'ou',
+    step1:'Ajoutez l\'e-mail ci-dessus comme destinataire dans les paramètres LiveTrack',
+    step2:'Démarrez une activité sur votre montre',
+    step3:'Ouvrez l\'URL ci-dessus pour suivre',
+    opt1Label:'Collez l\'URL de session Garmin LiveTrack',
+  },
+  'de': {
+    name:'Deutsch',
+    subtitle:'Verfolge eine Garmin LiveTrack-Session auf einer interaktiven Karte mit deiner Position.',
+    urlLabel:'Garmin LiveTrack Sitzungs-URL',trackBtn:'Verfolgen',
+    hintPre:'Füge eine URL ein wie:',hintPost:'Funktioniert für Live-Aktivitäten und kürzlich beendete Sessions.',
+    navBtn:'Zum Athleten navigieren',menuNavDesc:'In Google Maps öffnen',
+    copyLinkBtn:'Link kopieren',menuCopyDesc:'Diese Session teilen',
+    menuGarminTitle:'Auf Garmin ansehen',menuGarminDesc:'Session auf der offiziellen Seite öffnen',
+    changeUrlBtn:'URL ändern',menuChangeDesc:'Andere Session öffnen',
+    nodataText:'Streckendaten nicht verfügbar —',nodataGarmin:'Auf Garmin öffnen ↗',
+    nodataMyLoc:'Dein Standort wird auf der Karte angezeigt',
+    panelTitle:'Details',status:'Status',statusActive:'Aktiv',statusEnded:'Beendet',
+    pace:'Tempo',speed:'Geschwindigkeit',distance:'Distanz',
+    duration:'Dauer',activity:'Sportart',updated:'Aktualisiert',countdown:'Nächste',
+    tracker:'Athlet',myLocation:'Mein Standort',
+    btnTracker:'Athlet',btnUser:'Ich',btnRoute:'Strecke',btnAll:'Alles',
+    titleTracker:'Athleten folgen — Karte klicken zum Abbrechen',
+    titleUser:'Meinem Standort folgen — Karte klicken zum Abbrechen',
+    titleRoute:'Gesamte Strecke anzeigen — Karte klicken zum Abbrechen',
+    titleAll:'Strecke und Standort anzeigen — Karte klicken zum Abbrechen',
+    trackerPopup:'Position des Athleten',userPopup:'Mein Standort',startTooltip:'Start',
+    connecting:'Verbindung zur Sitzung…',resolvingUser:'Neueste Sitzung wird gesucht…',tryingAlt:'Alternative Endpunkte werden versucht…',
+    fetchingGarmin:'Garmin-Seite wird abgerufen…',loadingTest:'Testsitzung wird geladen…',
+    connectedViaProxy:'Verbunden über Proxy',
+    trackerNotAvail:'Athletenposition noch nicht verfügbar',
+    userNotAvail:'Dein Standort noch nicht verfügbar',
+    activityFinished:'Aktivität beendet — aufgezeichnete Strecke wird angezeigt',
+    altEndpointOk:'Strecke über alternativen Endpunkt geladen',
+    scrapedOk:'Strecke von der Garmin-Seite extrahiert',
+    cacheOk:'Strecke aus Cache — API für beendete Session nicht verfügbar',
+    geoNotSupported:'Geolokalisierung von diesem Browser nicht unterstützt',
+    permDenied:'Berechtigung verweigert',
+    invalidUrl:'Ungültige URL. Erwartet: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'Kopieren fehlgeschlagen — Adressleiste manuell auswählen',
+    copied:'✓ Kopiert!',refreshing:'Wird aktualisiert…',
+    testModeToast:'TESTMODUS — simulierte Live-Sitzung',testModeEnd:'Test-Aktivität beendet',
+    nextUpdate:'in {s}s',
+    menuCalcTitle:'Rechner',menuCalcDesc:'Pace, Distanz und Zeit',
+    calcTitle:'Pace-Rechner',calcHint:'Fülle zwei Felder aus, um das dritte zu berechnen',
+    calcLblDist:'Distanz',calcLblDur:'Zeit',calcLblPace:'Tempo (Pace)',calcLblSpeed:'Geschwindigkeit',
+    calcReset:'Alles löschen',
+    lastActivityMins:'Letzte Aktivität: vor {mins} Min.',
+    lastActivityHours:'Letzte Aktivität: vor {hours}h',
+    noActivity:'Keine Aktivität erfasst',
+    checkingIn:'Prüfe in {time}',
+    checking:'Prüfe…',
+    opt2Label:'Wähle deine URL:',
+    opt2Placeholder:'deinname',
+    emailLabel:'Füge diese E-Mail in den Garmin LiveTrack-Einstellungen hinzu:',
+    emailCopy:'Kopieren',
+    pathOr:'oder',
+    step1:'Füge die obige E-Mail als Empfänger in den LiveTrack-Einstellungen hinzu',
+    step2:'Starte eine Aktivität auf deiner Uhr',
+    step3:'Öffne die obige URL, um zu folgen',
+    opt1Label:'Garmin LiveTrack Sitzungs-URL einfügen',
+  },
+};
+
+let currentLang = 'en';
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] || TRANSLATIONS['en'])[key] ?? TRANSLATIONS['en'][key] ?? key;
+}
+
+function detectLang() {
+  const saved = localStorage.getItem('gt-lang');
+  if (saved && TRANSLATIONS[saved]) return saved;
+  const nav = (navigator.language || 'en').toLowerCase();
+  if (nav.startsWith('pt')) return 'pt';
+  if (nav.startsWith('de')) return 'de';
+  if (nav.startsWith('es')) return 'es';
+  if (nav.startsWith('fr')) return 'fr';
+  return 'en';
+}
+
+function applyTranslations() {
+  document.documentElement.lang = currentLang;
+  // Landing
+  const brandSub = document.querySelector('.brand-sub');
+  if (brandSub) brandSub.textContent = t('subtitle');
+  const urlLbl = document.querySelector('label[for="url-input"]');
+  if (urlLbl) urlLbl.textContent = t('urlLabel');
+  const submitBtn = document.getElementById('submit-btn');
+  if (submitBtn) submitBtn.textContent = t('trackBtn');
+  const hintPre = document.getElementById('hint-pre');
+  if (hintPre) hintPre.textContent = t('hintPre');
+  const hintPost = document.getElementById('hint-post');
+  if (hintPost) hintPost.textContent = t('hintPost');
+  // Option 2 / username path
+  const opt2lbl = document.getElementById('opt2-lbl');
+  if (opt2lbl) opt2lbl.textContent = t('opt2Label');
+  const opt1lbl = document.getElementById('opt1-lbl');
+  if (opt1lbl) opt1lbl.textContent = t('opt1Label');
+  const emailLbl = document.getElementById('email-lbl');
+  if (emailLbl) emailLbl.textContent = t('emailLabel');
+  const copyBtn = document.getElementById('copy-email-btn');
+  if (copyBtn && copyBtn.textContent !== t('copied')) copyBtn.textContent = t('emailCopy');
+  const pathOr = document.getElementById('path-or');
+  if (pathOr) pathOr.textContent = t('pathOr');
+  const s1 = document.getElementById('step1'); if (s1) s1.textContent = t('step1');
+  const s2 = document.getElementById('step2'); if (s2) s2.textContent = t('step2');
+  const s3 = document.getElementById('step3'); if (s3) s3.textContent = t('step3');
+  const nameGoBtn = document.getElementById('name-go-btn');
+  if (nameGoBtn) nameGoBtn.textContent = t('trackBtn');
+  const nameInp = document.getElementById('name-input');
+  if (nameInp) nameInp.placeholder = t('opt2Placeholder');
+  // App menu items
+  const mca = document.getElementById('menu-calc-title');   if (mca) mca.textContent = t('menuCalcTitle');
+  const mcb = document.getElementById('menu-calc-desc');    if (mcb) mcb.textContent = t('menuCalcDesc');
+  const nfl = document.getElementById('nav-fab-label');     if (nfl) nfl.textContent = t('navBtn');
+  const mct = document.getElementById('menu-copy-title');   if (mct) mct.textContent = t('copyLinkBtn');
+  const mcd = document.getElementById('menu-copy-desc');    if (mcd) mcd.textContent = t('menuCopyDesc');
+  const mgt = document.getElementById('menu-garmin-title'); if (mgt) mgt.textContent = t('menuGarminTitle');
+  const mgd = document.getElementById('menu-garmin-desc');  if (mgd) mgd.textContent = t('menuGarminDesc');
+  const mut = document.getElementById('menu-change-title'); if (mut) mut.textContent = t('changeUrlBtn');
+  const mud = document.getElementById('menu-change-desc');  if (mud) mud.textContent = t('menuChangeDesc');
+  // No-data bar
+  const nd = document.getElementById('nodata-text');        if (nd) nd.textContent = t('nodataText');
+  const ndg = document.getElementById('nodata-garmin');     if (ndg) ndg.textContent = t('nodataGarmin');
+  const ndm = document.getElementById('nodata-my-loc');     if (ndm) ndm.textContent = t('nodataMyLoc');
+  // Panel
+  const pt = document.getElementById('panel-title');        if (pt) pt.textContent = t('panelTitle');
+  // Metric labels
+  const lst = document.getElementById('lbl-status');        if (lst) lst.textContent = t('status');
+  const lp = document.getElementById('lbl-pace');           if (lp) lp.textContent = t('pace');
+  const ls = document.getElementById('lbl-speed');          if (ls) ls.textContent = t('speed');
+  const ld = document.getElementById('lbl-dist');           if (ld) ld.textContent = t('distance');
+  const ldu = document.getElementById('lbl-dur');           if (ldu) ldu.textContent = t('duration');
+  const la = document.getElementById('lbl-act');            if (la) la.textContent = t('activity');
+  const lu = document.getElementById('lbl-updated');        if (lu) lu.textContent = t('updated');
+  const lc = document.getElementById('lbl-countdown');      if (lc) lc.textContent = t('countdown');
+  // Location panel
+  const lt = document.getElementById('lbl-tracker');        if (lt) lt.textContent = t('tracker');
+  const lm = document.getElementById('lbl-my-loc');         if (lm) lm.textContent = t('myLocation');
+  // Map buttons
+  const afTr = document.getElementById('af-txt-tracker');   if (afTr) afTr.textContent = t('btnTracker');
+  const afUs = document.getElementById('af-txt-user');      if (afUs) afUs.textContent = t('btnUser');
+  const afRo = document.getElementById('af-txt-route');     if (afRo) afRo.textContent = t('btnRoute');
+  const afAl = document.getElementById('af-txt-all');       if (afAl) afAl.textContent = t('btnAll');
+  const bTr = document.querySelector('[data-af="tracker"]');if (bTr) bTr.title = t('titleTracker');
+  const bUs = document.querySelector('[data-af="user"]');   if (bUs) bUs.title = t('titleUser');
+  const bRo = document.querySelector('[data-af="route"]');  if (bRo) bRo.title = t('titleRoute');
+  const bAl = document.querySelector('[data-af="all"]');    if (bAl) bAl.title = t('titleAll');
+  // Marker popups/tooltips (if already placed)
+  if (userMarker)  userMarker.setPopupContent(`<b style="color:#3b82f6">${t('userPopup')}</b>`);
+  if (startMarker) { startMarker.setTooltipContent(t('startTooltip')); startMarker.options.title = t('startTooltip'); }
+  // Dropdown active state
+  document.querySelectorAll('.lang-option').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === currentLang);
+  });
+  // Calculator
+  const cti = document.getElementById('calc-title');       if (cti) cti.textContent = t('calcTitle');
+  const chi = document.getElementById('calc-hint');        if (chi) chi.textContent = t('calcHint');
+  const cld = document.getElementById('calc-lbl-dist');    if (cld) cld.textContent = t('calcLblDist');
+  const clt = document.getElementById('calc-lbl-dur');     if (clt) clt.textContent = t('calcLblDur');
+  const clp = document.getElementById('calc-lbl-pace');    if (clp) clp.textContent = t('calcLblPace');
+  const cls = document.getElementById('calc-lbl-speed');   if (cls) cls.textContent = t('calcLblSpeed');
+  const crb = document.getElementById('calc-reset-btn');   if (crb) crb.textContent = t('calcReset');
+  calcUpdateUnits();
+}
+
+function toggleLangDropdown() {
+  document.getElementById('lang-dropdown').classList.toggle('open');
+}
+
+function toggleLandingLang() {
+  document.getElementById('landing-lang-dropdown').classList.toggle('open');
+}
+
+function setLanguage(code) {
+  if (!TRANSLATIONS[code]) return;
+  currentLang = code;
+  localStorage.setItem('gt-lang', code);
+  document.getElementById('lang-dropdown').classList.remove('open');
+  document.getElementById('landing-lang-dropdown').classList.remove('open');
+  applyTranslations();
+}
+
+function initLang() {
+  currentLang = detectLang();
+  applyTranslations();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Map
+// ─────────────────────────────────────────────────────────────────────────────
+let map, trackerMarker, userMarker, userAccuracy, trackPolyline, startMarker;
+
+function initMap() {
+  map = L.map('map', { center: [20, 0], zoom: 3, zoomControl: false });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(map);
+
+  // Disable auto-follow silently on any user-initiated map interaction
+  map.on('dragstart', _deactivateAutoFollow);
+  map.getContainer().addEventListener('wheel',     _deactivateAutoFollow, { passive: true });
+  map.getContainer().addEventListener('touchmove', e => { if (e.touches.length >= 2) _deactivateAutoFollow(); }, { passive: true });
+}
+
+function trackerIcon() {
+  return L.divIcon({
+    className: '',
+    html: `<div class="tracker-marker-outer"><div class="tracker-pulse"></div><div class="tracker-dot"></div></div>`,
+    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -16],
+  });
+}
+
+function userIcon() {
+  return L.divIcon({
+    className: '',
+    html: `<div class="user-marker-outer"><div class="user-pulse"></div><div class="user-dot"></div></div>`,
+    iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -14],
+  });
+}
+
+function startIcon() {
+  return L.divIcon({
+    className: '',
+    html: `<div class="start-marker"></div>`,
+    iconSize: [10, 10], iconAnchor: [5, 5],
+  });
+}
+
+function updateTrackerOnMap(lat, lng, label) {
+  const latlng = [lat, lng];
+  if (!trackerMarker) {
+    trackerMarker = L.marker(latlng, { icon: trackerIcon() }).addTo(map);
+  } else {
+    trackerMarker.setLatLng(latlng);
+    trackerMarker.setIcon(trackerIcon());
+  }
+  if (label) {
+    trackerMarker.bindPopup(`<b style="color:#f97316">${escHtml(label)}</b><br>${t('trackerPopup')}`, {
+      closeButton: false, maxWidth: 180,
+    });
+  }
+  document.getElementById('tracker-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  setNavButton(lat, lng);
+  if (_camBusy()) return;
+  switch (state.autoFollow) {
+    case 'tracker': map.panTo([lat, lng], { animate: true, duration: 0.5 }); break;
+    case 'route':   _autoFitRoute(); break;
+    case 'all':     _autoFitAll();   break;
+  }
+}
+
+function updateRoute(points) {
+  const latlngs = points.map(p => [p.latitude, p.longitude]);
+  if (!trackPolyline) {
+    trackPolyline = L.polyline(latlngs, {
+      color: '#f97316', weight: 3.5, opacity: 0.85, lineJoin: 'round',
+    }).addTo(map);
+  } else {
+    trackPolyline.setLatLngs(latlngs);
+  }
+  if (latlngs.length > 0 && !startMarker) {
+    startMarker = L.marker(latlngs[0], { icon: startIcon(), title: t('startTooltip') }).addTo(map);
+    startMarker.bindTooltip(t('startTooltip'), { permanent: false, direction: 'top' });
+  }
+}
+
+function updateUserOnMap(lat, lng, accuracy) {
+  const latlng = [lat, lng];
+  if (!userMarker) {
+    userMarker = L.marker(latlng, { icon: userIcon() }).addTo(map);
+    userMarker.bindPopup(`<b style="color:#3b82f6">${t('userPopup')}</b>`, { closeButton: false, maxWidth: 140 });
+  } else {
+    userMarker.setLatLng(latlng);
+  }
+  if (accuracy) {
+    if (!userAccuracy) {
+      userAccuracy = L.circle(latlng, {
+        radius: accuracy, color: '#3b82f6', fillColor: '#3b82f6',
+        fillOpacity: 0.06, weight: 1.5, opacity: 0.4,
+      }).addTo(map);
+    } else {
+      userAccuracy.setLatLng(latlng);
+      userAccuracy.setRadius(accuracy);
+    }
+  }
+  document.getElementById('user-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById('user-loc-dot').className = 'loc-dot user';
+  if (_camBusy()) return;
+  switch (state.autoFollow) {
+    case 'user': map.panTo([lat, lng], { animate: true, duration: 0.5 }); break;
+    case 'all':  _autoFitAll(); break;
+  }
+}
+
+// While a click-triggered flight is running, auto-follow camera updates
+// (panTo/fitBounds from geolocation or refresh) must not cut it short —
+// that interruption is what makes the screen appear to "blink".
+let _camAnimUntil = 0;
+function _markCamAnim(durationSec) { _camAnimUntil = Date.now() + durationSec * 1000 + 150; }
+function _camBusy() { return Date.now() < _camAnimUntil; }
+
+function fitMap() {
+  const bounds = [];
+  if (trackerMarker) bounds.push(trackerMarker.getLatLng());
+  if (userMarker) bounds.push(userMarker.getLatLng());
+  if (trackPolyline && trackPolyline.getLatLngs().length > 0) {
+    trackPolyline.getLatLngs().forEach(ll => bounds.push(ll));
+  }
+  if (bounds.length === 0) return;
+  _markCamAnim(1.2);
+  map.flyToBounds(L.latLngBounds(bounds), { padding: [60, 60], maxZoom: 16, duration: 1.2 });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// App menu (hamburger)
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleAppMenu() {
+  document.getElementById('app-menu').classList.toggle('open');
+}
+
+function setNavButton(lat, lng) {
+  const fab = document.getElementById('nav-fab');
+  fab.href = `https://www.google.com/maps/dir/?api=1&destination=${lat.toFixed(6)},${lng.toFixed(6)}`;
+  fab.classList.add('ready');
+}
+
+function hideNavButton() {
+  const fab = document.getElementById('nav-fab');
+  fab.classList.remove('ready');
+  fab.href = '#';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// localStorage cache
+// ─────────────────────────────────────────────────────────────────────────────
+function cacheKey() { return `gt-${state.sessionId}`; }
+
+function saveToCache() {
+  if (state.trackpoints.length === 0) return;
+  try {
+    localStorage.setItem(cacheKey(), JSON.stringify({
+      points: state.trackpoints,
+      sessionInfo: state.sessionInfo,
+      cachedAt: Date.now(),
+    }));
+  } catch (_) { /* storage full — ignore */ }
+}
+
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(cacheKey());
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    // Discard cache older than 7 days
+    if (Date.now() - d.cachedAt > 7 * 86_400_000) {
+      localStorage.removeItem(cacheKey());
+      return null;
+    }
+    return d;
+  } catch (_) { return null; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// API
+// ─────────────────────────────────────────────────────────────────────────────
+const GAS_PROXY = 'https://script.google.com/macros/s/AKfycbzB1GQU599Y_DIuBo5TjgeDBpp1HLnxs83XG51_yG7Kb4teL-yRy7PDO1pk--mkbCOr/exec';
+
+const PROXY_FNS = [
+  u => u,
+  u => `${GAS_PROXY}?url=${encodeURIComponent(u)}`,
+  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+];
+
+async function apiFetch(rawUrl) {
+  const start = state.proxyIndex ?? 0;
+  for (let i = start; i < PROXY_FNS.length; i++) {
+    const url = PROXY_FNS[i](rawUrl);
+    try {
+      const resp = await fetch(url, { signal: AbortSignal.timeout(12_000) });
+      if (!resp.ok) {
+        console.debug(`[garmin] proxy[${i}] HTTP ${resp.status}`, rawUrl);
+        throw Object.assign(new Error(`HTTP ${resp.status}`), { status: resp.status });
+      }
+      const data = await resp.json();
+      // GAS proxy signals errors via __gasError field
+      if (data?.__gasError != null) {
+        throw Object.assign(new Error(`GAS: ${data.__gasError}`), { status: data.__gasError });
+      }
+      if (i !== start) {
+        state.proxyIndex = i;
+        if (i > 0) showToast(`${t('connectedViaProxy')} ${i}`, 'info', 3000);
+      }
+      return data;
+    } catch (e) {
+      if (e.status === 404) throw e; // only 404 means data truly doesn't exist; 403 = IP block → try next proxy
+      console.debug(`[garmin] proxy[${i}] network error:`, e.message);
+    }
+  }
+  const err = new Error('Todas as tentativas de conexão falharam');
+  err.allFailed = true;
+  throw err;
+}
+
+async function fetchSession() {
+  const url = `${API_BASE}/session/${state.sessionId}/token/${state.token}?requestTime=${Date.now()}`;
+  return apiFetch(url);
+}
+
+async function fetchTrackpoints(from = 0) {
+  const url = `${API_BASE}/trackLog/${state.sessionId}/token/${state.token}?requestTime=${Date.now()}&from=${from}`;
+  return apiFetch(url);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// URL Parsing
+// ─────────────────────────────────────────────────────────────────────────────
+function parseGarminUrl(raw) {
+  const m = raw.trim().match(/livetrack\.garmin\.com\/session\/([^\/\s?#]+)\/token\/([^\/\s?#]+)/i);
+  if (!m) return null;
+  return { sessionId: m[1], token: m[2] };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Metrics
+// ─────────────────────────────────────────────────────────────────────────────
+function _effectiveSpeed(meta) {
+  let v = parseFloat(meta?.SPEED);
+  if (isNaN(v) || v < 0.1) {
+    // fall back to average: totalDistance / totalDuration
+    const dist = parseFloat(meta?.TOTAL_DISTANCE);
+    const dur  = parseFloat(meta?.TOTAL_DURATION);
+    if (!isNaN(dist) && !isNaN(dur) && dur > 0 && dist > 0) v = dist / dur;
+    else return NaN;
+  }
+  return v;
+}
+function fmtPace(meta) {
+  const v = _effectiveSpeed(meta);
+  if (isNaN(v) || v < 0.01) return '—';
+  const secPerKm = 1000 / v;
+  const m = Math.floor(secPerKm / 60);
+  const s = Math.floor(secPerKm % 60);
+  return `${m}:${String(s).padStart(2,'0')} /km`;
+}
+function fmtSpeed(meta) {
+  const v = _effectiveSpeed(meta);
+  return isNaN(v) ? '—' : `${(v * 3.6).toFixed(1)} km/h`;
+}
+function fmtDistance(meta) {
+  const v = parseFloat(meta?.TOTAL_DISTANCE);
+  if (isNaN(v)) return '—';
+  return v >= 1000 ? `${(v / 1000).toFixed(2)} km` : `${Math.round(v)} m`;
+}
+function fmtDuration(meta) {
+  const v = parseFloat(meta?.TOTAL_DURATION);
+  if (isNaN(v)) return '—';
+  const h = Math.floor(v / 3600);
+  const m = Math.floor((v % 3600) / 60);
+  const s = Math.floor(v % 60);
+  return h > 0
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${m}:${String(s).padStart(2,'0')}`;
+}
+function fmtActivity(meta) {
+  const v = meta?.ACTIVITY_TYPE;
+  return v ? v.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase()) : '—';
+}
+
+function updateStatus(isActive) {
+  const el = document.getElementById('m-status');
+  if (!el) return;
+  if (isActive) {
+    el.textContent = t('statusActive');
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = t('statusEnded');
+    el.style.color = 'var(--muted)';
+  }
+}
+
+function updateMetrics(point) {
+  if (!point) return;
+  const m = point.metaData || {};
+  document.getElementById('m-pace').textContent = fmtPace(m);
+  document.getElementById('m-speed').textContent = fmtSpeed(m);
+  document.getElementById('m-dist').textContent = fmtDistance(m);
+  document.getElementById('m-dur').textContent = fmtDuration(m);
+  document.getElementById('m-act').textContent = fmtActivity(m);
+  _calcUpdateFillBtns();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alternative endpoints — try URL patterns that may work for finished sessions
+// ─────────────────────────────────────────────────────────────────────────────
+async function tryAlternativeEndpoints() {
+  const ts = Date.now();
+  const id = state.sessionId, tok = state.token;
+  // Garmin killed the legacy /services/ API (404). The new frontend uses
+  // /api/sessions/ Next.js route handlers — exact shape unknown, so try
+  // the plausible variants.
+  const variants = [
+    `https://livetrack.garmin.com/api/sessions/${id}/token/${tok}/trackpoints?requestTime=${ts}`,
+    `https://livetrack.garmin.com/api/sessions/${id}/trackpoints?token=${tok}&requestTime=${ts}`,
+    `https://livetrack.garmin.com/api/sessions/${id}/track-points?token=${tok}&requestTime=${ts}`,
+    // Legacy endpoints last, in case Garmin restores them
+    `${API_BASE}/trackLog/${id}/token/${tok}?requestTime=${ts}`,
+  ];
+
+  for (const url of variants) {
+    // Try every proxy for each alternative URL (don't short-circuit on 404)
+    for (let i = 0; i < PROXY_FNS.length; i++) {
+      try {
+        const resp = await fetch(PROXY_FNS[i](url), { signal: AbortSignal.timeout(10_000) });
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        const pts = normalisePoints(data);
+        if (pts && pts.length > 0) {
+          console.log(`[garmin] alt endpoint worked: proxy[${i}] ${url}`);
+          return pts;
+        }
+      } catch (_) { /* try next */ }
+    }
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HTML scraping — fetch the Garmin LiveTrack page and extract embedded data
+// ─────────────────────────────────────────────────────────────────────────────
+async function scrapeGarminPage() {
+  const garminUrl = `https://livetrack.garmin.com/session/${state.sessionId}/token/${state.token}`;
+
+  // Proxy configurations that return the raw HTML (or JSON wrapping it)
+  const proxyConfigs = [
+    {
+      // allorigins returns { contents: "<html>…", status: {…} }
+      build: () => `https://api.allorigins.win/get?url=${encodeURIComponent(garminUrl)}&_=${Date.now()}`,
+      read:  async r => { const j = await r.json(); return j.contents || ''; },
+    },
+    {
+      // allorigins raw — sometimes different WAF path
+      build: () => `https://api.allorigins.win/raw?url=${encodeURIComponent(garminUrl)}&_=${Date.now()}`,
+      read:  async r => r.text(),
+    },
+    {
+      // codetabs — different server pool
+      build: () => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(garminUrl)}`,
+      read:  async r => r.text(),
+    },
+    {
+      // thingproxy — yet another pool
+      build: () => `https://thingproxy.freeboard.io/fetch/${garminUrl}`,
+      read:  async r => r.text(),
+    },
+    {
+      // corsproxy.io used for HTML
+      build: () => `https://corsproxy.io/?${encodeURIComponent(garminUrl)}`,
+      read:  async r => r.text(),
+    },
+  ];
+
+  for (const { build, read } of proxyConfigs) {
+    try {
+      const resp = await fetch(build(), { signal: AbortSignal.timeout(20_000) });
+      if (!resp.ok) { console.debug('[garmin] scrape proxy HTTP', resp.status); continue; }
+      const html = await read(resp);
+      if (!html || html.length < 200) continue;
+
+      const pts = parsePointsFromHtml(html);
+      if (pts && pts.length > 0) {
+        console.log(`[garmin] scraped ${pts.length} points from HTML`);
+        return pts;
+      }
+    } catch (e) {
+      console.debug('[garmin] scrape error:', e.message);
+    }
+  }
+  return null;
+}
+
+function parsePointsFromHtml(html) {
+  // 1. Known React / SSR state injection patterns
+  const statePatterns = [
+    /window\.__INITIAL_STATE__\s*=\s*({[\s\S]*?});\s*(?:window\.|<\/script>)/,
+    /window\.__APP_STATE__\s*=\s*({[\s\S]*?});\s*(?:window\.|<\/script>)/,
+    /window\.__PRELOADED_STATE__\s*=\s*({[\s\S]*?});\s*(?:window\.|<\/script>)/,
+    /window\.__REDUX_STATE__\s*=\s*({[\s\S]*?});\s*(?:window\.|<\/script>)/,
+    /<script[^>]+id="__NEXT_DATA__"[^>]*>([\s\S]+?)<\/script>/,
+    /window\.pageData\s*=\s*({[\s\S]*?});/,
+    /window\.livetrackData\s*=\s*({[\s\S]*?});/,
+  ];
+
+  for (const pat of statePatterns) {
+    const m = html.match(pat);
+    if (!m) continue;
+    try {
+      const obj = JSON.parse(m[1]);
+      const pts = deepFindPoints(obj, 0);
+      if (pts?.length) return pts;
+    } catch (_) {}
+  }
+
+  // 2. Find JSON arrays of objects that contain latitude/longitude
+  const arrayRe = /\[(\s*\{[^[\]]{10,600}"latitude"\s*:[^[\]]{0,300}\}[\s,]*)+\]/g;
+  let m;
+  while ((m = arrayRe.exec(html)) !== null) {
+    try {
+      const arr = JSON.parse(m[0]);
+      const pts = normalisePoints(arr);
+      if (pts?.length) return pts;
+    } catch (_) {}
+  }
+
+  // 3. Collect individual lat/lng pairs as last resort (at least gives tracker position)
+  const pairRe = /"latitude"\s*:\s*([-\d.]+)[^}]{0,150}"longitude"\s*:\s*([-\d.]+)/g;
+  const singles = [];
+  while ((m = pairRe.exec(html)) !== null) {
+    const lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+      singles.push({ latitude: lat, longitude: lng, timestamp: singles.length, metaData: {} });
+    }
+  }
+  return singles.length ? singles : null;
+}
+
+// Walk an arbitrary parsed-JSON tree looking for an array of track points
+function deepFindPoints(obj, depth) {
+  if (depth > 6 || !obj || typeof obj !== 'object') return null;
+  if (Array.isArray(obj)) {
+    const pts = normalisePoints(obj);
+    if (pts?.length) return pts;
+    for (const item of obj) {
+      const r = deepFindPoints(item, depth + 1);
+      if (r) return r;
+    }
+    return null;
+  }
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (Array.isArray(val) && val.length > 0) {
+      const pts = normalisePoints(val);
+      if (pts?.length) return pts;
+    }
+    if (val && typeof val === 'object') {
+      const r = deepFindPoints(val, depth + 1);
+      if (r) return r;
+    }
+  }
+  return null;
+}
+
+// Normalise any point array shape into our internal format
+function normalisePoints(arr) {
+  if (!Array.isArray(arr)) return null;
+  const pts = arr.map(p => {
+    if (!p || typeof p !== 'object') return null;
+    const lat = parseFloat(p.latitude ?? p.lat ?? p.Latitude ?? p.Lat ?? p.position?.lat);
+    const lng = parseFloat(p.longitude ?? p.lng ?? p.lon ?? p.Longitude ?? p.Lng ?? p.Lon ?? p.position?.lon);
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90) return null;
+    const ts = p.timestamp != null ? p.timestamp
+      : p.time != null ? p.time
+      : p.dateTime ? new Date(p.dateTime).getTime()
+      : 0;
+    let meta = p.metaData ?? p.metadata ?? {};
+    if (Array.isArray(meta)) {
+      meta = Object.fromEntries(meta.map(m => [m.key, m.value]));
+    }
+    if (!meta.SPEED && (p.speedMetersPerSec ?? p.speed) != null) meta.SPEED = String(p.speedMetersPerSec ?? p.speed);
+    if (!meta.TOTAL_DISTANCE && (p.totalDistanceMeters ?? p.distance) != null) meta.TOTAL_DISTANCE = String(p.totalDistanceMeters ?? p.distance);
+    if (!meta.ELEVATION && p.altitude != null) meta.ELEVATION = String(p.altitude);
+    if (!meta.TOTAL_DURATION && p.totalDurationSecs != null) meta.TOTAL_DURATION = String(p.totalDurationSecs);
+    if (!meta.ACTIVITY_TYPE && p.activityType) meta.ACTIVITY_TYPE = p.activityType;
+    return { latitude: lat, longitude: lng, timestamp: ts, metaData: meta };
+  }).filter(Boolean);
+  return pts.length ? pts : null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// No-data strip
+// ─────────────────────────────────────────────────────────────────────────────
+function showNoDataBar() {
+  const garminUrl = `https://livetrack.garmin.com/session/${state.sessionId}/token/${state.token}`;
+  document.getElementById('garmin-direct-link').href = garminUrl;
+  document.getElementById('nodata-bar').classList.add('visible');
+}
+
+function hideNoDataBar() {
+  document.getElementById('nodata-bar').classList.remove('visible');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Garmin Next.js page parser — extracts session + trackpoints from RSC payload
+// ─────────────────────────────────────────────────────────────────────────────
+function parseGarminPageData(html) {
+  // Extract type 1 and type 2 string chunks from Next.js RSC flight data
+  const re = /self\.__next_f\.push\(\[(?:1|2),"((?:[^"\\]|\\.)*)"\]\)/g;
+  let payload = '';
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    try { payload += JSON.parse('"' + m[1] + '"'); } catch (_) {}
+  }
+  // Garmin's page has multiple HydrationBoundary sections; iterate all of them
+  const marker = '"mutations":[],"queries":[';
+  let sessionData = null, profileData = null;
+  let searchFrom = 0;
+  while (true) {
+    const mi = payload.indexOf(marker, searchFrom);
+    if (mi === -1) break;
+    const arrStart = mi + marker.length - 1;
+    let depth = 0, i;
+    for (i = arrStart; i < payload.length; i++) {
+      if (payload[i] === '[') depth++;
+      else if (payload[i] === ']') { depth--; if (depth === 0) break; }
+    }
+    searchFrom = i + 1;
+    let qs;
+    try {
+      qs = JSON.parse(payload.substring(arrStart, i + 1).replace(/"\$undefined"/g, 'null'));
+    } catch (_) { continue; }
+    for (const q of qs) {
+      const k = q?.queryKey, d = q?.state?.data;
+      if (!k || !d) continue;
+      if (k[0] === 'session' && k[k.length - 1] === 'track-points') trackData = d;
+      else if (k[0] === 'session' && k.length <= 3) sessionData = d;
+      else if (k[0] === 'user' && k[2] === 'profile') profileData = d;
+    }
+  }
+  if (!sessionData && !profileData && !trackData) return null;
+  const now = Date.now();
+  const endMs = sessionData?.end ? new Date(sessionData.end).getTime() : 0;
+  const sessionInfo = {
+    sessionStatus: now < endMs ? 'InProgress' : 'Ended',
+    sessionName: sessionData?.sessionName || profileData?.name || 'Garmin LiveTrack',
+    userName: profileData?.name || sessionData?.userDisplayName || 'Atleta',
+  };
+  // Track-points are SSR'd for current sessions (all pages of the infinite
+  // query); old/expired sessions lose them, in which case trackPoints stays
+  // null and the caller falls back to other strategies.
+  let trackPoints = null;
+  if (Array.isArray(trackData?.pages)) {
+    trackPoints = [];
+    for (const pg of trackData.pages) {
+      for (const pt of (pg?.trackPoints || [])) {
+        if (pt?.position?.lat == null) continue;
+        trackPoints.push({
+          latitude:  pt.position.lat,
+          longitude: pt.position.lon,
+          timestamp: new Date(pt.dateTime).getTime(),
+          metaData: {
+            SPEED:          String(pt.speedMetersPerSec ?? 0),
+            TOTAL_DISTANCE: String(pt.totalDistanceMeters ?? 0),
+            ELEVATION:      String(pt.altitude ?? 0),
+            TOTAL_DURATION: String(pt.totalDurationSecs ?? 0),
+            ACTIVITY_TYPE:  pt.activityType || '',
+          },
+        });
+      }
+    }
+    if (!trackPoints.length) trackPoints = null;
+  }
+  return { sessionInfo, trackPoints };
+}
+
+async function fetchViaGASPage() {
+  const url = `https://livetrack.garmin.com/session/${state.sessionId}/token/${state.token}`;
+  const ac = new AbortController();
+  const tid = setTimeout(() => ac.abort(), 25_000);
+  let resp;
+  try {
+    resp = await fetch(`${GAS_PROXY}?url=${encodeURIComponent(url)}`, { signal: ac.signal });
+  } finally {
+    clearTimeout(tid);
+  }
+  if (!resp.ok) throw Object.assign(new Error(`HTTP ${resp.status}`), { status: resp.status });
+  const body = await resp.text();
+  // Detect GAS error sentinel (returned as JSON even when Garmin is down)
+  try {
+    const j = JSON.parse(body);
+    if (j?.__gasError != null) throw Object.assign(new Error(`GAS upstream: ${j.__gasError}`), { status: j.__gasError });
+  } catch (e) {
+    if (e.status != null) throw e;
+    // not JSON → it's the HTML page, continue
+  }
+  const result = parseGarminPageData(body);
+  if (!result) {
+    throw new Error('no RSC data found in page');
+  }
+  if (result.sessionInfo) {
+    state.sessionInfo = result.sessionInfo;
+  }
+  if (!result.trackPoints) {
+    throw new Error('no track data in RSC');
+  }
+  return result;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Countdown to next refresh
+// ─────────────────────────────────────────────────────────────────────────────
+function startCountdown(seconds) {
+  stopCountdown();
+  let s = Math.round(seconds);
+  const el = document.getElementById('m-countdown');
+  const row = document.getElementById('countdown-row');
+  if (!el) return;
+  if (row) row.style.display = '';
+  const tick = () => {
+    el.textContent = t('nextUpdate').replace('{s}', s);
+    if (s <= 0) { stopCountdown(); return; }
+    s--;
+    state.countdownInterval = setTimeout(tick, 1000);
+  };
+  tick();
+}
+
+function stopCountdown() {
+  if (state.countdownInterval) { clearTimeout(state.countdownInterval); state.countdownInterval = null; }
+  const row = document.getElementById('countdown-row');
+  if (row) row.style.display = 'none';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main data load / refresh
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadData(isInitial = false) {
+  stopCountdown();
+  if (!isInitial) {
+    document.getElementById('last-update').textContent = t('refreshing');
+  }
+
+  let sessionInfo, newPoints;
+
+  // ── Strategy 1: GAS page fetch — parses Garmin's Next.js/Apollo RSC data ──
+  try {
+    const r = await fetchViaGASPage();
+    sessionInfo = r.sessionInfo;
+    newPoints = r.trackPoints;
+  } catch (gasErr) {
+    console.warn('[garmin] GAS page fetch failed, trying legacy API:', gasErr.message);
+
+    // ── Strategy 2: Legacy REST API (likely broken after Garmin's Next.js migration) ──
+    const sessionPromise = fetchSession().catch(err => {
+      console.warn('[garmin] session fetch failed (non-fatal):', err.status ?? err.message);
+      return null;
+    });
+    const trackFrom = isInitial ? 0 : state.lastPointTimestamp;
+    const trackPromise = fetchTrackpoints(trackFrom);
+
+    try {
+      [sessionInfo, newPoints] = await Promise.all([sessionPromise, trackPromise]);
+      if (newPoints && !Array.isArray(newPoints)) {
+        newPoints = deepFindPoints(newPoints, 0);
+      }
+    } catch (err) {
+      console.error('[garmin] trackpoint fetch failed:', err);
+
+      if (isInitial) {
+        // ── Strategy 3: alternative API endpoint variants ──
+        showLoading(t('tryingAlt'));
+        const altPts = await tryAlternativeEndpoints();
+        if (altPts) {
+          state.trackpoints = altPts;
+          state.lastPointTimestamp = altPts[altPts.length - 1].timestamp;
+          saveToCache();
+          renderTrack({ source: 'alt' });
+          return;
+        }
+
+        // ── Strategy 4: scrape the Garmin HTML page ──
+        showLoading(t('fetchingGarmin'));
+        const scrapedPts = await scrapeGarminPage();
+        if (scrapedPts) {
+          state.trackpoints = scrapedPts;
+          state.lastPointTimestamp = scrapedPts[scrapedPts.length - 1].timestamp;
+          saveToCache();
+          renderTrack({ source: 'scraped' });
+          return;
+        }
+
+        // ── Strategy 5: localStorage cache ──
+        const cached = loadFromCache();
+        if (cached && cached.points && cached.points.length > 0) {
+          state.trackpoints = cached.points;
+          state.sessionInfo = cached.sessionInfo || null;
+          state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
+          renderTrack({ source: 'cache' });
+          return;
+        }
+
+        // ── Nothing worked — show map with user's location only ──
+        hideLoading();
+        showApp();
+        showNoDataBar();
+        startGeolocation();
+        return;
+      }
+
+      // Non-initial failure: keep what's on screen, retry later
+      if (state.refreshTimer) clearTimeout(state.refreshTimer);
+      if (state.trackpoints.length > 0) {
+        state.refreshTimer = setTimeout(() => loadData(false), REFRESH_MS * 2);
+      }
+      return;
+    }
+  }
+
+  if (sessionInfo) state.sessionInfo = sessionInfo;
+
+  const info = state.sessionInfo;
+  const isActive = info?.sessionStatus === 'InProgress';
+  const name = info?.sessionName || info?.userName || 'Garmin LiveTrack';
+
+  document.getElementById('status-dot').className = `topbar-dot ${isActive ? 'active' : 'expired'}`;
+  document.getElementById('live-badge').classList.toggle('visible', isActive);
+  updateStatus(isActive);
+
+  // Merge trackpoints
+  if (Array.isArray(newPoints) && newPoints.length > 0) {
+    if (isInitial) {
+      state.trackpoints = newPoints;
+    } else {
+      const seen = new Set(state.trackpoints.map(p => p.timestamp));
+      state.trackpoints.push(...newPoints.filter(p => !seen.has(p.timestamp)));
+    }
+    state.trackpoints.sort((a, b) => a.timestamp - b.timestamp);
+    state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
+  }
+
+  // Persist to localStorage so the track survives after the session ends
+  saveToCache();
+
+  // Update map
+  if (state.trackpoints.length > 0) {
+    updateRoute(state.trackpoints);
+    const latest = state.trackpoints[state.trackpoints.length - 1];
+    updateTrackerOnMap(latest.latitude, latest.longitude, name);
+    updateMetrics(latest);
+    if (isInitial) {
+      map.setView([latest.latitude, latest.longitude], 14);
+      // after a short delay, fit to show the full recorded route
+      setTimeout(fitMap, 400);
+    }
+  } else if (info?.startLatitude && info?.startLongitude) {
+    updateTrackerOnMap(info.startLatitude, info.startLongitude, name);
+    if (isInitial) map.setView([info.startLatitude, info.startLongitude], 13);
+  }
+
+  const _ts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.getElementById('last-update').textContent = _ts;
+  document.getElementById('m-updated').textContent = _ts;
+
+  // Schedule next refresh
+  if (state.refreshTimer) clearTimeout(state.refreshTimer);
+  if (isActive) {
+    state.refreshTimer = setTimeout(() => loadData(false), REFRESH_MS);
+    startCountdown(REFRESH_MS / 1000);
+  } else {
+    state.refreshTimer = setTimeout(() => loadData(false), REFRESH_MS * 2);
+  }
+}
+
+// Renders offline/fallback track data on the map
+function renderTrack({ source = 'cache' } = {}) {
+  const info = state.sessionInfo;
+  const name = info?.sessionName || info?.userName || 'Garmin LiveTrack';
+
+  document.getElementById('status-dot').className = 'topbar-dot cached';
+  document.getElementById('live-badge').classList.remove('visible');
+
+  if (state.trackpoints.length > 0) {
+    updateRoute(state.trackpoints);
+    const latest = state.trackpoints[state.trackpoints.length - 1];
+    updateTrackerOnMap(latest.latitude, latest.longitude, name);
+    updateMetrics(latest);
+    map.setView([latest.latitude, latest.longitude], 14);
+    fitMap();
+  }
+
+  const msgs = {
+    alt:     t('altEndpointOk'),
+    scraped: t('scrapedOk'),
+    cache:   t('cacheOk'),
+  };
+  showToast(msgs[source] ?? msgs.cache, 'warn', 6000);
+
+  hideLoading();
+  showApp();
+  startGeolocation();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Geolocation
+// ─────────────────────────────────────────────────────────────────────────────
+function startGeolocation() {
+  if (!navigator.geolocation) {
+    showToast(t('geoNotSupported'), 'warn', 4000);
+    return;
+  }
+  if (state.watchId !== null) return;
+  state.watchId = navigator.geolocation.watchPosition(
+    pos => {
+      const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+      state.userLatLng = [lat, lng];
+      updateUserOnMap(lat, lng, accuracy);
+    },
+    err => {
+      console.warn('Geolocation error:', err);
+      if (err.code === 1) {
+        document.getElementById('user-coords').textContent = t('permDenied');
+      }
+    },
+    { enableHighAccuracy: true, maximumAge: 10_000 }
+  );
+}
+
+function stopGeolocation() {
+  if (state.watchId !== null) {
+    navigator.geolocation.clearWatch(state.watchId);
+    state.watchId = null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI helpers
+// ─────────────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = 'info', duration = 5000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show toast-${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, duration);
+}
+
+function togglePanel() {
+  const body = document.getElementById('panel-body');
+  const icon = document.getElementById('panel-toggle');
+  const hidden = body.classList.toggle('hidden');
+  icon.className = hidden ? 'collapsed' : '';
+  icon.textContent = '▾';
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg ?? t('connecting');
+  document.getElementById('loading').classList.remove('hidden');
+}
+function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+
+function showLanding() {
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+}
+
+function showApp() {
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  setTimeout(() => { map && map.invalidateSize(); }, 100);
+  // Sync button highlight with initial autoFollow state
+  document.querySelectorAll('.map-btn[data-af]').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.af === state.autoFollow);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Session start / reset
+// ─────────────────────────────────────────────────────────────────────────────
+async function startSession(url) {
+  const parsed = parseGarminUrl(url);
+  const errEl = document.getElementById('url-error');
+
+  if (!parsed) {
+    errEl.textContent = t('invalidUrl');
+    document.getElementById('url-input').classList.add('error-field');
+    return;
+  }
+  errEl.textContent = '';
+  document.getElementById('url-input').classList.remove('error-field');
+
+  if (state.refreshTimer) clearTimeout(state.refreshTimer);
+  stopCountdown();
+  stopGeolocation();
+  hideNoDataBar();
+  hideNavButton();
+
+  state.sessionId = parsed.sessionId;
+  state.token = parsed.token;
+  state.trackpoints = [];
+  state.lastPointTimestamp = 0;
+  state.proxyIndex = 0;
+  state.sessionInfo = null;
+
+  // Reset map layers
+  [trackerMarker, userMarker, userAccuracy, trackPolyline, startMarker].forEach(layer => {
+    if (layer) map.removeLayer(layer);
+  });
+  trackerMarker = userMarker = userAccuracy = trackPolyline = startMarker = null;
+
+  ['m-status','m-pace','m-speed','m-dist','m-dur','m-act'].forEach(id => {
+    const el = document.getElementById(id); if (el) { el.textContent = '—'; el.style.color = ''; }
+  });
+  document.getElementById('user-loc-dot').className = 'loc-dot user off';
+  document.getElementById('user-coords').textContent = '—';
+  document.getElementById('tracker-coords').textContent = '—';
+
+  if (_trackUser) {
+    // Permanent per-user link: keep /live_tracker/<user> instead of the ephemeral Garmin session URL.
+    history.replaceState(null, '', userPathUrl(_trackUser));
+  } else {
+    const shareUrl = `${location.pathname}?url=${encodeURIComponent(`https://livetrack.garmin.com/session/${parsed.sessionId}/token/${parsed.token}`)}`;
+    history.replaceState(null, '', shareUrl);
+  }
+
+  showLoading(t('connecting'));
+  showApp();
+  startGeolocation(); // start immediately so user dot appears while Garmin data loads
+
+  try {
+    await loadData(true);
+  } catch (_) { /* handled inside loadData */ }
+
+  hideLoading();
+}
+
+function resetToLanding() {
+  if (state.refreshTimer) clearTimeout(state.refreshTimer);
+  stopCountdown();
+  stopGeolocation();
+  stopUserPolling();
+  hideNoDataBar();
+  hideNavButton();
+  document.getElementById('live-badge').classList.remove('visible');
+  _trackUser = null;
+  history.replaceState(null, '', APP_BASE);
+  showLanding();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Event Listeners
+// ─────────────────────────────────────────────────────────────────────────────
+document.getElementById('submit-btn').addEventListener('click', () => {
+  startSession(document.getElementById('url-input').value);
+});
+
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('submit-btn').click();
+});
+
+document.getElementById('url-input').addEventListener('input', () => {
+  document.getElementById('url-error').textContent = '';
+  document.getElementById('url-input').classList.remove('error-field');
+});
+
+function openOnGarmin() {
+  const url = `https://livetrack.garmin.com/session/${state.sessionId}/token/${state.token}`;
+  window.open(url, '_blank', 'noopener');
+}
+
+function copyShareLink() {
+  navigator.clipboard.writeText(location.href)
+    .then(() => showToast(t('copied'), 'ok', 2000))
+    .catch(() => showToast(t('copyFailed'), 'warn', 4000));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auto-follow controls
+// ─────────────────────────────────────────────────────────────────────────────
+function setAutoFollow(mode) {
+  state.autoFollow = state.autoFollow === mode ? null : mode;
+  document.querySelectorAll('.map-btn[data-af]').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.af === state.autoFollow);
+  });
+  if (state.autoFollow) {
+    switch (state.autoFollow) {
+      case 'tracker':
+        if (trackerMarker) { _markCamAnim(1); map.flyTo(trackerMarker.getLatLng(), Math.max(map.getZoom(), 16), { duration: 1 }); }
+        else showToast(t('trackerNotAvail'), 'warn', 3000);
+        break;
+      case 'user':
+        if (state.userLatLng) { _markCamAnim(1); map.flyTo(state.userLatLng, Math.max(map.getZoom(), 16), { duration: 1 }); }
+        else showToast(t('userNotAvail'), 'warn', 3000);
+        break;
+      case 'route': fitRoute(); break;
+      case 'all':   fitMap();   break;
+    }
+  }
+}
+
+function _deactivateAutoFollow() {
+  if (state.autoFollow === null) return;
+  state.autoFollow = null;
+  document.querySelectorAll('.map-btn[data-af]').forEach(btn => btn.classList.remove('on'));
+}
+
+function fitRoute() {
+  const bounds = [];
+  if (trackPolyline && trackPolyline.getLatLngs().length > 0) {
+    trackPolyline.getLatLngs().forEach(ll => bounds.push(ll));
+  } else if (trackerMarker) {
+    bounds.push(trackerMarker.getLatLng());
+  }
+  if (bounds.length === 0) return;
+  _markCamAnim(1.2);
+  map.flyToBounds(L.latLngBounds(bounds), { padding: [60, 60], maxZoom: 17, duration: 1.2 });
+}
+
+function _autoFitRoute() {
+  if (!trackPolyline || trackPolyline.getLatLngs().length === 0) return;
+  map.fitBounds(trackPolyline.getBounds(), { padding: [60, 60], maxZoom: 17, animate: true });
+}
+
+function _autoFitAll() {
+  const b = [];
+  if (trackerMarker) b.push(trackerMarker.getLatLng());
+  if (userMarker) b.push(userMarker.getLatLng());
+  if (trackPolyline) trackPolyline.getLatLngs().forEach(ll => b.push(ll));
+  if (b.length) map.fitBounds(L.latLngBounds(b), { padding: [60, 60], maxZoom: 16, animate: true });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mock mode  (?mock=true)  — simulates a live session for testing
+// ─────────────────────────────────────────────────────────────────────────────
+function buildMockPoints(count) {
+  // Parque da Cidade Sarah Kubitschek — Brasília, DF
+  // Semi-eixo N-S ~670 m, semi-eixo L-O ~860 m → perímetro ≈ 4,8 km
+  const base = { lat: -15.7938, lng: -47.9248 };
+  const rLat = 0.006;
+  const rLng = 0.008;
+  const pts = [];
+  for (let i = 0; i < count; i++) {
+    const angle  = (i / 60) * 2 * Math.PI - Math.PI / 2;
+    const jitter = () => (Math.random() - 0.5) * 0.0004;
+    const dist   = i * 80;
+    const speed  = 2.8 + Math.sin(i * 0.35) * 0.4;
+    pts.push({
+      latitude:  base.lat + Math.sin(angle) * rLat + jitter(),
+      longitude: base.lng + Math.cos(angle) * rLng + jitter(),
+      timestamp: Date.now() - (count - i) * 30_000,
+      metaData: {
+        SPEED:          String(speed.toFixed(2)),
+        TOTAL_DISTANCE: String(dist),
+        ELEVATION:      String((1055 + Math.sin(i * 0.25) * 8).toFixed(1)),
+        TOTAL_DURATION: String(i * 30),
+        ACTIVITY_TYPE:  'RUNNING',
+      },
+    });
+  }
+  return pts;
+}
+
+function startMockSession() {
+  state.sessionId = 'mock-session-id';
+  state.token     = 'mock-token';
+  state.sessionInfo = { sessionStatus: 'InProgress', sessionName: 'Parque da Cidade — BSB (TESTE)', userName: 'Atleta Teste' };
+
+  const shareUrl = `${location.pathname}?mock=true`;
+  history.replaceState(null, '', shareUrl);
+
+  showLoading(t('loadingTest'));
+  showApp();
+  startGeolocation();
+
+  setTimeout(() => {
+    state.trackpoints = buildMockPoints(20); // first 20 points already recorded
+    state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
+
+    const info = state.sessionInfo;
+    document.getElementById('status-dot').className = 'topbar-dot active';
+    document.getElementById('live-badge').classList.add('visible');
+
+    updateRoute(state.trackpoints);
+    const latest = state.trackpoints[state.trackpoints.length - 1];
+    updateTrackerOnMap(latest.latitude, latest.longitude, info.sessionName);
+    updateMetrics(latest);
+    map.setView([latest.latitude, latest.longitude], 15);
+    setTimeout(fitMap, 400);
+
+    const _its = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById('last-update').textContent = _its;
+    document.getElementById('m-updated').textContent = _its;
+
+    hideLoading();
+    showToast(t('testModeToast'), 'info', 6000);
+    startCountdown(30);
+
+    // Simulate new points arriving every 30 s (up to 60 total)
+    let pointIndex = 20;
+    const allPoints = buildMockPoints(60);
+    state.refreshTimer = setInterval(() => {
+      if (pointIndex >= allPoints.length) {
+        clearInterval(state.refreshTimer);
+        stopCountdown();
+        document.getElementById('status-dot').className = 'topbar-dot expired';
+        document.getElementById('live-badge').classList.remove('visible');
+        showToast(t('testModeEnd'), 'warn', 4000);
+        return;
+      }
+      const newPt = allPoints[pointIndex++];
+      newPt.timestamp = Date.now();
+      state.trackpoints.push(newPt);
+      state.lastPointTimestamp = newPt.timestamp;
+      updateRoute(state.trackpoints);
+      updateTrackerOnMap(newPt.latitude, newPt.longitude, info.sessionName);
+      updateMetrics(newPt);
+      const _mts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('last-update').textContent = _mts;
+      document.getElementById('m-updated').textContent = _mts;
+      document.getElementById('last-update').style.color = 'var(--green)';
+      setTimeout(() => { document.getElementById('last-update').style.color = ''; }, 1000);
+      startCountdown(30);
+    }, 30_000);
+  }, 800);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pace Calculator
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleCalc() {
+  document.getElementById('calc-overlay').classList.toggle('open');
+  document.getElementById('app-menu')?.classList.remove('open');
+}
+
+function handleCalcOverlayClick(e) {
+  if (e.target === document.getElementById('calc-overlay')) toggleCalc();
+}
+
+// Input masking
+
+const _calcUnits  = { dist: 'km', pace: 'km', speed: 'kmh' };
+// Tracks the last ≤2 fields the user explicitly typed into (oldest→newest).
+// calcRecalc treats only these as "knowns" and writes to the rest.
+const _calcEdited   = [];
+const _calcComputed = new Set(); // fields currently showing a computed value (readonly)
+
+function _calcMarkEdited(field) {
+  const i = _calcEdited.indexOf(field);
+  if (i !== -1) _calcEdited.splice(i, 1);
+  _calcEdited.push(field);
+  if (_calcEdited.length > 2) _calcEdited.shift();
+}
+function _calcMarkCleared(field) {
+  const i = _calcEdited.indexOf(field);
+  if (i !== -1) _calcEdited.splice(i, 1);
+  _calcComputed.delete(field);
+}
+
+function _calcApplyReadonly() {
+  const map = { dist: 'calc-dist', dur: 'calc-dur', pace: 'calc-pace', speed: 'calc-speed' };
+  Object.entries(map).forEach(([field, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const computed = _calcComputed.has(field);
+    el.disabled = computed;
+    el.classList.toggle('calc-inp--computed', computed);
+    el.closest('.calc-wrap')?.classList.toggle('calc-wrap--computed', computed);
+  });
+}
+
+function _calcMaskDecimal(el, field, decPlaces, maxDigits) {
+  const d = el.value.replace(/\D/g, '').slice(0, maxDigits);
+  if (!d) { el.value = ''; _calcMarkCleared(field); calcRecalc(); return; }
+  const padded = d.padStart(decPlaces + 1, '0');
+  const dec    = padded.slice(-decPlaces);
+  const whole  = String(parseInt(padded.slice(0, -decPlaces), 10) || 0);
+  el.value = `${whole}.${dec}`;
+  _calcMarkEdited(field);
+  calcRecalc();
+}
+
+function calcMaskDist(el) {
+  if (_calcUnits.dist === 'm') {
+    const d = el.value.replace(/\D/g, '').slice(0, 6);
+    el.value = d ? String(parseInt(d, 10)) : '';
+    if (el.value) _calcMarkEdited('dist'); else _calcMarkCleared('dist');
+    calcRecalc();
+  } else {
+    _calcMaskDecimal(el, 'dist', 3, 7);
+  }
+}
+
+function calcMaskSpeed(el) { _calcMaskDecimal(el, 'speed', 1, 4); }
+
+function _calcMaskTime(el, field, maxDigits) {
+  const d = el.value.replace(/\D/g, '').slice(0, maxDigits);
+  if (!d) { el.value = ''; _calcMarkCleared(field); calcRecalc(); return; }
+  const len = d.length;
+  let out;
+  if (len <= 2) {
+    out = d;
+  } else if (len <= 4) {
+    const ss = Math.min(parseInt(d.slice(-2), 10), 59);
+    out = `${d.slice(0, -2)}:${String(ss).padStart(2, '0')}`;
+  } else {
+    const ss = Math.min(parseInt(d.slice(-2), 10), 59);
+    const mm = Math.min(parseInt(d.slice(-4, -2), 10), 59);
+    out = `${d.slice(0, -4)}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+  }
+  el.value = out;
+  _calcMarkEdited(field);
+  calcRecalc();
+}
+
+function calcMaskDur(el)  { _calcMaskTime(el, 'dur',   6); }
+function calcMaskPace(el) { _calcMaskTime(el, 'pace',  4); }
+
+function _cParseTime(str) {
+  if (!str || !str.trim()) return NaN;
+  const p = str.trim().split(':');
+  if (p.length < 2 || p.length > 3) return NaN;
+  const n = p.map(s => parseInt(s, 10));
+  if (n.some(isNaN)) return NaN;
+  return p.length === 3 ? n[0]*3600 + n[1]*60 + n[2] : n[0]*60 + n[1];
+}
+
+function _cFmtTime(secs) {
+  if (!isFinite(secs) || secs < 0) return '';
+  secs = Math.round(secs);
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  return h > 0
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function _toMetres(v, unit)   { return unit==='km' ? v*1000 : unit==='m' ? v : v*1609.344; }
+function _fromMetres(m, unit) { return unit==='km' ? m/1000 : unit==='m' ? m : m/1609.344; }
+
+function calcRecalc() {
+  const dEl = document.getElementById('calc-dist');
+  const tEl = document.getElementById('calc-dur');
+  const pEl = document.getElementById('calc-pace');
+  const sEl = document.getElementById('calc-speed');
+  const du = _calcUnits.dist, pu = _calcUnits.pace, su = _calcUnits.speed;
+
+  const kDist  = _calcEdited.includes('dist');
+  const kDur   = _calcEdited.includes('dur');
+  const kPace  = _calcEdited.includes('pace');
+  const kSpeed = _calcEdited.includes('speed');
+
+  const rawD = du === 'm' ? parseInt(dEl.value, 10) : parseFloat(dEl.value);
+  const rawT = _cParseTime(tEl.value);
+  const rawP = _cParseTime(pEl.value);
+  const rawS = parseFloat(sEl.value);
+
+  let distM  = kDist  && isFinite(rawD) && rawD > 0 ? _toMetres(rawD, du)           : NaN;
+  let tSec   = kDur   && isFinite(rawT) && rawT > 0 ? rawT                          : NaN;
+  let psM    = kPace  && isFinite(rawP) && rawP > 0 ? rawP / _toMetres(1, pu)       : NaN;
+  let spdMps = kSpeed && isFinite(rawS) && rawS > 0 ? rawS / (su==='kmh' ? 3.6 : 2.23694) : NaN;
+
+  if (kPace && kSpeed) {
+    if (_calcEdited[_calcEdited.length - 1] === 'speed') psM    = 1 / spdMps;
+    else                                                  spdMps = 1 / psM;
+  } else if (kSpeed && isFinite(spdMps)) {
+    psM    = 1 / spdMps;
+  } else if (kPace && isFinite(psM)) {
+    spdMps = 1 / psM;
+  }
+
+  const hD = isFinite(distM), hT = isFinite(tSec), hP = isFinite(psM);
+
+  let outDistM = NaN, outTSec = NaN, outPsM = NaN;
+  if ( hD &&  hT && !hP) { outPsM   = tSec / distM; }
+  if ( hD && !hT &&  hP) { outTSec  = distM * psM; }
+  if (!hD &&  hT &&  hP) { outDistM = tSec / psM; }
+
+  const fP = isNaN(psM) ? outPsM : psM;
+  const fS = isFinite(fP) ? 1 / fP : NaN;
+
+  // Remember which fields were computed before this call, then rebuild _calcComputed
+  const prevComputed = new Set(_calcComputed);
+  _calcComputed.clear();
+
+  if (!kDist  && isFinite(outDistM)) {
+    const v = _fromMetres(outDistM, du);
+    dEl.value = du === 'm' ? String(Math.round(v)) : v.toFixed(3);
+    _calcComputed.add('dist');
+  }
+  if (!kDur   && isFinite(outTSec))  { tEl.value = _cFmtTime(outTSec);                               _calcComputed.add('dur');   }
+  if (!kPace  && isFinite(fP))       { pEl.value = _cFmtTime(fP * _toMetres(1, pu));                 _calcComputed.add('pace');  }
+  if (!kSpeed && isFinite(fS))       { sEl.value = (fS * (su==='kmh' ? 3.6 : 2.23694)).toFixed(1);  _calcComputed.add('speed'); }
+
+  // Re-enable first so value writes below work in all browsers
+  _calcApplyReadonly();
+
+  // Clear any field that was computed before but is no longer computable (stale)
+  const elMap = { dist: dEl, dur: tEl, pace: pEl, speed: sEl };
+  prevComputed.forEach(f => {
+    if (!_calcComputed.has(f) && !_calcEdited.includes(f)) elMap[f].value = '';
+  });
+}
+
+function calcReset() {
+  ['calc-dist','calc-dur','calc-pace','calc-speed'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  _calcEdited.length = 0;
+  _calcComputed.clear();
+  _calcApplyReadonly();
+}
+
+function _calcUpdateFillBtns() {
+  const latest = state.trackpoints?.[state.trackpoints.length - 1];
+  const m = latest?.metaData || {};
+  const hasDist = isFinite(parseFloat(m.TOTAL_DISTANCE)) && parseFloat(m.TOTAL_DISTANCE) > 0;
+  const hasDur  = isFinite(parseFloat(m.TOTAL_DURATION)) && parseFloat(m.TOTAL_DURATION) > 0;
+  const hasPace = !isNaN(_effectiveSpeed(m)) && _effectiveSpeed(m) > 0;
+  document.getElementById('calc-fill-dist')?.classList.toggle('live', hasDist);
+  document.getElementById('calc-fill-dur')?.classList.toggle('live', hasDur);
+  document.getElementById('calc-fill-pace')?.classList.toggle('live', hasPace);
+}
+
+function _calcFillFromRace(field) {
+  const latest = state.trackpoints?.[state.trackpoints.length - 1];
+  if (!latest) return;
+  const m = latest.metaData || {};
+  if (field === 'dist') {
+    const distM = parseFloat(m.TOTAL_DISTANCE);
+    if (!isFinite(distM) || distM <= 0) return;
+    const el = document.getElementById('calc-dist');
+    const du = _calcUnits.dist;
+    el.value = du === 'm' ? String(Math.round(distM)) : _fromMetres(distM, du).toFixed(3);
+    _calcMarkEdited('dist');
+  } else if (field === 'dur') {
+    const durS = parseFloat(m.TOTAL_DURATION);
+    if (!isFinite(durS) || durS <= 0) return;
+    document.getElementById('calc-dur').value = _cFmtTime(durS);
+    _calcMarkEdited('dur');
+  } else if (field === 'pace') {
+    const spd = _effectiveSpeed(m);
+    if (isNaN(spd) || spd <= 0) return;
+    const pu = _calcUnits.pace;
+    const secPerUnit = _toMetres(1, pu) / spd;
+    document.getElementById('calc-pace').value = _cFmtTime(secPerUnit);
+    _calcMarkEdited('pace');
+  }
+  calcRecalc();
+}
+
+function calcSetUnit(field, newUnit) {
+  const prev  = _calcUnits[field];
+  if (prev === newUnit) return;
+  const elId  = field === 'dist' ? 'calc-dist' : field === 'pace' ? 'calc-pace' : 'calc-speed';
+  const el    = document.getElementById(elId);
+  if (el && el.value) {
+    if (field === 'dist') {
+      const v = prev === 'm' ? parseInt(el.value, 10) : parseFloat(el.value);
+      if (isFinite(v) && v > 0) {
+        const r = _fromMetres(_toMetres(v, prev), newUnit);
+        el.value = newUnit === 'm' ? String(Math.round(r)) : r.toFixed(3);
+      }
+    } else if (field === 'pace') {
+      const sec = _cParseTime(el.value);
+      if (isFinite(sec) && sec > 0) {
+        el.value = _cFmtTime(sec / _toMetres(1, prev) * _toMetres(1, newUnit));
+      }
+    } else {
+      const v = parseFloat(el.value);
+      if (isFinite(v) && v > 0) {
+        const mps = v / (prev === 'kmh' ? 3.6 : 2.23694);
+        el.value  = (mps * (newUnit === 'kmh' ? 3.6 : 2.23694)).toFixed(1);
+      }
+    }
+  }
+  _calcUnits[field] = newUnit;
+  calcRecalc();
+}
+
+function calcUpdateUnits() {
+  Object.keys(_calcUnits).forEach(f => {
+    const sel = document.getElementById(`calc-${f}-unit`);
+    if (sel) sel.value = _calcUnits[f];
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Username path
+// ─────────────────────────────────────────────────────────────────────────────
+function onNameInput() {
+  const inp = document.getElementById('name-input');
+  const clean = inp.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  if (inp.value !== clean) inp.value = clean;
+  const emailName = document.getElementById('email-name');
+  if (emailName) emailName.textContent = clean;
+  const reveal = document.getElementById('email-reveal');
+  if (reveal) reveal.style.display = clean ? 'block' : 'none';
+  const goBtn = document.getElementById('name-go-btn');
+  if (goBtn) goBtn.disabled = !clean;
+}
+
+function goToUser() {
+  const name = document.getElementById('name-input').value;
+  if (!name) return;
+  resolveUserSession(name);
+}
+
+function copyTrackerEmail() {
+  const name = document.getElementById('name-input').value || t('opt2Placeholder');
+  const email = `mendelson.mateus+${name}@gmail.com`;
+  navigator.clipboard.writeText(email).then(() => {
+    const btn = document.getElementById('copy-email-btn');
+    btn.textContent = t('copied');
+    setTimeout(() => { btn.textContent = t('emailCopy'); }, 2000);
+  }).catch(() => {});
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#lang-selector')) {
+    const dd = document.getElementById('lang-dropdown');
+    if (dd) dd.classList.remove('open');
+  }
+  if (!e.target.closest('#landing-lang-selector')) {
+    const dd = document.getElementById('landing-lang-dropdown');
+    if (dd) dd.classList.remove('open');
+  }
+  if (!e.target.closest('#menu-btn') && !e.target.closest('#app-menu')) {
+    document.getElementById('app-menu')?.classList.remove('open');
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────────────────────────
+initMap();
+initLang();
+
+const USER_POLL_MS = 5 * 60 * 1000;
+let _userPollTimer = null;
+let _userCountdownInterval = null;
+let _trackUser = null; // when set, this is a permanent /live_tracker/<user> link
+
+// App directory captured at load, before any history rewrite mutates location.pathname
+// (e.g. to /live_tracker/<user>). Used to build per-user links and to return to the landing.
+const APP_BASE = (function () {
+  let b = location.pathname.replace(/index\.html$/, '');
+  if (!b.endsWith('/')) b += '/';
+  return b;
+})();
+
+// Clean, permanent per-user path: /live_tracker/<user> (not the ephemeral ?url= form).
+function userPathUrl(user) {
+  return APP_BASE + encodeURIComponent(user);
+}
+
+async function resolveUserSession(user) {
+  _trackUser = user.toLowerCase();
+  history.replaceState(null, '', userPathUrl(_trackUser));
+  showLoading(t('resolvingUser'));
+  try {
+    const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
+    const data = await resp.json();
+    if (data.url) {
+      startSession(data.url);
+    } else {
+      hideLoading();
+      showLanding();
+      showUserBanner(user, data.ts);
+      startUserPolling(user);
+    }
+  } catch (_) {
+    hideLoading();
+    showLanding();
+    showUserBanner(user, null);
+    startUserPolling(user);
+  }
+}
+
+function showUserBanner(user, ts) {
+  document.getElementById('user-banner-name').textContent = '@' + user;
+  const statusEl = document.getElementById('user-banner-status');
+  if (ts) {
+    const mins = Math.round((Date.now() - ts) / 60000);
+    statusEl.textContent = mins < 60
+      ? t('lastActivityMins').replace('{mins}', mins)
+      : t('lastActivityHours').replace('{hours}', Math.round(mins / 60));
+  } else {
+    statusEl.textContent = t('noActivity');
+  }
+  document.getElementById('user-banner').classList.remove('hidden');
+}
+
+function startUserPolling(user) {
+  clearTimeout(_userPollTimer);
+  clearInterval(_userCountdownInterval);
+
+  let remaining = USER_POLL_MS / 1000;
+  const cdEl = document.getElementById('user-banner-countdown');
+
+  function tick() {
+    if (!cdEl) return;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    cdEl.textContent = t('checkingIn').replace('{time}', `${m}:${String(s).padStart(2, '0')}`);
+    remaining--;
+  }
+  tick();
+  _userCountdownInterval = setInterval(tick, 1000);
+
+  _userPollTimer = setTimeout(async () => {
+    clearInterval(_userCountdownInterval);
+    if (cdEl) cdEl.textContent = t('checking');
+    try {
+      const resp = await fetch(`${GAS_PROXY}?action=session&user=${encodeURIComponent(user.toLowerCase())}`);
+      const data = await resp.json();
+      if (data.url) {
+        startSession(data.url);
+      } else {
+        showUserBanner(user, data.ts);
+        startUserPolling(user);
+      }
+    } catch (_) {
+      startUserPolling(user);
+    }
+  }, USER_POLL_MS);
+}
+
+function stopUserPolling() {
+  clearTimeout(_userPollTimer);
+  clearInterval(_userCountdownInterval);
+  _userPollTimer = null;
+  _userCountdownInterval = null;
+}
+
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mock') === 'true') {
+    document.getElementById('landing').classList.add('hidden');
+    setTimeout(startMockSession, 100);
+    return;
+  }
+  const u = params.get('url') || params.get('session');
+  if (u) {
+    document.getElementById('landing').classList.add('hidden');
+    document.getElementById('url-input').value = decodeURIComponent(u);
+    setTimeout(() => startSession(document.getElementById('url-input').value), 100);
+    return;
+  }
+  const user = params.get('user');
+  if (user) {
+    document.getElementById('landing').classList.add('hidden');
+    _trackUser = user.toLowerCase();
+    history.replaceState(null, '', userPathUrl(_trackUser));
+    setTimeout(() => resolveUserSession(user), 100);
+    return;
+  }
+  showLanding();
+})();
+</script>
+</body>
+  </html>
