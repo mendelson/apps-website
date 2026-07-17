@@ -20,7 +20,7 @@ const CSS = `
     --text: #eee; --muted: #9a9a9a; --primary: #3b82f6; --accent: #f97316; --maxw: 820px;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  body { margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--bg); color: var(--text); line-height: 1.65; -webkit-text-size-adjust: 100%; }
   a { color: var(--primary); }
   a:hover { color: #60a5fa; }
@@ -99,6 +99,9 @@ ${altLinks}
 <link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/privacy_policy/" />
 <link rel="icon" type="image/jpeg" href="/assets/favicon.jpg" />
 <link rel="apple-touch-icon" href="/assets/favicon.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>${CSS}
 </style>
 </head>
