@@ -2,6 +2,9 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Garmin Live Track</title>
   <link rel="icon" type="image/jpeg" href="/assets/favicon.jpg">
@@ -30,7 +33,7 @@
     html, body { height: 100%; overflow: hidden; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
       background: var(--bg);
       color: var(--text);
     }
@@ -163,7 +166,7 @@
       line-height: 1.5;
     }
     .hint code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-family: 'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace;
       background: rgba(59,130,246,0.2);
       padding: 0.1em 0.35em;
       border-radius: 4px;
@@ -222,7 +225,7 @@
     .email-reveal-label { color: var(--muted); margin-bottom: 0.5rem; line-height: 1.4; }
     .email-copy-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
     .email-display {
-      flex: 1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+      flex: 1; font-family: 'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
       color: var(--accent); background: rgba(249,115,22,0.1);
       padding: 0.3em 0.6em; border-radius: 5px; word-break: break-all;
     }
@@ -417,7 +420,7 @@
     .loc-dot.user { background: var(--primary); }
     .loc-dot.off { background: var(--muted); }
     .loc-text { color: var(--muted); }
-    .loc-coords { color: var(--text); font-variant-numeric: tabular-nums; font-family: 'SF Mono', monospace; font-size: 0.72rem; }
+    .loc-coords { color: var(--text); font-variant-numeric: tabular-nums; font-family: 'IBM Plex Mono', 'SF Mono', monospace; font-size: 0.72rem; }
 
     /* Map control button panel */
     #map-controls {
