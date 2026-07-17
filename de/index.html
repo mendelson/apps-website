@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/visual.css?v=28" />
+<link rel="stylesheet" href="/assets/css/visual.css?v=29" />
 <style>
 .header-subtitle-row{display:flex;align-items:center;justify-content:center;gap:8px;}
 .header-subtitle-row p{margin:0;}
@@ -47,6 +47,26 @@
   <div id="preloader">
     <div id="loader-container"></div>
   </div>
+
+  <div class="brandbar">
+    <div class="brandbar-inner">
+      <a class="brand-logo" href="/" aria-label="apps.mmendelson.com — home">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
+            <path d="M6 7H23V25H38V42"></path>
+            <path d="M6 13H17V30H34V42"></path>
+          </g>
+        </svg>
+        <span class="brand-word">apps.mmendelson.com</span>
+      </a>
+      <div class="site-switch" role="navigation" aria-label="Sister sites">
+        <a href="https://mmendelson.com">Home</a>
+        <a href="/" class="active" aria-current="page">Apps</a>
+        <a href="https://run.mmendelson.com">Run</a>
+      </div>
+    </div>
+  </div>
+
 
 <header>
   <h1>Garmin Apps</h1>
@@ -467,8 +487,24 @@
   </div>
 </section>
 
-<footer data-i18n="footer">
-  © 2026 M. Mendelson — Garmin Apps
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="foot-social" role="navigation" aria-label="Social profiles">
+      <a href="https://www.linkedin.com/in/mateusmendelson/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/mendelson" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.youtube.com/mateusmendelson" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.strava.com/athletes/9485255" target="_blank" rel="noopener">Strava</a>
+      <a href="https://instagram.com/byte.papo" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://open.spotify.com/show/1zGax7Ftyup8WKN7BQGJ1g" target="_blank" rel="noopener">Spotify</a>
+      <a href="https://t.me/mmendelson" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <div class="foot-switch" role="navigation" aria-label="Sister sites">
+      <a href="https://mmendelson.com" target="_blank" rel="noopener">Home ↗</a>
+      <a href="/" class="active">Apps</a>
+      <a href="https://run.mmendelson.com" target="_blank" rel="noopener">Run ↗</a>
+    </div>
+  </div>
+  <div class="foot-copy" data-i18n="footer">© 2026 M. Mendelson — Garmin Apps</div>
 </footer>
 
 <script src="/assets/js/i18n.js"></script>

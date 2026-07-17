@@ -3,13 +3,48 @@
 ## Visual identity
 
 This site is one of three sibling sites (mmendelson.com hub,
-apps.mmendelson.com, run.mmendelson.com) undergoing a cross-repo visual
-standardization — shared fonts/tokens/brand-bar pattern, each site keeping
-its own accent color and its own menus/sections. The plan, decisions, and
-resumable phase checklist live in
+apps.mmendelson.com, run.mmendelson.com) sharing a standardized visual
+identity — same fonts, token structure and brand-bar/footer pattern, each
+site keeping its own accent color and its own menus/sections. The plan,
+decisions, and phase checklist live in
 [`website/BRAND_STANDARDIZATION.md`](https://github.com/mendelson/website/blob/main/BRAND_STANDARDIZATION.md)
-(the hub repo). This repo's accent is blue (`#3b82f6`); see that doc's
-Phase 2 for the full scope.
+(the hub repo).
+
+- **Fonts**: IBM Plex Serif (display headings), IBM Plex Sans (body),
+  IBM Plex Mono (wordmark/chrome and numeric surfaces), via Google Fonts.
+- **Tokens** (`assets/css/visual.css`, top `:root` block): `--bg #111`,
+  `--bg2 #1a1a1a`, `--bg3 #444`, `--bg3-hover #555`, `--fg #eee`,
+  `--muted #9a9a9a`, `--line #333`, `--accent #3b82f6` (+ `--accent-dim`,
+  `--accent-ink`). The accent is **blue** — it was already the de-facto
+  accent of `/tracker/`, `/live_tracker/` and the privacy pages.
+  `live_tracker`'s internal orange/blue map colors are functional
+  semantics (athlete dot vs. user dot), not brand, and stay as they are.
+- **Family chrome**: a slim brand bar (staircase mark + `apps.mmendelson.com`
+  wordmark + Home/Apps/Run switcher) above the app's own header/nav, and a
+  structured footer (social row + site switcher + localized copyright).
+  Both are classed `div`s, deliberately not bare `<header>/<nav>` elements —
+  `visual.css` styles those element selectors for the app's own sticky nav.
+  The brand bar is static (scrolls away) so the app nav keeps sticky
+  `top: 0`. The footer's copyright line keeps `data-i18n="footer"`.
+- **Favicon**: `assets/favicon.ico` + `favicon-{32,180,192,512}.png`,
+  all derived (resize-only) from the staircase brand image.
+
+## Path map
+
+| Path | What it is |
+|---|---|
+| `/` | Language detector → redirects to `/{lang}/` |
+| `/de/ /en/ /es/ /fr/ /pt/` | The apps showcase (6 byte-identical HTML copies; strings swapped client-side by `assets/js/i18n.js`) |
+| `/tracker/` | Garmin Tracker Data Field companion (reads `?trackId=…`; migrated here from mmendelson.com/tracker, which redirects here preserving the query) |
+| `/live_tracker/` | Real-time Garmin LiveTrack map follower (renamed from `/tracker/`; per-user links `/live_tracker/?user=<user>`) |
+| `/tracker/<user>` (legacy) | Caught by `404.html` → `/live_tracker/?user=<user>` (old Live Track share links) |
+| `/live_tracker/<user>` | Caught by `404.html` → `/live_tracker/?user=<user>` |
+| `/privacy_policy/{lang}/` | Canonical localized privacy policy (generated) |
+| `/privacy_policy/ /policy/ /privacy/` | Language-detecting redirect stubs → `/privacy_policy/<lang>/` (generated) |
+| `/404.html` | Pretty-URL router (per-user tracker links) + fallback |
+
+Editing the 6 main-page copies: they must stay **byte-identical** — edit
+`index.html`, then copy it over `{de,en,es,fr,pt}/index.html`.
 
 ## Adding an app
 
