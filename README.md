@@ -19,8 +19,8 @@ decisions, and phase checklist live in
   accent of `/tracker/`, `/live_tracker/` and the privacy pages.
   `live_tracker`'s internal orange/blue map colors are functional
   semantics (athlete dot vs. user dot), not brand, and stay as they are.
-- **Family chrome**: a slim brand bar (staircase mark + `apps.mmendelson.com`
-  wordmark + Home/Apps/Run switcher) above the app's own header/nav, and a
+- **Family chrome**: a slim brand bar (staircase mark + Home/Apps/Run
+  switcher — no URL wordmark) above the app's own header/nav, and a
   structured footer (social row + site switcher + localized copyright).
   Both are classed `div`s, deliberately not bare `<header>/<nav>` elements —
   `visual.css` styles those element selectors for the app's own sticky nav.
