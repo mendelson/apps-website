@@ -1,5 +1,16 @@
 # apps-website
 
+## Visual identity
+
+This site is one of three sibling sites (mmendelson.com hub,
+apps.mmendelson.com, run.mmendelson.com) undergoing a cross-repo visual
+standardization — shared fonts/tokens/brand-bar pattern, each site keeping
+its own accent color and its own menus/sections. The plan, decisions, and
+resumable phase checklist live in
+[`website/BRAND_STANDARDIZATION.md`](https://github.com/mendelson/website/blob/main/BRAND_STANDARDIZATION.md)
+(the hub repo). This repo's accent is blue (`#3b82f6`); see that doc's
+Phase 2 for the full scope.
+
 ## Adding an app
 
 - **Card** in `index.html`: set `data-name` exactly as the row key in the metrics API (Google Apps Script), e.g. `Split Pacer Pro`.
