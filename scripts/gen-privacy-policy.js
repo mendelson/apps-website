@@ -97,8 +97,10 @@ function page(lang, t) {
 <link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/${lang}/" />
 ${altLinks}
 <link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/privacy_policy/" />
-<link rel="icon" type="image/jpeg" href="/assets/favicon.jpg" />
-<link rel="apple-touch-icon" href="/assets/favicon.jpg" />
+<link rel="icon" href="/assets/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+<link rel="apple-touch-icon" href="/assets/favicon-180.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -198,7 +200,7 @@ const redirect = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Privacy Policy – Garmin Apps by M. Mendelson</title>
 <link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/en/" />
-<link rel="icon" type="image/jpeg" href="/assets/favicon.jpg" />
+<link rel="icon" href="/assets/favicon.ico" sizes="any" />
 <script>
 (function(){var s=['de','en','es','fr','pt'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/privacy_policy/'+l+'/');})();
 </script>
