@@ -47,8 +47,12 @@
     border-bottom:1px solid var(--line);
     padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
   }
-  .bar .brand{color:var(--fg);font-weight:600;font-size:15px}
-  .bar .back{font-size:14px}
+  .bar .brand{display:flex;align-items:center;gap:10px;color:var(--fg);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em}
+  .bar .brand:hover{color:var(--accent);text-decoration:none}
+  .bar .switch{display:flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:13px}
+  .bar .switch a{color:var(--muted);text-decoration:none;padding:8px 10px;min-height:40px;display:inline-flex;align-items:center}
+  .bar .switch a:hover{color:var(--accent);text-decoration:none}
+  .bar .switch a.active{color:var(--accent);border-bottom:1px solid var(--accent)}
   main{max-width:640px;margin:0 auto;padding:32px 20px 64px}
   h1{font-size:clamp(24px,5vw,32px);line-height:1.15;margin:0 0 8px}
   .lead{color:var(--muted);margin:0 0 24px}
@@ -90,8 +94,20 @@
 </head>
 <body>
   <div class="bar">
-    <a class="brand" href="https://apps.mmendelson.com/">apps.mmendelson.com</a>
-    <a class="back" href="https://apps.mmendelson.com/">← All apps</a>
+    <a class="brand" href="https://apps.mmendelson.com/">
+      <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
+          <path d="M6 7H23V25H38V42"></path>
+          <path d="M6 13H17V30H34V42"></path>
+        </g>
+      </svg>
+      apps.mmendelson.com
+    </a>
+    <div class="switch" role="navigation" aria-label="Sister sites">
+      <a href="https://mmendelson.com">Home</a>
+      <a href="https://apps.mmendelson.com/" class="active" aria-current="page">Apps</a>
+      <a href="https://run.mmendelson.com">Run</a>
+    </div>
   </div>
 
   <main>

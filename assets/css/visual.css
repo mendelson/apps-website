@@ -2362,3 +2362,123 @@ nav.open .nav-hamburger span:nth-child(3) {
   100% { transform: rotate(0deg); }
 }
 
+
+/* ===========================
+   FAMILY CHROME (brand bar + footer)
+   Shared structural pattern across mmendelson.com / apps / run — see
+   website/BRAND_STANDARDIZATION.md. Deliberately classed divs (not bare
+   <header>/<nav> elements): this file styles those element selectors for
+   the app's own sticky nav, and the family chrome must not inherit them.
+   The brand bar is static (scrolls away) so the app's functional nav keeps
+   its sticky top:0 behavior untouched.
+=========================== */
+
+.brandbar {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.brandbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+  text-decoration: none;
+  min-height: 40px;
+}
+
+.brand-logo:hover { color: var(--accent); }
+
+.brand-word {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.site-switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.site-switch a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 8px 10px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-switch a:hover { color: var(--accent); }
+
+.site-switch a.active {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+footer.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--bg2);
+  margin-top: 48px;
+  padding: 26px 20px 30px;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.foot-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.foot-social a,
+.foot-switch a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.foot-social a:hover,
+.foot-switch a:hover { color: var(--accent); }
+
+.foot-switch {
+  display: flex;
+  gap: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.foot-switch a.active { color: var(--accent); }
+
+.foot-copy {
+  max-width: 1100px;
+  margin: 14px auto 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
