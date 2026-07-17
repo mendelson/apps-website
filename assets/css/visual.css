@@ -2400,12 +2400,6 @@ nav.open .nav-hamburger span:nth-child(3) {
 
 .brand-logo:hover { color: var(--accent); }
 
-.brand-word {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-}
-
 .site-switch {
   display: flex;
   align-items: center;
