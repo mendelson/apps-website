@@ -17,7 +17,7 @@ const LANGS = [
 const CSS = `
   :root {
     --bg: #111; --surface: #1a1a1a; --surface2: #202020; --border: #333;
-    --text: #eee; --muted: #9a9a9a; --primary: #3b82f6; --accent: #f97316; --maxw: 820px;
+    --text: #eee; --muted: #9a9a9a; --primary: #3b82f6; --accent: #3b82f6; --maxw: 820px;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
