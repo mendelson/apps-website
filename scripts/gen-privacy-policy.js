@@ -145,6 +145,10 @@ ${rows}
   </div>
   <p class="note">${t.s2Note}</p>
 
+  <h2>${t.sTrackTitle}</h2>
+  <p>${t.sTrackBody1}</p>
+  <p>${t.sTrackBody2}</p>
+
   <h2>${t.sIdTitle}</h2>
   <p>${t.sIdBody}</p>
 
