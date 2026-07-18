@@ -68,7 +68,26 @@
   .note { color: var(--muted); font-size: 14px; }
   footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
   footer.page a { color: var(--muted); }
+  .foot-cookies { color: var(--primary); }
+  .consent-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 20px rgba(0,0,0,.5); }
+  .consent-bar[hidden] { display: none; }
+  .consent-text { margin: 0; font-size: 13.5px; color: var(--text); max-width: 60ch; }
+  .consent-actions { display: flex; gap: 10px; }
+  .consent-btn { min-height: 40px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; background: var(--primary); color: #fff; }
+  .consent-btn:hover { filter: brightness(1.1); }
+  .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
+  .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }
 </style>
+<!-- GA4 with Consent Mode v2 (denied by default). -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  gtag('config', 'G-0MHS4QK452');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
 </head>
 <body>
 
@@ -91,7 +110,7 @@
 </header>
 
 <main>
-  <p class="meta">Última atualização: 17 de julho de 2026</p>
+  <p class="meta">Última atualização: 18 de julho de 2026</p>
 
   <div class="intro"><p style="margin:0;">Esta Política de Privacidade aplica-se a <strong>todos os aplicativos Garmin Connect IQ</strong> publicados por M. Mendelson — tanto campos de dados quanto mostradores, incluindo apps lançados no futuro (os “Apps”). Ela explica quais informações de uso os Apps coletam, por quê, e as opções que você tem.</p></div>
 
@@ -151,13 +170,23 @@
 
   <h2>10. Contato</h2>
   <p>Dúvidas, solicitações ou preocupações sobre esta política ou seus dados:<br /> <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
+  <h2>Análise do site e cookies</h2>
+  <p>Este site (apps.mmendelson.com e suas páginas) usa o Google Analytics para entender o uso agregado — visualizações de página, cliques e eventos semelhantes. O armazenamento analítico (cookies) fica desativado por padrão e só é ativado se você aceitar pelo aviso de cookies; você pode mudar sua escolha a qualquer momento pelo link "Cookies" no rodapé. A análise do site não coleta informações de identificação pessoal e é separada dos dados do app Garmin descritos acima.</p>
 </main>
 
-<footer class="page"><p>© 2026 M. Mendelson — Garmin Apps</p></footer>
+<footer class="page"><p>© 2026 M. Mendelson — Garmin Apps · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
 
 <script>
 (function(){var s=document.querySelector(".lang-selector");if(!s)return;var b=s.querySelector(".lang-btn");b.addEventListener("click",function(e){e.stopPropagation();s.classList.toggle("open");});document.addEventListener("click",function(){s.classList.remove("open");});})();
 </script>
 
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+<script src="/assets/js/consent.js?v=1"></script>
 </body>
 </html>

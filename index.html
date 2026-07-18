@@ -6,14 +6,18 @@
 (function(){var p=location.pathname;if(p==='/'||p==='/index.html'){var s=['de','en','es','fr','pt'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/'+l+'/');}})();
 </script>
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
+<!-- Google Analytics (GA4) with Consent Mode v2: analytics denied by default →
+     cookieless pings until the visitor accepts via the consent bar. See
+     website/ANALYTICS_TRACKING.md. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
   gtag('config', 'G-0MHS4QK452');
 </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/visual.css?v=31" />
+<link rel="stylesheet" href="/assets/css/visual.css?v=32" />
 <style>
 .header-subtitle-row{display:flex;align-items:center;justify-content:center;gap:8px;}
 .header-subtitle-row p{margin:0;}
@@ -684,11 +688,20 @@
       <a href="https://run.mmendelson.com">Run</a>
     </div>
   </div>
-  <div class="foot-copy" data-i18n="footer">© 2026 M. Mendelson</div>
+  <div class="foot-copy" data-i18n="footer">© 2026 M. Mendelson · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></div>
 </footer>
+
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
 
 <script src="/assets/js/i18n.js"></script>
 <script src="/assets/js/script.js?v=9"></script>
+<script src="/assets/js/consent.js?v=1"></script>
 
 <script>
 (async function() {
