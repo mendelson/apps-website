@@ -1579,12 +1579,12 @@ html:has(#preloader:not(.hide)) body {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 10px 16px;
+  padding: 10px 12px 10px 8px;
   color: var(--fg);
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  margin-left: auto;
+  order: 11; /* rightmost — after the 🌐 globe */
 }
 
 .nav-hamburger span {
@@ -1615,6 +1615,12 @@ nav.open .nav-hamburger span:nth-child(3) {
 
   .nav-hamburger {
     display: flex;
+  }
+
+  /* On mobile the globe starts the right-side group (the hamburger is the
+     rightmost control), so it carries the push-right margin. */
+  .lang-selector {
+    margin-left: auto;
   }
 
   nav ul {
