@@ -94,12 +94,20 @@ window.startSwimRace = function (container) {
 
 /* ==========================================================
    EXTERNAL LINKS → NEW TAB
+   Genuinely external links (Garmin store, socials, …) open in a new tab.
+   Navigation *within* the family (mmendelson.com / apps / run — the header
+   and footer Home/Apps/Run switchers, the Run-aggregator link) must stay in
+   the same tab, so those are skipped.
 ========================================================== */
+const FAMILY_HOST = /(^|\.)mmendelson\.com$/i;
 function initExternalLinks() {
   document.querySelectorAll("a[href]").forEach(a => {
     const h = a.getAttribute("href");
     if (!h || h.startsWith("#") || h.startsWith("mailto:") || h.startsWith("tel:")) return;
     if (/^https?:\/\//i.test(h)) {
+      let host;
+      try { host = new URL(h, location.href).hostname; } catch (e) { host = ""; }
+      if (FAMILY_HOST.test(host)) return; // same-tab navigation between the three sites
       a.setAttribute("target", "_blank");
       a.setAttribute("rel", "noopener noreferrer");
     }
