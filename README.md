@@ -34,7 +34,7 @@ decisions, and phase checklist live in
 | Path | What it is |
 |---|---|
 | `/` | Language detector → redirects to `/{lang}/` |
-| `/de/ /en/ /es/ /fr/ /pt/` | The apps showcase (6 byte-identical HTML copies; strings swapped client-side by `assets/js/i18n.js`) |
+| `/de/ /en/ /es/ /fr/ /pt/` | The apps showcase. Same page in every language; the crawler-facing head (`<html lang>`, `<title>`, `<meta description>`, self-canonical) is baked per language, the visible text is swapped client-side by `assets/js/i18n.js`. Generated from `index.html` — see below. |
 | `/tracker/` | Garmin Tracker Data Field companion (reads `?trackId=…`; migrated here from mmendelson.com/tracker, which redirects here preserving the query) |
 | `/live_tracker/` | Real-time Garmin LiveTrack map follower (renamed from `/tracker/`; per-user links `/live_tracker/?user=<user>`) |
 | `/tracker/<user>` (legacy) | Caught by `404.html` → `/live_tracker/?user=<user>` (old Live Track share links) |
@@ -43,8 +43,26 @@ decisions, and phase checklist live in
 | `/privacy_policy/ /policy/ /privacy/` | Language-detecting redirect stubs → `/privacy_policy/<lang>/` (generated) |
 | `/404.html` | Pretty-URL router (per-user tracker links) + fallback |
 
-Editing the 6 main-page copies: they must stay **byte-identical** — edit
-`index.html`, then copy it over `{de,en,es,fr,pt}/index.html`.
+**Editing the main page.** `index.html` is the single source (it is also the
+English root that redirects `/` → `/{lang}/`). Edit it, then regenerate the
+five language copies:
+
+```sh
+node scripts/gen-index-pages.js
+```
+
+The generator ([`scripts/gen-index-pages.js`](scripts/gen-index-pages.js))
+copies `index.html` verbatim into `{de,en,es,fr,pt}/index.html`, stamping only
+four head fields per language: `<html lang>`, `<title>`, the meta description,
+and a self-`canonical` (`https://apps.mmendelson.com/{lang}/`). This gives each
+URL a real per-language identity for search engines and social previews while
+the runtime i18n (`assets/js/i18n.js`, which reads the language from the URL
+path) keeps translating the visible content. The shared `hreflang` cluster is
+identical across all copies (reciprocal, as required); the root `/` keeps its
+canonical to `https://apps.mmendelson.com/` as the `x-default`. Per-language
+`<title>`/description strings live in the generator's `T` table — bump them
+there, not in the generated files. **Do not hand-edit the five generated
+`{lang}/index.html` files.**
 
 ## Adding an app
 
