@@ -54,7 +54,103 @@ const T = {
   },
 };
 
-const template = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+// ---------------------------------------------------------------------------
+// SoftwareApplication structured data (ItemList of the app cards).
+//
+// Each static .card in index.html represents a real Garmin Connect IQ app. We
+// emit one schema.org/SoftwareApplication per card so search engines recognize
+// the pages as a software catalogue (the query space — "garmin pacer data
+// field", "garmin watch face free" — where this markup helps). Everything is
+// read from the card markup itself (name, store URL, icon, category from the
+// section), so it never drifts from the page and holds no hardcoded values.
+//
+// Deliberately NOT emitted: aggregateRating and offers/price. The cards carry
+// download counts, not real star ratings, and the prices are not on the page —
+// inventing either would be a schema-policy violation. Without them Google will
+// not render the app *rich result* (stars/price), but the entities are still
+// declared correctly for categorization; add rating/price here only when real,
+// on-page data exists.
+// ---------------------------------------------------------------------------
+function buildAppsJsonLd(source) {
+  const dataFieldsAt = source.indexOf('id="data-fields"');
+  const watchFacesAt = source.indexOf('id="watch-faces"');
+
+  const cardRe = /<div class="card" data-name="([^"]+)">([\s\S]*?)(?=<div class="card"|<\/section>)/g;
+  const items = [];
+  let m;
+  while ((m = cardRe.exec(source)) !== null) {
+    const name = m[1];
+    const body = m[2];
+    const pos = m.index;
+    // A card is a watch face only if it sits after the #watch-faces section;
+    // everything from #data-fields onward (before that) is a data field.
+    const isWatchFace = watchFacesAt >= 0 && pos > watchFacesAt;
+    const inCatalogue = dataFieldsAt >= 0 && pos > dataFieldsAt;
+    if (!inCatalogue) continue; // skip anything before the catalogue (e.g. featured markup)
+
+    const store = /<a class="ciq-badge"[^>]*href="([^"]+)"/.exec(body);
+    const thumb = /<img class="thumb" src="([^"]+)"/.exec(body);
+    if (!store || !thumb) {
+      throw new Error(`card "${name}" is missing a store badge or thumbnail`);
+    }
+    const img = thumb[1].startsWith("http") ? thumb[1] : SITE + thumb[1];
+
+    items.push({
+      "@type": "ListItem",
+      position: items.length + 1,
+      item: {
+        "@type": "SoftwareApplication",
+        name,
+        applicationCategory: "HealthApplication",
+        applicationSubCategory: isWatchFace ? "Watch Face" : "Data Field",
+        operatingSystem: "Garmin Connect IQ",
+        url: store[1],
+        image: img,
+        author: {
+          "@type": "Person",
+          name: "Mateus Mendelson",
+          url: "https://mmendelson.com/",
+        },
+      },
+    });
+  }
+
+  if (!items.length) throw new Error("no app cards found — refusing to emit an empty ItemList");
+
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Garmin Connect IQ apps by M. Mendelson",
+    itemListElement: items,
+  };
+  return (
+    '<script type="application/ld+json">\n' +
+    JSON.stringify(data, null, 2) +
+    "\n</script>"
+  );
+}
+
+let template = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+
+// Refresh the JSON-LD region in the source, then persist it back to index.html
+// so the root page carries current structured data too. The five language
+// copies inherit the same block (app names/URLs/categories are language-neutral).
+{
+  const START = "<!-- apps-jsonld:start";
+  const END = "<!-- apps-jsonld:end -->";
+  const s = template.indexOf(START);
+  const e = template.indexOf(END);
+  if (s < 0 || e < 0) {
+    throw new Error("apps-jsonld markers not found in index.html");
+  }
+  const startLineEnd = template.indexOf("\n", s) + 1;
+  const jsonld = buildAppsJsonLd(template);
+  template =
+    template.slice(0, startLineEnd) + jsonld + "\n" + template.slice(e);
+  fs.writeFileSync(path.join(ROOT, "index.html"), template);
+  const count = (jsonld.match(/"@type": "SoftwareApplication"/g) || []).length;
+  console.log(`refreshed apps JSON-LD in index.html (${count} SoftwareApplication entries)`);
+}
 
 // Sanity-check the four anchors exist exactly once in the source, so a future
 // edit that renames them fails loudly instead of silently producing English
