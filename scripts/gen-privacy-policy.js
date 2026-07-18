@@ -62,7 +62,16 @@ const CSS = `
   th { background: var(--surface2); }
   .note { color: var(--muted); font-size: 14px; }
   footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
-  footer.page a { color: var(--muted); }`;
+  footer.page a { color: var(--muted); }
+  .foot-cookies { color: var(--primary); }
+  .consent-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 20px rgba(0,0,0,.5); }
+  .consent-bar[hidden] { display: none; }
+  .consent-text { margin: 0; font-size: 13.5px; color: var(--text); max-width: 60ch; }
+  .consent-actions { display: flex; gap: 10px; }
+  .consent-btn { min-height: 40px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; background: var(--primary); color: #fff; }
+  .consent-btn:hover { filter: brightness(1.1); }
+  .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
+  .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }`;
 
 function fill(str, map) {
   let out = str;
@@ -106,6 +115,16 @@ ${altLinks}
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>${CSS}
 </style>
+<!-- GA4 with Consent Mode v2 (denied by default). -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  gtag('config', 'G-0MHS4QK452');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
 </head>
 <body>
 
@@ -174,14 +193,24 @@ ${s7b}
 
   <h2>${t.s9Title}</h2>
   <p>${s9Body}</p>
+  <h2>${t.sAnalyticsTitle}</h2>
+  <p>${t.sAnalyticsBody}</p>
 </main>
 
-<footer class="page"><p>${t.footer}</p></footer>
+<footer class="page"><p>${t.footer} · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
 
 <script>
 (function(){var s=document.querySelector(".lang-selector");if(!s)return;var b=s.querySelector(".lang-btn");b.addEventListener("click",function(e){e.stopPropagation();s.classList.toggle("open");});document.addEventListener("click",function(){s.classList.remove("open");});})();
 </script>
 
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+<script src="/assets/js/consent.js?v=1"></script>
 </body>
 </html>
 `;
