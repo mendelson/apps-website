@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/visual.css?v=30" />
+<link rel="stylesheet" href="/assets/css/visual.css?v=31" />
 <style>
 .header-subtitle-row{display:flex;align-items:center;justify-content:center;gap:8px;}
 .header-subtitle-row p{margin:0;}
@@ -48,46 +48,35 @@
     <div id="loader-container"></div>
   </div>
 
-  <div class="brandbar">
-    <div class="brandbar-inner">
-      <a class="brand-logo" href="/" aria-label="apps.mmendelson.com — home">
-        <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
-            <path d="M6 7H23V25H38V42"></path>
-            <path d="M6 13H17V30H34V42"></path>
-          </g>
-        </svg>
-      </a>
-      <div class="site-switch" role="navigation" aria-label="Sister sites">
-        <a href="https://mmendelson.com">Home</a>
-        <a href="/" class="active" aria-current="page">Apps</a>
-        <a href="https://run.mmendelson.com">Run</a>
-      </div>
-    </div>
-  </div>
-
-
-<header>
-  <h1>Garmin Apps</h1>
-  <div class="header-subtitle-row">
-    <p data-i18n="headerSubtitle">Developed by M. Mendelson</p>
-    <div class="lang-selector">
-      <button class="lang-btn" aria-label="Language">🌐</button>
-      <div class="lang-dropdown">
-        <a href="/de/" class="lang-option">Deutsch</a>
-        <a href="/en/" class="lang-option">English</a>
-        <a href="/es/" class="lang-option">Español</a>
-        <a href="/fr/" class="lang-option">Français</a>
-        <a href="/pt/" class="lang-option">Português</a>
-      </div>
-    </div>
-  </div>
-</header>
+  <h1 class="visually-hidden">Garmin Apps</h1>
 
 <nav>
+  <a class="brand-logo" href="/" aria-label="apps.mmendelson.com — home">
+    <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
+        <path d="M6 7H23V25H38V42"></path>
+        <path d="M6 13H17V30H34V42"></path>
+      </g>
+    </svg>
+  </a>
+  <div class="site-switch" role="navigation" aria-label="Sister sites">
+    <a href="https://mmendelson.com">Home</a>
+    <a href="/" class="active" aria-current="page">Apps</a>
+    <a href="https://run.mmendelson.com">Run</a>
+  </div>
   <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
+  <div class="lang-selector">
+    <button class="lang-btn" aria-label="Language">🌐</button>
+    <div class="lang-dropdown">
+      <a href="/de/" class="lang-option">Deutsch</a>
+      <a href="/en/" class="lang-option">English</a>
+      <a href="/es/" class="lang-option">Español</a>
+      <a href="/fr/" class="lang-option">Français</a>
+      <a href="/pt/" class="lang-option">Português</a>
+    </div>
+  </div>
   <ul>
     <li><a href="#featured"    data-i18n="navFeatured">Featured</a></li>
     <li><a href="#data-fields" data-i18n="navDataFields">Data Fields</a></li>
