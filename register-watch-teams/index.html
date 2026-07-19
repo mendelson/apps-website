@@ -131,7 +131,6 @@
   }
   details[open]>summary::before{transform:rotate(90deg)}
   .country>summary{font-weight:600}
-  .league>summary{padding-left:30px;font-size:14px;color:var(--fg)}
   .count-badge{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
   .teams{padding:2px 0 8px}
   .team{
@@ -356,57 +355,68 @@
     });
   }
 
-  // Build the collapsible country > league > team tree. Teams are rendered
-  // lazily: a league's checkboxes are created the first time it is expanded,
-  // then kept in the DOM so selection state persists across collapse.
+  // Teams we never show: women's sides and under-age (U17/U19/U21/U23…) sides.
+  // The slim catalog has no gender/age field, so we match on the name after
+  // stripping accents (so "Féminin"/"Femení" normalise to plain ascii).
+  var UNDER_RE = /\bu-?\d{2}\b|\bunder[-\s]?\d{2}\b/;
+  var WOMEN_RE = /\b(?:women|woman|ladies|lady|frauen|damen|dames|naiset)\b|femin|femen|kvinn/;
+  function isExcludedTeam_(name) {
+    var n = String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return UNDER_RE.test(n) || WOMEN_RE.test(n);
+  }
+
+  // Flatten a country's leagues into one alphabetical team list: the
+  // competition (league) level is hidden, teams are de-duplicated by id, and
+  // excluded teams are dropped.
+  function countryTeams_(country) {
+    var seen = {};
+    var out = [];
+    (country.leagues || []).forEach(function (league) {
+      (league.teams || []).forEach(function (team) {
+        var id = String(team.id);
+        if (seen[id] || isExcludedTeam_(team.name)) return;
+        seen[id] = true;
+        out.push(team);
+      });
+    });
+    out.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    return out;
+  }
+
+  // Build the collapsible country > team tree (no competition level). A
+  // country's checkboxes are rendered lazily on first expand and kept in the
+  // DOM so selection state persists across collapse. Countries left empty by
+  // the exclusion filter are skipped.
   function buildTree(data) {
     var tree = $('tree');
     var frag = document.createDocumentFragment();
 
-    (data.countries || []).forEach(function (country, ci) {
+    (data.countries || []).forEach(function (country) {
+      var teams = countryTeams_(country);
+      if (!teams.length) return;
+
       var cDet = document.createElement('details');
       cDet.className = 'country';
       cDet.name = 'mm-country'; // exclusive accordion group (native)
       var cSum = document.createElement('summary');
-      var teamTotal = 0;
-      (country.leagues || []).forEach(function (l) { teamTotal += (l.teams || []).length; });
       cSum.innerHTML = '<span>' + escapeHtml(country.name) + '</span>' +
-        '<span class="count-badge">' + teamTotal + '</span>';
+        '<span class="count-badge">' + teams.length + '</span>';
       cDet.appendChild(cSum);
 
-      // Accordion: opening a country collapses any other open country.
+      var teamsWrap = document.createElement('div');
+      teamsWrap.className = 'teams';
+      var populated = false;
+      // Accordion: opening a country collapses any other open country, and
+      // lazily fills its team checkboxes the first time.
       cDet.addEventListener('toggle', function () {
         if (!cDet.open) return;
         collapseSiblings(tree, 'details.country', cDet);
+        if (!populated) {
+          populated = true;
+          teams.forEach(function (team) { teamsWrap.appendChild(teamRow(team)); });
+        }
       });
-
-      (country.leagues || []).forEach(function (league) {
-        var lDet = document.createElement('details');
-        lDet.className = 'league';
-        lDet.name = 'mm-league-' + ci; // one open league per country
-        var lSum = document.createElement('summary');
-        lSum.innerHTML = '<span>' + escapeHtml(league.name) + '</span>' +
-          '<span class="count-badge">' + (league.teams || []).length + '</span>';
-        lDet.appendChild(lSum);
-
-        var teamsWrap = document.createElement('div');
-        teamsWrap.className = 'teams';
-        var populated = false;
-        lDet.addEventListener('toggle', function () {
-          if (!lDet.open) return;
-          // Accordion: only one league open within a country at a time.
-          collapseSiblings(cDet, 'details.league', lDet);
-          if (!populated) {
-            populated = true;
-            (league.teams || []).forEach(function (team) {
-              teamsWrap.appendChild(teamRow(team));
-            });
-          }
-        });
-        lDet.appendChild(teamsWrap);
-        cDet.appendChild(lDet);
-      });
-
+      cDet.appendChild(teamsWrap);
       frag.appendChild(cDet);
     });
 
@@ -481,11 +491,12 @@
         var league = country.leagues[li];
         for (var ti = 0; ti < league.teams.length; ti++) {
           var team = league.teams[ti];
+          if (isExcludedTeam_(team.name)) continue;
           if (team.name.toLowerCase().indexOf(q) === -1) continue;
           var key = String(team.id);
           if (seen.has(key)) continue;
           seen.add(key);
-          matches.push({ team: team, where: country.name + ' · ' + league.name });
+          matches.push({ team: team, where: country.name });
           if (matches.length >= MAX) break outer;
         }
       }
