@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register your teams – Garmin Soccer Matches – M. Mendelson</title>
-<meta name="description" content="Pair your Garmin watch with the Soccer Matches data field: get a pairing code, pick the teams you want to follow, and save them to your watch.">
+<meta name="description" content="Pair your Garmin watch with the Soccer Matches watch face: get a pairing code, pick the teams you want to follow, and save them to your watch.">
 <link rel="canonical" href="https://apps.mmendelson.com/register-watch-teams/">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -200,7 +200,7 @@
           <button type="button" class="btn btn--ghost" id="copyCodeBtn">Copy</button>
           <span id="copyState" hidden>Copied</span>
         </div>
-        <p class="code-hint">Type this code into the <strong>Soccer Matches</strong> data field settings on your watch. It expires in 24&nbsp;hours.</p>
+        <p class="code-hint">Type this code into the <strong>Soccer Matches</strong> watch face settings on your watch. It expires in 24&nbsp;hours.</p>
         <div class="save-row">
           <button type="button" class="btn" id="doneBtn">Done — pick my teams</button>
         </div>
@@ -345,6 +345,17 @@
     });
   }
 
+  // Accordion: browsers that support the exclusive-<details> `name` attribute
+  // (all current ones) keep only one open per group synchronously; the
+  // toggle-based fallback below covers anything older.
+  var SUPPORTS_DETAILS_NAME = 'name' in document.createElement('details');
+  function collapseSiblings(scope, selector, keep) {
+    if (SUPPORTS_DETAILS_NAME) return; // native `name` grouping already did it
+    scope.querySelectorAll(selector + '[open]').forEach(function (d) {
+      if (d !== keep) d.open = false;
+    });
+  }
+
   // Build the collapsible country > league > team tree. Teams are rendered
   // lazily: a league's checkboxes are created the first time it is expanded,
   // then kept in the DOM so selection state persists across collapse.
@@ -352,9 +363,10 @@
     var tree = $('tree');
     var frag = document.createDocumentFragment();
 
-    (data.countries || []).forEach(function (country) {
+    (data.countries || []).forEach(function (country, ci) {
       var cDet = document.createElement('details');
       cDet.className = 'country';
+      cDet.name = 'mm-country'; // exclusive accordion group (native)
       var cSum = document.createElement('summary');
       var teamTotal = 0;
       (country.leagues || []).forEach(function (l) { teamTotal += (l.teams || []).length; });
@@ -362,9 +374,16 @@
         '<span class="count-badge">' + teamTotal + '</span>';
       cDet.appendChild(cSum);
 
+      // Accordion: opening a country collapses any other open country.
+      cDet.addEventListener('toggle', function () {
+        if (!cDet.open) return;
+        collapseSiblings(tree, 'details.country', cDet);
+      });
+
       (country.leagues || []).forEach(function (league) {
         var lDet = document.createElement('details');
         lDet.className = 'league';
+        lDet.name = 'mm-league-' + ci; // one open league per country
         var lSum = document.createElement('summary');
         lSum.innerHTML = '<span>' + escapeHtml(league.name) + '</span>' +
           '<span class="count-badge">' + (league.teams || []).length + '</span>';
@@ -374,7 +393,10 @@
         teamsWrap.className = 'teams';
         var populated = false;
         lDet.addEventListener('toggle', function () {
-          if (lDet.open && !populated) {
+          if (!lDet.open) return;
+          // Accordion: only one league open within a country at a time.
+          collapseSiblings(cDet, 'details.league', lDet);
+          if (!populated) {
             populated = true;
             (league.teams || []).forEach(function (team) {
               teamsWrap.appendChild(teamRow(team));
