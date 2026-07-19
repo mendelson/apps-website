@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register your teams – Garmin Soccer Matches – M. Mendelson</title>
+<meta name="description" content="Pair your Garmin watch with the Soccer Matches data field: get a pairing code, pick the teams you want to follow, and save them to your watch.">
+<link rel="canonical" href="https://apps.mmendelson.com/register-match/">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  gtag('config', 'G-0MHS4QK452');
+</script>
+
+<style>
+  :root{
+    --bg:#0f0f11; --card:#17171a; --fg:#ededed; --muted:#9a978f;
+    --line:rgba(255,255,255,.10); --accent:#3b82f6; --accent-ink:#fff;
+    --ok:#3fae6b; --err:#e0603a;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f5f4f1; --card:#ffffff; --fg:#1d1c1a; --muted:#6b675f;
+      --line:rgba(0,0,0,.12); --accent:#2563eb; --accent-ink:#ffffff;
+      --ok:#1f8a4c; --err:#c23c15;
+    }
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:'IBM Plex Sans',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .bar{
+    border-bottom:1px solid var(--line);
+    padding:14px 20px; display:flex; align-items:center; gap:10px;
+  }
+  .bar .brand{display:flex;align-items:center;gap:10px;color:var(--fg);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em}
+  .bar .brand:hover{color:var(--accent);text-decoration:none}
+  .bar .switch{display:flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:13px}
+  .bar .switch a{color:var(--muted);text-decoration:none;padding:8px 10px;min-height:40px;display:inline-flex;align-items:center}
+  .bar .switch a:hover{color:var(--accent);text-decoration:none}
+  .bar .switch a.active{color:var(--accent);border-bottom:1px solid var(--accent)}
+  main{max-width:680px;margin:0 auto;padding:32px 20px 96px}
+  h1{font-size:clamp(24px,5vw,32px);line-height:1.15;margin:0 0 8px}
+  .lead{color:var(--muted);margin:0 0 24px}
+
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px;margin-bottom:20px;
+  }
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 12px;font-weight:600}
+  .step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:600;margin-right:8px;font-family:'IBM Plex Mono',monospace}
+
+  .btn{
+    padding:12px 22px;font-size:15px;font-weight:600;cursor:pointer;
+    color:var(--accent-ink);background:var(--accent);border:0;border-radius:10px;
+    font-family:inherit;min-height:44px;
+  }
+  .btn:hover{filter:brightness(1.07)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+  .btn--ghost{background:none;border:1px solid var(--line);color:var(--fg)}
+  .btn--ghost:hover{border-color:var(--accent);filter:none}
+
+  /* Code display */
+  .code-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .code{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;
+    font-size:clamp(34px,9vw,52px);letter-spacing:.14em;
+    color:var(--fg);background:var(--bg);border:1px dashed var(--line);
+    border-radius:12px;padding:10px 20px;user-select:all;
+  }
+  .code-hint{color:var(--muted);font-size:14px;margin:14px 0 0}
+  #copyCodeBtn{font-size:13px;padding:8px 14px;min-height:38px}
+  #copyState{color:var(--ok);font-size:13px;margin-left:2px}
+
+  .spinner{
+    width:26px;height:26px;border-radius:50%;
+    border:3px solid var(--line);border-top-color:var(--accent);
+    animation:spin .8s linear infinite;display:inline-block;vertical-align:middle
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-row{display:flex;align-items:center;gap:12px;color:var(--muted)}
+
+  .msg{margin:0;font-size:14px}
+  .msg--err{color:var(--err)}
+  .msg--ok{color:var(--ok)}
+
+  [hidden]{display:none !important}
+
+  /* Team picker */
+  .picker-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .picker-head h2{margin:0}
+  #selCount{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  #filterInput{
+    width:100%;padding:12px 14px;font-size:16px;margin-bottom:14px;
+    color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;
+  }
+  #filterInput:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+  .tree{max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  details{border-bottom:1px solid var(--line)}
+  details:last-child{border-bottom:0}
+  summary{
+    cursor:pointer;padding:12px 14px;font-size:15px;font-weight:500;
+    list-style:none;display:flex;align-items:center;gap:8px;user-select:none;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::before{
+    content:"";width:0;height:0;border-left:6px solid var(--muted);
+    border-top:5px solid transparent;border-bottom:5px solid transparent;
+    transition:transform .15s ease;flex:none;
+  }
+  details[open]>summary::before{transform:rotate(90deg)}
+  .country>summary{font-weight:600}
+  .league>summary{padding-left:30px;font-size:14px;color:var(--fg)}
+  .count-badge{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .teams{padding:2px 0 8px}
+  .team{
+    display:flex;align-items:center;gap:10px;padding:9px 14px 9px 48px;
+    font-size:14px;cursor:pointer;min-height:40px;
+  }
+  .team:hover{background:var(--card)}
+  .team input{width:18px;height:18px;accent-color:var(--accent);flex:none;cursor:pointer}
+  .team.flat{padding-left:14px}
+  .team .where{color:var(--muted);font-size:12px;margin-left:6px}
+  .empty-note{padding:16px 14px;color:var(--muted);font-size:14px}
+
+  .save-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}
+</style>
+<style>
+.consent-bar{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 20px;padding:14px 20px;background:#1a1a1a;border-top:1px solid #333;box-shadow:0 -6px 20px rgba(0,0,0,.5)}
+.consent-bar[hidden]{display:none}
+.consent-text{margin:0;font-size:13.5px;color:#eee;max-width:60ch}
+.consent-actions{display:flex;gap:10px}
+.consent-btn{min-height:40px;padding:0 18px;border-radius:8px;border:0;cursor:pointer;font:inherit;font-size:14px;font-weight:600;background:#3b82f6;color:#fff}
+.consent-btn:hover{filter:brightness(1.1)}
+.consent-btn--ghost{background:none;border:1px solid #333;color:#eee;font-weight:500}
+.consent-btn--ghost:hover{border-color:#3b82f6;filter:none}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <a class="brand" href="https://apps.mmendelson.com/">
+      <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
+          <path d="M6 7H23V25H38V42"></path>
+          <path d="M6 13H17V30H34V42"></path>
+        </g>
+      </svg>
+    </a>
+    <div class="switch" role="navigation" aria-label="Sister sites">
+      <a href="https://mmendelson.com">Home</a>
+      <a href="https://apps.mmendelson.com/" class="active" aria-current="page">Apps</a>
+      <a href="https://run.mmendelson.com">Run</a>
+    </div>
+  </div>
+
+  <main>
+    <h1>Register your teams</h1>
+    <p class="lead">Pair this page with your Garmin watch, then choose the soccer teams you want it to follow.</p>
+
+    <!-- STEP 1: pairing code -->
+    <section class="panel" id="codePanel">
+      <h2><span class="step-num">1</span>Your pairing code</h2>
+
+      <div id="codeLoading" class="loading-row">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Getting your pairing code…</span>
+      </div>
+
+      <div id="codeError" hidden>
+        <p class="msg msg--err" id="codeErrorMsg">Couldn't reach the server.</p>
+        <div class="save-row">
+          <button type="button" class="btn" id="retryPairBtn">Try again</button>
+        </div>
+      </div>
+
+      <div id="codeReady" hidden>
+        <div class="code-box">
+          <span class="code" id="codeValue" aria-label="Pairing code"></span>
+          <button type="button" class="btn btn--ghost" id="copyCodeBtn">Copy</button>
+          <span id="copyState" hidden>Copied</span>
+        </div>
+        <p class="code-hint">Type this code into the <strong>Soccer Matches</strong> data field settings on your watch. It expires in 24&nbsp;hours.</p>
+        <div class="save-row">
+          <button type="button" class="btn" id="doneBtn">Done — pick my teams</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: team picker -->
+    <section class="panel" id="pickerPanel" hidden>
+      <div class="picker-head">
+        <h2><span class="step-num">2</span>Pick your teams</h2>
+        <span id="selCount">0 selected</span>
+      </div>
+
+      <input type="search" id="filterInput" placeholder="Filter teams by name…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter teams by name">
+
+      <div id="treeLoading" class="loading-row">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Loading team list…</span>
+      </div>
+      <div class="tree" id="tree" hidden></div>
+
+      <div class="save-row">
+        <button type="button" class="btn" id="saveBtn" disabled>Save my teams</button>
+        <span id="saveState" class="msg" hidden></span>
+      </div>
+    </section>
+
+    <!-- STEP 3: saved -->
+    <section class="panel" id="savedPanel" hidden>
+      <h2><span class="step-num">✓</span>All set</h2>
+      <p class="msg msg--ok" id="savedMsg">Your teams are saved.</p>
+      <div class="save-row">
+        <button type="button" class="btn btn--ghost" id="editBtn">Change my selection</button>
+      </div>
+    </section>
+  </main>
+
+<script>
+(function () {
+  'use strict';
+
+  // The Apps Script Web App. Configurable — may change if the backend is
+  // redeployed. Stays the same across normal backend updates.
+  var API_BASE = 'https://script.google.com/macros/s/AKfycbxmdM60WRUz7J2DTpfaO9EYVGBXCXp5qzichsDlk_N-ktEAyURMnqYZj3-Er2KtzHBa/exec';
+  var CATALOG_URL = 'catalog-index.json'; // bundled, same-origin
+
+  // Google Apps Script sends no CORS headers, so a normal cross-origin fetch()
+  // can't read the response. Call it via JSONP (inject a <script> tag).
+  function jsonp(url, opts) {
+    var timeoutMs = (opts && opts.timeoutMs) || 15000;
+    return new Promise(function (resolve, reject) {
+      var cb = 'cb_' + Math.random().toString(36).slice(2);
+      var script = document.createElement('script');
+      var timer = setTimeout(function () { cleanup(); reject(new Error('timeout')); }, timeoutMs);
+      function cleanup() { try { delete window[cb]; } catch (e) { window[cb] = undefined; } script.remove(); clearTimeout(timer); }
+      window[cb] = function (data) { cleanup(); resolve(data); };
+      script.onerror = function () { cleanup(); reject(new Error('network error')); };
+      script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + cb;
+      document.body.appendChild(script);
+    });
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  function show(el) { el.hidden = false; }
+  function hide(el) { el.hidden = true; }
+
+  var state = {
+    code: null,
+    catalog: null,
+    selected: new Set(),   // team ids (strings)
+    teamName: new Map()    // id -> name, for de-dupe/display
+  };
+
+  // ---- Step 1: pairing code -------------------------------------------------
+
+  function requestCode() {
+    show($('codeLoading')); hide($('codeError')); hide($('codeReady'));
+    jsonp(API_BASE + '?action=pair').then(function (res) {
+      if (!res || !res.ok || !res.code) {
+        throw new Error((res && res.error) || 'Unexpected response');
+      }
+      state.code = res.code;
+      $('codeValue').textContent = res.code;
+      hide($('codeLoading')); show($('codeReady'));
+    }).catch(function (err) {
+      $('codeErrorMsg').textContent = 'Couldn’t get a pairing code (' + err.message + '). Please try again.';
+      hide($('codeLoading')); show($('codeError'));
+    });
+  }
+
+  $('retryPairBtn').addEventListener('click', requestCode);
+
+  $('copyCodeBtn').addEventListener('click', function () {
+    var done = function () {
+      var s = $('copyState'); s.hidden = false;
+      setTimeout(function () { s.hidden = true; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(state.code).then(done, done);
+    } else {
+      var r = document.createRange(); r.selectNode($('codeValue'));
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      try { document.execCommand('copy'); } catch (e) {}
+      sel.removeAllRanges(); done();
+    }
+  });
+
+  $('doneBtn').addEventListener('click', function () {
+    show($('pickerPanel'));
+    $('pickerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    loadCatalog();
+  });
+
+  // ---- Step 2: team picker --------------------------------------------------
+
+  var catalogLoadStarted = false;
+  function loadCatalog() {
+    if (catalogLoadStarted) return;
+    catalogLoadStarted = true;
+    fetch(CATALOG_URL).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      state.catalog = data;
+      buildTree(data);
+      hide($('treeLoading')); show($('tree'));
+    }).catch(function (err) {
+      $('treeLoading').innerHTML = '<p class="msg msg--err">Couldn’t load the team list (' +
+        escapeHtml(err.message) + '). <a href="#" id="retryCatalog">Retry</a></p>';
+      var rc = $('retryCatalog');
+      if (rc) rc.addEventListener('click', function (e) {
+        e.preventDefault(); catalogLoadStarted = false;
+        $('treeLoading').innerHTML = '<span class="spinner"></span> <span>Loading team list…</span>';
+        loadCatalog();
+      });
+    });
+  }
+
+  function escapeHtml(v) {
+    return String(v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // Build the collapsible country > league > team tree. Teams are rendered
+  // lazily: a league's checkboxes are created the first time it is expanded,
+  // then kept in the DOM so selection state persists across collapse.
+  function buildTree(data) {
+    var tree = $('tree');
+    var frag = document.createDocumentFragment();
+
+    (data.countries || []).forEach(function (country) {
+      var cDet = document.createElement('details');
+      cDet.className = 'country';
+      var cSum = document.createElement('summary');
+      var teamTotal = 0;
+      (country.leagues || []).forEach(function (l) { teamTotal += (l.teams || []).length; });
+      cSum.innerHTML = '<span>' + escapeHtml(country.name) + '</span>' +
+        '<span class="count-badge">' + teamTotal + '</span>';
+      cDet.appendChild(cSum);
+
+      (country.leagues || []).forEach(function (league) {
+        var lDet = document.createElement('details');
+        lDet.className = 'league';
+        var lSum = document.createElement('summary');
+        lSum.innerHTML = '<span>' + escapeHtml(league.name) + '</span>' +
+          '<span class="count-badge">' + (league.teams || []).length + '</span>';
+        lDet.appendChild(lSum);
+
+        var teamsWrap = document.createElement('div');
+        teamsWrap.className = 'teams';
+        var populated = false;
+        lDet.addEventListener('toggle', function () {
+          if (lDet.open && !populated) {
+            populated = true;
+            (league.teams || []).forEach(function (team) {
+              teamsWrap.appendChild(teamRow(team));
+            });
+          }
+        });
+        lDet.appendChild(teamsWrap);
+        cDet.appendChild(lDet);
+      });
+
+      frag.appendChild(cDet);
+    });
+
+    tree.appendChild(frag);
+  }
+
+  function teamRow(team, opts) {
+    var id = String(team.id);
+    state.teamName.set(id, team.name);
+    var label = document.createElement('label');
+    label.className = 'team' + (opts && opts.flat ? ' flat' : '');
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = id;
+    cb.checked = state.selected.has(id);
+    cb.addEventListener('change', function () {
+      if (cb.checked) state.selected.add(id); else state.selected.delete(id);
+      syncSelection();
+    });
+    label.appendChild(cb);
+    var name = document.createElement('span');
+    name.textContent = team.name;
+    label.appendChild(name);
+    if (opts && opts.where) {
+      var w = document.createElement('span');
+      w.className = 'where';
+      w.textContent = opts.where;
+      label.appendChild(w);
+    }
+    return label;
+  }
+
+  // Keep every rendered checkbox for a given id in sync (a team can appear in
+  // more than one league, and also in the flat filter view).
+  function syncSelection() {
+    var boxes = $('tree').querySelectorAll('input[type=checkbox]');
+    boxes.forEach(function (b) { b.checked = state.selected.has(b.value); });
+    var n = state.selected.size;
+    $('selCount').textContent = n + ' selected';
+    $('saveBtn').disabled = n === 0;
+  }
+
+  // ---- Filter: flat search across the whole catalog -------------------------
+
+  var filterTimer = null;
+  $('filterInput').addEventListener('input', function () {
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(runFilter, 140);
+  });
+
+  function runFilter() {
+    var q = $('filterInput').value.trim().toLowerCase();
+    var tree = $('tree');
+    if (!q) {
+      // Restore the tree view.
+      if (tree.dataset.mode === 'filter') {
+        tree.innerHTML = '';
+        tree.dataset.mode = 'tree';
+        buildTree(state.catalog);
+      }
+      return;
+    }
+    tree.dataset.mode = 'filter';
+    tree.innerHTML = '';
+    var seen = new Set();
+    var matches = [];
+    var MAX = 300;
+    outer:
+    for (var ci = 0; ci < state.catalog.countries.length; ci++) {
+      var country = state.catalog.countries[ci];
+      for (var li = 0; li < country.leagues.length; li++) {
+        var league = country.leagues[li];
+        for (var ti = 0; ti < league.teams.length; ti++) {
+          var team = league.teams[ti];
+          if (team.name.toLowerCase().indexOf(q) === -1) continue;
+          var key = String(team.id);
+          if (seen.has(key)) continue;
+          seen.add(key);
+          matches.push({ team: team, where: country.name + ' · ' + league.name });
+          if (matches.length >= MAX) break outer;
+        }
+      }
+    }
+    if (!matches.length) {
+      var note = document.createElement('div');
+      note.className = 'empty-note';
+      note.textContent = 'No teams match “' + q + '”.';
+      tree.appendChild(note);
+      return;
+    }
+    var frag = document.createDocumentFragment();
+    matches.forEach(function (m) {
+      frag.appendChild(teamRow(m.team, { flat: true, where: m.where }));
+    });
+    tree.appendChild(frag);
+    if (matches.length >= MAX) {
+      var more = document.createElement('div');
+      more.className = 'empty-note';
+      more.textContent = 'Showing the first ' + MAX + ' matches — keep typing to narrow it down.';
+      tree.appendChild(more);
+    }
+  }
+
+  // ---- Save -----------------------------------------------------------------
+
+  $('saveBtn').addEventListener('click', function () {
+    var ids = Array.from(state.selected);
+    if (!ids.length) return;
+    if (ids.length > 200) {
+      setSaveState('Please pick 200 teams or fewer (you have ' + ids.length + ').', 'err');
+      return;
+    }
+    var btn = $('saveBtn');
+    btn.disabled = true;
+    setSaveState('Saving…', '');
+    var url = API_BASE + '?action=saveTeams&code=' + encodeURIComponent(state.code) +
+      '&teamIds=' + encodeURIComponent(ids.join(','));
+    jsonp(url).then(function (res) {
+      if (res && res.ok) {
+        showSaved(res.complete);
+        return;
+      }
+      var err = (res && res.error) || 'Unknown error';
+      if (/expired|unknown/i.test(err)) {
+        setSaveState('Your pairing code expired. ', 'err', true);
+      } else {
+        setSaveState('Couldn’t save: ' + err, 'err');
+      }
+      btn.disabled = false;
+    }).catch(function (e) {
+      setSaveState('Couldn’t save (' + e.message + '). Please try again.', 'err');
+      btn.disabled = false;
+    });
+  });
+
+  function setSaveState(text, kind, offerReload) {
+    var el = $('saveState');
+    el.hidden = false;
+    el.className = 'msg' + (kind === 'err' ? ' msg--err' : kind === 'ok' ? ' msg--ok' : '');
+    el.textContent = text;
+    if (offerReload) {
+      var a = document.createElement('a');
+      a.href = '#'; a.textContent = 'Reload for a new code';
+      a.addEventListener('click', function (e) { e.preventDefault(); location.reload(); });
+      el.appendChild(a);
+    }
+  }
+
+  function showSaved(complete) {
+    hide($('pickerPanel'));
+    show($('savedPanel'));
+    $('savedMsg').textContent = complete
+      ? 'Your teams are saved and your watch is paired. You’re all set!'
+      : 'Your teams are saved. Now enter the code on your watch to finish pairing.';
+    $('savedPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('editBtn').addEventListener('click', function () {
+    hide($('savedPanel'));
+    show($('pickerPanel'));
+    $('saveState').hidden = true;
+    $('saveBtn').disabled = state.selected.size === 0;
+    $('pickerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ---- Go -------------------------------------------------------------------
+  requestCode();
+})();
+</script>
+
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+<script src="/assets/js/consent.js?v=1"></script>
+</body>
+</html>
