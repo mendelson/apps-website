@@ -79,17 +79,7 @@
   .btn--ghost{background:none;border:1px solid var(--line);color:var(--fg)}
   .btn--ghost:hover{border-color:var(--accent);filter:none}
 
-  /* Code display */
-  .code-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .code{
-    font-family:'IBM Plex Mono',monospace;font-weight:600;
-    font-size:clamp(34px,9vw,52px);letter-spacing:.14em;
-    color:var(--fg);background:var(--bg);border:1px dashed var(--line);
-    border-radius:12px;padding:10px 20px;user-select:all;
-  }
   .code-hint{color:var(--muted);font-size:14px;margin:14px 0 0}
-  #copyCodeBtn{font-size:13px;padding:8px 14px;min-height:38px}
-  #copyState{color:var(--ok);font-size:13px;margin-left:2px}
 
   .spinner{
     width:26px;height:26px;border-radius:50%;
@@ -144,6 +134,27 @@
   .empty-note{padding:16px 14px;color:var(--muted);font-size:14px}
 
   .save-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}
+
+  /* Code entry (user types the code shown on their watch) */
+  .code-entry{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .code-field{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;
+    font-size:clamp(28px,8vw,44px);letter-spacing:.14em;text-transform:uppercase;
+    width:auto;max-width:240px;text-align:center;
+    color:var(--fg);background:var(--bg);border:1px dashed var(--line);
+    border-radius:12px;padding:8px 18px;
+  }
+  .code-field:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+  /* "Currently following" summary of previously-selected teams */
+  #selectedSummary{margin:2px 0 16px}
+  .sel-summary-label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .sel-summary{display:flex;flex-wrap:wrap;gap:8px}
+  .sel-chip{
+    font-size:13px;padding:5px 12px;border-radius:999px;
+    background:var(--bg);border:1px solid var(--line);color:var(--fg);
+    font-variant-numeric:tabular-nums;
+  }
 </style>
 <style>
 .consent-bar{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 20px;padding:14px 20px;background:#1a1a1a;border-top:1px solid #333;box-shadow:0 -6px 20px rgba(0,0,0,.5)}
@@ -175,35 +186,18 @@
 
   <main>
     <h1>Register your teams</h1>
-    <p class="lead">Pair this page with your Garmin watch, then choose the soccer teams you want it to follow.</p>
+    <p class="lead">Enter the pairing code from your Garmin watch, then choose the soccer teams you want it to follow. Come back any time with the same code to change them.</p>
 
-    <!-- STEP 1: pairing code -->
+    <!-- STEP 1: enter the pairing code shown on the watch -->
     <section class="panel" id="codePanel">
-      <h2><span class="step-num">1</span>Your pairing code</h2>
+      <h2><span class="step-num">1</span>Enter your pairing code</h2>
+      <p class="code-hint" style="margin-top:0">Open the <strong>Football Matches</strong> watch face on your Garmin — it shows a 5-character code. Type that code here.</p>
 
-      <div id="codeLoading" class="loading-row">
-        <span class="spinner" aria-hidden="true"></span>
-        <span>Getting your pairing code…</span>
+      <div class="code-entry">
+        <input type="text" id="codeInput" class="code-field" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="5" placeholder="ABC23" aria-label="Pairing code from your watch">
+        <button type="button" class="btn" id="codeSubmitBtn">Continue</button>
       </div>
-
-      <div id="codeError" hidden>
-        <p class="msg msg--err" id="codeErrorMsg">Couldn't reach the server.</p>
-        <div class="save-row">
-          <button type="button" class="btn" id="retryPairBtn">Try again</button>
-        </div>
-      </div>
-
-      <div id="codeReady" hidden>
-        <div class="code-box">
-          <span class="code" id="codeValue" aria-label="Pairing code"></span>
-          <button type="button" class="btn btn--ghost" id="copyCodeBtn">Copy</button>
-          <span id="copyState" hidden>Copied</span>
-        </div>
-        <p class="code-hint">Type this code into the <strong>Football Matches</strong> watch face settings on your watch. It expires in 24&nbsp;hours.</p>
-        <div class="save-row">
-          <button type="button" class="btn" id="doneBtn">Done — pick my teams</button>
-        </div>
-      </div>
+      <p class="msg msg--err" id="codeErrorMsg" hidden></p>
     </section>
 
     <!-- STEP 2: team picker -->
@@ -211,6 +205,11 @@
       <div class="picker-head">
         <h2><span class="step-num">2</span>Pick your teams</h2>
         <span id="selCount">0 selected</span>
+      </div>
+
+      <div id="selectedSummary" hidden>
+        <p class="sel-summary-label">Currently following</p>
+        <div id="selectedWrap" class="sel-summary"></div>
       </div>
 
       <input type="search" id="filterInput" placeholder="Filter teams by name…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter teams by name">
@@ -273,45 +272,63 @@
     teamName: new Map()    // id -> name, for de-dupe/display
   };
 
-  // ---- Step 1: pairing code -------------------------------------------------
+  // ---- Step 1: enter the pairing code shown on the watch --------------------
 
-  function requestCode() {
-    show($('codeLoading')); hide($('codeError')); hide($('codeReady'));
-    jsonp(API_BASE + '?action=pair').then(function (res) {
-      if (!res || !res.ok || !res.code) {
-        throw new Error((res && res.error) || 'Unexpected response');
+  // Keep only unambiguous-alphabet chars (matches the backend), max 5.
+  function normalizeCode(v) {
+    return String(v || '').toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, '').slice(0, 5);
+  }
+
+  function showCodeError(msg) {
+    var el = $('codeErrorMsg');
+    el.textContent = msg;
+    el.hidden = false;
+  }
+
+  function submitCode() {
+    var code = normalizeCode($('codeInput').value);
+    $('codeInput').value = code;
+    if (code.length !== 5) {
+      showCodeError('Enter the 5-character code shown on your watch.');
+      return;
+    }
+    $('codeErrorMsg').hidden = true;
+    var btn = $('codeSubmitBtn');
+    var prev = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Checking…';
+    // lookup pre-loads any teams already saved for this code, so the picker
+    // opens with the user's previous selection checked.
+    jsonp(API_BASE + '?action=lookup&code=' + encodeURIComponent(code)).then(function (res) {
+      btn.disabled = false; btn.textContent = prev;
+      if (!res || !res.ok) {
+        var err = (res && res.error) || 'Unexpected response';
+        if (/unknown/i.test(err)) {
+          showCodeError('That code isn’t recognized yet. Make sure the watch face is installed and showing a code, then try again.');
+        } else {
+          showCodeError('Couldn’t check that code (' + err + '). Please try again.');
+        }
+        return;
       }
-      state.code = res.code;
-      $('codeValue').textContent = res.code;
-      hide($('codeLoading')); show($('codeReady'));
+      state.code = code;
+      state.selected = new Set((res.teamIds || []).map(String));
+      revealPicker();
     }).catch(function (err) {
-      $('codeErrorMsg').textContent = 'Couldn’t get a pairing code (' + err.message + '). Please try again.';
-      hide($('codeLoading')); show($('codeError'));
+      btn.disabled = false; btn.textContent = prev;
+      showCodeError('Couldn’t reach the server (' + err.message + '). Please try again.');
     });
   }
 
-  $('retryPairBtn').addEventListener('click', requestCode);
-
-  $('copyCodeBtn').addEventListener('click', function () {
-    var done = function () {
-      var s = $('copyState'); s.hidden = false;
-      setTimeout(function () { s.hidden = true; }, 1600);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(state.code).then(done, done);
-    } else {
-      var r = document.createRange(); r.selectNode($('codeValue'));
-      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-      try { document.execCommand('copy'); } catch (e) {}
-      sel.removeAllRanges(); done();
-    }
+  $('codeSubmitBtn').addEventListener('click', submitCode);
+  $('codeInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); submitCode(); }
   });
 
-  $('doneBtn').addEventListener('click', function () {
+  function revealPicker() {
     show($('pickerPanel'));
     $('pickerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     loadCatalog();
-  });
+    syncSelection();
+  }
 
   // ---- Step 2: team picker --------------------------------------------------
 
@@ -324,7 +341,10 @@
       return r.json();
     }).then(function (data) {
       state.catalog = data;
+      resolveSelectedNames(data);   // names for the "currently following" summary
       buildTree(data);
+      renderSelectedSummary();
+      syncSelection();
       hide($('treeLoading')); show($('tree'));
     }).catch(function (err) {
       $('treeLoading').innerHTML = '<p class="msg msg--err">Couldn’t load the team list (' +
@@ -457,6 +477,43 @@
     var n = state.selected.size;
     $('selCount').textContent = n + ' selected';
     $('saveBtn').disabled = n === 0;
+    renderSelectedSummary();
+  }
+
+  // Resolve display names for the currently-selected ids (used by the summary)
+  // from the catalog, so a returning user sees their previous picks by name.
+  function resolveSelectedNames(data) {
+    if (!state.selected.size) return;
+    var need = new Set(state.selected);
+    (data.countries || []).some(function (c) {
+      (c.leagues || []).forEach(function (l) {
+        (l.teams || []).forEach(function (t) {
+          var id = String(t.id);
+          if (need.has(id)) { state.teamName.set(id, t.name); need.delete(id); }
+        });
+      });
+      return need.size === 0;
+    });
+  }
+
+  // Show the current selection as name chips, so previously-chosen teams are
+  // visible without hunting through the tree. Live-updates as boxes toggle.
+  function renderSelectedSummary() {
+    var box = $('selectedSummary');
+    var wrap = $('selectedWrap');
+    if (!box || !wrap) return;
+    if (!state.selected.size) { box.hidden = true; wrap.innerHTML = ''; return; }
+    var ids = Array.from(state.selected).sort(function (a, b) {
+      return (state.teamName.get(a) || a).localeCompare(state.teamName.get(b) || b);
+    });
+    wrap.innerHTML = '';
+    ids.forEach(function (id) {
+      var chip = document.createElement('span');
+      chip.className = 'sel-chip';
+      chip.textContent = state.teamName.get(id) || ('Team ' + id);
+      wrap.appendChild(chip);
+    });
+    box.hidden = false;
   }
 
   // ---- Filter: flat search across the whole catalog -------------------------
@@ -537,12 +594,12 @@
       '&teamIds=' + encodeURIComponent(ids.join(','));
     jsonp(url).then(function (res) {
       if (res && res.ok) {
-        showSaved(res.complete);
+        showSaved();
         return;
       }
       var err = (res && res.error) || 'Unknown error';
-      if (/expired|unknown/i.test(err)) {
-        setSaveState('Your pairing code expired. ', 'err', true);
+      if (/unknown/i.test(err)) {
+        setSaveState('That pairing code isn’t recognized. ', 'err', true);
       } else {
         setSaveState('Couldn’t save: ' + err, 'err');
       }
@@ -560,18 +617,16 @@
     el.textContent = text;
     if (offerReload) {
       var a = document.createElement('a');
-      a.href = '#'; a.textContent = 'Reload for a new code';
+      a.href = '#'; a.textContent = 'Start over';
       a.addEventListener('click', function (e) { e.preventDefault(); location.reload(); });
       el.appendChild(a);
     }
   }
 
-  function showSaved(complete) {
+  function showSaved() {
     hide($('pickerPanel'));
     show($('savedPanel'));
-    $('savedMsg').textContent = complete
-      ? 'Your teams are saved and your watch is paired. You’re all set!'
-      : 'Your teams are saved. Now enter the code on your watch to finish pairing.';
+    $('savedMsg').textContent = 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.';
     $('savedPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -584,7 +639,7 @@
   });
 
   // ---- Go -------------------------------------------------------------------
-  requestCode();
+  $('codeInput').focus();
 })();
 </script>
 
