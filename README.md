@@ -41,6 +41,7 @@ decisions, and phase checklist live in
 | `/live_tracker/<user>` | Caught by `404.html` → `/live_tracker/?user=<user>` |
 | `/privacy_policy/{lang}/` | Canonical localized privacy policy (generated) |
 | `/privacy_policy/ /policy/ /privacy/` | Language-detecting redirect stubs → `/privacy_policy/<lang>/` (generated) |
+| `/garmin-pricing/` | Redirect stub → KiezelPay checkout (`kiezelpay.com/code/?s=…`). Centralized here so `mmendelson.com/garmin-pricing` and any other site only ever have to hop through this one URL. |
 | `/404.html` | Pretty-URL router (per-user tracker links) + fallback |
 
 **Editing the main page.** `index.html` is the single source (it is also the
