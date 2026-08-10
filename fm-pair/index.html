@@ -407,7 +407,9 @@
       teamFallback: 'Team {id}',
       followingHint: 'Tap × on a team to stop following it.',
       removeTeam: 'Stop following {team}',
-      removedTeam: '{team} removed'
+      removedTeam: '{team} removed',
+      verifying: 'Taking longer than usual — checking whether it saved…',
+      errSaveSlow: 'The server is slow right now and we couldn’t confirm the save. Wait a moment and try again.'
     },
     pt: {
       h1: 'Registre seus times',
@@ -451,7 +453,9 @@
       teamFallback: 'Time {id}',
       followingHint: 'Toque no × de um time para parar de acompanhá-lo.',
       removeTeam: 'Parar de acompanhar {team}',
-      removedTeam: '{team} removido'
+      removedTeam: '{team} removido',
+      verifying: 'Está demorando mais que o normal — verificando se foi salvo…',
+      errSaveSlow: 'O servidor está lento agora e não foi possível confirmar. Aguarde um instante e tente de novo.'
     },
     es: {
       h1: 'Registra tus equipos',
@@ -495,7 +499,9 @@
       teamFallback: 'Equipo {id}',
       followingHint: 'Toca la × de un equipo para dejar de seguirlo.',
       removeTeam: 'Dejar de seguir a {team}',
-      removedTeam: '{team} eliminado'
+      removedTeam: '{team} eliminado',
+      verifying: 'Está tardando más de lo normal: comprobando si se guardó…',
+      errSaveSlow: 'El servidor está lento y no se pudo confirmar. Espera un momento e inténtalo de nuevo.'
     },
     fr: {
       h1: 'Enregistrez vos équipes',
@@ -539,7 +545,9 @@
       teamFallback: 'Équipe {id}',
       followingHint: 'Touchez le × d’une équipe pour ne plus la suivre.',
       removeTeam: 'Ne plus suivre {team}',
-      removedTeam: '{team} retirée'
+      removedTeam: '{team} retirée',
+      verifying: 'Cela prend plus de temps que d’habitude — vérification de l’enregistrement…',
+      errSaveSlow: 'Le serveur est lent et l’enregistrement n’a pas pu être confirmé. Patientez un instant et réessayez.'
     },
     de: {
       h1: 'Teams registrieren',
@@ -583,7 +591,9 @@
       teamFallback: 'Team {id}',
       followingHint: 'Tippe auf das × eines Teams, um ihm nicht mehr zu folgen.',
       removeTeam: '{team} nicht mehr folgen',
-      removedTeam: '{team} entfernt'
+      removedTeam: '{team} entfernt',
+      verifying: 'Dauert länger als üblich — es wird geprüft, ob gespeichert wurde…',
+      errSaveSlow: 'Der Server ist gerade langsam und das Speichern konnte nicht bestätigt werden. Warte kurz und versuche es erneut.'
     },
     ru: {
       h1: 'Регистрация команд',
@@ -627,7 +637,9 @@
       teamFallback: 'Команда {id}',
       followingHint: 'Нажмите × у команды, чтобы перестать следить за ней.',
       removeTeam: 'Перестать следить за {team}',
-      removedTeam: '{team} удалена'
+      removedTeam: '{team} удалена',
+      verifying: 'Дольше обычного — проверяем, сохранилось ли…',
+      errSaveSlow: 'Сервер сейчас медленный, подтвердить сохранение не удалось. Подождите немного и попробуйте снова.'
     }
   };
 
@@ -1271,7 +1283,10 @@
     setSaveState(t('saving'), '');
     var url = API_BASE + '?action=saveTeams&code=' + encodeURIComponent(state.code) +
       '&teamIds=' + encodeURIComponent(ids.join(','));
-    jsonp(url).then(function (res) {
+    // 30 s, not the 15 s default. This endpoint takes the script lock and the
+    // whole Web App has a ~3 s floor before it does anything, so 15 s was a
+    // budget the save could plausibly lose while still succeeding.
+    jsonp(url, { timeoutMs: 30000 }).then(function (res) {
       if (res && res.ok) {
         showSaved();
         return;
@@ -1284,9 +1299,34 @@
       }
       btn.disabled = false;
     }).catch(function (e) {
+      // A timeout means WE stopped listening — it does not mean the backend
+      // stopped working. saveTeams writes the row before doing anything else,
+      // so a save that ran long has usually already landed, and telling the
+      // user it failed sends them to retry something that is done. Ask what is
+      // stored before claiming anything.
+      if (e.message === 'timeout') { verifyAfterTimeout(ids, btn); return; }
       setSaveState(t('errSaveNetwork', { error: e.message }), 'err');
       btn.disabled = false;
     });
+  }
+
+  // Read the row back and compare it with what we sent. Same ids, same order →
+  // the save happened and only the answer was lost.
+  function verifyAfterTimeout(ids, btn) {
+    setSaveState(t('verifying'), '');
+    jsonp(API_BASE + '?action=lookup&code=' + encodeURIComponent(state.code), { timeoutMs: 20000 })
+      .then(function (res) {
+        if (res && res.ok && (res.teamIds || []).join(',') === ids.join(',')) {
+          showSaved();
+          return;
+        }
+        setSaveState(t('errSaveSlow'), 'err');
+        btn.disabled = false;
+      })
+      .catch(function () {
+        setSaveState(t('errSaveSlow'), 'err');
+        btn.disabled = false;
+      });
   }
 
   // The save can be fired from step 3, or straight from step 2 when there is
