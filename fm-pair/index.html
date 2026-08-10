@@ -240,17 +240,17 @@
   </div>
 
   <main>
-    <h1>Register your teams</h1>
-    <p class="lead">Enter the pairing code from your Garmin watch, then choose the soccer teams you want it to follow. Come back any time with the same code to change them.</p>
+    <h1 data-i18n="h1">Register your teams</h1>
+    <p class="lead" data-i18n="lead">Enter the pairing code from your Garmin watch, then choose the soccer teams you want it to follow. Come back any time with the same code to change them.</p>
 
     <!-- STEP 1: enter the pairing code shown on the watch -->
     <section class="panel" id="codePanel">
-      <h2><span class="step-num">1</span>Enter your pairing code</h2>
-      <p class="code-hint" style="margin-top:0">Open the <strong>Football Matches</strong> watch face on your Garmin — it shows a 5-character code. Type that code here.</p>
+      <h2><span class="step-num">1</span><span data-i18n="step1">Enter your pairing code</span></h2>
+      <p class="code-hint" id="step1Hint" style="margin-top:0">Open the <strong>Football Matches</strong> watch face on your Garmin — it shows a 5-character code. Type that code here.</p>
 
       <div class="code-entry">
-        <input type="text" id="codeInput" class="code-field" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="5" placeholder="ABC23" aria-label="Pairing code from your watch">
-        <button type="button" class="btn" id="codeSubmitBtn">Continue</button>
+        <input type="text" id="codeInput" class="code-field" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="5" placeholder="ABC23" data-i18n-aria="codeAria" aria-label="Pairing code from your watch">
+        <button type="button" class="btn" id="codeSubmitBtn" data-i18n="continue">Continue</button>
       </div>
       <p class="msg msg--err" id="codeErrorMsg" hidden></p>
     </section>
@@ -258,52 +258,52 @@
     <!-- STEP 2: team picker -->
     <section class="panel" id="pickerPanel" hidden>
       <div class="picker-head">
-        <h2><span class="step-num">2</span>Pick your teams</h2>
+        <h2><span class="step-num">2</span><span data-i18n="step2">Pick your teams</span></h2>
         <span id="selCount">0 selected</span>
       </div>
 
       <div id="selectedSummary" hidden>
-        <p class="sel-summary-label">Currently following</p>
+        <p class="sel-summary-label" data-i18n="following">Currently following</p>
         <div id="selectedWrap" class="sel-summary"></div>
       </div>
 
-      <input type="search" id="filterInput" placeholder="Filter teams by name…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter teams by name">
+      <input type="search" id="filterInput" placeholder="Filter teams by name…" data-i18n="filterPlaceholder" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter teams by name" data-i18n-aria="filterAria">
 
       <div id="treeLoading" class="loading-row">
         <span class="spinner" aria-hidden="true"></span>
-        <span>Loading team list…</span>
+        <span data-i18n="loadingTeams">Loading team list…</span>
       </div>
       <div class="tree" id="tree" hidden></div>
 
       <div class="save-row">
-        <button type="button" class="btn" id="continueBtn" disabled>Continue</button>
+        <button type="button" class="btn" id="continueBtn" data-i18n="continue" disabled>Continue</button>
         <span id="pickerSaveState" class="msg" hidden></span>
       </div>
     </section>
 
     <!-- STEP 3: priority order -->
     <section class="panel" id="priorityPanel" hidden>
-      <h2><span class="step-num">3</span>Set your order</h2>
+      <h2><span class="step-num">3</span><span data-i18n="step3">Set your order</span></h2>
 
-      <p class="why">Your teams sometimes play at the same time. Your watch shows the match of whichever team is higher on this list.</p>
+      <p class="why" data-i18n="why">Your teams sometimes play at the same time. Your watch shows the match of whichever team is higher on this list.</p>
 
       <ol class="prio-list" id="priorityList"></ol>
-      <p class="prio-hint">Drag the handle, or use the arrows, to re-order.</p>
+      <p class="prio-hint" data-i18n="dragHint">Drag the handle, or use the arrows, to re-order.</p>
       <p class="sr-only" id="prioLive" aria-live="polite"></p>
 
       <div class="save-row">
-        <button type="button" class="btn" id="saveBtn">Save my teams</button>
+        <button type="button" class="btn" id="saveBtn" data-i18n="save">Save my teams</button>
         <span id="saveState" class="msg" hidden></span>
       </div>
     </section>
 
     <!-- STEP 4: saved -->
     <section class="panel" id="savedPanel" hidden>
-      <h2><span class="step-num">✓</span>All set</h2>
+      <h2><span class="step-num">✓</span><span data-i18n="allSet">All set</span></h2>
       <p class="msg msg--ok" id="savedMsg">Your teams are saved.</p>
       <ol class="saved-order" id="savedOrder"></ol>
       <div class="save-row">
-        <button type="button" class="btn btn--ghost" id="editBtn">Change my selection</button>
+        <button type="button" class="btn btn--ghost" id="editBtn" data-i18n="edit">Change my selection</button>
       </div>
     </section>
   </main>
@@ -333,9 +333,308 @@
     });
   }
 
+  // ---- i18n -----------------------------------------------------------------
+  //
+  // A page-local dictionary, deliberately NOT the site's assets/js/i18n.js.
+  // That file's SUPPORTED list is de/en/es/fr/pt — the site's languages — while
+  // the watch face this page pairs ships eng/por/fre/deu/rus. Adding `ru` to
+  // the shared list to cover the watch's users would make every OTHER page
+  // detect Russian and then render English under <html lang="ru">, since none
+  // of them have Russian strings. So this page carries the union of both sets,
+  // six languages, and no other page changes. The strings live nowhere else.
+  //
+  // Detection mirrors i18n.js: the browser's language, English otherwise. There
+  // is no /xx/ path to read here — the page has one URL — so ?lang=xx is
+  // honoured as an override (handy for testing, and for anyone whose browser
+  // language is not the one they want to read).
+  var I18N = {
+    en: {
+      h1: 'Register your teams',
+      lead: 'Enter the pairing code from your Garmin watch, then choose the soccer teams you want it to follow. Come back any time with the same code to change them.',
+      step1: 'Enter your pairing code',
+      step1Hint: 'Open the {app} watch face on your Garmin — it shows a 5-character code. Type that code here.',
+      codeAria: 'Pairing code from your watch',
+      continue: 'Continue',
+      checking: 'Checking…',
+      errCodeLength: 'Enter the 5-character code shown on your watch.',
+      errCodeUnknown: 'That code isn’t recognized yet. Make sure the watch face is installed and showing a code, then try again.',
+      errCodeCheck: 'Couldn’t check that code ({error}). Please try again.',
+      errCodeReach: 'Couldn’t reach the server ({error}). Please try again.',
+      step2: 'Pick your teams',
+      selCount: '{n} selected',
+      following: 'Currently following',
+      filterPlaceholder: 'Filter teams by name…',
+      filterAria: 'Filter teams by name',
+      loadingTeams: 'Loading team list…',
+      errCatalog: 'Couldn’t load the team list ({error}).',
+      retry: 'Retry',
+      noMatches: 'No teams match “{q}”.',
+      tooManyMatches: 'Showing the first {n} matches — keep typing to narrow it down.',
+      step3: 'Set your order',
+      why: 'Your teams sometimes play at the same time. Your watch shows the match of whichever team is higher on this list.',
+      dragHint: 'Drag the handle, or use the arrows, to re-order.',
+      moveUp: 'Move {team} up',
+      moveDown: 'Move {team} down',
+      moved: '{team} moved to position {n} of {total}',
+      save: 'Save my teams',
+      saving: 'Saving…',
+      errTooManyTeams: 'Please pick 200 teams or fewer (you have {n}).',
+      errSaveUnknown: 'That pairing code isn’t recognized. ',
+      errSave: 'Couldn’t save: {error}',
+      errSaveNetwork: 'Couldn’t save ({error}). Please try again.',
+      startOver: 'Start over',
+      allSet: 'All set',
+      savedOrdered: 'Your teams are saved, in this order. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams or their order.',
+      savedSingle: 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.',
+      edit: 'Change my selection',
+      teamFallback: 'Team {id}'
+    },
+    pt: {
+      h1: 'Registre seus times',
+      lead: 'Digite o código de pareamento do seu relógio Garmin e escolha os times que você quer acompanhar. Volte quando quiser com o mesmo código para alterá-los.',
+      step1: 'Digite seu código de pareamento',
+      step1Hint: 'Abra o mostrador {app} no seu Garmin — ele exibe um código de 5 caracteres. Digite esse código aqui.',
+      codeAria: 'Código de pareamento do seu relógio',
+      continue: 'Continuar',
+      checking: 'Verificando…',
+      errCodeLength: 'Digite o código de 5 caracteres exibido no seu relógio.',
+      errCodeUnknown: 'Esse código ainda não foi reconhecido. Verifique se o mostrador está instalado e exibindo um código e tente de novo.',
+      errCodeCheck: 'Não foi possível verificar esse código ({error}). Tente novamente.',
+      errCodeReach: 'Não foi possível conectar ao servidor ({error}). Tente novamente.',
+      step2: 'Escolha seus times',
+      selCount: '{n} selecionados',
+      following: 'Acompanhando atualmente',
+      filterPlaceholder: 'Filtrar times por nome…',
+      filterAria: 'Filtrar times por nome',
+      loadingTeams: 'Carregando a lista de times…',
+      errCatalog: 'Não foi possível carregar a lista de times ({error}).',
+      retry: 'Tentar de novo',
+      noMatches: 'Nenhum time corresponde a “{q}”.',
+      tooManyMatches: 'Mostrando os primeiros {n} resultados — continue digitando para refinar.',
+      step3: 'Defina sua ordem',
+      why: 'Seus times às vezes jogam ao mesmo tempo. Seu relógio mostra a partida do time que estiver mais acima nesta lista.',
+      dragHint: 'Arraste pela alça, ou use as setas, para reordenar.',
+      moveUp: 'Mover {team} para cima',
+      moveDown: 'Mover {team} para baixo',
+      moved: '{team} movido para a posição {n} de {total}',
+      save: 'Salvar meus times',
+      saving: 'Salvando…',
+      errTooManyTeams: 'Escolha no máximo 200 times (você tem {n}).',
+      errSaveUnknown: 'Esse código de pareamento não foi reconhecido. ',
+      errSave: 'Não foi possível salvar: {error}',
+      errSaveNetwork: 'Não foi possível salvar ({error}). Tente novamente.',
+      startOver: 'Começar de novo',
+      allSet: 'Tudo pronto',
+      savedOrdered: 'Seus times foram salvos, nesta ordem. Seu relógio será atualizado em alguns minutos. Guarde seu código de pareamento — digite-o aqui quando quiser para mudar os times ou a ordem.',
+      savedSingle: 'Seus times foram salvos. Seu relógio será atualizado em alguns minutos. Guarde seu código de pareamento — digite-o aqui quando quiser para mudar os times.',
+      edit: 'Alterar minha seleção',
+      teamFallback: 'Time {id}'
+    },
+    es: {
+      h1: 'Registra tus equipos',
+      lead: 'Introduce el código de vinculación de tu reloj Garmin y elige los equipos que quieres seguir. Vuelve cuando quieras con el mismo código para cambiarlos.',
+      step1: 'Introduce tu código de vinculación',
+      step1Hint: 'Abre la esfera {app} en tu Garmin: muestra un código de 5 caracteres. Escribe ese código aquí.',
+      codeAria: 'Código de vinculación de tu reloj',
+      continue: 'Continuar',
+      checking: 'Comprobando…',
+      errCodeLength: 'Introduce el código de 5 caracteres que muestra tu reloj.',
+      errCodeUnknown: 'Ese código aún no se reconoce. Comprueba que la esfera esté instalada y mostrando un código, e inténtalo de nuevo.',
+      errCodeCheck: 'No se pudo comprobar ese código ({error}). Inténtalo de nuevo.',
+      errCodeReach: 'No se pudo conectar con el servidor ({error}). Inténtalo de nuevo.',
+      step2: 'Elige tus equipos',
+      selCount: '{n} seleccionados',
+      following: 'Siguiendo actualmente',
+      filterPlaceholder: 'Filtrar equipos por nombre…',
+      filterAria: 'Filtrar equipos por nombre',
+      loadingTeams: 'Cargando la lista de equipos…',
+      errCatalog: 'No se pudo cargar la lista de equipos ({error}).',
+      retry: 'Reintentar',
+      noMatches: 'Ningún equipo coincide con «{q}».',
+      tooManyMatches: 'Mostrando los primeros {n} resultados: sigue escribiendo para acotar.',
+      step3: 'Define tu orden',
+      why: 'Tus equipos a veces juegan a la misma hora. Tu reloj muestra el partido del equipo que esté más arriba en esta lista.',
+      dragHint: 'Arrastra el asa, o usa las flechas, para reordenar.',
+      moveUp: 'Mover {team} hacia arriba',
+      moveDown: 'Mover {team} hacia abajo',
+      moved: '{team} movido a la posición {n} de {total}',
+      save: 'Guardar mis equipos',
+      saving: 'Guardando…',
+      errTooManyTeams: 'Elige 200 equipos o menos (tienes {n}).',
+      errSaveUnknown: 'Ese código de vinculación no se reconoce. ',
+      errSave: 'No se pudo guardar: {error}',
+      errSaveNetwork: 'No se pudo guardar ({error}). Inténtalo de nuevo.',
+      startOver: 'Empezar de nuevo',
+      allSet: 'Todo listo',
+      savedOrdered: 'Tus equipos se han guardado, en este orden. Tu reloj se actualizará en unos minutos. Guarda tu código de vinculación: introdúcelo aquí cuando quieras para cambiar los equipos o su orden.',
+      savedSingle: 'Tus equipos se han guardado. Tu reloj se actualizará en unos minutos. Guarda tu código de vinculación: introdúcelo aquí cuando quieras para cambiar los equipos.',
+      edit: 'Cambiar mi selección',
+      teamFallback: 'Equipo {id}'
+    },
+    fr: {
+      h1: 'Enregistrez vos équipes',
+      lead: 'Saisissez le code d’association affiché sur votre montre Garmin, puis choisissez les équipes à suivre. Revenez quand vous voulez avec le même code pour les modifier.',
+      step1: 'Saisissez votre code d’association',
+      step1Hint: 'Ouvrez le cadran {app} sur votre Garmin — il affiche un code de 5 caractères. Saisissez ce code ici.',
+      codeAria: 'Code d’association de votre montre',
+      continue: 'Continuer',
+      checking: 'Vérification…',
+      errCodeLength: 'Saisissez le code de 5 caractères affiché sur votre montre.',
+      errCodeUnknown: 'Ce code n’est pas encore reconnu. Vérifiez que le cadran est installé et affiche un code, puis réessayez.',
+      errCodeCheck: 'Impossible de vérifier ce code ({error}). Veuillez réessayer.',
+      errCodeReach: 'Impossible de joindre le serveur ({error}). Veuillez réessayer.',
+      step2: 'Choisissez vos équipes',
+      selCount: '{n} sélectionnées',
+      following: 'Suivi actuellement',
+      filterPlaceholder: 'Filtrer les équipes par nom…',
+      filterAria: 'Filtrer les équipes par nom',
+      loadingTeams: 'Chargement de la liste des équipes…',
+      errCatalog: 'Impossible de charger la liste des équipes ({error}).',
+      retry: 'Réessayer',
+      noMatches: 'Aucune équipe ne correspond à « {q} ».',
+      tooManyMatches: 'Affichage des {n} premiers résultats — continuez à taper pour affiner.',
+      step3: 'Définissez votre ordre',
+      why: 'Vos équipes jouent parfois en même temps. Votre montre affiche le match de l’équipe la plus haute dans cette liste.',
+      dragHint: 'Faites glisser la poignée, ou utilisez les flèches, pour réordonner.',
+      moveUp: 'Déplacer {team} vers le haut',
+      moveDown: 'Déplacer {team} vers le bas',
+      moved: '{team} déplacée en position {n} sur {total}',
+      save: 'Enregistrer mes équipes',
+      saving: 'Enregistrement…',
+      errTooManyTeams: 'Choisissez 200 équipes maximum (vous en avez {n}).',
+      errSaveUnknown: 'Ce code d’association n’est pas reconnu. ',
+      errSave: 'Échec de l’enregistrement : {error}',
+      errSaveNetwork: 'Échec de l’enregistrement ({error}). Veuillez réessayer.',
+      startOver: 'Recommencer',
+      allSet: 'C’est prêt',
+      savedOrdered: 'Vos équipes sont enregistrées, dans cet ordre. Votre montre se mettra à jour d’ici quelques minutes. Conservez votre code d’association — saisissez-le ici à tout moment pour changer vos équipes ou leur ordre.',
+      savedSingle: 'Vos équipes sont enregistrées. Votre montre se mettra à jour d’ici quelques minutes. Conservez votre code d’association — saisissez-le ici à tout moment pour changer vos équipes.',
+      edit: 'Modifier ma sélection',
+      teamFallback: 'Équipe {id}'
+    },
+    de: {
+      h1: 'Teams registrieren',
+      lead: 'Gib den Kopplungscode von deiner Garmin-Uhr ein und wähle die Fußballteams, denen sie folgen soll. Komm jederzeit mit demselben Code zurück, um sie zu ändern.',
+      step1: 'Kopplungscode eingeben',
+      step1Hint: 'Öffne das Zifferblatt {app} auf deiner Garmin — es zeigt einen 5-stelligen Code. Gib diesen Code hier ein.',
+      codeAria: 'Kopplungscode deiner Uhr',
+      continue: 'Weiter',
+      checking: 'Wird geprüft…',
+      errCodeLength: 'Gib den 5-stelligen Code ein, den deine Uhr anzeigt.',
+      errCodeUnknown: 'Dieser Code wird noch nicht erkannt. Stelle sicher, dass das Zifferblatt installiert ist und einen Code anzeigt, und versuche es erneut.',
+      errCodeCheck: 'Der Code konnte nicht geprüft werden ({error}). Bitte versuche es erneut.',
+      errCodeReach: 'Der Server ist nicht erreichbar ({error}). Bitte versuche es erneut.',
+      step2: 'Teams auswählen',
+      selCount: '{n} ausgewählt',
+      following: 'Aktuell verfolgt',
+      filterPlaceholder: 'Teams nach Namen filtern…',
+      filterAria: 'Teams nach Namen filtern',
+      loadingTeams: 'Teamliste wird geladen…',
+      errCatalog: 'Die Teamliste konnte nicht geladen werden ({error}).',
+      retry: 'Erneut versuchen',
+      noMatches: 'Kein Team passt zu „{q}“.',
+      tooManyMatches: 'Die ersten {n} Treffer werden angezeigt — tippe weiter, um einzugrenzen.',
+      step3: 'Reihenfolge festlegen',
+      why: 'Deine Teams spielen manchmal gleichzeitig. Deine Uhr zeigt das Spiel des Teams, das in dieser Liste weiter oben steht.',
+      dragHint: 'Zum Umsortieren den Griff ziehen oder die Pfeile benutzen.',
+      moveUp: '{team} nach oben verschieben',
+      moveDown: '{team} nach unten verschieben',
+      moved: '{team} auf Position {n} von {total} verschoben',
+      save: 'Teams speichern',
+      saving: 'Wird gespeichert…',
+      errTooManyTeams: 'Bitte wähle höchstens 200 Teams (du hast {n}).',
+      errSaveUnknown: 'Dieser Kopplungscode wird nicht erkannt. ',
+      errSave: 'Speichern fehlgeschlagen: {error}',
+      errSaveNetwork: 'Speichern fehlgeschlagen ({error}). Bitte versuche es erneut.',
+      startOver: 'Von vorn beginnen',
+      allSet: 'Fertig',
+      savedOrdered: 'Deine Teams sind in dieser Reihenfolge gespeichert. Deine Uhr aktualisiert sich in wenigen Minuten. Bewahre deinen Kopplungscode auf — gib ihn hier jederzeit ein, um Teams oder Reihenfolge zu ändern.',
+      savedSingle: 'Deine Teams sind gespeichert. Deine Uhr aktualisiert sich in wenigen Minuten. Bewahre deinen Kopplungscode auf — gib ihn hier jederzeit ein, um deine Teams zu ändern.',
+      edit: 'Auswahl ändern',
+      teamFallback: 'Team {id}'
+    },
+    ru: {
+      h1: 'Регистрация команд',
+      lead: 'Введите код сопряжения с часов Garmin и выберите футбольные команды, за которыми они будут следить. Возвращайтесь с тем же кодом в любое время, чтобы изменить выбор.',
+      step1: 'Введите код сопряжения',
+      step1Hint: 'Откройте циферблат {app} на часах Garmin — на нём показан код из 5 символов. Введите этот код здесь.',
+      codeAria: 'Код сопряжения с ваших часов',
+      continue: 'Продолжить',
+      checking: 'Проверка…',
+      errCodeLength: 'Введите код из 5 символов, показанный на часах.',
+      errCodeUnknown: 'Этот код пока не распознан. Убедитесь, что циферблат установлен и показывает код, затем попробуйте снова.',
+      errCodeCheck: 'Не удалось проверить код ({error}). Попробуйте ещё раз.',
+      errCodeReach: 'Не удалось связаться с сервером ({error}). Попробуйте ещё раз.',
+      step2: 'Выберите команды',
+      selCount: 'Выбрано: {n}',
+      following: 'Сейчас отслеживаются',
+      filterPlaceholder: 'Поиск команд по названию…',
+      filterAria: 'Поиск команд по названию',
+      loadingTeams: 'Загрузка списка команд…',
+      errCatalog: 'Не удалось загрузить список команд ({error}).',
+      retry: 'Повторить',
+      noMatches: 'Нет команд по запросу «{q}».',
+      tooManyMatches: 'Показаны первые {n} совпадений — продолжайте вводить, чтобы сузить поиск.',
+      step3: 'Задайте порядок',
+      why: 'Ваши команды иногда играют одновременно. Часы покажут матч той команды, которая выше в этом списке.',
+      dragHint: 'Перетаскивайте за ручку или используйте стрелки, чтобы изменить порядок.',
+      moveUp: 'Переместить {team} вверх',
+      moveDown: 'Переместить {team} вниз',
+      moved: '{team} перемещена на позицию {n} из {total}',
+      save: 'Сохранить команды',
+      saving: 'Сохранение…',
+      errTooManyTeams: 'Выберите не больше 200 команд (сейчас {n}).',
+      errSaveUnknown: 'Этот код сопряжения не распознан. ',
+      errSave: 'Не удалось сохранить: {error}',
+      errSaveNetwork: 'Не удалось сохранить ({error}). Попробуйте ещё раз.',
+      startOver: 'Начать заново',
+      allSet: 'Готово',
+      savedOrdered: 'Команды сохранены в этом порядке. Часы обновятся в течение нескольких минут. Сохраните код сопряжения — введите его здесь в любой момент, чтобы изменить команды или их порядок.',
+      savedSingle: 'Команды сохранены. Часы обновятся в течение нескольких минут. Сохраните код сопряжения — введите его здесь в любой момент, чтобы изменить команды.',
+      edit: 'Изменить выбор',
+      teamFallback: 'Команда {id}'
+    }
+  };
+
+  var LANG = (function () {
+    var q = (location.search.match(/[?&]lang=([a-z]{2})/i) || [])[1];
+    if (q && I18N[q.toLowerCase()]) return q.toLowerCase();
+    var raw = (navigator.language || '').toLowerCase().split('-')[0];
+    return I18N[raw] ? raw : 'en';
+  })();
+
+  // Missing keys fall back to English string-by-string, the same way the watch
+  // face's language folders fall back to base `resources/`.
+  function t(key, vars) {
+    var s = (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || '';
+    if (vars) {
+      Object.keys(vars).forEach(function (k) {
+        s = s.split('{' + k + '}').join(String(vars[k]));
+      });
+    }
+    return s;
+  }
+
   var $ = function (id) { return document.getElementById(id); };
   function show(el) { el.hidden = false; }
   function hide(el) { el.hidden = true; }
+
+  function applyStaticTranslations() {
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n'));
+      if (!v) return;
+      if (el.tagName === 'INPUT') { el.placeholder = v; } else { el.textContent = v; }
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n-aria'));
+      if (v) el.setAttribute('aria-label', v);
+    });
+    // The one string with markup in it: the app name is the brand and stays
+    // untranslated (same rule as AppName in the watch face's strings.xml).
+    $('step1Hint').innerHTML = escapeHtml(t('step1Hint'))
+      .replace('{app}', '<strong>Football Matches</strong>');
+  }
 
   // `order` is the single source of truth for the selection AND its priority:
   // an ordered list of team ids, highest priority first. It is what the backend
@@ -363,7 +662,9 @@
     if (i !== -1) state.order.splice(i, 1);
   }
 
-  function teamLabel(id) { return state.teamName.get(id) || ('Team ' + id); }
+  // The fallback is for an id the bundled catalog does not know (it lags the
+  // backend slightly), so it is rare — but it is user-visible, so it translates.
+  function teamLabel(id) { return state.teamName.get(id) || t('teamFallback', { id: id }); }
 
   // ---- Step 1: enter the pairing code shown on the watch --------------------
 
@@ -382,13 +683,13 @@
     var code = normalizeCode($('codeInput').value);
     $('codeInput').value = code;
     if (code.length !== 5) {
-      showCodeError('Enter the 5-character code shown on your watch.');
+      showCodeError(t('errCodeLength'));
       return;
     }
     $('codeErrorMsg').hidden = true;
     var btn = $('codeSubmitBtn');
     var prev = btn.textContent;
-    btn.disabled = true; btn.textContent = 'Checking…';
+    btn.disabled = true; btn.textContent = t('checking');
     // lookup pre-loads any teams already saved for this code, so the picker
     // opens with the user's previous selection checked.
     jsonp(API_BASE + '?action=lookup&code=' + encodeURIComponent(code)).then(function (res) {
@@ -396,9 +697,9 @@
       if (!res || !res.ok) {
         var err = (res && res.error) || 'Unexpected response';
         if (/unknown/i.test(err)) {
-          showCodeError('That code isn’t recognized yet. Make sure the watch face is installed and showing a code, then try again.');
+          showCodeError(t('errCodeUnknown'));
         } else {
-          showCodeError('Couldn’t check that code (' + err + '). Please try again.');
+          showCodeError(t('errCodeCheck', { error: err }));
         }
         return;
       }
@@ -409,7 +710,7 @@
       revealPicker();
     }).catch(function (err) {
       btn.disabled = false; btn.textContent = prev;
-      showCodeError('Couldn’t reach the server (' + err.message + '). Please try again.');
+      showCodeError(t('errCodeReach', { error: err.message }));
     });
   }
 
@@ -442,12 +743,14 @@
       syncSelection();
       hide($('treeLoading')); show($('tree'));
     }).catch(function (err) {
-      $('treeLoading').innerHTML = '<p class="msg msg--err">Couldn’t load the team list (' +
-        escapeHtml(err.message) + '). <a href="#" id="retryCatalog">Retry</a></p>';
+      $('treeLoading').innerHTML = '<p class="msg msg--err">' +
+        escapeHtml(t('errCatalog', { error: err.message })) +
+        ' <a href="#" id="retryCatalog">' + escapeHtml(t('retry')) + '</a></p>';
       var rc = $('retryCatalog');
       if (rc) rc.addEventListener('click', function (e) {
         e.preventDefault(); catalogLoadStarted = false;
-        $('treeLoading').innerHTML = '<span class="spinner"></span> <span>Loading team list…</span>';
+        $('treeLoading').innerHTML = '<span class="spinner"></span> <span>' +
+          escapeHtml(t('loadingTeams')) + '</span>';
         loadCatalog();
       });
     });
@@ -570,7 +873,7 @@
     var boxes = $('tree').querySelectorAll('input[type=checkbox]');
     boxes.forEach(function (b) { b.checked = isSelected(b.value); });
     var n = state.order.length;
-    $('selCount').textContent = n + ' selected';
+    $('selCount').textContent = t('selCount', { n: n });
     $('continueBtn').disabled = n === 0;
     renderSelectedSummary();
     // Keep step 3 honest while it is on screen: a team un-ticked above has to
@@ -660,7 +963,7 @@
     if (!matches.length) {
       var note = document.createElement('div');
       note.className = 'empty-note';
-      note.textContent = 'No teams match “' + q + '”.';
+      note.textContent = t('noMatches', { q: q });
       tree.appendChild(note);
       return;
     }
@@ -672,7 +975,7 @@
     if (matches.length >= MAX) {
       var more = document.createElement('div');
       more.className = 'empty-note';
-      more.textContent = 'Showing the first ' + MAX + ' matches — keep typing to narrow it down.';
+      more.textContent = t('tooManyMatches', { n: MAX });
       tree.appendChild(more);
     }
   }
@@ -749,14 +1052,15 @@
     b.className = 'prio-move';
     b.textContent = delta < 0 ? '↑' : '↓';
     b.disabled = !!disabled;
-    b.setAttribute('aria-label', 'Move ' + teamLabel(id) + (delta < 0 ? ' up' : ' down'));
+    b.setAttribute('aria-label', t(delta < 0 ? 'moveUp' : 'moveDown', { team: teamLabel(id) }));
     b.addEventListener('click', function () {
       var from = state.order.indexOf(id);
       if (from === -1) return;
       moveTo(from, from + delta);
       renderPriority();
-      announce(teamLabel(id) + ' moved to position ' + (state.order.indexOf(id) + 1) +
-        ' of ' + state.order.length);
+      announce(t('moved', {
+        team: teamLabel(id), n: state.order.indexOf(id) + 1, total: state.order.length,
+      }));
       // Re-focus the same control on the row's new position, so a run of taps
       // keeps working instead of dropping focus to the body on every render.
       var moved = $('priorityList').children[state.order.indexOf(id)];
@@ -881,8 +1185,9 @@
       window.removeEventListener('pointercancel', endDrag);
       drag = null;
       renderPriority(); // clears the transform and the dragging styles
-      announce(teamLabel(id) + ' moved to position ' + (state.order.indexOf(id) + 1) +
-        ' of ' + state.order.length);
+      announce(t('moved', {
+        team: teamLabel(id), n: state.order.indexOf(id) + 1, total: state.order.length,
+      }));
     }
 
     list.addEventListener('pointerdown', onDown);
@@ -896,12 +1201,12 @@
     var ids = state.order.slice();
     if (!ids.length) return;
     if (ids.length > 200) {
-      setSaveState('Please pick 200 teams or fewer (you have ' + ids.length + ').', 'err');
+      setSaveState(t('errTooManyTeams', { n: ids.length }), 'err');
       return;
     }
     var btn = activeSaveBtn();
     btn.disabled = true;
-    setSaveState('Saving…', '');
+    setSaveState(t('saving'), '');
     var url = API_BASE + '?action=saveTeams&code=' + encodeURIComponent(state.code) +
       '&teamIds=' + encodeURIComponent(ids.join(','));
     jsonp(url).then(function (res) {
@@ -911,13 +1216,13 @@
       }
       var err = (res && res.error) || 'Unknown error';
       if (/unknown/i.test(err)) {
-        setSaveState('That pairing code isn’t recognized. ', 'err', true);
+        setSaveState(t('errSaveUnknown'), 'err', true);
       } else {
-        setSaveState('Couldn’t save: ' + err, 'err');
+        setSaveState(t('errSave', { error: err }), 'err');
       }
       btn.disabled = false;
     }).catch(function (e) {
-      setSaveState('Couldn’t save (' + e.message + '). Please try again.', 'err');
+      setSaveState(t('errSaveNetwork', { error: e.message }), 'err');
       btn.disabled = false;
     });
   }
@@ -935,7 +1240,7 @@
     el.textContent = text;
     if (offerReload) {
       var a = document.createElement('a');
-      a.href = '#'; a.textContent = 'Start over';
+      a.href = '#'; a.textContent = t('startOver');
       a.addEventListener('click', function (e) { e.preventDefault(); location.reload(); });
       el.appendChild(a);
     }
@@ -945,9 +1250,7 @@
     hide($('pickerPanel'));
     hide($('priorityPanel'));
     show($('savedPanel'));
-    $('savedMsg').textContent = state.order.length > 1
-      ? 'Your teams are saved, in this order. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams or their order.'
-      : 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.';
+    $('savedMsg').textContent = t(state.order.length > 1 ? 'savedOrdered' : 'savedSingle');
     renderSavedOrder();
     $('savedPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -981,6 +1284,7 @@
   });
 
   // ---- Go -------------------------------------------------------------------
+  applyStaticTranslations();
   $('codeInput').focus();
 })();
 </script>
