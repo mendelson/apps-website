@@ -155,6 +155,61 @@
     background:var(--bg);border:1px solid var(--line);color:var(--fg);
     font-variant-numeric:tabular-nums;
   }
+
+  /* Priority list (step 3) — drag to re-order, or use the arrows. */
+  .why{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .prio-list{
+    list-style:none;margin:0 0 4px;padding:0;
+    max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    border:1px solid var(--line);border-radius:12px;background:var(--bg);
+  }
+  .prio-item{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;
+    border-bottom:1px solid var(--line);background:var(--bg);min-height:52px;
+  }
+  .prio-item:last-child{border-bottom:0}
+  .prio-item.is-dragging{
+    background:var(--card);border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.35);position:relative;z-index:2;
+  }
+  .prio-item.is-placeholder{opacity:.35}
+  .prio-rank{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);
+    font-variant-numeric:tabular-nums;min-width:2.2ch;text-align:right;flex:none;
+  }
+  .prio-name{flex:1;font-size:15px;overflow-wrap:anywhere}
+  /* touch-action:none is what lets a drag start on a phone without the browser
+     claiming the gesture for scrolling. It is on the HANDLE only, so the list
+     itself still scrolls normally. */
+  .prio-grip{
+    flex:none;display:flex;align-items:center;justify-content:center;
+    width:40px;height:40px;margin:-6px -4px -6px -4px;
+    color:var(--muted);cursor:grab;touch-action:none;background:none;border:0;padding:0;
+  }
+  .prio-grip:active{cursor:grabbing}
+  .prio-grip svg{pointer-events:none}
+  .prio-move{
+    flex:none;width:36px;height:36px;border-radius:8px;
+    background:none;border:1px solid var(--line);color:var(--fg);
+    font-size:15px;line-height:1;cursor:pointer;font-family:inherit;
+  }
+  .prio-move:hover:not(:disabled){border-color:var(--accent)}
+  .prio-move:disabled{opacity:.3;cursor:not-allowed}
+  .prio-moves{display:flex;gap:6px;flex:none}
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  }
+  .prio-hint{color:var(--muted);font-size:13px;margin:10px 0 0}
+
+  /* Saved: the order, echoed back so the user can see what the watch got. */
+  .saved-order{list-style:none;margin:12px 0 0;padding:0}
+  .saved-order li{
+    display:flex;gap:10px;padding:6px 0;font-size:14px;
+    border-bottom:1px solid var(--line);
+  }
+  .saved-order li:last-child{border-bottom:0}
+  .saved-order .prio-rank{min-width:2.4ch}
 </style>
 <style>
 .consent-bar{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 20px;padding:14px 20px;background:#1a1a1a;border-top:1px solid #333;box-shadow:0 -6px 20px rgba(0,0,0,.5)}
@@ -221,15 +276,32 @@
       <div class="tree" id="tree" hidden></div>
 
       <div class="save-row">
-        <button type="button" class="btn" id="saveBtn" disabled>Save my teams</button>
+        <button type="button" class="btn" id="continueBtn" disabled>Continue</button>
+        <span id="pickerSaveState" class="msg" hidden></span>
+      </div>
+    </section>
+
+    <!-- STEP 3: priority order -->
+    <section class="panel" id="priorityPanel" hidden>
+      <h2><span class="step-num">3</span>Set your order</h2>
+
+      <p class="why">Your teams sometimes play at the same time. Your watch shows the match of whichever team is higher on this list.</p>
+
+      <ol class="prio-list" id="priorityList"></ol>
+      <p class="prio-hint">Drag the handle, or use the arrows, to re-order.</p>
+      <p class="sr-only" id="prioLive" aria-live="polite"></p>
+
+      <div class="save-row">
+        <button type="button" class="btn" id="saveBtn">Save my teams</button>
         <span id="saveState" class="msg" hidden></span>
       </div>
     </section>
 
-    <!-- STEP 3: saved -->
+    <!-- STEP 4: saved -->
     <section class="panel" id="savedPanel" hidden>
       <h2><span class="step-num">✓</span>All set</h2>
       <p class="msg msg--ok" id="savedMsg">Your teams are saved.</p>
+      <ol class="saved-order" id="savedOrder"></ol>
       <div class="save-row">
         <button type="button" class="btn btn--ghost" id="editBtn">Change my selection</button>
       </div>
@@ -265,12 +337,33 @@
   function show(el) { el.hidden = false; }
   function hide(el) { el.hidden = true; }
 
+  // `order` is the single source of truth for the selection AND its priority:
+  // an ordered list of team ids, highest priority first. It is what the backend
+  // stores (the position of an id in `teamIds` decides which match the watch
+  // shows when two of the user's teams play at once), so the page must never
+  // hold the selection in anything unordered — a Set here was how the order
+  // used to be whatever the DOM happened to produce.
+  //
+  // Checking a box APPENDS; unchecking removes and leaves the rest alone; step
+  // 3 re-orders. So a returning user who adds two teams and drops one arrives
+  // at step 3 with their existing order intact and the newcomers at the bottom.
   var state = {
     code: null,
     catalog: null,
-    selected: new Set(),   // team ids (strings)
+    order: [],             // team ids (strings), highest priority first
     teamName: new Map()    // id -> name, for de-dupe/display
   };
+
+  function isSelected(id) { return state.order.indexOf(id) !== -1; }
+
+  function select(id) { if (!isSelected(id)) state.order.push(id); }
+
+  function deselect(id) {
+    var i = state.order.indexOf(id);
+    if (i !== -1) state.order.splice(i, 1);
+  }
+
+  function teamLabel(id) { return state.teamName.get(id) || ('Team ' + id); }
 
   // ---- Step 1: enter the pairing code shown on the watch --------------------
 
@@ -310,7 +403,9 @@
         return;
       }
       state.code = code;
-      state.selected = new Set((res.teamIds || []).map(String));
+      // lookup returns the ids in the order they were saved, which IS the
+      // user's priority — keep it exactly as given.
+      state.order = (res.teamIds || []).map(String);
       revealPicker();
     }).catch(function (err) {
       btn.disabled = false; btn.textContent = prev;
@@ -451,9 +546,9 @@
     var cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.value = id;
-    cb.checked = state.selected.has(id);
+    cb.checked = isSelected(id);
     cb.addEventListener('change', function () {
-      if (cb.checked) state.selected.add(id); else state.selected.delete(id);
+      if (cb.checked) select(id); else deselect(id);
       syncSelection();
     });
     label.appendChild(cb);
@@ -473,18 +568,23 @@
   // more than one league, and also in the flat filter view).
   function syncSelection() {
     var boxes = $('tree').querySelectorAll('input[type=checkbox]');
-    boxes.forEach(function (b) { b.checked = state.selected.has(b.value); });
-    var n = state.selected.size;
+    boxes.forEach(function (b) { b.checked = isSelected(b.value); });
+    var n = state.order.length;
     $('selCount').textContent = n + ' selected';
-    $('saveBtn').disabled = n === 0;
+    $('continueBtn').disabled = n === 0;
     renderSelectedSummary();
+    // Keep step 3 honest while it is on screen: a team un-ticked above has to
+    // leave the order list, not linger in it and get saved anyway.
+    if (!$('priorityPanel').hidden) {
+      if (n < 2) { hide($('priorityPanel')); } else { renderPriority(); }
+    }
   }
 
   // Resolve display names for the currently-selected ids (used by the summary)
   // from the catalog, so a returning user sees their previous picks by name.
   function resolveSelectedNames(data) {
-    if (!state.selected.size) return;
-    var need = new Set(state.selected);
+    if (!state.order.length) return;
+    var need = new Set(state.order);
     (data.countries || []).some(function (c) {
       (c.leagues || []).forEach(function (l) {
         (l.teams || []).forEach(function (t) {
@@ -498,19 +598,18 @@
 
   // Show the current selection as name chips, so previously-chosen teams are
   // visible without hunting through the tree. Live-updates as boxes toggle.
+  // Chips follow `order`, NOT the alphabet: sorting them here would show the
+  // user an order that contradicts the one they are about to set in step 3.
   function renderSelectedSummary() {
     var box = $('selectedSummary');
     var wrap = $('selectedWrap');
     if (!box || !wrap) return;
-    if (!state.selected.size) { box.hidden = true; wrap.innerHTML = ''; return; }
-    var ids = Array.from(state.selected).sort(function (a, b) {
-      return (state.teamName.get(a) || a).localeCompare(state.teamName.get(b) || b);
-    });
+    if (!state.order.length) { box.hidden = true; wrap.innerHTML = ''; return; }
     wrap.innerHTML = '';
-    ids.forEach(function (id) {
+    state.order.forEach(function (id) {
       var chip = document.createElement('span');
       chip.className = 'sel-chip';
-      chip.textContent = state.teamName.get(id) || ('Team ' + id);
+      chip.textContent = teamLabel(id);
       wrap.appendChild(chip);
     });
     box.hidden = false;
@@ -578,16 +677,229 @@
     }
   }
 
+  // ---- Step 3: priority order ----------------------------------------------
+  //
+  // Nothing here talks to the backend. The whole visit — teams added, teams
+  // dropped, order changed — is sent as ONE saveTeams call at the end, because
+  // that call replaces the stored selection wholesale. Writing at step 2 as
+  // well would leave a window where the watch could poll a selection whose
+  // order the user had not finished setting.
+
+  // Step 3 opens BELOW step 2 rather than replacing it: the steps then read
+  // 1-2-3 down the page, and changing your mind about a team is scrolling up
+  // and un-ticking it — no back button, and the order list updates underneath
+  // as you do it (syncSelection re-renders it while it is visible).
+  $('continueBtn').addEventListener('click', function () {
+    if (!state.order.length) return;
+    // One team cannot clash with anything, so there is no order to set.
+    if (state.order.length === 1) { save(); return; }
+    show($('priorityPanel'));
+    renderPriority();
+    $('priorityPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  var GRIP_SVG =
+    '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="currentColor">' +
+    '<circle cx="6.5" cy="4" r="1.4"/><circle cx="11.5" cy="4" r="1.4"/>' +
+    '<circle cx="6.5" cy="9" r="1.4"/><circle cx="11.5" cy="9" r="1.4"/>' +
+    '<circle cx="6.5" cy="14" r="1.4"/><circle cx="11.5" cy="14" r="1.4"/></svg>';
+
+  function renderPriority() {
+    var list = $('priorityList');
+    list.innerHTML = '';
+    state.order.forEach(function (id, i) {
+      var li = document.createElement('li');
+      li.className = 'prio-item';
+      li.dataset.id = id;
+
+      var grip = document.createElement('button');
+      grip.type = 'button';
+      grip.className = 'prio-grip';
+      grip.innerHTML = GRIP_SVG;
+      // The handle is decorative for anyone not using a pointer — the arrow
+      // buttons beside it are the keyboard and screen-reader path — so keep it
+      // out of the tab order rather than offering a control that cannot act.
+      grip.tabIndex = -1;
+      grip.setAttribute('aria-hidden', 'true');
+      li.appendChild(grip);
+
+      var rank = document.createElement('span');
+      rank.className = 'prio-rank';
+      rank.textContent = (i + 1) + '.';
+      li.appendChild(rank);
+
+      var name = document.createElement('span');
+      name.className = 'prio-name';
+      name.textContent = teamLabel(id);
+      li.appendChild(name);
+
+      var moves = document.createElement('div');
+      moves.className = 'prio-moves';
+      moves.appendChild(moveBtn(id, -1, i === 0));
+      moves.appendChild(moveBtn(id, +1, i === state.order.length - 1));
+      li.appendChild(moves);
+
+      list.appendChild(li);
+    });
+  }
+
+  function moveBtn(id, delta, disabled) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'prio-move';
+    b.textContent = delta < 0 ? '↑' : '↓';
+    b.disabled = !!disabled;
+    b.setAttribute('aria-label', 'Move ' + teamLabel(id) + (delta < 0 ? ' up' : ' down'));
+    b.addEventListener('click', function () {
+      var from = state.order.indexOf(id);
+      if (from === -1) return;
+      moveTo(from, from + delta);
+      renderPriority();
+      announce(teamLabel(id) + ' moved to position ' + (state.order.indexOf(id) + 1) +
+        ' of ' + state.order.length);
+      // Re-focus the same control on the row's new position, so a run of taps
+      // keeps working instead of dropping focus to the body on every render.
+      var moved = $('priorityList').children[state.order.indexOf(id)];
+      if (moved) {
+        var again = moved.querySelectorAll('.prio-move')[delta < 0 ? 0 : 1];
+        if (again && !again.disabled) again.focus();
+      }
+    });
+    return b;
+  }
+
+  function moveTo(from, to) {
+    if (to < 0 || to >= state.order.length || from === to) return;
+    var id = state.order.splice(from, 1)[0];
+    state.order.splice(to, 0, id);
+  }
+
+  function announce(msg) { $('prioLive').textContent = msg; }
+
+  // Drag with Pointer Events, not HTML5 drag-and-drop: the latter never fires
+  // on touch, and this page is mostly opened on a phone. The handle carries
+  // `touch-action:none` so the browser hands us the gesture instead of
+  // scrolling the list with it.
+  //
+  // Positions come from getBoundingClientRect on every move rather than a
+  // cached layout, so the list re-flowing under the drag (which it does, on
+  // every swap) cannot desynchronise the hit-testing.
+  // Two things this has to get right, both learned by driving it rather than
+  // reading it:
+  //
+  //   * A swap moves the EXISTING row node (insertBefore) instead of re-running
+  //     renderPriority. Re-rendering destroys the element the pointer capture
+  //     is attached to, and a destroyed element silently drops the capture.
+  //   * pointerup/pointercancel are listened for on `window`, not the list. A
+  //     finger released past the end of the list — the ordinary way to drag a
+  //     row to the bottom — never produces a pointerup on the list itself, and
+  //     the row was left stuck to the finger's last position.
+  (function enableDrag() {
+    var list = $('priorityList');
+    var drag = null;
+
+    function shiftOf(li) {
+      var m = /translateY\((-?[\d.]+)px\)/.exec(li.style.transform || '');
+      return m ? parseFloat(m[1]) : 0;
+    }
+
+    // Rank numbers and the end-stop arrows after a swap. Cheaper than a
+    // re-render, and it leaves every node — including the dragged one — alive.
+    function refreshRanks() {
+      Array.prototype.forEach.call(list.children, function (li, i) {
+        li.querySelector('.prio-rank').textContent = (i + 1) + '.';
+        var moves = li.querySelectorAll('.prio-move');
+        moves[0].disabled = i === 0;
+        moves[1].disabled = i === list.children.length - 1;
+      });
+    }
+
+    function onDown(e) {
+      var grip = e.target.closest ? e.target.closest('.prio-grip') : null;
+      if (!grip || e.button > 0) return;
+      var li = grip.closest('.prio-item');
+      if (!li) return;
+      e.preventDefault();
+      var rect = li.getBoundingClientRect();
+      drag = {
+        li: li, id: li.dataset.id, grip: grip, pointerId: e.pointerId,
+        grabDy: e.clientY - rect.top, height: rect.height,
+      };
+      li.classList.add('is-dragging');
+      li.style.pointerEvents = 'none';
+      try { grip.setPointerCapture(e.pointerId); } catch (err) {}
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+    }
+
+    function onMove(e) {
+      if (!drag) return;
+      e.preventDefault();
+
+      // Follow the finger.
+      var listRect = list.getBoundingClientRect();
+      var liRect = drag.li.getBoundingClientRect();
+      var wantTop = e.clientY - drag.grabDy;
+      drag.li.style.transform = 'translateY(' + (wantTop - liRect.top + shiftOf(drag.li)) + 'px)';
+
+      // Swap when the dragged row's midpoint lands inside a neighbour.
+      // Rects are read fresh every move, so the list re-flowing underneath
+      // cannot desynchronise the hit-testing.
+      var mid = wantTop + drag.height / 2;
+      var rows = Array.prototype.slice.call(list.children);
+      var from = rows.indexOf(drag.li);
+      var to = from;
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i] === drag.li) continue;
+        var r = rows[i].getBoundingClientRect();
+        if (mid > r.top && mid < r.bottom) { to = i; break; }
+      }
+      if (to !== from) {
+        var keepTop = liRect.top;
+        moveTo(from, to);
+        // Move the node itself — the capture, and the drag, survive.
+        var ref = to > from ? rows[to].nextSibling : rows[to];
+        list.insertBefore(drag.li, ref);
+        refreshRanks();
+        var nr = drag.li.getBoundingClientRect();
+        drag.li.style.transform = 'translateY(' + (keepTop - nr.top + shiftOf(drag.li)) + 'px)';
+      }
+
+      // Auto-scroll near the edges, so a long list can be dragged across.
+      var EDGE = 48;
+      if (e.clientY < listRect.top + EDGE) list.scrollTop -= 8;
+      else if (e.clientY > listRect.bottom - EDGE) list.scrollTop += 8;
+    }
+
+    function endDrag() {
+      if (!drag) return;
+      var id = drag.id;
+      try { drag.grip.releasePointerCapture(drag.pointerId); } catch (e) {}
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', endDrag);
+      window.removeEventListener('pointercancel', endDrag);
+      drag = null;
+      renderPriority(); // clears the transform and the dragging styles
+      announce(teamLabel(id) + ' moved to position ' + (state.order.indexOf(id) + 1) +
+        ' of ' + state.order.length);
+    }
+
+    list.addEventListener('pointerdown', onDown);
+  })();
+
   // ---- Save -----------------------------------------------------------------
 
-  $('saveBtn').addEventListener('click', function () {
-    var ids = Array.from(state.selected);
+  $('saveBtn').addEventListener('click', save);
+
+  function save() {
+    var ids = state.order.slice();
     if (!ids.length) return;
     if (ids.length > 200) {
       setSaveState('Please pick 200 teams or fewer (you have ' + ids.length + ').', 'err');
       return;
     }
-    var btn = $('saveBtn');
+    var btn = activeSaveBtn();
     btn.disabled = true;
     setSaveState('Saving…', '');
     var url = API_BASE + '?action=saveTeams&code=' + encodeURIComponent(state.code) +
@@ -608,10 +920,16 @@
       setSaveState('Couldn’t save (' + e.message + '). Please try again.', 'err');
       btn.disabled = false;
     });
-  });
+  }
+
+  // The save can be fired from step 3, or straight from step 2 when there is
+  // only one team and no order to set — so progress and errors have to land on
+  // whichever panel the user is actually looking at.
+  function onPriorityStep() { return !$('priorityPanel').hidden; }
+  function activeSaveBtn() { return onPriorityStep() ? $('saveBtn') : $('continueBtn'); }
 
   function setSaveState(text, kind, offerReload) {
-    var el = $('saveState');
+    var el = onPriorityStep() ? $('saveState') : $('pickerSaveState');
     el.hidden = false;
     el.className = 'msg' + (kind === 'err' ? ' msg--err' : kind === 'ok' ? ' msg--ok' : '');
     el.textContent = text;
@@ -625,16 +943,40 @@
 
   function showSaved() {
     hide($('pickerPanel'));
+    hide($('priorityPanel'));
     show($('savedPanel'));
-    $('savedMsg').textContent = 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.';
+    $('savedMsg').textContent = state.order.length > 1
+      ? 'Your teams are saved, in this order. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams or their order.'
+      : 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.';
+    renderSavedOrder();
     $('savedPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  // Echo the saved order back, so what the watch was told is on screen rather
+  // than only in the step the user just left.
+  function renderSavedOrder() {
+    var ol = $('savedOrder');
+    ol.innerHTML = '';
+    if (state.order.length < 2) return;
+    state.order.forEach(function (id, i) {
+      var li = document.createElement('li');
+      var rank = document.createElement('span');
+      rank.className = 'prio-rank';
+      rank.textContent = (i + 1) + '.';
+      var name = document.createElement('span');
+      name.textContent = teamLabel(id);
+      li.appendChild(rank); li.appendChild(name);
+      ol.appendChild(li);
+    });
+  }
+
   $('editBtn').addEventListener('click', function () {
+    // Back to step 2, writing nothing: the next write is the next save.
     hide($('savedPanel'));
     show($('pickerPanel'));
     $('saveState').hidden = true;
-    $('saveBtn').disabled = state.selected.size === 0;
+    $('pickerSaveState').hidden = true;
+    syncSelection();
     $('pickerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
