@@ -151,10 +151,22 @@
   .sel-summary-label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px;font-weight:600}
   .sel-summary{display:flex;flex-wrap:wrap;gap:8px}
   .sel-chip{
-    font-size:13px;padding:5px 12px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:2px;
+    font-size:13px;padding:4px 4px 4px 12px;border-radius:999px;
     background:var(--bg);border:1px solid var(--line);color:var(--fg);
     font-variant-numeric:tabular-nums;
   }
+  /* The × is the fast way to drop a team: the chips are already on screen, so
+     removing one should not mean finding it again inside its country. */
+  .sel-chip-x{
+    flex:none;display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;margin-left:2px;border-radius:50%;
+    background:none;border:0;padding:0;cursor:pointer;
+    color:var(--muted);font-family:inherit;font-size:17px;line-height:1;
+  }
+  .sel-chip-x:hover{background:var(--card);color:var(--fg)}
+  .sel-chip-x:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .sel-hint{color:var(--muted);font-size:12px;margin:8px 0 0}
 
   /* Priority list (step 3) — drag to re-order, or use the arrows. */
   .why{color:var(--muted);font-size:14px;margin:0 0 16px}
@@ -265,6 +277,7 @@
       <div id="selectedSummary" hidden>
         <p class="sel-summary-label" data-i18n="following">Currently following</p>
         <div id="selectedWrap" class="sel-summary"></div>
+        <p class="sel-hint" data-i18n="followingHint">Tap × on a team to stop following it.</p>
       </div>
 
       <input type="search" id="filterInput" placeholder="Filter teams by name…" data-i18n="filterPlaceholder" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter teams by name" data-i18n-aria="filterAria">
@@ -289,7 +302,6 @@
 
       <ol class="prio-list" id="priorityList"></ol>
       <p class="prio-hint" data-i18n="dragHint">Drag the handle, or use the arrows, to re-order.</p>
-      <p class="sr-only" id="prioLive" aria-live="polite"></p>
 
       <div class="save-row">
         <button type="button" class="btn" id="saveBtn" data-i18n="save">Save my teams</button>
@@ -306,6 +318,11 @@
         <button type="button" class="btn btn--ghost" id="editBtn" data-i18n="edit">Change my selection</button>
       </div>
     </section>
+
+    <!-- One page-level live region. It used to sit inside the order panel,
+         where it is display:none for the whole of step 2 — and an aria-live
+         region inside a hidden subtree announces nothing. -->
+    <p class="sr-only" id="prioLive" aria-live="polite"></p>
   </main>
 
 <script>
@@ -387,7 +404,10 @@
       savedOrdered: 'Your teams are saved, in this order. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams or their order.',
       savedSingle: 'Your teams are saved. Your watch will update within a few minutes. Keep your pairing code — enter it here any time to change your teams.',
       edit: 'Change my selection',
-      teamFallback: 'Team {id}'
+      teamFallback: 'Team {id}',
+      followingHint: 'Tap × on a team to stop following it.',
+      removeTeam: 'Stop following {team}',
+      removedTeam: '{team} removed'
     },
     pt: {
       h1: 'Registre seus times',
@@ -428,7 +448,10 @@
       savedOrdered: 'Seus times foram salvos, nesta ordem. Seu relógio será atualizado em alguns minutos. Guarde seu código de pareamento — digite-o aqui quando quiser para mudar os times ou a ordem.',
       savedSingle: 'Seus times foram salvos. Seu relógio será atualizado em alguns minutos. Guarde seu código de pareamento — digite-o aqui quando quiser para mudar os times.',
       edit: 'Alterar minha seleção',
-      teamFallback: 'Time {id}'
+      teamFallback: 'Time {id}',
+      followingHint: 'Toque no × de um time para parar de acompanhá-lo.',
+      removeTeam: 'Parar de acompanhar {team}',
+      removedTeam: '{team} removido'
     },
     es: {
       h1: 'Registra tus equipos',
@@ -469,7 +492,10 @@
       savedOrdered: 'Tus equipos se han guardado, en este orden. Tu reloj se actualizará en unos minutos. Guarda tu código de vinculación: introdúcelo aquí cuando quieras para cambiar los equipos o su orden.',
       savedSingle: 'Tus equipos se han guardado. Tu reloj se actualizará en unos minutos. Guarda tu código de vinculación: introdúcelo aquí cuando quieras para cambiar los equipos.',
       edit: 'Cambiar mi selección',
-      teamFallback: 'Equipo {id}'
+      teamFallback: 'Equipo {id}',
+      followingHint: 'Toca la × de un equipo para dejar de seguirlo.',
+      removeTeam: 'Dejar de seguir a {team}',
+      removedTeam: '{team} eliminado'
     },
     fr: {
       h1: 'Enregistrez vos équipes',
@@ -510,7 +536,10 @@
       savedOrdered: 'Vos équipes sont enregistrées, dans cet ordre. Votre montre se mettra à jour d’ici quelques minutes. Conservez votre code d’association — saisissez-le ici à tout moment pour changer vos équipes ou leur ordre.',
       savedSingle: 'Vos équipes sont enregistrées. Votre montre se mettra à jour d’ici quelques minutes. Conservez votre code d’association — saisissez-le ici à tout moment pour changer vos équipes.',
       edit: 'Modifier ma sélection',
-      teamFallback: 'Équipe {id}'
+      teamFallback: 'Équipe {id}',
+      followingHint: 'Touchez le × d’une équipe pour ne plus la suivre.',
+      removeTeam: 'Ne plus suivre {team}',
+      removedTeam: '{team} retirée'
     },
     de: {
       h1: 'Teams registrieren',
@@ -551,7 +580,10 @@
       savedOrdered: 'Deine Teams sind in dieser Reihenfolge gespeichert. Deine Uhr aktualisiert sich in wenigen Minuten. Bewahre deinen Kopplungscode auf — gib ihn hier jederzeit ein, um Teams oder Reihenfolge zu ändern.',
       savedSingle: 'Deine Teams sind gespeichert. Deine Uhr aktualisiert sich in wenigen Minuten. Bewahre deinen Kopplungscode auf — gib ihn hier jederzeit ein, um deine Teams zu ändern.',
       edit: 'Auswahl ändern',
-      teamFallback: 'Team {id}'
+      teamFallback: 'Team {id}',
+      followingHint: 'Tippe auf das × eines Teams, um ihm nicht mehr zu folgen.',
+      removeTeam: '{team} nicht mehr folgen',
+      removedTeam: '{team} entfernt'
     },
     ru: {
       h1: 'Регистрация команд',
@@ -592,7 +624,10 @@
       savedOrdered: 'Команды сохранены в этом порядке. Часы обновятся в течение нескольких минут. Сохраните код сопряжения — введите его здесь в любой момент, чтобы изменить команды или их порядок.',
       savedSingle: 'Команды сохранены. Часы обновятся в течение нескольких минут. Сохраните код сопряжения — введите его здесь в любой момент, чтобы изменить команды.',
       edit: 'Изменить выбор',
-      teamFallback: 'Команда {id}'
+      teamFallback: 'Команда {id}',
+      followingHint: 'Нажмите × у команды, чтобы перестать следить за ней.',
+      removeTeam: 'Перестать следить за {team}',
+      removedTeam: '{team} удалена'
     }
   };
 
@@ -879,7 +914,11 @@
     // Keep step 3 honest while it is on screen: a team un-ticked above has to
     // leave the order list, not linger in it and get saved anyway.
     if (!$('priorityPanel').hidden) {
-      if (n < 2) { hide($('priorityPanel')); } else { renderPriority(); }
+      // Render in BOTH branches. Hiding a panel that still holds the old rows
+      // leaves stale DOM behind the curtain, and anything that later shows it
+      // without re-rendering would show a list that is quietly wrong.
+      renderPriority();
+      if (n < 2) hide($('priorityPanel'));
     }
   }
 
@@ -912,7 +951,30 @@
     state.order.forEach(function (id) {
       var chip = document.createElement('span');
       chip.className = 'sel-chip';
-      chip.textContent = teamLabel(id);
+      var name = document.createElement('span');
+      name.textContent = teamLabel(id);
+      chip.appendChild(name);
+
+      // Removing a team used to mean finding it again in the tree — opening its
+      // country and scrolling to it — when the chip saying you follow it is
+      // already on screen. The × drops it from here.
+      var x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'sel-chip-x';
+      x.textContent = '×';
+      x.setAttribute('aria-label', t('removeTeam', { team: teamLabel(id) }));
+      x.addEventListener('click', function () {
+        var label = teamLabel(id);
+        deselect(id);
+        syncSelection();     // re-renders the chips, the count and the order list
+        announce(t('removedTeam', { team: label }));
+        // Focus does not survive the re-render, so put it somewhere useful
+        // rather than on the body: the next chip's ×, or the filter box when
+        // that was the last team.
+        var next = wrap.querySelector('.sel-chip-x');
+        if (next) { next.focus(); } else { $('filterInput').focus(); }
+      });
+      chip.appendChild(x);
       wrap.appendChild(chip);
     });
     box.hidden = false;
