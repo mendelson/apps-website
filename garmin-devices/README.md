@@ -3,7 +3,7 @@
 Mapeamento extraído automaticamente da [referência de dispositivos do Connect IQ](https://developer.garmin.com/connect-iq/device-reference/).
 
 - **Part numbers:** 318 (318 listados hoje no site da Garmin)
-- **Última atualização:** 2026-08-03
+- **Última atualização:** 2026-08-10
 - Arquivo para copiar/colar em planilha: [`garmin-pn-map.tsv`](garmin-pn-map.tsv)
 - Cada seção abaixo é um dia em que algo mudou (mais recente no topo): dispositivos vistos pela 1ª vez, renomeados, removidos do site ou que voltaram a aparecer. Part numbers removidos são mantidos como registro histórico.
 
