@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Политика конфиденциальности – приложения Garmin от M. Mendelson</title>
+<meta name="description" content="Политика конфиденциальности приложений Garmin Connect IQ (поля данных и циферблаты) от M. Mendelson — для всех текущих и будущих приложений." />
+<link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/ru/" />
+<link rel="alternate" hreflang="de" href="https://apps.mmendelson.com/privacy_policy/de/" />
+<link rel="alternate" hreflang="en" href="https://apps.mmendelson.com/privacy_policy/en/" />
+<link rel="alternate" hreflang="es" href="https://apps.mmendelson.com/privacy_policy/es/" />
+<link rel="alternate" hreflang="fr" href="https://apps.mmendelson.com/privacy_policy/fr/" />
+<link rel="alternate" hreflang="it" href="https://apps.mmendelson.com/privacy_policy/it/" />
+<link rel="alternate" hreflang="pt" href="https://apps.mmendelson.com/privacy_policy/pt/" />
+<link rel="alternate" hreflang="ru" href="https://apps.mmendelson.com/privacy_policy/ru/" />
+<link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/privacy_policy/" />
+<link rel="icon" href="/assets/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+<link rel="apple-touch-icon" href="/assets/favicon-180.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #111; --surface: #1a1a1a; --surface2: #202020; --border: #333;
+    --text: #eee; --muted: #9a9a9a; --primary: #3b82f6; --accent: #3b82f6; --maxw: 820px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.65; -webkit-text-size-adjust: 100%; }
+  a { color: var(--primary); }
+  a:hover { color: #60a5fa; }
+
+  header.page { text-align: center; padding: 24px 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .header-top { display: flex; justify-content: flex-end; }
+  header.page h1 { margin: 8px 0 6px; font-size: clamp(24px, 5vw, 34px); }
+  header.page .sub { margin: 0; color: var(--muted); font-size: 15px; }
+  .home-link { display: inline-block; margin-top: 16px; font-size: 14px; text-decoration: none;
+    padding: 7px 14px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+  .home-link:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* Language selector — mirrors the site header control */
+  .lang-selector { position: relative; display: inline-flex; align-items: center; }
+  .lang-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%; width: 34px; height: 34px; font-size: 18px; line-height: 1; cursor: pointer;
+    transition: background .2s; display: flex; align-items: center; justify-content: center; padding: 0; color: inherit; }
+  .lang-btn:hover { background: rgba(255,255,255,0.18); }
+  .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #1e1e1e;
+    border: 1px solid #333; border-radius: 10px; overflow: hidden; min-width: 140px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 1001; }
+  .lang-selector.open .lang-dropdown { display: block; }
+  .lang-option { display: block; padding: 9px 16px; color: #bbb; text-decoration: none; font-size: 14px;
+    transition: background .15s, color .15s; }
+  .lang-option:hover { background: #2a2a2a; color: #fff; }
+  .lang-option.active { color: #fff; font-weight: 600; }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 64px; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+  .intro { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 18px 20px; margin: 0 0 32px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p, li { font-size: 15.5px; }
+  ul { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--surface2); }
+  .note { color: var(--muted); font-size: 14px; }
+  footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
+  footer.page a { color: var(--muted); }
+  .foot-cookies { color: var(--primary); }
+  .consent-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 20px rgba(0,0,0,.5); }
+  .consent-bar[hidden] { display: none; }
+  .consent-text { margin: 0; font-size: 13.5px; color: var(--text); max-width: 60ch; }
+  .consent-actions { display: flex; gap: 10px; }
+  .consent-btn { min-height: 40px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; background: var(--primary); color: #fff; }
+  .consent-btn:hover { filter: brightness(1.1); }
+  .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
+  .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }
+</style>
+<!-- GA4 with Consent Mode v2 (denied by default). -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  gtag('config', 'G-0MHS4QK452');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
+</head>
+<body>
+
+<header class="page">
+  <div class="header-top">
+    <div class="lang-selector">
+      <button class="lang-btn" aria-label="Язык">🌐</button>
+      <div class="lang-dropdown">
+        <a href="/privacy_policy/de/" class="lang-option">Deutsch</a>
+        <a href="/privacy_policy/en/" class="lang-option">English</a>
+        <a href="/privacy_policy/es/" class="lang-option">Español</a>
+        <a href="/privacy_policy/fr/" class="lang-option">Français</a>
+        <a href="/privacy_policy/it/" class="lang-option">Italiano</a>
+        <a href="/privacy_policy/pt/" class="lang-option">Português</a>
+        <a href="/privacy_policy/ru/" class="lang-option active">Русский</a>
+      </div>
+    </div>
+  </div>
+  <h1>Политика конфиденциальности</h1>
+  <p class="sub">Приложения Garmin Connect IQ от M. Mendelson</p>
+  <a class="home-link" href="/ru/">← К приложениям</a>
+</header>
+
+<main>
+  <p class="meta">Последнее обновление: 18 июля 2026</p>
+
+  <div class="intro"><p style="margin:0;">Эта политика распространяется на <strong>все приложения Garmin Connect IQ</strong>, опубликованные M. Mendelson — как поля данных, так и циферблаты, включая будущие (далее — “Приложения”). Она объясняет, какую информацию об использовании они собирают, зачем и какие у вас есть возможности выбора.</p></div>
+
+  <p>Приложения устанавливаются из Garmin Connect IQ Store и работают на вашем устройстве Garmin. Использование платформы Garmin также регулируется <a href="https://www.garmin.com/en-US/privacy/connect/" target="_blank" rel="noopener">политикой конфиденциальности Garmin</a>, отдельной от этой.</p>
+
+  <h2>1. Кто несёт ответственность</h2>
+  <p>Эти Приложения разрабатывает и поддерживает независимый разработчик M. Mendelson (“Разработчик”). По любым вопросам о конфиденциальности пишите: <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a>.</p>
+
+  <h2>2. Какую информацию собирают Приложения</h2>
+  <p>Чтобы понимать, как Приложения используются на разных устройствах, и улучшать их, Приложения отправляют небольшую запись об использовании при запуске. Такая запись может включать:</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Данные</th><th>Источник</th><th>Назначение</th></tr></thead>
+    <tbody>
+      <tr><td>Год рождения (т.е. примерный возраст)</td><td>Ваш профиль Garmin</td><td>Понимать аудиторию и улучшать Приложения</td></tr>
+      <tr><td>Пол</td><td>Ваш профиль Garmin</td><td>Понимать аудиторию и улучшать Приложения</td></tr>
+      <tr><td>Модель устройства</td><td>Настройки устройства</td><td>Диагностика проблем и приоритеты поддержки</td></tr>
+      <tr><td>Идентификатор устройства (уникальный для установки, выдаётся Garmin)</td><td>Настройки устройства</td><td>Счёт уникальных устройств и дедупликация записей</td></tr>
+      <tr><td>Язык системы</td><td>Настройки устройства</td><td>Понимать, какие языки поддерживать</td></tr>
+      <tr><td>Смещение часового пояса &amp; время использования</td><td>Часы устройства</td><td>Статистика времени использования</td></tr>
+      <tr><td>Текущий вид спорта / профиль активности (например, бег, велосипед)</td><td>Профиль активности Garmin</td><td>Понимать, как используются Приложения</td></tr>
+      <tr><td>Идёт ли запись активности, и версия Приложения</td><td>Состояние Приложения</td><td>Отладка и статистика версий</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Год рождения и пол берутся из профиля, настроенного вами в Garmin Connect. Если они не заданы, Приложению они недоступны.</p>
+
+  <h2>3. Трансляция в реальном времени (Tracker Data Field)</h2>
+  <p>Tracker Data Field включает необязательную функцию трансляции. Когда вы задаёте Track ID и записываете активность, поле данных передаёт с часов записи об этой активности — то, ради чего функция существует: время, темп, дистанцию и, где это предусмотрено, ваше местоположение — на сервер Разработчика, чтобы страница apps.mmendelson.com/tracker могла показать их тому, кто введёт этот Track ID.</p>
+  <p>Это добровольно и инициируется вами: без активного использования поля данных с Track ID ничего не передаётся, и запуск — это и есть ваше согласие на передачу. Любой, кто знает ваш Track ID, увидит эти записи — относитесь к нему как к приватной ссылке. Записи хранятся только столько, сколько нужно для работы функции; остановить передачу можно в любой момент, завершив активность или убрав поле данных, а удаление сохранённых записей можно запросить по адресу в разделе Контакты.</p>
+
+  <h2>4. Вас нельзя идентифицировать лично</h2>
+  <p>Приложения не запрашивают и не собирают ваше имя, email, телефон или данные для входа, и перечисленная выше информация не связана с вашей личностью в Garmin Connect или где-либо ещё. Идентификатор устройства — это значение от Garmin, которое лишь отличает одно устройство от другого — это не ваше имя и оно не используется, чтобы узнать, кто вы. Поэтому собираемая информация сама по себе не позволяет установить вашу личность. Единственное исключение — необязательная трансляция из следующего раздела: записи, которыми вы сами решаете поделиться, могут содержать геоданные, и любой с вашим Track ID увидит их — в этом и состоит смысл функции.</p>
+
+  <h2>5. Как используется информация</h2>
+  <ul>
+    <li>Чтобы понимать, на каких устройствах, языках и в каких видах активности используются Приложения.</li>
+    <li>Чтобы исправлять ошибки, расставлять приоритеты улучшений и готовить агрегированную статистику.</li>
+  </ul>
+  <p>Я <strong>не</strong> продаю ваши персональные данные и <strong>не</strong> использую их для рекламы или рекламных профилей.</p>
+
+  <h2>6. Хранение &amp; безопасность данных</h2>
+  <p>Информация об использовании передаётся по шифрованным (HTTPS) соединениям и хранится только столько, сколько нужно для работы Приложений и статистики, после чего удаляется или остаётся в агрегированном виде. Ни один способ передачи или хранения не является на 100% безопасным, но я принимаю разумные меры защиты.</p>
+
+  <h2>7. Конфиденциальность детей</h2>
+  <p>Приложения — это спортивные инструменты общего назначения и не адресованы детям. Я не собираю осознанно персональные данные детей младше возраста, установленного местным законом. Если вы считаете, что ребёнок предоставил такие данные, свяжитесь со мной, и я их удалю.</p>
+
+  <h2>8. Ваши права &amp; выбор</h2>
+  <ul>
+    <li>Возраст и пол берутся из вашего профиля Garmin; вы можете изменить или очистить эти поля в Garmin Connect в любое время.</li>
+    <li>Вы можете удалить Приложение в любой момент, чтобы оно перестало работать и отправлять данные; трансляция идёт только пока вы активно используете Tracker Data Field с Track ID.</li>
+    <li>В зависимости от страны проживания у вас может быть право бесплатно узнать, какая информация связана с вашим устройством, получить к ней доступ, исправить или потребовать удаления. По запросу я удалю всё, что связано с вашим устройством или Track ID, и прекращу дальнейшую обработку. Напишите мне по адресу ниже.</li>
+  </ul>
+
+  <h2>9. Изменения этой политики</h2>
+  <p>Я могу время от времени обновлять эту политику. Дата “Последнее обновление” вверху отражает актуальную версию. Существенные изменения будут отражены на этой странице.</p>
+
+  <h2>10. Контакты</h2>
+  <p>Вопросы, запросы или сомнения по этой политике или вашим данным:<br /> <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
+  <h2>Аналитика сайта и cookie</h2>
+  <p>Этот сайт (apps.mmendelson.com и его страницы) использует Google Analytics для понимания агрегированного использования — просмотров страниц, кликов и подобных событий. Хранение аналитических данных (cookie) по умолчанию отключено и включается, только если вы согласитесь в баннере; изменить выбор можно в любое время по ссылке "Cookies" в подвале сайта. Аналитика сайта не собирает персонально идентифицирующей информации и отделена от данных приложений Garmin, описанных выше.</p>
+</main>
+
+<footer class="page"><p>© 2026 M. Mendelson — приложения Garmin · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
+
+<script>
+(function(){var s=document.querySelector(".lang-selector");if(!s)return;var b=s.querySelector(".lang-btn");b.addEventListener("click",function(e){e.stopPropagation();s.classList.toggle("open");});document.addEventListener("click",function(){s.classList.remove("open");});})();
+</script>
+
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+<script src="/assets/js/consent.js?v=1"></script>
+</body>
+</html>

@@ -52,6 +52,14 @@ const T = {
     title: "Apps para Garmin – M. Mendelson",
     desc: "Apps Garmin Connect IQ desenvolvidos por M. Mendelson. Data fields e watch faces disponíveis na Connect IQ Store.",
   },
+  it: {
+    title: "App Garmin – M. Mendelson",
+    desc: "App Garmin Connect IQ di M. Mendelson. Campi dati e quadranti sul Connect IQ Store.",
+  },
+  ru: {
+    title: "Приложения Garmin – M. Mendelson",
+    desc: "Приложения Garmin Connect IQ от M. Mendelson. Поля данных и циферблаты в Connect IQ Store.",
+  },
 };
 
 // ---------------------------------------------------------------------------

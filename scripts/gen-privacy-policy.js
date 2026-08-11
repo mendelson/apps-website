@@ -11,7 +11,9 @@ const LANGS = [
   ["en", "English"],
   ["es", "Español"],
   ["fr", "Français"],
+  ["it", "Italiano"],
   ["pt", "Português"],
+  ["ru", "Русский"],
 ];
 
 const CSS = `
@@ -235,7 +237,7 @@ const redirect = `<!DOCTYPE html>
 <link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/en/" />
 <link rel="icon" href="/assets/favicon.ico" sizes="any" />
 <script>
-(function(){var s=['de','en','es','fr','pt'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/privacy_policy/'+l+'/');})();
+(function(){var s=['de','en','es','fr','it','pt','ru'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/privacy_policy/'+l+'/');})();
 </script>
 <meta http-equiv="refresh" content="0; url=/privacy_policy/en/" />
 </head>

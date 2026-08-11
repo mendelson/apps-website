@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Informativa sulla privacy – App Garmin di M. Mendelson</title>
+<meta name="description" content="Informativa sulla privacy delle app Garmin Connect IQ (campi dati e quadranti) di M. Mendelson, valida per tutte le app attuali e future." />
+<link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/it/" />
+<link rel="alternate" hreflang="de" href="https://apps.mmendelson.com/privacy_policy/de/" />
+<link rel="alternate" hreflang="en" href="https://apps.mmendelson.com/privacy_policy/en/" />
+<link rel="alternate" hreflang="es" href="https://apps.mmendelson.com/privacy_policy/es/" />
+<link rel="alternate" hreflang="fr" href="https://apps.mmendelson.com/privacy_policy/fr/" />
+<link rel="alternate" hreflang="it" href="https://apps.mmendelson.com/privacy_policy/it/" />
+<link rel="alternate" hreflang="pt" href="https://apps.mmendelson.com/privacy_policy/pt/" />
+<link rel="alternate" hreflang="ru" href="https://apps.mmendelson.com/privacy_policy/ru/" />
+<link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/privacy_policy/" />
+<link rel="icon" href="/assets/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+<link rel="apple-touch-icon" href="/assets/favicon-180.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #111; --surface: #1a1a1a; --surface2: #202020; --border: #333;
+    --text: #eee; --muted: #9a9a9a; --primary: #3b82f6; --accent: #3b82f6; --maxw: 820px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.65; -webkit-text-size-adjust: 100%; }
+  a { color: var(--primary); }
+  a:hover { color: #60a5fa; }
+
+  header.page { text-align: center; padding: 24px 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .header-top { display: flex; justify-content: flex-end; }
+  header.page h1 { margin: 8px 0 6px; font-size: clamp(24px, 5vw, 34px); }
+  header.page .sub { margin: 0; color: var(--muted); font-size: 15px; }
+  .home-link { display: inline-block; margin-top: 16px; font-size: 14px; text-decoration: none;
+    padding: 7px 14px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+  .home-link:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* Language selector — mirrors the site header control */
+  .lang-selector { position: relative; display: inline-flex; align-items: center; }
+  .lang-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%; width: 34px; height: 34px; font-size: 18px; line-height: 1; cursor: pointer;
+    transition: background .2s; display: flex; align-items: center; justify-content: center; padding: 0; color: inherit; }
+  .lang-btn:hover { background: rgba(255,255,255,0.18); }
+  .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #1e1e1e;
+    border: 1px solid #333; border-radius: 10px; overflow: hidden; min-width: 140px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 1001; }
+  .lang-selector.open .lang-dropdown { display: block; }
+  .lang-option { display: block; padding: 9px 16px; color: #bbb; text-decoration: none; font-size: 14px;
+    transition: background .15s, color .15s; }
+  .lang-option:hover { background: #2a2a2a; color: #fff; }
+  .lang-option.active { color: #fff; font-weight: 600; }
+
+  main { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 64px; }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+  .intro { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 18px 20px; margin: 0 0 32px; }
+  h2 { font-size: 20px; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  p, li { font-size: 15.5px; }
+  ul { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--surface2); }
+  .note { color: var(--muted); font-size: 14px; }
+  footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
+  footer.page a { color: var(--muted); }
+  .foot-cookies { color: var(--primary); }
+  .consent-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); box-shadow: 0 -6px 20px rgba(0,0,0,.5); }
+  .consent-bar[hidden] { display: none; }
+  .consent-text { margin: 0; font-size: 13.5px; color: var(--text); max-width: 60ch; }
+  .consent-actions { display: flex; gap: 10px; }
+  .consent-btn { min-height: 40px; padding: 0 18px; border-radius: 8px; border: 0; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600; background: var(--primary); color: #fff; }
+  .consent-btn:hover { filter: brightness(1.1); }
+  .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
+  .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }
+</style>
+<!-- GA4 with Consent Mode v2 (denied by default). -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  gtag('config', 'G-0MHS4QK452');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
+</head>
+<body>
+
+<header class="page">
+  <div class="header-top">
+    <div class="lang-selector">
+      <button class="lang-btn" aria-label="Lingua">🌐</button>
+      <div class="lang-dropdown">
+        <a href="/privacy_policy/de/" class="lang-option">Deutsch</a>
+        <a href="/privacy_policy/en/" class="lang-option">English</a>
+        <a href="/privacy_policy/es/" class="lang-option">Español</a>
+        <a href="/privacy_policy/fr/" class="lang-option">Français</a>
+        <a href="/privacy_policy/it/" class="lang-option active">Italiano</a>
+        <a href="/privacy_policy/pt/" class="lang-option">Português</a>
+        <a href="/privacy_policy/ru/" class="lang-option">Русский</a>
+      </div>
+    </div>
+  </div>
+  <h1>Informativa sulla privacy</h1>
+  <p class="sub">App Garmin Connect IQ di M. Mendelson</p>
+  <a class="home-link" href="/it/">← Torna alle app</a>
+</header>
+
+<main>
+  <p class="meta">Ultimo aggiornamento: 18 luglio 2026</p>
+
+  <div class="intro"><p style="margin:0;">Questa informativa si applica a <strong>tutte le applicazioni Garmin Connect IQ</strong> pubblicate da M. Mendelson — campi dati e quadranti, comprese le app pubblicate in futuro (le “App”). Spiega quali informazioni d’uso le App raccolgono, perché, e quali scelte hai a disposizione.</p></div>
+
+  <p>Le App si installano dal Garmin Connect IQ Store e funzionano sul tuo dispositivo Garmin. L’uso della piattaforma Garmin è regolato anche da <a href="https://www.garmin.com/en-US/privacy/connect/" target="_blank" rel="noopener">l’informativa sulla privacy di Garmin</a>, che è separata da questa.</p>
+
+  <h2>1. Chi è il responsabile</h2>
+  <p>Queste App sono sviluppate e mantenute da uno sviluppatore indipendente, M. Mendelson (lo “Sviluppatore”). Per qualsiasi domanda o richiesta sulla privacy, scrivi a: <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a>.</p>
+
+  <h2>2. Informazioni raccolte dalle App</h2>
+  <p>Per capire come le App vengono usate sui diversi dispositivi e migliorarle, le App inviano un piccolo record d’uso quando vengono eseguite. Questo record può includere:</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Dato</th><th>Origine</th><th>Finalità</th></tr></thead>
+    <tbody>
+      <tr><td>Anno di nascita (ossia età approssimativa)</td><td>Il tuo profilo utente Garmin</td><td>Capire il pubblico e migliorare le App</td></tr>
+      <tr><td>Genere</td><td>Il tuo profilo utente Garmin</td><td>Capire il pubblico e migliorare le App</td></tr>
+      <tr><td>Modello del dispositivo</td><td>Impostazioni del dispositivo</td><td>Diagnosticare problemi specifici e dare priorità al supporto</td></tr>
+      <tr><td>Un identificativo del dispositivo (identificativo univoco per installazione fornito da Garmin)</td><td>Impostazioni del dispositivo</td><td>Contare i dispositivi distinti ed eliminare i record duplicati</td></tr>
+      <tr><td>Lingua di sistema</td><td>Impostazioni del dispositivo</td><td>Capire quali lingue supportare</td></tr>
+      <tr><td>Fuso orario &amp; orario d’uso</td><td>Orologio del dispositivo</td><td>Statistiche e distribuzione oraria d’uso</td></tr>
+      <tr><td>Sport / profilo attività corrente (es. corsa, ciclismo)</td><td>Profilo attività Garmin</td><td>Capire come vengono usate le App</td></tr>
+      <tr><td>Se è in corso una registrazione, e la versione dell’App</td><td>Stato dell’App</td><td>Debug e statistiche di versione</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">L’anno di nascita e il genere provengono dal profilo che hai configurato in Garmin Connect. Se non li hai impostati, non sono disponibili all’App.</p>
+
+  <h2>3. Tracciamento dal vivo (Tracker Data Field)</h2>
+  <p>Il Tracker Data Field include una funzione facoltativa di tracciamento dal vivo. Quando la configuri con un Track ID e registri un’attività, il campo dati trasmette dal tuo orologio i record dal vivo di quell’attività — i valori che la funzione esiste per condividere, come tempo trascorso, ritmo e distanza e, dove la funzione lo prevede, la tua posizione — a un backend gestito dallo Sviluppatore, così che la pagina apps.mmendelson.com/tracker possa mostrarli a chi inserisce quel Track ID.</p>
+  <p>Questa condivisione è facoltativa e avviata da te: nulla viene trasmesso se non usi attivamente il campo dati con un Track ID, e avviarlo è il modo in cui acconsenti al trasferimento. Chiunque conosca il tuo Track ID può vedere i record condivisi, quindi trattalo come un link privato e dallo solo a persone di cui ti fidi. Questi record sono conservati solo per il tempo necessario a fornire la funzione; puoi interrompere la trasmissione in qualsiasi momento terminando l’attività o rimuovendo il campo dati, e puoi chiederne la cancellazione all’indirizzo nella sezione Contatti.</p>
+
+  <h2>4. Non puoi essere identificato personalmente</h2>
+  <p>Le App non chiedono né raccolgono il tuo nome, indirizzo email, numero di telefono o credenziali di accesso, e le informazioni sopra non sono collegate alla tua identità in Garmin Connect o in altri account. L’identificativo del dispositivo è un valore fornito da Garmin che serve solo a distinguere un dispositivo da un altro, per contare e deduplicare i record d’uso — non è il tuo nome e non viene usato per capire chi sei. Per questo, le informazioni raccolte dalle App non possono, da sole, identificarti come persona determinata. L’unica eccezione è la funzione facoltativa di tracciamento descritta nella sezione successiva: i record che scegli attivamente di condividere possono includere dati di posizione, e chiunque abbia il tuo Track ID può vederli — è lo scopo della funzione.</p>
+
+  <h2>5. Come vengono usate le informazioni</h2>
+  <ul>
+    <li>Per capire con quali dispositivi, lingue e tipi di attività vengono usate le App.</li>
+    <li>Per correggere errori, dare priorità ai miglioramenti e produrre statistiche d’uso aggregate.</li>
+  </ul>
+  <p><strong>Non</strong> vendo le tue informazioni personali e <strong>non</strong> le uso per pubblicità né per costruire profili pubblicitari.</p>
+
+  <h2>6. Conservazione &amp; sicurezza dei dati</h2>
+  <p>Le informazioni d’uso sono trasmesse su connessioni cifrate (HTTPS) e conservate solo per il tempo necessario a far funzionare le App e produrre statistiche, dopodiché sono eliminate o mantenute in forma aggregata. Nessun metodo di trasmissione o archiviazione è sicuro al 100%, ma adotto misure ragionevoli per proteggere le limitate informazioni raccolte.</p>
+
+  <h2>7. Privacy dei minori</h2>
+  <p>Le App sono strumenti sportivi di uso generale e non sono rivolte ai bambini. Non raccolgo consapevolmente informazioni personali da minori al di sotto dell’età richiesta dalla legge locale. Se ritieni che un minore abbia fornito tali informazioni, contattami e le cancellerò.</p>
+
+  <h2>8. I tuoi diritti &amp; le tue scelte</h2>
+  <ul>
+    <li>Età e genere provengono dal tuo profilo Garmin; puoi modificarli o cancellarli in Garmin Connect in qualsiasi momento.</li>
+    <li>Puoi disinstallare un’App in qualsiasi momento per impedirle di funzionare e di inviare informazioni d’uso; il tracciamento dal vivo trasmette solo mentre usi attivamente il Tracker Data Field con un Track ID.</li>
+    <li>A seconda del luogo in cui vivi, puoi avere il diritto di chiedere — gratuitamente — quali informazioni sono associate al tuo dispositivo, e di accedervi, correggerle o chiederne la cancellazione. Su richiesta cancellerò tutto ciò che è associato al tuo dispositivo o Track ID e interromperò ogni ulteriore trattamento. Scrivimi all’indirizzo qui sotto.</li>
+  </ul>
+
+  <h2>9. Modifiche a questa informativa</h2>
+  <p>Potrei aggiornare questa informativa di tanto in tanto. La data di “Ultimo aggiornamento” in alto indica la versione più recente. Le modifiche sostanziali saranno riportate su questa pagina.</p>
+
+  <h2>10. Contatti</h2>
+  <p>Domande, richieste o dubbi su questa informativa o sui tuoi dati:<br /> <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
+  <h2>Analisi del sito e cookie</h2>
+  <p>Questo sito (apps.mmendelson.com e le sue pagine) usa Google Analytics per capire l’utilizzo aggregato — visualizzazioni di pagina, clic ed eventi simili. L’archiviazione a fini analitici (cookie) è disattivata per impostazione predefinita e viene abilitata solo se la accetti dal banner dei cookie; puoi cambiare idea in qualsiasi momento dal link "Cookie" nel piè di pagina. Attraverso le analisi del sito non viene raccolta alcuna informazione che identifichi personalmente, e sono separate dai dati delle app Garmin descritti sopra.</p>
+</main>
+
+<footer class="page"><p>© 2026 M. Mendelson — App Garmin · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
+
+<script>
+(function(){var s=document.querySelector(".lang-selector");if(!s)return;var b=s.querySelector(".lang-btn");b.addEventListener("click",function(e){e.stopPropagation();s.classList.toggle("open");});document.addEventListener("click",function(){s.classList.remove("open");});})();
+</script>
+
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+<script src="/assets/js/consent.js?v=1"></script>
+</body>
+</html>

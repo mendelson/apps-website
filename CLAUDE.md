@@ -33,19 +33,27 @@ Static site on GitHub Pages (`apps.mmendelson.com`), plain HTML/CSS/JS — **no
 build step and no dependencies**. Anything added has to work as a file the
 browser loads directly.
 
-- **Layout.** `/{de,en,es,fr,pt}/` are the generated showcase pages (from the
+- **Layout.** `/{de,en,es,fr,it,pt,ru}/` are the generated showcase pages (from the
   root `index.html` via `scripts/gen-index-pages.js`); the rest are standalone
   apps: `fm-pair/`, `tracker/`, `live_tracker/`, `garmin-devices/`,
   `garmin-pricing/`, `privacy*/`.
 - **Site i18n.** `assets/js/i18n.js` holds the showcase translations and its
-  `SUPPORTED` list is `de/en/es/fr/pt`. Language comes from the `/xx/` path,
-  then `navigator.language`, then English, and `data-i18n` attributes are
-  applied on load.
-- **A companion page for a watch app ships the union of two language sets** —
-  the site's five plus `ru`, which the apps ship and the site does not — using a
-  **page-local** dictionary. Widening `SUPPORTED` instead would make every other
-  page detect Russian and render English under `lang="ru"`. `fm-pair/index.html`
-  is the reference; the rule is in `AI-Instructions/docs/LOCALIZATION.md`.
+  `SUPPORTED` list is `de/en/es/fr/it/pt/ru` — **seven, matching the apps**
+  (rule G). Language comes from the `/xx/` path, then `navigator.language`, then
+  English, and `data-i18n` attributes are applied on load.
+- **The site and the apps ship the SAME set, and that is new.** They used to
+  differ — the site had `es` and no `ru`, the apps had `ru` and no `es` — so
+  whichever of the two a customer spoke, one half of the product answered in
+  English. `ru` and `it` were added here on 2026-08-10 in the same pass that
+  added `spa`/`ita` to the watch face.
+- **Widening `SUPPORTED` is only safe once every page has the strings**, which
+  is why it could not be done before: a code in that list makes every page
+  detect the language and then render English under `<html lang="ru">` if it has
+  no dictionary. The order is translate, then widen, then load each page in that
+  language and look.
+- **`fm-pair/` keeps its own page-local dictionary** (a `t()` helper plus a
+  `?lang=` override) because a single-URL companion page has no `/xx/` path to
+  read and no language switcher. It carries all seven too.
 - **`fm-pair/`** is the pairing page for the Football Matches watch face: enter
   the code the watch shows, pick teams, set their priority order. It calls the
   `matches` Apps Script backend over **JSONP** (`callback=`), because Apps Script
