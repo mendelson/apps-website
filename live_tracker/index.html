@@ -333,6 +333,16 @@
       background: rgba(234,179,8,0.12);
       border-color: rgba(234,179,8,0.35);
     }
+    #pause-timer {
+      display: none;
+      font-size: 0.68rem;
+      font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+      font-variant-numeric: tabular-nums;
+      color: var(--yellow);
+      opacity: 0.75;
+      margin-left: -0.15rem;
+    }
+    #pause-timer.visible { display: inline-block; }
     .topbar-spacer { flex: 1; }
     #last-update {
       font-size: 0.72rem;
@@ -984,6 +994,7 @@
     <div class="topbar-brand">
       <div class="topbar-dot" id="status-dot"></div>
       <span id="live-badge">LIVE</span>
+      <span id="pause-timer" aria-live="polite"></span>
     </div>
     <div class="topbar-spacer"></div>
     <span id="last-update"></span>
@@ -1216,6 +1227,9 @@ const REFRESH_MS = 30_000;
 // LiveTrack pushes a point roughly every minute while recording, so this is
 // two missed updates plus slack — long enough not to trip on a slow feed.
 const PAUSE_AFTER_MS = 120_000;
+// A frozen activity timer must hold for this long before it reads as a pause —
+// one repeated value is reporting jitter, a run of them is the athlete stopped.
+const PAUSE_FREEZE_MS = 45_000;
 // How often the paused/live call is re-made without waiting for a poll, so a
 // feed that goes quiet flips the badge instead of leaving a stale LIVE on it.
 const STATE_WATCH_MS = 10_000;
@@ -1234,8 +1248,9 @@ const state = {
   trackerLatLng: null,
   autoFollow: 'all',
   activityState: null,   // 'live' | 'paused' | 'finished' | 'cached'
-  timerStalled: false,   // points still arriving, but the activity clock is frozen
+  pausedSince: null,     // ms — when the activity clock stopped
   stateWatchTimer: null,
+  pauseTickTimer: null,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1986,38 +2001,77 @@ function fmtActivity(meta) {
 // flag, so a pause has to be read off the data the athlete's watch stops
 // producing. Two independent signals, either of which means paused:
 //
-//   1. The newest trackpoint has gone stale (PAUSE_AFTER_MS). A recording
-//      activity keeps pushing points even when the athlete is standing still,
-//      so silence is the pause — not a zero speed, which is just a red light.
-//   2. Points keep arriving but the activity timer barely moves. Covers a
-//      watch that keeps the feed alive across the pause.
+//   1. The activity timer stopped advancing while points kept arriving. This
+//      is what a real pause looks like: a paused watch does NOT stop posting.
+//      Read against the live session on 2026-08-15 — 179 points arrived over
+//      the 30 minutes of a pause, every ~10 s, each repeating the frozen
+//      TOTAL_DURATION of 2031 s and the frozen distance of 2166.57 m.
+//   2. The feed itself went silent (PAUSE_AFTER_MS) — a watch that stopped
+//      posting, or a phone that lost the connection.
 //
-// A finished session is authoritative (sessionStatus), so it wins outright.
+// Neither is a zero speed: that same session went STATIONARY seven times with
+// the timer still running (traffic lights), and none of those is a pause.
+//
+// Signal 1 is read off the trackpoint HISTORY rather than by diffing polls, so
+// a page opened in the middle of a pause — the normal case — sees it at once
+// and can say when it started. That start time is the pause timer's origin.
+//
+// A finished session wins outright, but note sessionStatus is weak: Garmin's
+// `end` sits 24 h after `start`, so it does not go false when the athlete
+// stops. An END event on the newest point is the real finish marker.
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Walks back over the points sharing the newest TOTAL_DURATION value and
+// returns when that run began, or null if the timer is still advancing.
+function timerFreezeStart(pts) {
+  const last = pts[pts.length - 1];
+  const lastDur = parseFloat(last?.metaData?.TOTAL_DURATION);
+  if (!isFinite(lastDur)) return null;          // no timer to read
+  let i = pts.length - 1;
+  while (i > 0 && parseFloat(pts[i - 1].metaData?.TOTAL_DURATION) === lastDur) i--;
+  if (i === pts.length - 1) return null;        // newest point advanced it
+  return pts[i].timestamp;
+}
+
+// Exact tokens only. The live session's first point carries BEGIN and every
+// other point carries none — including across a 30-minute pause, which is why
+// a pause cannot be read from here. Which token marks a finish has not been
+// seen yet, so the three plausible spellings are matched and sessionStatus
+// remains the fallback; a partial match (LAP_END and the like) is not worth
+// the risk of calling a running activity finished.
+const END_EVENTS = new Set(['END', 'STOP', 'FINISH']);
+function hasEndEvent(point) {
+  const raw = point?.metaData?.EVENT_TYPES;
+  if (!raw) return false;
+  return raw.split(',').some(e => END_EVENTS.has(e.trim().toUpperCase()));
+}
+
+// null when running; { since } — the moment the activity clock stopped — when paused.
+function derivePause() {
+  const pts = state.trackpoints;
+  const last = pts[pts.length - 1];
+  if (!last) return null;
+  if (Date.now() - last.timestamp > PAUSE_AFTER_MS) return { since: last.timestamp };
+  const freeze = timerFreezeStart(pts);
+  // A single repeated value is jitter; a run that spans PAUSE_FREEZE_MS is a pause.
+  if (freeze != null && last.timestamp - freeze >= PAUSE_FREEZE_MS) return { since: freeze };
+  return null;
+}
+
 function deriveActivityState() {
   const info = state.sessionInfo;
   if (!info || info.sessionStatus !== 'InProgress') return 'finished';
   const last = state.trackpoints[state.trackpoints.length - 1];
   if (!last) return 'live';           // session open, nothing recorded yet
-  if (Date.now() - last.timestamp > PAUSE_AFTER_MS) return 'paused';
-  if (state.timerStalled) return 'paused';
-  return 'live';
-}
-
-// Did the activity clock keep up with the wall clock between these two points?
-// Less than a fifth of it means the athlete was paused for most of the gap.
-function updateTimerStalled(prev, cur) {
-  if (!prev || !cur || cur.timestamp <= prev.timestamp) return;
-  const wallSec = (cur.timestamp - prev.timestamp) / 1000;
-  if (wallSec < 20) return;           // too short a window to judge
-  const dPrev = parseFloat(prev.metaData?.TOTAL_DURATION);
-  const dCur  = parseFloat(cur.metaData?.TOTAL_DURATION);
-  if (!isFinite(dPrev) || !isFinite(dCur)) return;   // no timer to read
-  state.timerStalled = (dCur - dPrev) < wallSec * 0.2;
+  if (hasEndEvent(last)) return 'finished';
+  const pause = derivePause();
+  state.pausedSince = pause ? pause.since : null;
+  return pause ? 'paused' : 'live';
 }
 
 function applyActivityState(s) {
   state.activityState = s;
+  if (s !== 'paused') state.pausedSince = null;
   const dot   = document.getElementById('status-dot');
   const badge = document.getElementById('live-badge');
   if (dot) {
@@ -2033,6 +2087,40 @@ function applyActivityState(s) {
   if (el && s !== 'cached') {
     el.textContent = s === 'live' ? t('statusActive') : s === 'paused' ? t('statusPaused') : t('statusEnded');
     el.style.color = s === 'live' ? 'var(--green)' : s === 'paused' ? 'var(--yellow)' : 'var(--muted)';
+  }
+  updatePauseTimer();
+}
+
+// ── How long the pause has lasted ────────────────────────────────────────────
+// Counted from the athlete's own clock stopping, not from when this page
+// noticed — so it reads the same whether you were watching all along or opened
+// the page ten minutes into the pause.
+function fmtElapsed(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return h > 0
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function updatePauseTimer() {
+  const el = document.getElementById('pause-timer');
+  if (!el) return;
+  if (state.activityState !== 'paused' || !state.pausedSince) {
+    el.classList.remove('visible');
+    el.textContent = '';
+    if (state.pauseTickTimer) { clearInterval(state.pauseTickTimer); state.pauseTickTimer = null; }
+    return;
+  }
+  el.textContent = fmtElapsed(Date.now() - state.pausedSince);
+  el.classList.add('visible');
+  if (!state.pauseTickTimer) {
+    state.pauseTickTimer = setInterval(() => {
+      if (state.activityState !== 'paused' || !state.pausedSince) { updatePauseTimer(); return; }
+      el.textContent = fmtElapsed(Date.now() - state.pausedSince);
+    }, 1000);
   }
 }
 
@@ -2243,6 +2331,7 @@ function normalisePoints(arr) {
     if (!meta.ELEVATION && p.altitude != null) meta.ELEVATION = String(p.altitude);
     if (!meta.TOTAL_DURATION && p.totalDurationSecs != null) meta.TOTAL_DURATION = String(p.totalDurationSecs);
     if (!meta.ACTIVITY_TYPE && p.activityType) meta.ACTIVITY_TYPE = p.activityType;
+    if (!meta.EVENT_TYPES && Array.isArray(p.eventTypes)) meta.EVENT_TYPES = p.eventTypes.join(',');
     return { latitude: lat, longitude: lng, timestamp: ts, metaData: meta };
   }).filter(Boolean);
   return pts.length ? pts : null;
@@ -2325,6 +2414,10 @@ function parseGarminPageData(html) {
             ELEVATION:      String(pt.altitude ?? 0),
             TOTAL_DURATION: String(pt.totalDurationSecs ?? 0),
             ACTIVITY_TYPE:  pt.activityType || '',
+            // Garmin marks the activity's own start/stop here; BEGIN is on the
+            // first point of a real session, so END is how a finish announces
+            // itself. Kept as a plain string for the cache round-trip.
+            EVENT_TYPES:    Array.isArray(pt.eventTypes) ? pt.eventTypes.join(',') : '',
           },
         });
       }
@@ -2485,7 +2578,6 @@ async function loadData(isInitial = false) {
 
   // Merge trackpoints
   if (Array.isArray(newPoints) && newPoints.length > 0) {
-    const prevNewest = state.trackpoints[state.trackpoints.length - 1];
     if (isInitial) {
       state.trackpoints = newPoints;
     } else {
@@ -2494,7 +2586,6 @@ async function loadData(isInitial = false) {
     }
     state.trackpoints.sort((a, b) => a.timestamp - b.timestamp);
     state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
-    if (!isInitial) updateTimerStalled(prevNewest, state.trackpoints[state.trackpoints.length - 1]);
   }
 
   // Decided after the merge — the newest trackpoint is what tells live from paused
@@ -2666,7 +2757,8 @@ async function startSession(url) {
   hideNavButton();
 
   state.activityState = null;
-  state.timerStalled = false;
+  state.pausedSince = null;
+  updatePauseTimer();
   state.sessionId = parsed.sessionId;
   state.token = parsed.token;
   state.trackpoints = [];
@@ -2717,7 +2809,8 @@ function resetToLanding() {
   hideNoDataBar();
   hideNavButton();
   state.activityState = null;
-  state.timerStalled = false;
+  state.pausedSince = null;
+  updatePauseTimer();
   document.getElementById('live-badge').classList.remove('visible');
   _trackUser = null;
   history.replaceState(null, '', APP_BASE);
@@ -2837,14 +2930,33 @@ function buildMockPoints(count) {
   return pts;
 }
 
-// variant 'paused' backdates the feed so the session is open but silent —
-// the state the pause detection has to recognise, without a 2-minute wait.
+// Extends a mock track with the shape a real paused session has: points keep
+// coming every 10 s, each repeating the last one's timer and distance, only
+// the position jittering. `backfillMs` fills that run in retroactively, so a
+// pause can be several minutes old the moment the page opens.
+function appendMockPauseRun(pts, backfillMs) {
+  // Backfilling means the recorded part happened before the pause, not during it
+  if (backfillMs > 0) pts.forEach(p => { p.timestamp -= backfillMs; });
+  const src = pts[pts.length - 1];
+  for (let ts = src.timestamp + 10_000; ts <= Date.now(); ts += 10_000) {
+    pts.push({
+      latitude:  src.latitude  + (Math.random() - 0.5) * 0.00004,   // GPS noise
+      longitude: src.longitude + (Math.random() - 0.5) * 0.00004,
+      timestamp: ts,
+      metaData: { ...src.metaData, SPEED: '0' },                    // timer and distance frozen
+    });
+  }
+}
+
+// variant 'paused' opens onto an activity that has been paused for 5 minutes,
+// so the state and its timer are visible without waiting for one.
 function startMockSession(variant = 'live') {
   state.sessionId = 'mock-session-id';
   state.token     = 'mock-token';
   state.sessionInfo = { sessionStatus: 'InProgress', sessionName: 'Parque da Cidade — BSB (TESTE)', userName: 'Atleta Teste' };
   state.activityState = null;
-  state.timerStalled = false;
+  state.pausedSince = null;
+  updatePauseTimer();
 
   const shareUrl = `${location.pathname}?mock=${variant === 'paused' ? 'paused' : 'true'}`;
   history.replaceState(null, '', shareUrl);
@@ -2855,10 +2967,7 @@ function startMockSession(variant = 'live') {
 
   setTimeout(() => {
     state.trackpoints = buildMockPoints(20); // first 20 points already recorded
-    if (variant === 'paused') {
-      const back = PAUSE_AFTER_MS + 60_000;
-      state.trackpoints.forEach(p => { p.timestamp -= back; });
-    }
+    if (variant === 'paused') appendMockPauseRun(state.trackpoints, 5 * 60_000);
     state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
 
     const info = state.sessionInfo;
@@ -2878,7 +2987,15 @@ function startMockSession(variant = 'live') {
 
     hideLoading();
     showToast(t('testModeToast'), 'info', 6000);
-    if (variant === 'paused') return;   // feed stays silent: the pause is the point
+    if (variant === 'paused') {
+      // Keep posting frozen points, the way a real paused watch does
+      state.refreshTimer = setInterval(() => {
+        appendMockPauseRun(state.trackpoints, 0);
+        state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
+        applyActivityState(deriveActivityState());
+      }, 10_000);
+      return;
+    }
     startCountdown(30);
 
     // Simulate new points arriving every 30 s (up to 60 total)
