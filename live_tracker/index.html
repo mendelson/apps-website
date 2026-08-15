@@ -434,6 +434,25 @@
     .loc-text { color: var(--muted); }
     .loc-coords { color: var(--text); font-variant-numeric: tabular-nums; font-family: 'IBM Plex Mono', 'SF Mono', monospace; font-size: 0.72rem; }
 
+    /* Straight-line distance between me and the athlete */
+    #gap-row {
+      display: none;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: 0.15rem;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--border);
+    }
+    #gap-row.visible { display: flex; }
+    .loc-gap-label { color: var(--muted); font-size: 0.72rem; }
+    .loc-gap-value {
+      color: var(--text); font-weight: 600; font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+      font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+      white-space: nowrap;
+    }
+
     /* Map control button panel */
     #map-controls {
       position: absolute;
@@ -1094,6 +1113,10 @@
         <div class="loc-coords" id="user-coords">—</div>
       </div>
     </div>
+    <div id="gap-row">
+      <span class="loc-gap-label" id="lbl-gap">Distância até o atleta</span>
+      <span class="loc-gap-value" id="m-gap">—</span>
+    </div>
   </div>
 </div>
 
@@ -1187,6 +1210,7 @@ const state = {
   countdownInterval: null,
   watchId: null,
   userLatLng: null,
+  trackerLatLng: null,
   autoFollow: 'all',
 };
 
@@ -1208,7 +1232,7 @@ const TRANSLATIONS = {
     panelTitle:'Detalhes',status:'Status',statusActive:'Em andamento',statusEnded:'Encerrada',
     pace:'Ritmo',speed:'Velocidade',distance:'Distância',
     duration:'Duração',activity:'Modalidade',updated:'Atualizado',countdown:'Próxima',
-    tracker:'Atleta',myLocation:'Minha localização',
+    tracker:'Atleta',myLocation:'Minha localização',gapLabel:'Distância até o atleta',
     btnTracker:'Atleta',btnUser:'Eu',btnRoute:'Percurso',btnAll:'Tudo',
     titleTracker:'Acompanhar atleta — clique no mapa para cancelar',
     titleUser:'Acompanhar minha localização — clique no mapa para cancelar',
@@ -1264,7 +1288,7 @@ const TRANSLATIONS = {
     panelTitle:'Details',status:'Status',statusActive:'In progress',statusEnded:'Ended',
     pace:'Pace',speed:'Speed',distance:'Distance',
     duration:'Duration',activity:'Activity',updated:'Updated',countdown:'Next',
-    tracker:'Tracker',myLocation:'My Location',
+    tracker:'Tracker',myLocation:'My Location',gapLabel:'Distance to athlete',
     btnTracker:'Tracker',btnUser:'Me',btnRoute:'Route',btnAll:'All',
     titleTracker:'Follow tracker — click map to cancel',
     titleUser:'Follow my location — click map to cancel',
@@ -1320,7 +1344,7 @@ const TRANSLATIONS = {
     panelTitle:'Detalles',status:'Estado',statusActive:'En curso',statusEnded:'Finalizada',
     pace:'Ritmo',speed:'Velocidad',distance:'Distancia',
     duration:'Duración',activity:'Modalidad',updated:'Actualizado',countdown:'Siguiente',
-    tracker:'Atleta',myLocation:'Mi ubicación',
+    tracker:'Atleta',myLocation:'Mi ubicación',gapLabel:'Distancia al atleta',
     btnTracker:'Atleta',btnUser:'Yo',btnRoute:'Ruta',btnAll:'Todo',
     titleTracker:'Seguir atleta — toca el mapa para cancelar',
     titleUser:'Seguir mi ubicación — toca el mapa para cancelar',
@@ -1376,7 +1400,7 @@ const TRANSLATIONS = {
     panelTitle:'Détails',status:'Statut',statusActive:'En cours',statusEnded:'Terminée',
     pace:'Allure',speed:'Vitesse',distance:'Distance',
     duration:'Durée',activity:'Activité',updated:'Mis à jour',countdown:'Suivant',
-    tracker:'Athlète',myLocation:'Ma position',
+    tracker:'Athlète',myLocation:'Ma position',gapLabel:'Distance jusqu’à l’athlète',
     btnTracker:'Athlète',btnUser:'Moi',btnRoute:'Parcours',btnAll:'Tout',
     titleTracker:"Suivre l'athlète — cliquez sur la carte pour annuler",
     titleUser:'Suivre ma position — cliquez sur la carte pour annuler',
@@ -1432,7 +1456,7 @@ const TRANSLATIONS = {
     panelTitle:'Details',status:'Status',statusActive:'Aktiv',statusEnded:'Beendet',
     pace:'Tempo',speed:'Geschwindigkeit',distance:'Distanz',
     duration:'Dauer',activity:'Sportart',updated:'Aktualisiert',countdown:'Nächste',
-    tracker:'Athlet',myLocation:'Mein Standort',
+    tracker:'Athlet',myLocation:'Mein Standort',gapLabel:'Entfernung zum Athleten',
     btnTracker:'Athlet',btnUser:'Ich',btnRoute:'Strecke',btnAll:'Alles',
     titleTracker:'Athleten folgen — Karte klicken zum Abbrechen',
     titleUser:'Meinem Standort folgen — Karte klicken zum Abbrechen',
@@ -1552,6 +1576,7 @@ function applyTranslations() {
   // Location panel
   const lt = document.getElementById('lbl-tracker');        if (lt) lt.textContent = t('tracker');
   const lm = document.getElementById('lbl-my-loc');         if (lm) lm.textContent = t('myLocation');
+  const lg = document.getElementById('lbl-gap');            if (lg) lg.textContent = t('gapLabel');
   // Map buttons
   const afTr = document.getElementById('af-txt-tracker');   if (afTr) afTr.textContent = t('btnTracker');
   const afUs = document.getElementById('af-txt-user');      if (afUs) afUs.textContent = t('btnUser');
@@ -1658,6 +1683,8 @@ function updateTrackerOnMap(lat, lng, label) {
     });
   }
   document.getElementById('tracker-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  state.trackerLatLng = [lat, lng];
+  updateGap();
   setNavButton(lat, lng);
   if (_camBusy()) return;
   switch (state.autoFollow) {
@@ -1703,11 +1730,47 @@ function updateUserOnMap(lat, lng, accuracy) {
   }
   document.getElementById('user-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   document.getElementById('user-loc-dot').className = 'loc-dot user';
+  updateGap();
   if (_camBusy()) return;
   switch (state.autoFollow) {
     case 'user': map.panTo([lat, lng], { animate: true, duration: 0.5 }); break;
     case 'all':  _autoFitAll(); break;
   }
+}
+
+// ── Distance between me and the athlete ──
+// Straight line (great circle), not route distance: the athlete's remaining
+// path is unknown, so anything else would be invented. Updated from both
+// sides — a new trackpoint and a new geolocation fix each move the gap.
+function haversineMetres(a, b) {
+  const R = 6_371_008.8; // mean Earth radius (IUGG)
+  const rad = d => d * Math.PI / 180;
+  const dLat = rad(b[0] - a[0]);
+  const dLng = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2
+          + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+function fmtGap(m) {
+  if (!isFinite(m)) return '—';
+  if (m < 1000)  return `${Math.round(m)} m`;
+  if (m < 10000) return `${(m / 1000).toFixed(2)} km`;
+  return `${(m / 1000).toFixed(1)} km`;
+}
+
+function updateGap() {
+  const row = document.getElementById('gap-row');
+  const val = document.getElementById('m-gap');
+  if (!row || !val) return;
+  const me = state.userLatLng, athlete = state.trackerLatLng;
+  if (!me || !athlete) {           // one of the two positions is still unknown
+    val.textContent = '—';
+    row.classList.remove('visible');
+    return;
+  }
+  val.textContent = fmtGap(haversineMetres(me, athlete));
+  row.classList.add('visible');
 }
 
 // While a click-triggered flight is running, auto-follow camera updates
@@ -2526,6 +2589,8 @@ async function startSession(url) {
   document.getElementById('user-loc-dot').className = 'loc-dot user off';
   document.getElementById('user-coords').textContent = '—';
   document.getElementById('tracker-coords').textContent = '—';
+  state.trackerLatLng = null;
+  updateGap();
 
   if (_trackUser) {
     // Permanent per-user link: keep /live_tracker/<user> instead of the ephemeral Garmin session URL.
