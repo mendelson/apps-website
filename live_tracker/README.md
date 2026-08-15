@@ -16,6 +16,7 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
 ## Features
 
 - Real-time athlete position on an interactive map
+- Straight-line distance between you and the athlete, updated on every trackpoint and every GPS fix
 - Auto-follow modes: athlete, my location, route, or all
 - Pace / distance / time / speed calculator (bottom-sheet modal)
   - Per-field unit selection: km, m, mi / /km, /mi / km/h, mi/h
