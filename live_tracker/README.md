@@ -16,6 +16,7 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
 ## Features
 
 - Real-time athlete position on an interactive map
+- Live / paused / finished detection — Garmin reports no pause flag, so a pause is read off a stalled feed or a frozen activity timer
 - Straight-line distance between you and the athlete, updated on every trackpoint and every GPS fix
 - Auto-follow modes: athlete, my location, route, or all
 - Pace / distance / time / speed calculator (bottom-sheet modal)
@@ -29,4 +30,5 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
 
 Open `index.html` directly in a browser, or visit the GitHub Pages URL. Paste a Garmin LiveTrack session URL (or share link) into the input field to start tracking.
 
-To test with mock data, append `?mock=true` to the URL.
+To test with mock data, append `?mock=true` to the URL. `?mock=paused` opens the
+same session with a silent feed, which is what the pause detection reads.

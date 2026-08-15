@@ -305,6 +305,15 @@
       0%, 100% { box-shadow: 0 0 4px var(--green); }
       50%       { box-shadow: 0 0 10px var(--green), 0 0 20px rgba(34,197,94,0.4); }
     }
+    .topbar-dot.paused {
+      background: var(--yellow);
+      box-shadow: 0 0 6px var(--yellow);
+      animation: pausedPulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pausedPulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.35; }
+    }
     .topbar-dot.cached { background: var(--yellow); }
     .topbar-dot.expired { background: var(--muted); }
     #live-badge {
@@ -319,6 +328,11 @@
       padding: 0.1em 0.4em;
     }
     #live-badge.visible { display: inline-block; }
+    #live-badge.paused {
+      color: var(--yellow);
+      background: rgba(234,179,8,0.12);
+      border-color: rgba(234,179,8,0.35);
+    }
     .topbar-spacer { flex: 1; }
     #last-update {
       font-size: 0.72rem;
@@ -1198,6 +1212,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const API_BASE = 'https://livetrack.garmin.com/services';
 const REFRESH_MS = 30_000;
+// An open session whose newest trackpoint is older than this reads as paused.
+// LiveTrack pushes a point roughly every minute while recording, so this is
+// two missed updates plus slack — long enough not to trip on a slow feed.
+const PAUSE_AFTER_MS = 120_000;
+// How often the paused/live call is re-made without waiting for a poll, so a
+// feed that goes quiet flips the badge instead of leaving a stale LIVE on it.
+const STATE_WATCH_MS = 10_000;
 
 const state = {
   sessionId: null,
@@ -1212,6 +1233,9 @@ const state = {
   userLatLng: null,
   trackerLatLng: null,
   autoFollow: 'all',
+  activityState: null,   // 'live' | 'paused' | 'finished' | 'cached'
+  timerStalled: false,   // points still arriving, but the activity clock is frozen
+  stateWatchTimer: null,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1229,7 +1253,8 @@ const TRANSLATIONS = {
     changeUrlBtn:'Trocar URL',menuChangeDesc:'Abrir outra sessão',
     nodataText:'Dados da rota indisponíveis —',nodataGarmin:'Abrir no Garmin ↗',
     nodataMyLoc:'Sua localização está visível no mapa',
-    panelTitle:'Detalhes',status:'Status',statusActive:'Em andamento',statusEnded:'Encerrada',
+    panelTitle:'Detalhes',status:'Status',statusActive:'Em andamento',statusPaused:'Pausada',statusEnded:'Encerrada',
+    badgeLive:'AO VIVO',badgePaused:'PAUSADA',
     pace:'Ritmo',speed:'Velocidade',distance:'Distância',
     duration:'Duração',activity:'Modalidade',updated:'Atualizado',countdown:'Próxima',
     tracker:'Atleta',myLocation:'Minha localização',gapLabel:'Distância até o atleta',
@@ -1285,7 +1310,8 @@ const TRANSLATIONS = {
     changeUrlBtn:'Change URL',menuChangeDesc:'Open another session',
     nodataText:'Track data unavailable —',nodataGarmin:'Open on Garmin ↗',
     nodataMyLoc:'Your location is shown on the map',
-    panelTitle:'Details',status:'Status',statusActive:'In progress',statusEnded:'Ended',
+    panelTitle:'Details',status:'Status',statusActive:'In progress',statusPaused:'Paused',statusEnded:'Ended',
+    badgeLive:'LIVE',badgePaused:'PAUSED',
     pace:'Pace',speed:'Speed',distance:'Distance',
     duration:'Duration',activity:'Activity',updated:'Updated',countdown:'Next',
     tracker:'Tracker',myLocation:'My Location',gapLabel:'Distance to athlete',
@@ -1341,7 +1367,8 @@ const TRANSLATIONS = {
     changeUrlBtn:'Cambiar URL',menuChangeDesc:'Abrir otra sesión',
     nodataText:'Datos de ruta no disponibles —',nodataGarmin:'Abrir en Garmin ↗',
     nodataMyLoc:'Tu ubicación se muestra en el mapa',
-    panelTitle:'Detalles',status:'Estado',statusActive:'En curso',statusEnded:'Finalizada',
+    panelTitle:'Detalles',status:'Estado',statusActive:'En curso',statusPaused:'En pausa',statusEnded:'Finalizada',
+    badgeLive:'EN VIVO',badgePaused:'EN PAUSA',
     pace:'Ritmo',speed:'Velocidad',distance:'Distancia',
     duration:'Duración',activity:'Modalidad',updated:'Actualizado',countdown:'Siguiente',
     tracker:'Atleta',myLocation:'Mi ubicación',gapLabel:'Distancia al atleta',
@@ -1397,7 +1424,8 @@ const TRANSLATIONS = {
     changeUrlBtn:"Changer l'URL",menuChangeDesc:'Ouvrir une autre session',
     nodataText:'Données de parcours indisponibles —',nodataGarmin:'Ouvrir sur Garmin ↗',
     nodataMyLoc:'Votre position est affichée sur la carte',
-    panelTitle:'Détails',status:'Statut',statusActive:'En cours',statusEnded:'Terminée',
+    panelTitle:'Détails',status:'Statut',statusActive:'En cours',statusPaused:'En pause',statusEnded:'Terminée',
+    badgeLive:'EN DIRECT',badgePaused:'EN PAUSE',
     pace:'Allure',speed:'Vitesse',distance:'Distance',
     duration:'Durée',activity:'Activité',updated:'Mis à jour',countdown:'Suivant',
     tracker:'Athlète',myLocation:'Ma position',gapLabel:'Distance jusqu’à l’athlète',
@@ -1453,7 +1481,8 @@ const TRANSLATIONS = {
     changeUrlBtn:'URL ändern',menuChangeDesc:'Andere Session öffnen',
     nodataText:'Streckendaten nicht verfügbar —',nodataGarmin:'Auf Garmin öffnen ↗',
     nodataMyLoc:'Dein Standort wird auf der Karte angezeigt',
-    panelTitle:'Details',status:'Status',statusActive:'Aktiv',statusEnded:'Beendet',
+    panelTitle:'Details',status:'Status',statusActive:'Aktiv',statusPaused:'Pausiert',statusEnded:'Beendet',
+    badgeLive:'LIVE',badgePaused:'PAUSIERT',
     pace:'Tempo',speed:'Geschwindigkeit',distance:'Distanz',
     duration:'Dauer',activity:'Sportart',updated:'Aktualisiert',countdown:'Nächste',
     tracker:'Athlet',myLocation:'Mein Standort',gapLabel:'Entfernung zum Athleten',
@@ -1586,6 +1615,8 @@ function applyTranslations() {
   const bUs = document.querySelector('[data-af="user"]');   if (bUs) bUs.title = t('titleUser');
   const bRo = document.querySelector('[data-af="route"]');  if (bRo) bRo.title = t('titleRoute');
   const bAl = document.querySelector('[data-af="all"]');    if (bAl) bAl.title = t('titleAll');
+  // Status row and LIVE/PAUSED badge carry translated text of their own
+  if (state.activityState) applyActivityState(state.activityState);
   // Marker popups/tooltips (if already placed)
   if (userMarker)  userMarker.setPopupContent(`<b style="color:#3b82f6">${t('userPopup')}</b>`);
   if (startMarker) { startMarker.setTooltipContent(t('startTooltip')); startMarker.options.title = t('startTooltip'); }
@@ -1948,16 +1979,76 @@ function fmtActivity(meta) {
   return v ? v.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase()) : '—';
 }
 
-function updateStatus(isActive) {
-  const el = document.getElementById('m-status');
-  if (!el) return;
-  if (isActive) {
-    el.textContent = t('statusActive');
-    el.style.color = 'var(--green)';
-  } else {
-    el.textContent = t('statusEnded');
-    el.style.color = 'var(--muted)';
+// ─────────────────────────────────────────────────────────────────────────────
+// Activity state — live / paused / finished
+//
+// Garmin's session payload only says InProgress or not; it has no "paused"
+// flag, so a pause has to be read off the data the athlete's watch stops
+// producing. Two independent signals, either of which means paused:
+//
+//   1. The newest trackpoint has gone stale (PAUSE_AFTER_MS). A recording
+//      activity keeps pushing points even when the athlete is standing still,
+//      so silence is the pause — not a zero speed, which is just a red light.
+//   2. Points keep arriving but the activity timer barely moves. Covers a
+//      watch that keeps the feed alive across the pause.
+//
+// A finished session is authoritative (sessionStatus), so it wins outright.
+// ─────────────────────────────────────────────────────────────────────────────
+function deriveActivityState() {
+  const info = state.sessionInfo;
+  if (!info || info.sessionStatus !== 'InProgress') return 'finished';
+  const last = state.trackpoints[state.trackpoints.length - 1];
+  if (!last) return 'live';           // session open, nothing recorded yet
+  if (Date.now() - last.timestamp > PAUSE_AFTER_MS) return 'paused';
+  if (state.timerStalled) return 'paused';
+  return 'live';
+}
+
+// Did the activity clock keep up with the wall clock between these two points?
+// Less than a fifth of it means the athlete was paused for most of the gap.
+function updateTimerStalled(prev, cur) {
+  if (!prev || !cur || cur.timestamp <= prev.timestamp) return;
+  const wallSec = (cur.timestamp - prev.timestamp) / 1000;
+  if (wallSec < 20) return;           // too short a window to judge
+  const dPrev = parseFloat(prev.metaData?.TOTAL_DURATION);
+  const dCur  = parseFloat(cur.metaData?.TOTAL_DURATION);
+  if (!isFinite(dPrev) || !isFinite(dCur)) return;   // no timer to read
+  state.timerStalled = (dCur - dPrev) < wallSec * 0.2;
+}
+
+function applyActivityState(s) {
+  state.activityState = s;
+  const dot   = document.getElementById('status-dot');
+  const badge = document.getElementById('live-badge');
+  if (dot) {
+    dot.className = 'topbar-dot ' +
+      (s === 'live' ? 'active' : s === 'paused' ? 'paused' : s === 'cached' ? 'cached' : 'expired');
   }
+  if (badge) {
+    badge.classList.toggle('visible', s === 'live' || s === 'paused');
+    badge.classList.toggle('paused', s === 'paused');
+    badge.textContent = s === 'paused' ? t('badgePaused') : t('badgeLive');
+  }
+  const el = document.getElementById('m-status');
+  if (el && s !== 'cached') {
+    el.textContent = s === 'live' ? t('statusActive') : s === 'paused' ? t('statusPaused') : t('statusEnded');
+    el.style.color = s === 'live' ? 'var(--green)' : s === 'paused' ? 'var(--yellow)' : 'var(--muted)';
+  }
+}
+
+// Re-decide between polls: a feed that stops (paused watch, lost phone) never
+// delivers the update that would otherwise move the badge off LIVE.
+function startStateWatch() {
+  stopStateWatch();
+  state.stateWatchTimer = setInterval(() => {
+    if (state.activityState !== 'live' && state.activityState !== 'paused') return;
+    const s = deriveActivityState();
+    if (s !== state.activityState) applyActivityState(s);
+  }, STATE_WATCH_MS);
+}
+
+function stopStateWatch() {
+  if (state.stateWatchTimer) { clearInterval(state.stateWatchTimer); state.stateWatchTimer = null; }
 }
 
 function updateMetrics(point) {
@@ -2392,12 +2483,9 @@ async function loadData(isInitial = false) {
   const isActive = info?.sessionStatus === 'InProgress';
   const name = info?.sessionName || info?.userName || 'Garmin LiveTrack';
 
-  document.getElementById('status-dot').className = `topbar-dot ${isActive ? 'active' : 'expired'}`;
-  document.getElementById('live-badge').classList.toggle('visible', isActive);
-  updateStatus(isActive);
-
   // Merge trackpoints
   if (Array.isArray(newPoints) && newPoints.length > 0) {
+    const prevNewest = state.trackpoints[state.trackpoints.length - 1];
     if (isInitial) {
       state.trackpoints = newPoints;
     } else {
@@ -2406,7 +2494,12 @@ async function loadData(isInitial = false) {
     }
     state.trackpoints.sort((a, b) => a.timestamp - b.timestamp);
     state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
+    if (!isInitial) updateTimerStalled(prevNewest, state.trackpoints[state.trackpoints.length - 1]);
   }
+
+  // Decided after the merge — the newest trackpoint is what tells live from paused
+  applyActivityState(deriveActivityState());
+  startStateWatch();
 
   // Persist to localStorage so the track survives after the session ends
   saveToCache();
@@ -2446,8 +2539,9 @@ function renderTrack({ source = 'cache' } = {}) {
   const info = state.sessionInfo;
   const name = info?.sessionName || info?.userName || 'Garmin LiveTrack';
 
-  document.getElementById('status-dot').className = 'topbar-dot cached';
-  document.getElementById('live-badge').classList.remove('visible');
+  // No live feed to judge from, so no live/paused call is made here
+  applyActivityState('cached');
+  stopStateWatch();
 
   if (state.trackpoints.length > 0) {
     updateRoute(state.trackpoints);
@@ -2567,9 +2661,12 @@ async function startSession(url) {
   if (state.refreshTimer) clearTimeout(state.refreshTimer);
   stopCountdown();
   stopGeolocation();
+  stopStateWatch();
   hideNoDataBar();
   hideNavButton();
 
+  state.activityState = null;
+  state.timerStalled = false;
   state.sessionId = parsed.sessionId;
   state.token = parsed.token;
   state.trackpoints = [];
@@ -2616,8 +2713,11 @@ function resetToLanding() {
   stopCountdown();
   stopGeolocation();
   stopUserPolling();
+  stopStateWatch();
   hideNoDataBar();
   hideNavButton();
+  state.activityState = null;
+  state.timerStalled = false;
   document.getElementById('live-badge').classList.remove('visible');
   _trackUser = null;
   history.replaceState(null, '', APP_BASE);
@@ -2737,12 +2837,16 @@ function buildMockPoints(count) {
   return pts;
 }
 
-function startMockSession() {
+// variant 'paused' backdates the feed so the session is open but silent —
+// the state the pause detection has to recognise, without a 2-minute wait.
+function startMockSession(variant = 'live') {
   state.sessionId = 'mock-session-id';
   state.token     = 'mock-token';
   state.sessionInfo = { sessionStatus: 'InProgress', sessionName: 'Parque da Cidade — BSB (TESTE)', userName: 'Atleta Teste' };
+  state.activityState = null;
+  state.timerStalled = false;
 
-  const shareUrl = `${location.pathname}?mock=true`;
+  const shareUrl = `${location.pathname}?mock=${variant === 'paused' ? 'paused' : 'true'}`;
   history.replaceState(null, '', shareUrl);
 
   showLoading(t('loadingTest'));
@@ -2751,11 +2855,15 @@ function startMockSession() {
 
   setTimeout(() => {
     state.trackpoints = buildMockPoints(20); // first 20 points already recorded
+    if (variant === 'paused') {
+      const back = PAUSE_AFTER_MS + 60_000;
+      state.trackpoints.forEach(p => { p.timestamp -= back; });
+    }
     state.lastPointTimestamp = state.trackpoints[state.trackpoints.length - 1].timestamp;
 
     const info = state.sessionInfo;
-    document.getElementById('status-dot').className = 'topbar-dot active';
-    document.getElementById('live-badge').classList.add('visible');
+    applyActivityState(deriveActivityState());
+    startStateWatch();
 
     updateRoute(state.trackpoints);
     const latest = state.trackpoints[state.trackpoints.length - 1];
@@ -2770,6 +2878,7 @@ function startMockSession() {
 
     hideLoading();
     showToast(t('testModeToast'), 'info', 6000);
+    if (variant === 'paused') return;   // feed stays silent: the pause is the point
     startCountdown(30);
 
     // Simulate new points arriving every 30 s (up to 60 total)
@@ -2779,8 +2888,9 @@ function startMockSession() {
       if (pointIndex >= allPoints.length) {
         clearInterval(state.refreshTimer);
         stopCountdown();
-        document.getElementById('status-dot').className = 'topbar-dot expired';
-        document.getElementById('live-badge').classList.remove('visible');
+        stopStateWatch();
+        state.sessionInfo.sessionStatus = 'Ended';
+        applyActivityState('finished');
         showToast(t('testModeEnd'), 'warn', 4000);
         return;
       }
@@ -3212,9 +3322,10 @@ function stopUserPolling() {
 
 (function () {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('mock') === 'true') {
+  const mock = params.get('mock');
+  if (mock === 'true' || mock === 'paused') {
     document.getElementById('landing').classList.add('hidden');
-    setTimeout(startMockSession, 100);
+    setTimeout(() => startMockSession(mock === 'paused' ? 'paused' : 'live'), 100);
     return;
   }
   const u = params.get('url') || params.get('session');
