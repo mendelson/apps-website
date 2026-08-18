@@ -170,6 +170,33 @@ function getApproxDaysFromApi(api) {
   return approx;
 }
 
+/**
+ * Launch date for the 🚀 tooltip, localized to the page language.
+ *
+ * The sheet sends both `launch_date_iso` ("2026-08-17") and `launch_date`
+ * ("17/08/2026"); only the first is unambiguous, so it is what gets parsed —
+ * the day/month order of the other one is a guess in half the languages this
+ * site ships. Formatted in UTC because the ISO string parses as UTC midnight,
+ * and rendering that in a negative offset would print the day before.
+ */
+function formatLaunchDate(api) {
+  if (!api) return null;
+  const iso = String(api.launch_date_iso || "").trim();
+  if (!iso || isApiTextError(iso)) {
+    const raw = String(api.launch_date || "").trim();
+    return raw && !isApiTextError(raw) ? raw : null;
+  }
+  const d = new Date(iso + "T00:00:00Z");
+  if (Number.isNaN(d.getTime())) return null;
+  try {
+    return d.toLocaleDateString(window.currentLang || "en", {
+      year: "numeric", month: "short", day: "numeric", timeZone: "UTC"
+    });
+  } catch {
+    return iso;
+  }
+}
+
 function getYoungestAppCardByAge(cards, data) {
   let best = null;
   let bestApprox = Infinity;
@@ -222,12 +249,22 @@ const MOMENTUM_TRENDING_INSTALLS = 50;  // 🔥 weekly installs
 const MOMENTUM_POPULAR_TOTAL     = 500; // 🏆 all-time downloads that earn "popular" on their own
 const MOMENTUM_ACTIVE_USERS      = 10;  // 💪 weekly active users
 const MOMENTUM_GROWING_INSTALLS  = 10;  // 📈 weekly installs
+/* 🚀 A just-launched app has no numbers yet BY DEFINITION, and the four floors
+   above cannot tell "nobody wants it" from "it went on sale on Monday" — both
+   land under every threshold and the card falls silent on exactly the app the
+   site most wants to introduce. This is the age window in which "just launched"
+   is the honest answer instead. It is deliberately shorter than the carousel's
+   90-day ✨ New badge: appearing in a rotating highlight strip for a quarter is
+   fine, but a permanent tag on the card reading "just launched" stops being
+   true long before that. */
+const MOMENTUM_FRESH_MAX_DAYS    = 30;  // 🚀 days since launch
 
 const MOMENTUM_LEVELS = {
   trending:   { fallback: "🔥 Trending This Week",       cls: "momentum-hot" },
   popular:    { fallback: "🏆 Popular and Widely Used",  cls: "momentum-strong" },
   consistent: { fallback: "💪 Actively Used",            cls: "momentum-positive" },
-  discovered: { fallback: "📈 Newly Discovered",         cls: "momentum-positive" }
+  discovered: { fallback: "📈 Newly Discovered",         cls: "momentum-positive" },
+  fresh:      { fallback: "🚀 Just Launched",            cls: "momentum-fresh" }
 };
 
 const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
@@ -250,6 +287,11 @@ const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
     title: "📈 Newly Discovered",
     message: "Picking up new installs over the last 7 days.",
     note: "Based on recent installs."
+  },
+  fresh: {
+    title: "🚀 Just Launched",
+    message: "This app has only just reached the Connect IQ Store, so there is not much usage to report yet.",
+    note: "Based on the Store launch date."
   }
 };
 
@@ -277,6 +319,7 @@ function loadMetrics() {
         const total = Number(api.total_downloads) || 0;
         const installs = Number(api.installs_7_days) || 0;
         const users = Number(api.users_7_days) || 0;
+        const ageDays = getApproxDaysFromApi(api);
 
         const metrics = card.querySelector('.metrics');
         const tag = card.querySelector(".momentum-tag");
@@ -304,6 +347,11 @@ function loadMetrics() {
           level = "consistent";
         } else if (installs >= MOMENTUM_GROWING_INSTALLS) {
           level = "discovered";
+        } else if (ageDays !== null && ageDays <= MOMENTUM_FRESH_MAX_DAYS) {
+          /* Last, so any real traction claims the card instead: an app that
+             clears a floor in its first month is trending or growing, not
+             merely new. */
+          level = "fresh";
         }
 
         if (!level) {
@@ -322,11 +370,18 @@ function loadMetrics() {
         /* === Tooltip content (each stat shown only when ≥ 7) === */
         const tt = TOOLTIP_TEXT[level];
 
+        /* A new app's only honest number is the day it launched, and it is the
+           one the ≥ 7 gate below would otherwise leave the tooltip empty of.
+           Shown for the 🚀 tag only — on an established card the date is
+           trivia, and the three counters already say more. */
+        const launched = level === "fresh" ? formatLaunchDate(api) : null;
+
         tip.innerHTML = `
           <div class="tip-title">${tt.title}</div>
           <div class="tip-message">${tt.message}</div>
 
           <div class="tip-metrics">
+            ${launched ? `<div><span>${window._T?.metrics?.launched||"Launched:"}</span> <strong>${launched}</strong></div>` : ""}
             ${total    >= 7 ? `<div><span>${window._T?.metrics?.totalDownloads||"Total Downloads:"}</span> <strong>${total}</strong></div>` : ""}
             ${installs >= 7 ? `<div><span>${window._T?.metrics?.installs7d||"Installs (7 days):"}</span> <strong>${installs}</strong></div>` : ""}
             ${users    >= 7 ? `<div><span>${window._T?.metrics?.activeUsers||"Active Users (7 days):"}</span> <strong>${users}</strong></div>` : ""}

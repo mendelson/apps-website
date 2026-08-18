@@ -525,6 +525,12 @@ nav a:hover {
   color: #ff453a;
 }
 
+/* Same cyan as `.card-badge.fresh` below, so an app the carousel calls
+   "✨ New" and the card calls "🚀 Just Launched" reads as one statement. */
+.momentum-fresh {
+  color: #5ac8f5;
+}
+
 /* ===========================
    TOOLTIP (with dynamic arrow)
 =========================== */
