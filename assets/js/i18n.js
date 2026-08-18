@@ -53,7 +53,8 @@
         trending: '🔥 Trend Diese Woche',
         popular: '🏆 Beliebt und Weit Verbreitet',
         consistent: '💪 Aktiv Genutzt',
-        discovered: '📈 Neu Entdeckt'
+        discovered: '📈 Neu Entdeckt',
+        fresh: '🚀 Gerade Erschienen'
       },
       tooltips: {
         trending: {
@@ -75,12 +76,18 @@
           title: '📈 Neu Entdeckt',
           message: 'Gewinnt in den letzten 7 Tagen neue Installationen.',
           note: 'Basierend auf aktuellen Installationen.'
+        },
+        fresh: {
+          title: '🚀 Gerade Erschienen',
+          message: 'Diese App ist gerade erst im Connect IQ Store erschienen, daher gibt es noch kaum Nutzungsdaten.',
+          note: 'Basierend auf dem Erscheinungsdatum im Store.'
         }
       },
       metrics: {
         totalDownloads: 'Gesamte Downloads:',
         installs7d: 'Installationen (7 Tage):',
-        activeUsers: 'Aktive Nutzer (7 Tage):'
+        activeUsers: 'Aktive Nutzer (7 Tage):',
+        launched: 'Erschienen:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — kostenlos testen' },
@@ -144,7 +151,8 @@
         trending: '🔥 Trending This Week',
         popular: '🏆 Popular and Widely Used',
         consistent: '💪 Actively Used',
-        discovered: '📈 Newly Discovered'
+        discovered: '📈 Newly Discovered',
+        fresh: '🚀 Just Launched'
       },
       tooltips: {
         trending: {
@@ -166,12 +174,18 @@
           title: '📈 Newly Discovered',
           message: 'Picking up new installs over the last 7 days.',
           note: 'Based on recent installs.'
+        },
+        fresh: {
+          title: '🚀 Just Launched',
+          message: 'This app has only just reached the Connect IQ Store, so there is not much usage to report yet.',
+          note: 'Based on the Store launch date.'
         }
       },
       metrics: {
         totalDownloads: 'Total Downloads:',
         installs7d: 'Installs (7 days):',
-        activeUsers: 'Active Users (7 days):'
+        activeUsers: 'Active Users (7 days):',
+        launched: 'Launched:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — free trial' },
@@ -235,7 +249,8 @@
         trending: '🔥 Tendencia Esta Semana',
         popular: '🏆 Popular y Ampliamente Usada',
         consistent: '💪 Usada Activamente',
-        discovered: '📈 Recién Descubierta'
+        discovered: '📈 Recién Descubierta',
+        fresh: '🚀 Recién Lanzada'
       },
       tooltips: {
         trending: {
@@ -257,12 +272,18 @@
           title: '📈 Recién Descubierta',
           message: 'Ganando nuevas instalaciones en los últimos 7 días.',
           note: 'Basado en instalaciones recientes.'
+        },
+        fresh: {
+          title: '🚀 Recién Lanzada',
+          message: 'Esta app acaba de llegar a la Connect IQ Store, así que todavía no hay muchos datos de uso.',
+          note: 'Según la fecha de lanzamiento en la tienda.'
         }
       },
       metrics: {
         totalDownloads: 'Descargas totales:',
         installs7d: 'Instalaciones (7 días):',
-        activeUsers: 'Usuarios activos (7 días):'
+        activeUsers: 'Usuarios activos (7 días):',
+        launched: 'Lanzamiento:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — prueba gratis' },
@@ -326,7 +347,8 @@
         trending: '🔥 Tendance Cette Semaine',
         popular: '🏆 Populaire et Largement Utilisée',
         consistent: '💪 Activement Utilisée',
-        discovered: '📈 Nouvellement Découverte'
+        discovered: '📈 Nouvellement Découverte',
+        fresh: '🚀 Tout Juste Sortie'
       },
       tooltips: {
         trending: {
@@ -348,12 +370,18 @@
           title: '📈 Nouvellement Découverte',
           message: 'Gagne de nouvelles installations au cours des 7 derniers jours.',
           note: 'Basé sur les installations récentes.'
+        },
+        fresh: {
+          title: '🚀 Tout Juste Sortie',
+          message: 'Cette application vient tout juste d\'arriver sur le Connect IQ Store, il y a donc encore peu de données d\'utilisation.',
+          note: 'D\'après la date de sortie sur le Store.'
         }
       },
       metrics: {
         totalDownloads: 'Téléchargements totaux :',
         installs7d: 'Installations (7 jours) :',
-        activeUsers: 'Utilisateurs actifs (7 jours) :'
+        activeUsers: 'Utilisateurs actifs (7 jours) :',
+        launched: 'Sortie :'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — essai gratuit' },
@@ -417,7 +445,8 @@
         trending: '🔥 Em Alta Esta Semana',
         popular: '🏆 Popular e Amplamente Usado',
         consistent: '💪 Usado Ativamente',
-        discovered: '📈 Recém-Descoberto'
+        discovered: '📈 Recém-Descoberto',
+        fresh: '🚀 Acabou de Chegar'
       },
       tooltips: {
         trending: {
@@ -439,12 +468,18 @@
           title: '📈 Recém-Descoberto',
           message: 'Ganhando novas instalações nos últimos 7 dias.',
           note: 'Com base em instalações recentes.'
+        },
+        fresh: {
+          title: '🚀 Acabou de Chegar',
+          message: 'Este app acabou de chegar à Connect IQ Store, então ainda há poucos dados de uso.',
+          note: 'Com base na data de lançamento na loja.'
         }
       },
       metrics: {
         totalDownloads: 'Downloads totais:',
         installs7d: 'Instalações (7 dias):',
-        activeUsers: 'Usuários ativos (7 dias):'
+        activeUsers: 'Usuários ativos (7 dias):',
+        launched: 'Lançamento:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — teste grátis' },
@@ -507,7 +542,8 @@
         trending: '🔥 Di tendenza questa settimana',
         popular: '🏆 Popolare e molto usata',
         consistent: '💪 Usata attivamente',
-        discovered: '📈 Scoperta di recente'
+        discovered: '📈 Scoperta di recente',
+        fresh: '🚀 Appena Uscita'
       },
       tooltips: {
         trending: {
@@ -529,12 +565,18 @@
           title: '📈 Scoperta di recente',
           message: 'Sta guadagnando installazioni negli ultimi 7 giorni.',
           note: 'In base alle installazioni recenti.'
+        },
+        fresh: {
+          title: '🚀 Appena Uscita',
+          message: 'Questa app è appena arrivata sul Connect IQ Store, quindi non ci sono ancora molti dati di utilizzo.',
+          note: 'In base alla data di uscita nello Store.'
         }
       },
       metrics: {
         totalDownloads: 'Download totali:',
         installs7d: 'Installazioni (7 giorni):',
-        activeUsers: 'Utenti attivi (7 giorni):'
+        activeUsers: 'Utenti attivi (7 giorni):',
+        launched: 'Uscita:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Premium', class: 'premium'   }, headline: '💎 Premium — prova gratuita' },
@@ -598,7 +640,8 @@
         trending: '🔥 В тренде на этой неделе',
         popular: '🏆 Популярно и широко используется',
         consistent: '💪 Активно используется',
-        discovered: '📈 Набирает популярность'
+        discovered: '📈 Набирает популярность',
+        fresh: '🚀 Только Вышло'
       },
       tooltips: {
         trending: {
@@ -620,12 +663,18 @@
           title: '📈 Набирает популярность',
           message: 'Новые установки за последние 7 дней.',
           note: 'По недавним установкам.'
+        },
+        fresh: {
+          title: '🚀 Только Вышло',
+          message: 'Это приложение только что появилось в Connect IQ Store, поэтому данных об использовании пока мало.',
+          note: 'На основе даты выхода в магазине.'
         }
       },
       metrics: {
         totalDownloads: 'Всего загрузок:',
         installs7d: 'Установки (7 дней):',
-        activeUsers: 'Активные пользователи (7 дней):'
+        activeUsers: 'Активные пользователи (7 дней):',
+        launched: 'Выход:'
       },
       featuredReasons: {
         premium:  { badge: { emoji: '💎', word: 'Премиум', class: 'premium'   }, headline: '💎 Премиум — бесплатный период' },
