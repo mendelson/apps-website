@@ -53,7 +53,9 @@
         trending: '🔥 Trend Diese Woche',
         popular: '🏆 Beliebt und Weit Verbreitet',
         consistent: '💪 Aktiv Genutzt',
-        discovered: '📈 Neu Entdeckt'
+        discovered: '📈 Neu Entdeckt',
+        launched: '✨ Gerade Erschienen',
+        established: '⭐ Etabliert'
       },
       tooltips: {
         trending: {
@@ -75,6 +77,16 @@
           title: '📈 Neu Entdeckt',
           message: 'Gewinnt in den letzten 7 Tagen neue Installationen.',
           note: 'Basierend auf aktuellen Installationen.'
+        },
+        launched: {
+          title: '✨ Gerade Erschienen',
+          message: 'Neu im Connect IQ Store — die Zahlen fangen gerade erst an zu wachsen.',
+          note: 'Basierend auf der Zeit seit der Veröffentlichung.'
+        },
+        established: {
+          title: '⭐ Etabliert',
+          message: 'Schon eine Weile im Connect IQ Store. Hier das vollständige Bild.',
+          note: 'Basierend auf den Gesamt-Downloads.'
         }
       },
       metrics: {
@@ -144,7 +156,9 @@
         trending: '🔥 Trending This Week',
         popular: '🏆 Popular and Widely Used',
         consistent: '💪 Actively Used',
-        discovered: '📈 Newly Discovered'
+        discovered: '📈 Newly Discovered',
+        launched: '✨ Just Launched',
+        established: '⭐ Established'
       },
       tooltips: {
         trending: {
@@ -166,6 +180,16 @@
           title: '📈 Newly Discovered',
           message: 'Picking up new installs over the last 7 days.',
           note: 'Based on recent installs.'
+        },
+        launched: {
+          title: '✨ Just Launched',
+          message: 'New on the Connect IQ Store — the numbers are only starting to build.',
+          note: 'Based on time since launch.'
+        },
+        established: {
+          title: '⭐ Established',
+          message: 'On the Connect IQ Store for a while now. Here is the full picture.',
+          note: 'Based on all-time downloads.'
         }
       },
       metrics: {
@@ -235,7 +259,9 @@
         trending: '🔥 Tendencia Esta Semana',
         popular: '🏆 Popular y Ampliamente Usada',
         consistent: '💪 Usada Activamente',
-        discovered: '📈 Recién Descubierta'
+        discovered: '📈 Recién Descubierta',
+        launched: '✨ Recién Lanzada',
+        established: '⭐ Consolidada'
       },
       tooltips: {
         trending: {
@@ -257,6 +283,16 @@
           title: '📈 Recién Descubierta',
           message: 'Ganando nuevas instalaciones en los últimos 7 días.',
           note: 'Basado en instalaciones recientes.'
+        },
+        launched: {
+          title: '✨ Recién Lanzada',
+          message: 'Nueva en la Connect IQ Store — las cifras apenas empiezan a crecer.',
+          note: 'Basado en el tiempo desde el lanzamiento.'
+        },
+        established: {
+          title: '⭐ Consolidada',
+          message: 'Lleva ya un tiempo en la Connect IQ Store. Este es el panorama completo.',
+          note: 'Basado en las descargas totales.'
         }
       },
       metrics: {
@@ -326,7 +362,9 @@
         trending: '🔥 Tendance Cette Semaine',
         popular: '🏆 Populaire et Largement Utilisée',
         consistent: '💪 Activement Utilisée',
-        discovered: '📈 Nouvellement Découverte'
+        discovered: '📈 Nouvellement Découverte',
+        launched: '✨ Tout Juste Lancée',
+        established: '⭐ Établie'
       },
       tooltips: {
         trending: {
@@ -348,6 +386,16 @@
           title: '📈 Nouvellement Découverte',
           message: 'Gagne de nouvelles installations au cours des 7 derniers jours.',
           note: 'Basé sur les installations récentes.'
+        },
+        launched: {
+          title: '✨ Tout Juste Lancée',
+          message: 'Nouvelle sur le Connect IQ Store — les chiffres commencent tout juste à monter.',
+          note: 'Basé sur le temps écoulé depuis le lancement.'
+        },
+        established: {
+          title: '⭐ Établie',
+          message: 'Présente sur le Connect IQ Store depuis un moment. Voici le tableau complet.',
+          note: 'Basé sur les téléchargements totaux.'
         }
       },
       metrics: {
@@ -417,7 +465,9 @@
         trending: '🔥 Em Alta Esta Semana',
         popular: '🏆 Popular e Amplamente Usado',
         consistent: '💪 Usado Ativamente',
-        discovered: '📈 Recém-Descoberto'
+        discovered: '📈 Recém-Descoberto',
+        launched: '✨ Recém-Lançado',
+        established: '⭐ Consolidado'
       },
       tooltips: {
         trending: {
@@ -439,6 +489,16 @@
           title: '📈 Recém-Descoberto',
           message: 'Ganhando novas instalações nos últimos 7 dias.',
           note: 'Com base em instalações recentes.'
+        },
+        launched: {
+          title: '✨ Recém-Lançado',
+          message: 'Novo na Connect IQ Store — os números estão apenas começando a crescer.',
+          note: 'Com base no tempo desde o lançamento.'
+        },
+        established: {
+          title: '⭐ Consolidado',
+          message: 'Já há algum tempo na Connect IQ Store. Este é o quadro completo.',
+          note: 'Com base nos downloads totais.'
         }
       },
       metrics: {
@@ -507,7 +567,9 @@
         trending: '🔥 Di tendenza questa settimana',
         popular: '🏆 Popolare e molto usata',
         consistent: '💪 Usata attivamente',
-        discovered: '📈 Scoperta di recente'
+        discovered: '📈 Scoperta di recente',
+        launched: '✨ Appena lanciata',
+        established: '⭐ Consolidata'
       },
       tooltips: {
         trending: {
@@ -529,6 +591,16 @@
           title: '📈 Scoperta di recente',
           message: 'Sta guadagnando installazioni negli ultimi 7 giorni.',
           note: 'In base alle installazioni recenti.'
+        },
+        launched: {
+          title: '✨ Appena lanciata',
+          message: 'Nuova sul Connect IQ Store — i numeri stanno appena iniziando a crescere.',
+          note: 'In base al tempo trascorso dal lancio.'
+        },
+        established: {
+          title: '⭐ Consolidata',
+          message: 'Sul Connect IQ Store ormai da tempo. Ecco il quadro completo.',
+          note: 'In base ai download totali.'
         }
       },
       metrics: {
@@ -598,7 +670,9 @@
         trending: '🔥 В тренде на этой неделе',
         popular: '🏆 Популярно и широко используется',
         consistent: '💪 Активно используется',
-        discovered: '📈 Набирает популярность'
+        discovered: '📈 Набирает популярность',
+        launched: '✨ Только что вышло',
+        established: '⭐ Проверено временем'
       },
       tooltips: {
         trending: {
@@ -620,6 +694,16 @@
           title: '📈 Набирает популярность',
           message: 'Новые установки за последние 7 дней.',
           note: 'По недавним установкам.'
+        },
+        launched: {
+          title: '✨ Только что вышло',
+          message: 'Новинка в Connect IQ Store — цифры только начинают расти.',
+          note: 'По времени с момента выхода.'
+        },
+        established: {
+          title: '⭐ Проверено временем',
+          message: 'Уже некоторое время в Connect IQ Store. Вот полная картина.',
+          note: 'По общему числу загрузок.'
         }
       },
       metrics: {

@@ -525,6 +525,13 @@ nav a:hover {
   color: #ff453a;
 }
 
+/* The floor rungs (✨ Just Launched, ⭐ Established). Deliberately muted: they
+   are the tags that make the ladder total so no card is ever blank, and they
+   must not read as loudly as the earned ones above them. */
+.momentum-neutral {
+  color: var(--muted);
+}
+
 /* ===========================
    TOOLTIP (with dynamic arrow)
 =========================== */

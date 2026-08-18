@@ -236,14 +236,30 @@ const MOMENTUM_POPULAR_TOTAL     = 500; // 🏆 all-time downloads that earn "po
 const MOMENTUM_ACTIVE_USERS      = 10;  // 💪 weekly active users
 const MOMENTUM_GROWING_INSTALLS  = 10;  // 📈 weekly installs
 
+/* The ladder is TOTAL: every card with metrics lands on exactly one rung, so
+   every card carries a tag and an openable stats tooltip.
+
+   It did not use to be. The four rungs above are all *weekly-activity* floors,
+   and an app can have a real all-time audience while having a quiet week — so
+   three cards (Live Pace Speed Calculator, Solve for X, Football Matches)
+   cleared none of them and rendered a blank space where the tag goes. That
+   blank was invisible until the composite section ranking landed and started
+   lifting such cards up the grid: a tagless card sitting ABOVE a "💪 Actively
+   Used" one reads as broken, because the reader infers the ranking FROM the
+   tags and there was nothing there to infer from.
+
+   So the two rungs below are the floor, and they deliberately measure age
+   rather than activity — the one thing every app in the Store has. */
 const MOMENTUM_LEVELS = {
   trending:   { fallback: "🔥 Trending This Week",       cls: "momentum-hot" },
   popular:    { fallback: "🏆 Popular and Widely Used",  cls: "momentum-strong" },
   consistent: { fallback: "💪 Actively Used",            cls: "momentum-positive" },
-  discovered: { fallback: "📈 Newly Discovered",         cls: "momentum-positive" }
+  discovered: { fallback: "📈 Newly Discovered",         cls: "momentum-positive" },
+  launched:   { fallback: "✨ Just Launched",            cls: "momentum-neutral" },
+  established:{ fallback: "⭐ Established",              cls: "momentum-neutral" }
 };
 
-const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
+const DEFAULT_TOOLTIP_TEXT = {
   trending: {
     title: "🔥 Trending This Week",
     message: "One of the most installed apps over the last 7 days.",
@@ -263,8 +279,31 @@ const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
     title: "📈 Newly Discovered",
     message: "Picking up new installs over the last 7 days.",
     note: "Based on recent installs."
+  },
+  /* The two floor rungs claim nothing about usage — the numbers printed
+     underneath them do that, and they are now always printed. Both statements
+     are true of any app that reaches them, which is what lets the ladder be
+     total without inventing a compliment. */
+  launched: {
+    title: "✨ Just Launched",
+    message: "New on the Connect IQ Store — the numbers are only starting to build.",
+    note: "Based on time since launch."
+  },
+  established: {
+    title: "⭐ Established",
+    message: "On the Connect IQ Store for a while now. Here is the full picture.",
+    note: "Based on all-time downloads."
   }
 };
+
+/* Merged PER RUNG, not `window.TOOLTIP_TEXT || {…}` on the whole object.
+   i18n.js assigns `window.TOOLTIP_TEXT = tr.tooltips` wholesale, so under the
+   old `||` a dictionary missing one rung yielded `TOOLTIP_TEXT[level] ===
+   undefined` and `tt.title` threw — inside the per-card loop, so the throw
+   escaped to the outer catch and took the section ranking AND the featured
+   carousel down with it. One absent string, a page-wide failure. Now an
+   untranslated rung falls back to English and everything else still runs. */
+const TOOLTIP_TEXT = Object.assign({}, DEFAULT_TOOLTIP_TEXT, window.TOOLTIP_TEXT || {});
 
 /* ==========================================================
    SECTION RANKING
@@ -376,6 +415,15 @@ function loadMetrics() {
         const api = data[name];
         card.querySelector(".card-app-age")?.remove();
         if (!api) {
+          /* The only card that can still end up tagless, and it is the honest
+             case: no metrics arrived for it, so there is nothing to put in a
+             tooltip that promises numbers. It is a `data-name` that no longer
+             matches an API key — a renamed card, or an app the sheet has not
+             seen yet — and it used to fail in complete silence, which is
+             indistinguishable from "this app is just quiet". Say so. */
+          console.warn(
+            `No metrics for card "${name}" — no matching API key, so it renders untagged.`
+          );
           return;
         }
 
@@ -394,13 +442,19 @@ function loadMetrics() {
         metrics.style.display = "none"; // raw numbers hidden
 
         /* === MOMENTUM TAG ===
-           Four honest tiers. Below the lowest floor the app shows no tag at
-           all (no filler) — same philosophy as the featured carousel. Every
+           Six honest tiers, and the last one always matches — see the ladder
+           note above MOMENTUM_LEVELS for why "no tag" was retired. Every
            tooltip line states only what the raw 7-day / all-time numbers show,
            with no retention/trend claims we can't back. */
-        tag.classList.remove("momentum-hot", "momentum-strong", "momentum-positive");
+        tag.classList.remove(
+          "momentum-hot", "momentum-strong", "momentum-positive", "momentum-neutral"
+        );
 
-        let level = null;
+        /* Same source the carousel's ✨ badge reads, so "new" cannot mean one
+           thing on a card and another in the carousel above it. */
+        const ageDays = getApproxDaysFromApi(api);
+
+        let level;
         if (installs >= MOMENTUM_TRENDING_INSTALLS) {
           level = "trending";
         } else if (total >= MOMENTUM_POPULAR_TOTAL || (total >= 100 && users >= 20)) {
@@ -409,12 +463,13 @@ function loadMetrics() {
           level = "consistent";
         } else if (installs >= MOMENTUM_GROWING_INSTALLS) {
           level = "discovered";
-        }
-
-        if (!level) {
-          tag.classList.add("hidden");
-          tip.classList.add("hidden");
-          return; // long-tail app: show no momentum tag at all
+        } else if (ageDays !== null && ageDays <= MAX_NEW_AGE_DAYS) {
+          /* Checked BEFORE `established`: a 40-day-old app with 150 downloads
+             is new, not long-standing, and calling it "Established" would be
+             the same kind of untrue the blank tag was trying to avoid. */
+          level = "launched";
+        } else {
+          level = "established";
         }
 
         const _mt = window._T?.momentumTags || {};
@@ -424,17 +479,24 @@ function loadMetrics() {
         tag.classList.remove("hidden");
         tip.dataset.level = level;
 
-        /* === Tooltip content (each stat shown only when ≥ 7) === */
+        /* === Tooltip content ===
+           All three stats, always. They used to be gated at ≥ 7 each, which
+           made the tip on a young or quiet app render as a title, a message
+           and an empty box — the tooltip promises numbers, so shipping it with
+           none is worse than shipping a small one. Football Matches (4/4/4 on
+           its second day) was the case that produced a completely empty
+           block. */
         const tt = TOOLTIP_TEXT[level];
+        const _m = window._T?.metrics || {};
 
         tip.innerHTML = `
           <div class="tip-title">${tt.title}</div>
           <div class="tip-message">${tt.message}</div>
 
           <div class="tip-metrics">
-            ${total    >= 7 ? `<div><span>${window._T?.metrics?.totalDownloads||"Total Downloads:"}</span> <strong>${total}</strong></div>` : ""}
-            ${installs >= 7 ? `<div><span>${window._T?.metrics?.installs7d||"Installs (7 days):"}</span> <strong>${installs}</strong></div>` : ""}
-            ${users    >= 7 ? `<div><span>${window._T?.metrics?.activeUsers||"Active Users (7 days):"}</span> <strong>${users}</strong></div>` : ""}
+            <div><span>${_m.totalDownloads || "Total Downloads:"}</span> <strong>${total}</strong></div>
+            <div><span>${_m.installs7d    || "Installs (7 days):"}</span> <strong>${installs}</strong></div>
+            <div><span>${_m.activeUsers   || "Active Users (7 days):"}</span> <strong>${users}</strong></div>
           </div>
 
           <div class="tip-note">${tt.note}</div>
