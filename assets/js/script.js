@@ -200,6 +200,19 @@ function getYoungestAppCardByAge(cards, data) {
   return best;
 }
 
+/* A card's category is decided by the authored section it lives in, used to
+   pair the all-time favorite with the top app of the OTHER category. */
+const categoryOf = c =>
+  c.closest("#watch-faces") ? "watch" :
+  c.closest("#data-fields") ? "data" : null;
+
+/* A card is "paid" if it advertises a free trial and/or the premium
+   (Garmin Pay) purchase path — these are the apps we merchandise first.
+   Module scope on purpose: the section ranker and the featured carousel must
+   agree on what "paid" means, so there is exactly one definition of it. */
+const isPaid = c =>
+  !!c.querySelector('.badge-slot .trial, .pay-alt, [data-method="garmin-pay"]');
+
 document.addEventListener("DOMContentLoaded", () => {
   initExternalLinks();
 });
@@ -252,6 +265,98 @@ const TOOLTIP_TEXT = window.TOOLTIP_TEXT || {
     note: "Based on recent installs."
   }
 };
+
+/* ==========================================================
+   SECTION RANKING
+   ==========================================================
+   Cards inside a section are ranked by a composite score rather than by
+   all-time downloads alone.
+
+   `total_downloads` is a cumulative counter, so ranking on it freezes the
+   order — an app that led a year ago leads forever — and it systematically
+   sinks paid apps, which are downloaded far less than free ones by
+   construction. Together those put the site's highest weekly-install app (a
+   15-day-old paid watch face, 47 installs/week) BELOW two free apps with zero
+   weekly installs, while the featured carousel directly above it was
+   deliberately leading with paid. The two halves of the page disagreed.
+
+   Every signal is normalised to 0..1 across the cards being ranked BEFORE the
+   weights apply. That is not cosmetic: raw totals span thousands and weekly
+   installs span tens, so an unnormalised weighted sum is just the totals sort
+   wearing a hat. */
+const RANK_WEIGHTS = {
+  momentum:    0.35,  // weekly installs — the only signal that moves week to week
+  credibility: 0.20,  // all-time size, log-compressed
+  engagement:  0.15,  // weekly users per download (stickiness, not raw size)
+  recency:     0.15,  // decays to 0 over MAX_NEW_AGE_DAYS
+  paid:        0.15   // the commercial thumb on the scale, explicit and tunable
+};
+
+/* Sample floor for RATIO signals only. A 2-download app with 2 weekly users
+   scores a perfect 1.00 on engagement and outranks everything on a sample of
+   two — that is noise, not stickiness. Age is a direct measurement rather than
+   a ratio, so `recency` is deliberately NOT gated: a genuinely new app has few
+   downloads by definition, and gating it would disable the signal for exactly
+   the apps it exists to surface. */
+const MIN_CREDIBLE_TOTAL = 25;
+
+/**
+ * Rank one section's cards in place by composite score.
+ * Reads the metrics already stamped onto each card's `.metrics` dataset.
+ */
+function rankCardsInGrid(grid, data) {
+  const cards = [...grid.querySelectorAll(":scope > .card")];
+  if (cards.length < 2) return;
+
+  const metricOf = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
+
+  /* Normalisation bases, floored at 1 so an all-zero section cannot divide by
+     zero — it simply scores every card 0 and keeps the authored order. */
+  const maxInstalls = Math.max(...cards.map(c => metricOf(c, "installs")), 1);
+  const maxLogTotal = Math.max(...cards.map(c => Math.log1p(metricOf(c, "total"))), 1);
+
+  const scored = cards.map((card, domIndex) => {
+    const total    = metricOf(card, "total");
+    const installs = metricOf(card, "installs");
+    const users    = metricOf(card, "users");
+    const ageDays  = getApproxDaysFromApi(data?.[card.dataset.name]);
+
+    const momentum    = installs / maxInstalls;
+    /* log1p, not the raw total: 2 -> 200 downloads is a real difference,
+       2000 -> 2300 is not. Compressing the tail is what stops a legacy app
+       sitting on top of its section permanently. */
+    const credibility = Math.log1p(total) / maxLogTotal;
+    const engagement  = total >= MIN_CREDIBLE_TOTAL
+      ? Math.min(1, users / Math.max(total, 1))
+      : 0;
+    /* Same 90-day definition of "new" the carousel's ✨ badge uses, so the two
+       surfaces cannot disagree about which apps are new. */
+    const recency = ageDays !== null
+      ? Math.max(0, 1 - ageDays / MAX_NEW_AGE_DAYS)
+      : 0;
+
+    const score =
+      RANK_WEIGHTS.momentum    * momentum +
+      RANK_WEIGHTS.credibility * credibility +
+      RANK_WEIGHTS.engagement  * engagement +
+      RANK_WEIGHTS.recency     * recency +
+      RANK_WEIGHTS.paid        * (isPaid(card) ? 1 : 0);
+
+    /* Quantised so day-to-day metric wobble does not reshuffle the shelf on
+       every reload — visitors build a spatial memory of where an app sits. */
+    return { card, domIndex, score: Math.round(score * 100) / 100 };
+  });
+
+  /* Ties fall back to the authored DOM order. That also makes a failed metrics
+     fetch degrade cleanly: every score is equal, so the section renders exactly
+     as authored instead of in an arbitrary order. */
+  scored.sort((a, b) => b.score - a.score || a.domIndex - b.domIndex);
+
+  /* CSS `order` rather than appendChild: no reflow thrash, and the DOM order is
+     left as authored — which is what a crawler, a screen reader, and a visitor
+     whose metrics fetch failed all read. */
+  scored.forEach((entry, i) => { entry.card.style.order = String(i); });
+}
 
 /* ==========================================================
    LOAD METRICS + TOOLTIP FIX + FEATURED
@@ -352,20 +457,13 @@ function loadMetrics() {
         document.querySelectorAll(".tooltip").forEach(t => t.classList.add("hidden"));
       });
 
-      /* Dynamic ordering inside each app section: strongest first, by
-         all-time downloads → weekly installs → weekly users. The section
-         order itself (Data Fields before Watch Faces) stays authored;
-         only the cards within a section reflow as the live stats change. */
-      const metricOf = (c, k) => Number(c.querySelector(".metrics")?.dataset[k] || 0);
+      /* Dynamic ordering inside each app section, by composite score (see
+         RANK_WEIGHTS above). The section order itself — Data Fields before
+         Watch Faces — stays authored: that is an editorial statement, not a
+         metric. Only the cards within a section reflow as the stats change. */
       ["#data-fields .grid", "#watch-faces .grid"].forEach(sel => {
         const grid = document.querySelector(sel);
-        if (!grid) return;
-        [...grid.querySelectorAll(":scope > .card")]
-          .sort((a, b) =>
-            metricOf(b, "total") - metricOf(a, "total") ||
-            metricOf(b, "installs") - metricOf(a, "installs") ||
-            metricOf(b, "users") - metricOf(a, "users"))
-          .forEach(card => grid.appendChild(card));
+        if (grid) rankCardsInGrid(grid, data);
       });
 
       buildFeaturedCarousel(data);
@@ -448,17 +546,6 @@ function buildFeaturedCarousel(data) {
 
   const byInstalls = cards.slice().sort((a, b) => get(b, "installs") - get(a, "installs"));
   const byTotal = cards.slice().sort((a, b) => get(b, "total") - get(a, "total"));
-
-  /* A card's category is decided by the authored section it lives in, used to
-     pair the all-time favorite with the top app of the OTHER category. */
-  const categoryOf = c =>
-    c.closest("#watch-faces") ? "watch" :
-    c.closest("#data-fields") ? "data" : null;
-
-  /* A card is "paid" if it advertises a free trial and/or the premium
-     (Garmin Pay) purchase path — these are the apps we merchandise first. */
-  const isPaid = c =>
-    !!c.querySelector('.badge-slot .trial, .pay-alt, [data-method="garmin-pay"]');
 
   /* Youngest app and its age in days, so "new" is only ever shown when true. */
   const newcomer =
