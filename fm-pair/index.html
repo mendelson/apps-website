@@ -355,12 +355,19 @@
   // ---- i18n -----------------------------------------------------------------
   //
   // A page-local dictionary, deliberately NOT the site's assets/js/i18n.js.
-  // That file's SUPPORTED list is de/en/es/fr/pt — the site's languages — while
-  // the watch face this page pairs ships eng/por/fre/deu/rus. Adding `ru` to
-  // the shared list to cover the watch's users would make every OTHER page
-  // detect Russian and then render English under <html lang="ru">, since none
-  // of them have Russian strings. So this page carries the union of both sets,
-  // six languages, and no other page changes. The strings live nowhere else.
+  //
+  // The original reason was a mismatch: the shared SUPPORTED list was
+  // de/en/es/fr/pt while the watch face this page pairs shipped
+  // eng/por/fre/deu/rus, and simply adding `ru` to the shared list would have
+  // made every OTHER page detect Russian and then render English under
+  // <html lang="ru">. That mismatch is gone — on 2026-08-10 the site gained
+  // `ru` and `it` and the face gained `spa`/`ita`, so both sides now ship the
+  // same seven.
+  //
+  // The dictionary stays page-local anyway, for a reason that does not expire:
+  // this is a single-URL companion page. It has no /xx/ path for i18n.js to
+  // read and no language switcher, so it detects and overrides its own way
+  // (below) and keeps its own strings. They live nowhere else.
   //
   // Detection mirrors i18n.js: the browser's language, English otherwise. There
   // is no /xx/ path to read here — the page has one URL — so ?lang=xx is
