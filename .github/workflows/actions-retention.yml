@@ -1,0 +1,187 @@
+name: Actions retention
+
+# Deletes GitHub Actions RUN RECORDS older than RETENTION_DAYS, so the Actions
+# tab — and the storage behind it — stops growing without bound. Rule 28.
+#
+# WHAT THIS DELETES, AND WHAT IT PROVABLY CANNOT
+#
+# It calls exactly one mutating endpoint: DELETE /repos/{owner}/{repo}/actions/
+# runs/{run_id}. That removes a run's LOG and the workflow ARTIFACTS that run
+# uploaded — the ephemeral zips attached to the run page, which is the Actions
+# storage this job exists to reclaim.
+#
+# It never checks the repository out, and it holds `contents: read`. So any
+# build output that is COMMITTED is git content, not Actions storage, and is
+# unreachable from this job however it is dispatched. Deleting a run does not
+# rewrite a tree. If you ever need to prove that, note the job has no checkout
+# step and no write scope on contents; there is no path from here to a file
+# in main.
+#
+# WHAT IS KEPT, WHATEVER ITS AGE
+#
+#   1. Runs of a RELEASE workflow (KEEP_WORKFLOWS below) — the builds that
+#      produced a shipped .iq, and the Store-listing syncs. This repo (a
+#      website, not a Connect IQ project) has neither file, so this rule
+#      matches nothing here — kept for consistency with the shared template.
+#   2. The MOST RECENT run of EVERY workflow, whatever it is. A workflow that
+#      last ran a year ago still keeps that run, so a sweep never leaves a
+#      workflow with no reference run to diff the next failure against.
+#   3. Anything not `completed`. A queued or in-progress run is not deletable,
+#      and asking is a 4xx, so it is filtered out before the delete loop.
+#
+# THE REPO'S NATIVE RETENTION SETTING (Settings -> Actions -> General ->
+# "Artifact and log retention") IS DELIBERATELY NOT REQUIRED ALONGSIDE THIS —
+# see AI-Instructions docs/ACTIONS-RETENTION.md for why. This job is the whole
+# answer for every repo using the stock KEEP_WORKFLOWS list.
+
+on:
+  schedule:
+    # Weekly, Sunday 03:17 UTC. Off the hour on purpose: every other scheduled
+    # workflow in these repos fires on the hour, and GitHub delays scheduled
+    # runs under load at popular minutes.
+    - cron: '17 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Delete completed runs older than this many days"
+        required: false
+        default: "45"
+      dry_run:
+        description: "List what would be deleted without deleting it"
+        type: boolean
+        required: false
+        default: true
+
+# A sweep must never race another sweep: two passes deleting the same id turn
+# the second delete into a 404 and fail the job for no reason.
+concurrency:
+  group: actions-retention
+  cancel-in-progress: false
+
+permissions:
+  actions: write     # the delete endpoint, and nothing else needs write
+  contents: read     # never write: see the header
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete runs past the retention window
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          # A scheduled sweep always deletes; only a hand dispatch defaults to
+          # a dry run, so poking the button cannot cost history by accident.
+          DAYS: ${{ github.event.inputs.days || '45' }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
+          # Workflow FILE NAMES whose runs are never deleted. Basenames, comma
+          # separated. A repo without these files simply matches nothing —
+          # keep-rule 2 still protects one run per workflow there.
+          KEEP_WORKFLOWS: 'build-watchface.yml,store-details.yml'
+        run: |
+          set -euo pipefail
+
+          CUTOFF=$(date -u -d "-${DAYS} days" +%Y-%m-%d)
+          echo "Repo:    $REPO"
+          echo "Cutoff:  $CUTOFF (older than ${DAYS} days)"
+          echo "Dry run: $DRY_RUN"
+          echo
+
+          # ---- keep-rule 1: runs of a release workflow -------------------
+          # Matched on the workflow's PATH basename rather than its display
+          # name: the name is edited freely in the yaml and drifts, the file
+          # name is what the repo is organised by.
+          keep_paths=$(printf '%s' "$KEEP_WORKFLOWS" | tr ',' '\n' | sed '/^$/d')
+          echo "Release workflows kept at any age:"
+          printf '  %s\n' $keep_paths
+          echo
+
+          # ---- keep-rule 2: newest run of every workflow -----------------
+          # Asked per workflow instead of read off the newest page of runs: a
+          # workflow that last ran months ago has its newest run far down the
+          # global list, and reading only page 1 would silently fail to protect
+          # exactly the workflows this rule exists for.
+          : > /tmp/protected_ids
+          gh api --paginate "repos/$REPO/actions/workflows" \
+            -q '.workflows[] | "\(.id)"' > /tmp/workflow_ids || true
+          while read -r wid; do
+            [ -n "$wid" ] || continue
+            gh api "repos/$REPO/actions/workflows/$wid/runs?per_page=1" \
+              -q '.workflow_runs[0].id // empty' >> /tmp/protected_ids || true
+          done < /tmp/workflow_ids
+          sort -u /tmp/protected_ids -o /tmp/protected_ids
+          echo "Newest run of each workflow protected: $(wc -l < /tmp/protected_ids) run(s)"
+          echo
+
+          deleted=0; kept=0; failed=0
+
+          # The list endpoint returns at most 1000 results per search even with
+          # --paginate, so one collection pass cannot see a backlog larger than
+          # that. Collect, delete, and collect again: each pass removes what it
+          # saw, so the next pass reaches further back. Bounded, so a pass that
+          # can only ever keep (everything left is protected) still terminates.
+          for pass in $(seq 1 20); do
+            gh api --paginate \
+              "repos/$REPO/actions/runs?status=completed&created=%3C$CUTOFF&per_page=100" \
+              -q '.workflow_runs[] | [.id, .path, .created_at] | @tsv' \
+              > /tmp/candidates.tsv || true
+
+            candidates=$(wc -l < /tmp/candidates.tsv)
+            [ "$candidates" -gt 0 ] || { echo "Pass $pass: nothing older than $CUTOFF left."; break; }
+            echo "Pass $pass: $candidates candidate run(s) older than $CUTOFF"
+
+            pass_deleted=0
+            while IFS=$'\t' read -r id path created; do
+              [ -n "${id:-}" ] || continue
+
+              base=$(basename "$path")
+              if printf '%s\n' $keep_paths | grep -qxF "$base"; then
+                kept=$((kept+1)); continue
+              fi
+              if grep -qxF "$id" /tmp/protected_ids; then
+                kept=$((kept+1)); continue
+              fi
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "  would delete $id  $created  $base"
+                pass_deleted=$((pass_deleted+1)); deleted=$((deleted+1))
+                continue
+              fi
+
+              if gh api -X DELETE "repos/$REPO/actions/runs/$id" --silent 2>/dev/null; then
+                pass_deleted=$((pass_deleted+1)); deleted=$((deleted+1))
+              else
+                # A run deleted by a racing sweep, or one GitHub refuses, must
+                # not fail the whole sweep — the rest is still worth reclaiming.
+                echo "::warning::could not delete run $id ($base, $created)"
+                failed=$((failed+1))
+              fi
+            done < /tmp/candidates.tsv
+
+            # A dry run never actually removes anything, so a second collection
+            # pass would report the identical list forever.
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "Dry run: stopping after one pass."
+              break
+            fi
+            # Everything the pass could see is protected: further passes see
+            # the same rows and would spin.
+            [ "$pass_deleted" -gt 0 ] || { echo "Pass $pass deleted nothing; done."; break; }
+          done
+
+          verb=$([ "$DRY_RUN" = "true" ] && echo "Would delete" || echo "Deleted")
+          {
+            echo "### Actions retention — $REPO"
+            echo
+            echo "| | |"
+            echo "| :-- | --: |"
+            echo "| Window | ${DAYS} days (before $CUTOFF) |"
+            echo "| $verb | $deleted |"
+            echo "| Kept (release runs + newest per workflow) | $kept |"
+            echo "| Failed | $failed |"
+            echo
+            echo "Committed \`export/\` and \`evidences/\` are git content and are not touched by this job."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo
+          echo "$verb $deleted run(s); kept $kept; $failed failure(s)."
