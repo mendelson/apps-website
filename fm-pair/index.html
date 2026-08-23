@@ -335,6 +335,11 @@
   // redeployed. Stays the same across normal backend updates.
   var API_BASE = 'https://script.google.com/macros/s/AKfycbxmdM60WRUz7J2DTpfaO9EYVGBXCXp5qzichsDlk_N-ktEAyURMnqYZj3-Er2KtzHBa/exec';
   var CATALOG_URL = 'catalog-index.json'; // bundled, same-origin
+  // Same story as the catalog: bundled and same-origin because the source of
+  // truth (mendelson/matches) is private and this page is public. Both files
+  // are pushed here by that repo's sync-catalog.yml, which treats them as a
+  // pair and refuses to sync one without the other.
+  var TEAM_I18N_URL = 'team-names-i18n.json';
 
   // Google Apps Script sends no CORS headers, so a normal cross-origin fetch()
   // can't read the response. Call it via JSONP (inject a <script> tag).
@@ -359,8 +364,9 @@
   // the watch face this page pairs ships eng/por/fre/deu/rus. Adding `ru` to
   // the shared list to cover the watch's users would make every OTHER page
   // detect Russian and then render English under <html lang="ru">, since none
-  // of them have Russian strings. So this page carries the union of both sets,
-  // six languages, and no other page changes. The strings live nowhere else.
+  // of them have Russian strings. So this page carries the union of both sets
+  // plus Italian, seven languages, and no other page changes. The strings live
+  // nowhere else.
   //
   // Detection mirrors i18n.js: the browser's language, English otherwise. There
   // is no /xx/ path to read here — the page has one URL — so ?lang=xx is
@@ -717,6 +723,84 @@
     return s;
   }
 
+  // ---- national-team names --------------------------------------------------
+  //
+  // The team list is the catalog's, and the catalog is English. The backend
+  // already translates NATIONAL SIDE names when a request carries ?lang= — so
+  // a Portuguese watch shows BRASIL while this page, pairing that same watch,
+  // said "Brazil". This closes that gap using the same table the backend uses
+  // (mendelson/matches data/team-names-i18n.json, synced here alongside the
+  // catalog).
+  //
+  // THIS IS A MIRROR OF localizeTeamName_ IN matches/Localize.gs. The two must
+  // not drift: the watch and this page naming the same team differently is
+  // worse than neither translating it. If the rule changes there, change it
+  // here in the same pass.
+  //
+  // Three properties are inherited from that implementation on purpose:
+  //
+  //   * CLUBS ARE NEVER TRANSLATED. The table holds country names only, so
+  //     Flamengo misses every lookup and comes back unchanged. That is the
+  //     design, not a gap to fill in.
+  //   * A MISSING ENTRY IS NORMAL. The generator omits a language whenever the
+  //     translation equals the English (Spanish for "Australia" is
+  //     "Australia"), so absence means "use English", which is what the
+  //     fallback below already does.
+  //   * THE SUFFIX IS SPLIT OFF FIRST, because the table is keyed on the
+  //     country: "Lithuania W" would miss as one string. Age brackets stay as
+  //     they are — U17 reads the same everywhere — but "W"/"Women" is a word
+  //     and gets translated.
+  //
+  // The exclusion filter below drops women's and youth sides from this page, so
+  // the suffix path is reached by very little: today exactly "Lithuania W" and
+  // "Chorrillo W", the two names whose bare "W" that filter does not match. It
+  // is implemented in full anyway, because the alternative is this page and the
+  // backend disagreeing the first time the catalog changes shape.
+  var TEAM_I18N = null;   // { languages, suffixes, names }, or null if unavailable
+  var TEAM_SUFFIX_RE = /^(women|w|u-?\d{2})$/i;
+
+  function localizeTeamName(name) {
+    if (!TEAM_I18N || !TEAM_I18N.names || !name) return name;
+    // LANG is the page's own detected language — reused deliberately, so the
+    // team names and every other string on the page can never disagree about
+    // what language this is. English is simply not in `languages`, so it takes
+    // the same path as an unsupported one and returns untouched.
+    if ((TEAM_I18N.languages || []).indexOf(LANG) === -1) return name;
+
+    var parts = String(name).trim().split(/\s+/);
+    var suffix = [];
+    while (parts.length > 1 && TEAM_SUFFIX_RE.test(parts[parts.length - 1])) {
+      suffix.unshift(parts.pop());
+    }
+    var row = TEAM_I18N.names[parts.join(' ')];
+    if (!row || !row[LANG]) return name;
+
+    var out = row[LANG];
+    for (var i = 0; i < suffix.length; i++) {
+      var word = suffix[i];
+      var key = /^w$/i.test(word) ? 'W' : (/^women$/i.test(word) ? 'Women' : null);
+      var tr = key && TEAM_I18N.suffixes ? (TEAM_I18N.suffixes[key] || {})[LANG] : null;
+      out += ' ' + (tr || word);
+    }
+    return out;
+  }
+
+  // The name to SHOW for a catalog team. Every render path goes through this;
+  // team.name stays the catalog's English and is what the id/name de-dupe and
+  // the backend payload keep using.
+  function teamDisplayName(team) {
+    return (team && team.name) ? localizeTeamName(team.name) : '';
+  }
+
+  // Accent-insensitive compare key for the filter. The same NFD strip
+  // isExcludedTeam_ already uses below — pulled out because localized names make
+  // accents the rule rather than the exception: a French reader looking at
+  // "Brésil" types "bresil", and without this the picker answers "no matches".
+  // It only ever makes the filter match MORE, never less.
+  function foldForSearch_(s) {
+    return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
   var $ = function (id) { return document.getElementById(id); };
   function show(el) { el.hidden = false; }
   function hide(el) { el.hidden = true; }
@@ -834,10 +918,27 @@
   function loadCatalog() {
     if (catalogLoadStarted) return;
     catalogLoadStarted = true;
-    fetch(CATALOG_URL).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    }).then(function (data) {
+    // Both files, resolved together, because the tree is built once: if the
+    // names arrived after buildTree() the picker would render in English and
+    // stay that way until something forced a re-render.
+    //
+    // ONLY THE CATALOG IS FATAL. A missing or malformed name table leaves
+    // TEAM_I18N null, localizeTeamName returns every name unchanged, and the
+    // page is exactly what it was before this feature — which is also the state
+    // it is in until sync-catalog.yml has run at least once. A page that will
+    // not list any teams because it could not translate 205 of them would be a
+    // far worse failure than the English it falls back to.
+    Promise.all([
+      fetch(CATALOG_URL).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }),
+      fetch(TEAM_I18N_URL).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).catch(function () { return null; })
+    ]).then(function (loaded) {
+      var data = loaded[0];
+      TEAM_I18N = loaded[1];
       state.catalog = data;
       resolveSelectedNames(data);   // names for the "currently following" summary
       buildTree(data);
@@ -899,7 +1000,12 @@
         out.push(team);
       });
     });
-    out.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    // Sorted by the name the reader SEES, and collated for their language —
+    // sorting on the English while displaying the translation puts Alemanha
+    // under G.
+    out.sort(function (a, b) {
+      return teamDisplayName(a).localeCompare(teamDisplayName(b), LANG);
+    });
     return out;
   }
 
@@ -945,7 +1051,12 @@
 
   function teamRow(team, opts) {
     var id = String(team.id);
-    state.teamName.set(id, team.name);
+    var shown = teamDisplayName(team);
+    // The chips, the priority list and the save confirmation all read this map
+    // (via teamLabel), so storing the shown name localizes those too. Nothing
+    // reads it to talk to the backend — saveTeams sends teamIds and nothing
+    // else.
+    state.teamName.set(id, shown);
     var label = document.createElement('label');
     label.className = 'team' + (opts && opts.flat ? ' flat' : '');
     var cb = document.createElement('input');
@@ -958,7 +1069,7 @@
     });
     label.appendChild(cb);
     var name = document.createElement('span');
-    name.textContent = team.name;
+    name.textContent = shown;
     label.appendChild(name);
     if (opts && opts.where) {
       var w = document.createElement('span');
@@ -998,7 +1109,7 @@
       (c.leagues || []).forEach(function (l) {
         (l.teams || []).forEach(function (t) {
           var id = String(t.id);
-          if (need.has(id)) { state.teamName.set(id, t.name); need.delete(id); }
+          if (need.has(id)) { state.teamName.set(id, teamDisplayName(t)); need.delete(id); }
         });
       });
       return need.size === 0;
@@ -1055,8 +1166,18 @@
     filterTimer = setTimeout(runFilter, 140);
   });
 
+  // Match against BOTH the catalog's English name and the one on screen, so a
+  // reader can type either. Searching only the English breaks the moment the
+  // page shows a translation; searching only the translation would stop
+  // "Germany" finding Alemanha for someone typing from memory.
+  function teamMatchesQuery_(team, q) {
+    if (foldForSearch_(team.name).indexOf(q) !== -1) return true;
+    var shown = teamDisplayName(team);
+    return shown !== team.name && foldForSearch_(shown).indexOf(q) !== -1;
+  }
+
   function runFilter() {
-    var q = $('filterInput').value.trim().toLowerCase();
+    var q = foldForSearch_($('filterInput').value.trim());
     var tree = $('tree');
     if (!q) {
       // Restore the tree view.
@@ -1080,7 +1201,7 @@
         for (var ti = 0; ti < league.teams.length; ti++) {
           var team = league.teams[ti];
           if (isExcludedTeam_(team.name)) continue;
-          if (team.name.toLowerCase().indexOf(q) === -1) continue;
+          if (!teamMatchesQuery_(team, q)) continue;
           var key = String(team.id);
           if (seen.has(key)) continue;
           seen.add(key);
