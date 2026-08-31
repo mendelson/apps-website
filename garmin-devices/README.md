@@ -2,12 +2,26 @@
 
 Mapeamento extraído automaticamente da [referência de dispositivos do Connect IQ](https://developer.garmin.com/connect-iq/device-reference/).
 
-- **Part numbers:** 318 (318 listados hoje no site da Garmin)
-- **Última atualização:** 2026-08-24
+- **Part numbers:** 325 (325 listados hoje no site da Garmin)
+- **Última atualização:** 2026-08-31
 - Arquivo para copiar/colar em planilha: [`garmin-pn-map.tsv`](garmin-pn-map.tsv)
 - Cada seção abaixo é um dia em que algo mudou (mais recente no topo): dispositivos vistos pela 1ª vez, renomeados, removidos do site ou que voltaram a aparecer. Part numbers removidos são mantidos como registro histórico.
 
 ## Histórico de alterações
+
+### 2026-08-31 — 7 novo(s)
+
+**Vistos pela primeira vez**
+
+| Part number | Device |
+|---|---|
+| 006-B5133-00 | fēnix® 9 43mm |
+| 006-B5134-00 | fēnix® 9 47mm / 51mm |
+| 006-B4952-00 | fēnix® 9 Pro 43mm |
+| 006-B4953-00 | fēnix® 9 Pro 47mm |
+| 006-B4954-00 | fēnix® 9 Pro 51mm |
+| 006-B4955-00 | fēnix® 9 Pro Solar 47mm |
+| 006-B4956-00 | fēnix® 9 Pro Solar 51mm |
 
 ### 2026-07-02 — 318 novo(s)
 
