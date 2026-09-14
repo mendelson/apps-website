@@ -80,13 +80,40 @@
   .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
   .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }
 </style>
-<!-- GA4 with Consent Mode v2 (denied by default). -->
+<!-- Google Analytics (GA4), Consent Mode v2. ONE measurement ID for the whole
+     mmendelson.com family, so a hub -> apps -> run journey is one session:
+     the _ga cookies land on .mmendelson.com and every site reads the same
+     ones. Which site a hit came from is the built-in Hostname dimension, not
+     a parameter. Denied by default -> cookieless pings until the visitor
+     accepts. See website/ANALYTICS_TRACKING.md. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
-  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
+  // Consent is shared across the family, so it cannot live in localStorage
+  // alone: that is per ORIGIN, and the hub, apps and run are three origins.
+  // The record is a cookie on .mmendelson.com; localStorage stays as the
+  // fallback for hosts where that domain cannot be set (a local preview, the
+  // github.io project URL) and for visitors who answered before this change.
+  function mmConsentGet(k){ var m = document.cookie.match('(^|; )' + k + '=([^;]*)');
+    if (m) return decodeURIComponent(m[2]);
+    try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function mmConsentSet(k, v){
+    try { localStorage.setItem(k, v); } catch (e) {}
+    try { document.cookie = k + '=' + v + '; domain=.mmendelson.com; path=/; max-age=15552000; SameSite=Lax; Secure'; } catch (e) {}
+  }
+  // mm_consent_v is the banner VERSION the visitor answered. Only '2' — the
+  // banner that names the demographic signals — may grant them, so an older
+  // 'granted' stays analytics-only until the visitor is asked again.
+  try { var mmC = mmConsentGet('mm_consent'), mmV = mmConsentGet('mm_consent_v');
+        if (mmC === 'granted') { var mmU = { analytics_storage:'granted' };
+          if (mmV === '2') { mmU.ad_storage='granted'; mmU.ad_user_data='granted'; mmU.ad_personalization='granted'; }
+          gtag('consent','update', mmU); } } catch(e){}
+  // The three things GA4 does not collect by itself: the language actually
+  // RENDERED (it only sees the browser's), the colour scheme, and whether this
+  // is an installed PWA rather than a tab.
+  gtag('set', { ui_lang: document.documentElement.lang || '', ui_theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light', display_mode: (window.matchMedia && matchMedia('(display-mode: standalone)').matches) ? 'standalone' : 'browser' });
   gtag('config', 'G-0MHS4QK452');
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
@@ -114,7 +141,7 @@
 </header>
 
 <main>
-  <p class="meta">Dernière mise à jour : 18 juillet 2026</p>
+  <p class="meta">Dernière mise à jour : 13 septembre 2026</p>
 
   <div class="intro"><p style="margin:0;">Cette politique de confidentialité s’applique à <strong>toutes les applications Garmin Connect IQ</strong> publiées par M. Mendelson — champs de données comme cadrans, y compris les applications publiées à l’avenir (les « Applications »). Elle explique quelles informations d’utilisation les Applications collectent, pourquoi, et les choix dont vous disposez.</p></div>
 
@@ -175,7 +202,7 @@
   <h2>10. Contact</h2>
   <p>Questions, demandes ou préoccupations concernant cette politique ou vos données :<br /> <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
   <h2>Analyse du site web et cookies</h2>
-  <p>Ce site web (apps.mmendelson.com et ses pages) utilise Google Analytics pour comprendre l’usage agrégé — pages vues, clics et événements similaires. Le stockage analytique (cookies) est désactivé par défaut et n’est activé que si vous acceptez via le bandeau cookies ; vous pouvez modifier votre choix à tout moment via le lien "Cookies" dans le pied de page. L’analyse du site ne collecte aucune information personnelle identifiable et elle est distincte des données de l’application Garmin décrites ci-dessus.</p>
+  <p>Ce site fait partie de la famille mmendelson.com — mmendelson.com, apps.mmendelson.com et run.mmendelson.com — et les trois partagent une seule mesure Google Analytics : une visite qui passe de l’un à l’autre est donc vue comme un seul parcours plutôt que comme trois visites sans lien. Google Analytics enregistre l’usage agrégé : pages vues, clics et événements similaires, ainsi que le pays, la région, la ville, la langue, le navigateur, le système d’exploitation et le type d’appareil que Google déduit de la requête. Le stockage analytique (cookies) est désactivé par défaut et n’est activé que si vous acceptez via le bandeau cookies. Accepter active aussi Google Signals, qui ajoute les estimations propres à Google concernant la tranche d’âge, le genre et les centres d’intérêt des visiteurs connectés à un compte Google avec la personnalisation des annonces activée — ce sont des estimations de Google, jamais une information que vous auriez donnée à ce site ; elles ne sont rapportées qu’agrégées, et Google les retient entièrement lorsque les effectifs sont trop faibles pour rester anonymes. En cas de refus, l’analyse reste sans cookies : de simples comptages agrégés, sans données démographiques. Vous pouvez modifier votre choix à tout moment via le lien "Cookies" dans le pied de page de chacun des trois sites. L’analyse du site ne collecte aucune information personnelle identifiable et elle est distincte des données de l’application Garmin décrites ci-dessus.</p>
 </main>
 
 <footer class="page"><p>© 2026 M. Mendelson — Garmin Apps · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
@@ -191,6 +218,6 @@
     <button type="button" class="consent-btn" data-consent="accept"></button>
   </div>
 </div>
-<script src="/assets/js/consent.js?v=1"></script>
+<script src="/assets/js/consent.js?v=2"></script>
 </body>
 </html>
