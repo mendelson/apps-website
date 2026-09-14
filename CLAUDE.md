@@ -63,3 +63,20 @@ browser loads directly.
 - **`fm-pair/catalog-index.json`** is generated in the private `matches` repo and
   pushed here by its "Sync team catalog to apps-website" workflow. Do not edit it
   by hand.
+- **Analytics is family-wide and hand-duplicated.** The GA4 head block sits in
+  **19 HTML files plus `scripts/gen-privacy-policy.js`** — all byte identical,
+  and the generator's copy is the one that silently reverts an edit if you miss
+  it, because the policy pages are regenerated. All three family sites send to
+  the **same measurement id**, which is what makes a visit across apps/hub/run
+  one session. Consent is a cookie on `.mmendelson.com`
+  (`mmConsentGet`/`mmConsentSet`, defined in that head block, used by
+  `assets/js/consent.js`), never `localStorage` — that is per-origin and made
+  each site ask again. Bump the `consent.js?v=` cache-buster when the helper
+  changes, and re-run **both** generators (`gen-index-pages.js`,
+  `gen-privacy-policy.js`) after touching `index.html` or the policy strings.
+- **The privacy policy is the family's, not this site's.** It covers all three
+  domains and is the page every consent banner links to, including the ones on
+  the hub and run, which have no policy page of their own. Its text lives in
+  `scripts/privacy-translations.js` (seven languages, Russian stored
+  `\uXXXX`-escaped) and the pages are generated — never edit
+  `privacy_policy/*/index.html` by hand.

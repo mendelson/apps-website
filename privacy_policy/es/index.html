@@ -80,14 +80,43 @@
   .consent-btn--ghost { background: none; border: 1px solid var(--border); color: var(--text); font-weight: 500; }
   .consent-btn--ghost:hover { border-color: var(--primary); filter: none; }
 </style>
-<!-- GA4 with Consent Mode v2 (denied by default). -->
+<!-- Google Analytics (GA4), Consent Mode v2. ONE measurement ID for the whole
+     mmendelson.com family, so a hub -> apps -> run journey is one session:
+     the _ga cookies land on .mmendelson.com and every site reads the same
+     ones. Which site a hit came from is the built-in Hostname dimension, not
+     a parameter. Denied by default -> cookieless pings until the visitor
+     accepts. See website/ANALYTICS_TRACKING.md. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
-  try { if (localStorage.getItem('mm_consent') === 'granted') { gtag('consent','update',{ analytics_storage:'granted' }); } } catch(e){}
-  gtag('config', 'G-0MHS4QK452');
+  // Consent is shared across the family, so it cannot live in localStorage
+  // alone: that is per ORIGIN, and the hub, apps and run are three origins.
+  // The record is a cookie on .mmendelson.com; localStorage stays as the
+  // fallback for hosts where that domain cannot be set (a local preview, the
+  // github.io project URL) and for visitors who answered before this change.
+  function mmConsentGet(k){ var m = document.cookie.match('(^|; )' + k + '=([^;]*)');
+    if (m) return decodeURIComponent(m[2]);
+    try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function mmConsentSet(k, v){
+    try { localStorage.setItem(k, v); } catch (e) {}
+    try { document.cookie = k + '=' + v + '; domain=.mmendelson.com; path=/; max-age=15552000; SameSite=Lax; Secure'; } catch (e) {}
+  }
+  // mm_consent_v is the banner VERSION the visitor answered. Only '2' — the
+  // banner that names the demographic signals — may grant them, so an older
+  // 'granted' stays analytics-only until the visitor is asked again.
+  try { var mmC = mmConsentGet('mm_consent'), mmV = mmConsentGet('mm_consent_v');
+        if (mmC === 'granted') { var mmU = { analytics_storage:'granted' };
+          if (mmV === '2') { mmU.ad_storage='granted'; mmU.ad_user_data='granted'; mmU.ad_personalization='granted'; }
+          gtag('consent','update', mmU); } } catch(e){}
+  // The three things GA4 does not collect by itself: the language actually
+  // RENDERED (it only sees the browser's), the colour scheme, and whether this
+  // is an installed PWA rather than a tab. They go in the CONFIG call, not
+  // gtag('set', …) — measured against the real collect payload, custom keys
+  // passed to set() never leave the page, while config params ride along on
+  // every event to this destination.
+  gtag('config', 'G-0MHS4QK452', { ui_lang: document.documentElement.lang || '', ui_theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light', display_mode: (window.matchMedia && matchMedia('(display-mode: standalone)').matches) ? 'standalone' : 'browser' });
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
 </head>
@@ -114,7 +143,7 @@
 </header>
 
 <main>
-  <p class="meta">Última actualización: 18 de julio de 2026</p>
+  <p class="meta">Última actualización: 13 de septiembre de 2026</p>
 
   <div class="intro"><p style="margin:0;">Esta Política de Privacidad se aplica a <strong>todas las aplicaciones de Garmin Connect IQ</strong> publicadas por M. Mendelson —tanto campos de datos como esferas, incluidas las apps que se publiquen en el futuro (las «Apps»). Explica qué información de uso recopilan las Apps, por qué y las opciones que tienes.</p></div>
 
@@ -175,7 +204,7 @@
   <h2>10. Contacto</h2>
   <p>Preguntas, solicitudes o dudas sobre esta política o tus datos:<br /> <a href="mailto:mateusmendelson@hotmail.com">mateusmendelson@hotmail.com</a></p>
   <h2>Analítica del sitio web y cookies</h2>
-  <p>Este sitio web (apps.mmendelson.com y sus páginas) usa Google Analytics para entender el uso agregado — vistas de página, clics y eventos similares. El almacenamiento analítico (cookies) está desactivado de forma predeterminada y solo se activa si aceptas mediante el aviso de cookies; puedes cambiar tu elección en cualquier momento con el enlace "Cookies" del pie de página. La analítica del sitio no recopila información de identificación personal y es independiente de los datos de la app de Garmin descritos arriba.</p>
+  <p>Este sitio forma parte de la familia mmendelson.com — mmendelson.com, apps.mmendelson.com y run.mmendelson.com — y los tres comparten una única medición de Google Analytics, de modo que una visita que pasa de uno a otro se ve como un solo recorrido y no como tres visitas sin relación. Google Analytics registra el uso agregado: vistas de página, clics y eventos similares, además del país, la región, la ciudad, el idioma, el navegador, el sistema operativo y el tipo de dispositivo que Google deduce de la solicitud. El almacenamiento analítico (cookies) está desactivado de forma predeterminada y solo se activa si aceptas mediante el aviso de cookies. Aceptar también activa Google Signals, que añade las estimaciones propias de Google sobre franja de edad, género e intereses para quienes han iniciado sesión en una cuenta de Google con la personalización de anuncios activada: son estimaciones de Google, nunca algo que hayas indicado a este sitio, se informan solo de forma agregada y Google las retiene por completo cuando las cifras son demasiado pequeñas para ser anónimas. Al rechazar, la analítica sigue sin cookies: solo recuentos agregados, sin datos demográficos y sin cookies. Puedes cambiar tu elección en cualquier momento con el enlace "Cookies" del pie de página de cualquiera de los tres sitios. La analítica del sitio no recopila información de identificación personal y es independiente de los datos de la app de Garmin descritos arriba.</p>
 </main>
 
 <footer class="page"><p>© 2026 M. Mendelson — Garmin Apps · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
@@ -191,6 +220,6 @@
     <button type="button" class="consent-btn" data-consent="accept"></button>
   </div>
 </div>
-<script src="/assets/js/consent.js?v=1"></script>
+<script src="/assets/js/consent.js?v=2"></script>
 </body>
 </html>
