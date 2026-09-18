@@ -948,6 +948,8 @@
           <button class="lang-option" data-lang="en" onclick="setLanguage('en')">English</button>
           <button class="lang-option" data-lang="es" onclick="setLanguage('es')">Español</button>
           <button class="lang-option" data-lang="fr" onclick="setLanguage('fr')">Français</button>
+          <button class="lang-option" data-lang="it" onclick="setLanguage('it')">Italiano</button>
+          <button class="lang-option" data-lang="ru" onclick="setLanguage('ru')">Русский</button>
         </div>
       </div>
     </div>
@@ -1037,6 +1039,8 @@
         <button class="lang-option" data-lang="en"    onclick="setLanguage('en')">English</button>
         <button class="lang-option" data-lang="es"    onclick="setLanguage('es')">Español</button>
         <button class="lang-option" data-lang="fr"    onclick="setLanguage('fr')">Français</button>
+        <button class="lang-option" data-lang="it"    onclick="setLanguage('it')">Italiano</button>
+        <button class="lang-option" data-lang="ru"    onclick="setLanguage('ru')">Русский</button>
       </div>
     </div>
     <div style="position:relative">
@@ -1566,6 +1570,120 @@ const TRANSLATIONS = {
     step3:'Öffne die obige URL, um zu folgen',
     opt1Label:'Garmin LiveTrack Sitzungs-URL einfügen',
   },
+  'it': {
+    name:'Italiano',
+    subtitle:'Visualizza una sessione Garmin LiveTrack sulla mappa insieme alla tua posizione in tempo reale.',
+    urlLabel:'URL della sessione Garmin LiveTrack',trackBtn:'Segui',
+    hintPre:'Incolla un URL come:',hintPost:'Funziona per attività live e sessioni concluse di recente.',
+    navBtn:"Naviga verso l'atleta",menuNavDesc:'Apri in Google Maps',
+    copyLinkBtn:'Copia link',menuCopyDesc:'Condividi questa sessione',
+    menuGarminTitle:'Vedi su Garmin',menuGarminDesc:'Apri la sessione sul sito ufficiale',
+    changeUrlBtn:'Cambia URL',menuChangeDesc:"Apri un'altra sessione",
+    nodataText:'Dati del percorso non disponibili —',nodataGarmin:'Apri su Garmin ↗',
+    nodataMyLoc:'La tua posizione è visibile sulla mappa',
+    panelTitle:'Dettagli',status:'Stato',statusActive:'In corso',statusPaused:'In pausa',statusEnded:'Terminata',
+    badgeLive:'LIVE',badgePaused:'IN PAUSA',
+    pace:'Ritmo',speed:'Velocità',distance:'Distanza',
+    duration:'Durata',activity:'Attività',updated:'Aggiornato',countdown:'Prossimo',
+    tracker:'Atleta',myLocation:'La mia posizione',gapLabel:"Distanza dall'atleta",
+    btnTracker:'Atleta',btnUser:'Io',btnRoute:'Percorso',btnAll:'Tutto',
+    titleTracker:"Segui l'atleta — clicca sulla mappa per annullare",
+    titleUser:'Segui la mia posizione — clicca sulla mappa per annullare',
+    titleRoute:"Mantieni visibile l'intero percorso — clicca sulla mappa per annullare",
+    titleAll:'Mantieni visibili percorso e posizione — clicca sulla mappa per annullare',
+    trackerPopup:"Posizione dell'atleta",userPopup:'La mia posizione',startTooltip:'Partenza',
+    connecting:'Connessione alla sessione…',resolvingUser:'Ricerca della sessione più recente…',tryingAlt:'Tentativo con endpoint alternativi…',
+    fetchingGarmin:'Recupero della pagina Garmin…',loadingTest:'Caricamento sessione di test…',
+    connectedViaProxy:'Connesso tramite proxy',
+    trackerNotAvail:"Posizione dell'atleta non ancora disponibile",
+    userNotAvail:'La tua posizione non è ancora disponibile',
+    activityFinished:'Attività terminata — viene mostrato il percorso registrato',
+    altEndpointOk:'Percorso caricato tramite endpoint alternativo',
+    scrapedOk:'Percorso estratto dalla pagina Garmin',
+    cacheOk:'Percorso dalla cache — API non disponibile per sessione terminata',
+    geoNotSupported:'Geolocalizzazione non supportata da questo browser',
+    permDenied:'Permesso negato',
+    invalidUrl:'URL non valido. Atteso: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'Impossibile copiare — seleziona manualmente la barra degli indirizzi',
+    copied:'✓ Copiato!',refreshing:'Aggiornamento…',
+    testModeToast:'MODALITÀ TEST — sessione live simulata',testModeEnd:'Attività di test terminata',
+    nextUpdate:'tra {s}s',
+    menuCalcTitle:'Calcolatrice',menuCalcDesc:'Ritmo, distanza e tempo',
+    calcTitle:'Calcolatrice del ritmo',calcHint:'Compila due campi per calcolare il terzo',
+    calcLblDist:'Distanza',calcLblDur:'Tempo',calcLblPace:'Ritmo',calcLblSpeed:'Velocità',
+    calcReset:'Cancella tutto',
+    lastActivityMins:'Ultima attività: {mins} min fa',
+    lastActivityHours:'Ultima attività: {hours}h fa',
+    noActivity:'Nessuna attività registrata',
+    checkingIn:'Verifica tra {time}',
+    checking:'Verifica in corso…',
+    opt2Label:"Scegli l'URL che vuoi usare:",
+    opt2Placeholder:'tuonome',
+    emailLabel:'Aggiungi questa email nelle impostazioni di Garmin LiveTrack:',
+    emailCopy:'Copia',
+    pathOr:'oppure',
+    step1:"Aggiungi l'email sopra come destinatario nelle impostazioni LiveTrack",
+    step2:"Avvia un'attività sul tuo orologio",
+    step3:"Apri l'URL sopra per seguire l'attività",
+    opt1Label:"Incolla l'URL della sessione Garmin LiveTrack",
+  },
+  'ru': {
+    name:'Русский',
+    subtitle:'Смотрите сессию Garmin LiveTrack на карте вместе с вашим текущим местоположением.',
+    urlLabel:'URL сессии Garmin LiveTrack',trackBtn:'Отслеживать',
+    hintPre:'Вставьте URL вида:',hintPost:'Работает для текущих активностей и недавно завершённых сессий.',
+    navBtn:'Проложить маршрут к спортсмену',menuNavDesc:'Открыть в Google Maps',
+    copyLinkBtn:'Скопировать ссылку',menuCopyDesc:'Поделиться этой сессией',
+    menuGarminTitle:'Открыть в Garmin',menuGarminDesc:'Открыть сессию на официальном сайте',
+    changeUrlBtn:'Изменить URL',menuChangeDesc:'Открыть другую сессию',
+    nodataText:'Данные маршрута недоступны —',nodataGarmin:'Открыть в Garmin ↗',
+    nodataMyLoc:'Ваше местоположение показано на карте',
+    panelTitle:'Подробности',status:'Статус',statusActive:'В процессе',statusPaused:'На паузе',statusEnded:'Завершена',
+    badgeLive:'В ЭФИРЕ',badgePaused:'ПАУЗА',
+    pace:'Темп',speed:'Скорость',distance:'Дистанция',
+    duration:'Длительность',activity:'Вид активности',updated:'Обновлено',countdown:'Далее',
+    tracker:'Спортсмен',myLocation:'Моё местоположение',gapLabel:'Расстояние до спортсмена',
+    btnTracker:'Спортсмен',btnUser:'Я',btnRoute:'Маршрут',btnAll:'Всё',
+    titleTracker:'Следить за спортсменом — нажмите на карту, чтобы отменить',
+    titleUser:'Следить за моим местоположением — нажмите на карту, чтобы отменить',
+    titleRoute:'Показывать весь маршрут — нажмите на карту, чтобы отменить',
+    titleAll:'Показывать маршрут и моё местоположение — нажмите на карту, чтобы отменить',
+    trackerPopup:'Местоположение спортсмена',userPopup:'Моё местоположение',startTooltip:'Старт',
+    connecting:'Подключение к сессии…',resolvingUser:'Поиск последней сессии…',tryingAlt:'Пробуем альтернативные источники…',
+    fetchingGarmin:'Загрузка страницы Garmin…',loadingTest:'Загрузка тестовой сессии…',
+    connectedViaProxy:'Подключено через прокси',
+    trackerNotAvail:'Местоположение спортсмена пока недоступно',
+    userNotAvail:'Ваше местоположение пока недоступно',
+    activityFinished:'Активность завершена — показан записанный маршрут',
+    altEndpointOk:'Маршрут загружен через альтернативный источник',
+    scrapedOk:'Маршрут получен со страницы Garmin',
+    cacheOk:'Показан маршрут из кэша — API недоступен для завершённой сессии',
+    geoNotSupported:'Геолокация не поддерживается этим браузером',
+    permDenied:'Доступ запрещён',
+    invalidUrl:'Неверный URL. Ожидается: livetrack.garmin.com/session/{id}/token/{token}',
+    copyFailed:'Не удалось скопировать — выделите адресную строку вручную',
+    copied:'✓ Скопировано!',refreshing:'Обновление…',
+    testModeToast:'ТЕСТОВЫЙ РЕЖИМ — имитация прямой сессии',testModeEnd:'Тестовая активность завершена',
+    nextUpdate:'через {s}с',
+    menuCalcTitle:'Калькулятор',menuCalcDesc:'Темп, дистанция и время',
+    calcTitle:'Калькулятор темпа',calcHint:'Заполните два поля, чтобы рассчитать третье',
+    calcLblDist:'Дистанция',calcLblDur:'Время',calcLblPace:'Темп',calcLblSpeed:'Скорость',
+    calcReset:'Очистить всё',
+    lastActivityMins:'Последняя активность: {mins} мин назад',
+    lastActivityHours:'Последняя активность: {hours}ч назад',
+    noActivity:'Активность не зафиксирована',
+    checkingIn:'Проверка через {time}',
+    checking:'Проверка…',
+    opt2Label:'Выберите URL, который хотите использовать:',
+    opt2Placeholder:'вашеимя',
+    emailLabel:'Добавьте этот email в настройках Garmin LiveTrack:',
+    emailCopy:'Скопировать',
+    pathOr:'или',
+    step1:'Добавьте указанный выше email в качестве получателя в настройках LiveTrack',
+    step2:'Начните активность на часах',
+    step3:'Откройте указанный выше URL, чтобы следить за активностью',
+    opt1Label:'Вставьте URL сессии Garmin LiveTrack',
+  },
 };
 
 let currentLang = 'en';
@@ -1582,6 +1700,8 @@ function detectLang() {
   if (nav.startsWith('de')) return 'de';
   if (nav.startsWith('es')) return 'es';
   if (nav.startsWith('fr')) return 'fr';
+  if (nav.startsWith('it')) return 'it';
+  if (nav.startsWith('ru')) return 'ru';
   return 'en';
 }
 
