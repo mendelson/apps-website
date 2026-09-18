@@ -359,6 +359,7 @@
   // redeployed. Stays the same across normal backend updates.
   var API_BASE = 'https://script.google.com/macros/s/AKfycbxmdM60WRUz7J2DTpfaO9EYVGBXCXp5qzichsDlk_N-ktEAyURMnqYZj3-Er2KtzHBa/exec';
   var CATALOG_URL = 'catalog-index.json'; // bundled, same-origin
+  var TEAM_I18N_URL = 'team-names-i18n.json'; // bundled, same-origin; synced from `matches`
 
   // Google Apps Script sends no CORS headers, so a normal cross-origin fetch()
   // can't read the response. Call it via JSONP (inject a <script> tag).
@@ -379,12 +380,15 @@
   // ---- i18n -----------------------------------------------------------------
   //
   // A page-local dictionary, deliberately NOT the site's assets/js/i18n.js.
-  // That file's SUPPORTED list is de/en/es/fr/pt — the site's languages — while
-  // the watch face this page pairs ships eng/por/fre/deu/rus. Adding `ru` to
-  // the shared list to cover the watch's users would make every OTHER page
-  // detect Russian and then render English under <html lang="ru">, since none
-  // of them have Russian strings. So this page carries the union of both sets,
-  // six languages, and no other page changes. The strings live nowhere else.
+  // The site and the watch face this page pairs now ship the SAME seven
+  // languages (de/en/es/fr/it/pt/ru — `it`/`ru` joined both on 2026-08-10), so
+  // this dictionary is no longer "the union of two different sets" the way it
+  // was when the site had five and the watch had five different ones — it just
+  // carries all seven, same as everywhere else in the family. It still has to
+  // be page-local rather than reusing i18n.js's SUPPORTED list, because widening
+  // that shared list would make every OTHER page on the site detect a language
+  // it has no strings for and render English under the wrong <html lang>. The
+  // strings live nowhere else.
   //
   // Detection mirrors i18n.js: the browser's language, English otherwise. There
   // is no /xx/ path to read here — the page has one URL — so ?lang=xx is
@@ -409,6 +413,8 @@
       filterPlaceholder: 'Filter teams by name…',
       filterAria: 'Filter teams by name',
       coverageNote: 'Only teams whose matches we can follow live are listed.',
+      countryNationalTeams: 'National teams',
+      countryOther: 'Other',
       loadingTeams: 'Loading team list…',
       errCatalog: 'Couldn’t load the team list ({error}).',
       retry: 'Retry',
@@ -456,6 +462,8 @@
       filterPlaceholder: 'Filtrar times por nome…',
       filterAria: 'Filtrar times por nome',
       coverageNote: 'A lista traz apenas os times cujos jogos conseguimos acompanhar ao vivo.',
+      countryNationalTeams: 'Seleções nacionais',
+      countryOther: 'Outros',
       loadingTeams: 'Carregando a lista de times…',
       errCatalog: 'Não foi possível carregar a lista de times ({error}).',
       retry: 'Tentar de novo',
@@ -503,6 +511,8 @@
       filterPlaceholder: 'Filtrar equipos por nombre…',
       filterAria: 'Filtrar equipos por nombre',
       coverageNote: 'Solo aparecen los equipos cuyos partidos podemos seguir en vivo.',
+      countryNationalTeams: 'Selecciones nacionales',
+      countryOther: 'Otros',
       loadingTeams: 'Cargando la lista de equipos…',
       errCatalog: 'No se pudo cargar la lista de equipos ({error}).',
       retry: 'Reintentar',
@@ -550,6 +560,8 @@
       filterPlaceholder: 'Filtrer les équipes par nom…',
       filterAria: 'Filtrer les équipes par nom',
       coverageNote: 'Seules les équipes dont nous pouvons suivre les matchs en direct sont listées.',
+      countryNationalTeams: 'Équipes nationales',
+      countryOther: 'Autres',
       loadingTeams: 'Chargement de la liste des équipes…',
       errCatalog: 'Impossible de charger la liste des équipes ({error}).',
       retry: 'Réessayer',
@@ -597,6 +609,8 @@
       filterPlaceholder: 'Teams nach Namen filtern…',
       filterAria: 'Teams nach Namen filtern',
       coverageNote: 'Aufgeführt sind nur Teams, deren Spiele wir live verfolgen können.',
+      countryNationalTeams: 'Nationalmannschaften',
+      countryOther: 'Sonstige',
       loadingTeams: 'Teamliste wird geladen…',
       errCatalog: 'Die Teamliste konnte nicht geladen werden ({error}).',
       retry: 'Erneut versuchen',
@@ -644,6 +658,8 @@
       filterPlaceholder: 'Поиск команд по названию…',
       filterAria: 'Поиск команд по названию',
       coverageNote: 'В списке только команды, матчи которых мы можем показывать в реальном времени.',
+      countryNationalTeams: 'Сборные',
+      countryOther: 'Другое',
       loadingTeams: 'Загрузка списка команд…',
       errCatalog: 'Не удалось загрузить список команд ({error}).',
       retry: 'Повторить',
@@ -691,6 +707,8 @@
       filterPlaceholder: 'Cerca una squadra per nome\u2026',
       filterAria: 'Cerca una squadra per nome',
       coverageNote: 'L\u2019elenco contiene solo le squadre di cui possiamo mostrare le partite in tempo reale.',
+      countryNationalTeams: 'Nazionali',
+      countryOther: 'Altro',
       loadingTeams: 'Caricamento delle squadre\u2026',
       errCatalog: 'Non \u00e8 stato possibile caricare l\u2019elenco delle squadre ({error}).',
       retry: 'Riprova',
@@ -775,8 +793,9 @@
   var state = {
     code: null,
     catalog: null,
+    teamI18n: null,        // national-team name translations; null until loaded (or on 'en')
     order: [],             // team ids (strings), highest priority first
-    teamName: new Map()    // id -> name, for de-dupe/display
+    teamName: new Map()    // id -> LOCALIZED name, for de-dupe/display
   };
 
   function isSelected(id) { return state.order.indexOf(id) !== -1; }
@@ -858,11 +877,22 @@
   function loadCatalog() {
     if (catalogLoadStarted) return;
     catalogLoadStarted = true;
-    fetch(CATALOG_URL).then(function (r) {
+    var catalogP = fetch(CATALOG_URL).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
-    }).then(function (data) {
+    });
+    // Team-name translations are a nice-to-have, never a blocker: en has no
+    // translations to fetch, and a failed or slow fetch on any other language
+    // must not stop the catalog (which the page cannot work without) from
+    // loading — it resolves to null instead, and localizeName() already falls
+    // back to English whenever state.teamI18n is null.
+    var i18nP = (LANG === 'en') ? Promise.resolve(null) :
+      fetch(TEAM_I18N_URL).then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+    Promise.all([catalogP, i18nP]).then(function (results) {
+      var data = results[0];
       state.catalog = data;
+      state.teamI18n = results[1];
       resolveSelectedNames(data);   // names for the "currently following" summary
       buildTree(data);
       renderSelectedSummary();
@@ -909,6 +939,48 @@
     return UNDER_RE.test(n) || WOMEN_RE.test(n);
   }
 
+  // Localize a NATIONAL-TEAM or country name for display. `team-names-i18n.json`
+  // (synced from the `matches` backend — the same table that localizes national
+  // team names for the watch face, see that repo's Localize.gs) translates
+  // country names only, never clubs, so "Flamengo" must stay "Flamengo" in
+  // every language. A name this table has never heard of — a club, or a
+  // country whose translation happens to equal English and was therefore
+  // omitted from the generated table — falls back to the English name
+  // unchanged, the same shape as a watch-face string falling back to the base
+  // `resources/` folder. Handles the "Country Women" / "Country W" / "Country
+  // U17" shapes the catalog uses: the country part is looked up and the
+  // Women/W suffix is translated too, but an age-bracket token like `U17`
+  // reads the same in every language and is left exactly as it is.
+  var SUFFIX_RE = /^(.*)\s+(Women|W|U\d{1,2})$/;
+  function localizeName(name) {
+    var i18n = state.teamI18n;
+    if (!i18n || LANG === 'en') return name;
+    var m = SUFFIX_RE.exec(name);
+    var base = m ? m[1] : name;
+    var entry = i18n.names[base];
+    if (!entry) return name; // not a recognized national side — leave unchanged
+    var translatedBase = entry[LANG] || base;
+    if (!m) return translatedBase;
+    var suffixToken = m[2];
+    var translatedSuffix = suffixToken;
+    if (!/^U\d{1,2}$/.test(suffixToken)) {
+      var sufEntry = i18n.suffixes[suffixToken];
+      translatedSuffix = (sufEntry && sufEntry[LANG]) || suffixToken;
+    }
+    return translatedBase + ' ' + translatedSuffix;
+  }
+
+  // The catalog also groups teams under two pseudo-countries that are UI
+  // category labels, not real countries — international competitions that
+  // aren't tied to one nation's domestic setup, and an everything-else catch
+  // -all. team-names-i18n.json only knows real countries, so these two route
+  // through the page's own dictionary instead of localizeName().
+  var COUNTRY_LABEL_KEYS = { 'National teams': 'countryNationalTeams', 'Other': 'countryOther' };
+  function localizeCountryName(name) {
+    var key = COUNTRY_LABEL_KEYS[name];
+    return key ? t(key) : localizeName(name);
+  }
+
   // Flatten a country's leagues into one alphabetical team list: the
   // competition (league) level is hidden, teams are de-duplicated by id, and
   // excluded teams are dropped.
@@ -943,7 +1015,7 @@
       cDet.className = 'country';
       cDet.name = 'mm-country'; // exclusive accordion group (native)
       var cSum = document.createElement('summary');
-      cSum.innerHTML = '<span>' + escapeHtml(country.name) + '</span>' +
+      cSum.innerHTML = '<span>' + escapeHtml(localizeCountryName(country.name)) + '</span>' +
         '<span class="count-badge">' + teams.length + '</span>';
       cDet.appendChild(cSum);
 
@@ -969,7 +1041,8 @@
 
   function teamRow(team, opts) {
     var id = String(team.id);
-    state.teamName.set(id, team.name);
+    var displayName = localizeName(team.name);
+    state.teamName.set(id, displayName);
     var label = document.createElement('label');
     label.className = 'team' + (opts && opts.flat ? ' flat' : '');
     var cb = document.createElement('input');
@@ -982,7 +1055,7 @@
     });
     label.appendChild(cb);
     var name = document.createElement('span');
-    name.textContent = team.name;
+    name.textContent = displayName;
     label.appendChild(name);
     if (opts && opts.where) {
       var w = document.createElement('span');
@@ -1022,7 +1095,7 @@
       (c.leagues || []).forEach(function (l) {
         (l.teams || []).forEach(function (t) {
           var id = String(t.id);
-          if (need.has(id)) { state.teamName.set(id, t.name); need.delete(id); }
+          if (need.has(id)) { state.teamName.set(id, localizeName(t.name)); need.delete(id); }
         });
       });
       return need.size === 0;
@@ -1108,7 +1181,7 @@
           var key = String(team.id);
           if (seen.has(key)) continue;
           seen.add(key);
-          matches.push({ team: team, where: country.name });
+          matches.push({ team: team, where: localizeCountryName(country.name) });
           if (matches.length >= MAX) break outer;
         }
       }
