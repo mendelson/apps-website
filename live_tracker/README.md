@@ -7,7 +7,7 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
 | Layer | Technology |
 |---|---|
 | Runtime | Static HTML/CSS/JS — no build step, no framework |
-| Map | [Leaflet](https://leafletjs.com/) 1.9.4 with OpenStreetMap tiles |
+| Map | [Leaflet](https://leafletjs.com/) 1.9.4 with OpenStreetMap tiles (keyless; darkened by a CSS filter on the tile pane) |
 | Hosting | GitHub Pages |
 | Data | Garmin LiveTrack public session URL (polled via `fetch`) |
 | CORS proxy | Google Apps Script (primary) + public fallbacks — bypasses Garmin's cross-origin restrictions |
@@ -60,6 +60,24 @@ the page mid-pause. A feed that goes silent for 2 min is the secondary signal
 (watch off, phone out of range), dated to the last point received.
 
 **Finished** is the weak one: `sessionStatus` only flips a day later, so an
-`END`/`STOP`/`FINISH` event on the newest point is treated as the finish. Which
-token Garmin actually writes there has not been observed yet — no finished
-session has been captured — so `sessionStatus` remains the fallback.
+`END`/`STOP`/`FINISH` event on the newest point is treated as the finish. The
+token is **`END`** — observed on a finished session on 2026-09-27
+(`c0d96844…`), on the last point, whose `pointStatus` was `STATIONARY`. That
+session's `end` was also the real finish time rather than start + 24 h, so
+`sessionStatus` remains the fallback.
+
+## Where the data comes from — and how it broke
+
+The legacy `/services/` REST API is gone (404). What works is fetching the
+session page through the Apps Script proxy and reading the TanStack Query
+cache Next.js streams into it (`self.__next_f.push(...)`), in
+`parseGarminPageData`. Queries are identified **by content, not by key shape**:
+in Sept 2026 Garmin appended a `{garminGuid}` object to both session keys
+(`['session', id, token, 'track-points', {…}]`), the old
+`k[k.length - 1] === 'track-points'` / `k.length <= 3` tests matched nothing,
+and every session loaded with no athlete. `diag.html` dumps every query key
+the page carries — start there the next time it breaks.
+
+Map tiles were CARTO's `dark_all` until the same month, when CARTO began
+requiring an API key: every tile still answers HTTP 200, but with an
+"API KEY REQUIRED" image, so Leaflet reports no error at all.

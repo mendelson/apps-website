@@ -405,6 +405,11 @@
       position: absolute;
       inset: 0;
       z-index: 0;
+      background: #1b1b1d;
+    }
+    /* Light OSM tiles turned dark; only the tile pane, so markers keep their colours */
+    .leaflet-tile-pane.dark-tiles {
+      filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.4);
     }
 
     /* Info panel */
@@ -1823,11 +1828,15 @@ let map, trackerMarker, userMarker, userAccuracy, trackPolyline, startMarker;
 
 function initMap() {
   map = L.map('map', { center: [20, 0], zoom: 3, zoomControl: false });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20,
+  // CARTO's basemaps started requiring an API key (Sept 2026): every keyless
+  // tile comes back as an "API KEY REQUIRED" image with HTTP 200, so nothing
+  // errors — the map is just unusable. Plain OSM tiles need no key; the dark
+  // look is a CSS filter on the tile pane (.leaflet-tile-pane.dark-tiles).
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
   }).addTo(map);
+  map.getPane('tilePane').classList.add('dark-tiles');
 
   // Disable auto-follow silently on any user-initiated map interaction
   map.on('dragstart', _deactivateAutoFollow);
@@ -2507,7 +2516,7 @@ function parseGarminPageData(html) {
   }
   // Garmin's page has multiple HydrationBoundary sections; iterate all of them
   const marker = '"mutations":[],"queries":[';
-  let sessionData = null, profileData = null;
+  let sessionData = null, profileData = null, trackData = null;
   let searchFrom = 0;
   while (true) {
     const mi = payload.indexOf(marker, searchFrom);
@@ -2523,12 +2532,16 @@ function parseGarminPageData(html) {
     try {
       qs = JSON.parse(payload.substring(arrStart, i + 1).replace(/"\$undefined"/g, 'null'));
     } catch (_) { continue; }
+    // Identify each query by its content, never by the key's length or last
+    // element: Garmin appended a `{garminGuid}` object to both session keys in
+    // Sept 2026 (`['session', id, token, 'track-points', {…}]`), and matching
+    // on `k[k.length - 1]` / `k.length <= 3` silently found nothing.
     for (const q of qs) {
       const k = q?.queryKey, d = q?.state?.data;
-      if (!k || !d) continue;
-      if (k[0] === 'session' && k[k.length - 1] === 'track-points') trackData = d;
-      else if (k[0] === 'session' && k.length <= 3) sessionData = d;
-      else if (k[0] === 'user' && k[2] === 'profile') profileData = d;
+      if (!Array.isArray(k) || !d) continue;
+      if (k.includes('track-points') || Array.isArray(d.pages?.[0]?.trackPoints)) trackData = d;
+      else if (k[0] === 'session' || (d.sessionId && d.start)) sessionData = d;
+      else if (k[0] === 'user' && k.includes('profile')) profileData = d;
     }
   }
   if (!sessionData && !profileData && !trackData) return null;
