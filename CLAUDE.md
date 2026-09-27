@@ -37,6 +37,12 @@ browser loads directly.
   root `index.html` via `scripts/gen-index-pages.js`); the rest are standalone
   apps: `fm-pair/`, `tracker/`, `live_tracker/`, `garmin-devices/`,
   `garmin-pricing/`, `privacy*/`.
+- **`live_tracker/` is NOT the Live Tracker watch app** and shares nothing with
+  it but the name. It is a standalone web page that follows a Garmin LiveTrack
+  share link (`livetrack.garmin.com/session/…`) by reading Garmin's public page
+  through the Apps Script proxy — no watch code, no Connect IQ, no store
+  listing. Do not go looking for it in the watch repos, and do not apply watch
+  rules (devices, tiers, `.iq`) to it. Its own notes: `live_tracker/README.md`.
 - **Site i18n.** `assets/js/i18n.js` holds the showcase translations and its
   `SUPPORTED` list is `de/en/es/fr/it/pt/ru` — **seven, matching the apps**
   (rule G). Language comes from the `/xx/` path, then `navigator.language`, then
