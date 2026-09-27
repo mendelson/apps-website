@@ -43,6 +43,9 @@ browser loads directly.
   through the Apps Script proxy — no watch code, no Connect IQ, no store
   listing. Do not go looking for it in the watch repos, and do not apply watch
   rules (devices, tiers, `.iq`) to it. Its own notes: `live_tracker/README.md`.
+  It depends on services that change under it without notice (Garmin's page,
+  the map tiles), so `live-tracker-check.yml` tests it against them daily —
+  run `node scripts/check-live-tracker.js` after touching it.
 - **Site i18n.** `assets/js/i18n.js` holds the showcase translations and its
   `SUPPORTED` list is `de/en/es/fr/it/pt/ru` — **seven, matching the apps**
   (rule G). Language comes from the `/xx/` path, then `navigator.language`, then
