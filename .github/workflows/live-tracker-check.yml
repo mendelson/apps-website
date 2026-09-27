@@ -1,0 +1,97 @@
+name: Live tracker check
+
+# Daily check that live_tracker/ still works against the REAL services it
+# depends on — Garmin's session page, the Apps Script proxy, the map tiles.
+# Both Sept 2026 outages were upstream and silent (Garmin changed its page;
+# CARTO started serving an "API KEY REQUIRED" image with HTTP 200), so only a
+# scheduled check could have caught them. What each check does, and how to run
+# it on a desktop: scripts/check-live-tracker.js.
+#
+# On a failure it opens an issue (or comments on the open one), and closes it
+# on the next green run — a red scheduled run alone only e-mails, and that
+# e-mail is easy to lose. Nothing here writes to the repository.
+#
+# The "session" check needs a real LiveTrack session, and Garmin only serves
+# one for ~24 h after it ends. Set the repo VARIABLE (not a secret — it is an
+# identifier, rule 6) LIVETRACK_USER to the +tag the proxy's Gmail registry
+# knows you by, and every day with an activity is tested end to end; a day
+# without one reports the check as SKIPPED, by name. A one-off run against a
+# specific link: Actions → Live tracker check → Run workflow → session_url.
+
+on:
+  schedule:
+    # 21:07 UTC (18:07 Brasília): a morning activity is ~10 h old, well inside
+    # the ~24 h Garmin keeps a finished session visible. Off the hour, and clear
+    # of garmin-devices.yml (Mondays 06:00).
+    - cron: "7 21 * * *"
+  workflow_dispatch:
+    inputs:
+      session_url:
+        description: "LiveTrack link to test (optional; default: LIVETRACK_USER's latest session)"
+        required: false
+  pull_request:
+    paths:
+      - "live_tracker/**"
+      - "scripts/check-live-tracker.js"
+      - "scripts/fixtures/live-tracker-session.html"
+      - ".github/workflows/live-tracker-check.yml"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: live-tracker-check-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  ISSUE_TITLE: "Live tracker check is failing"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # The schedule tests what users get (the published page); a PR tests its
+      # own checkout, which is not published yet.
+      - name: Run the checks
+        env:
+          LIVETRACK_USER: ${{ vars.LIVETRACK_USER }}
+          LIVETRACK_URL: ${{ inputs.session_url }}
+          SOURCE: ${{ github.event_name == 'pull_request' && 'live_tracker/index.html' || 'https://apps.mmendelson.com/live_tracker/' }}
+        run: node scripts/check-live-tracker.js --source "$SOURCE"
+
+      - name: Open or update the failure issue
+        if: failure() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="The daily live tracker check failed on $(date -u +%F): $RUN_URL
+
+          The run's summary lists which check failed and why. How each check works, and how to run it locally: \`scripts/check-live-tracker.js\`. This issue closes itself on the next green run."
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --repo "$GITHUB_REPOSITORY" --body "Still failing on $(date -u +%F): $RUN_URL"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$ISSUE_TITLE" --body "$body"
+          fi
+
+      - name: Close the failure issue
+        if: success() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          if [ -n "$n" ]; then
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Green again on $(date -u +%F): $RUN_URL"
+          else
+            echo "No open failure issue."
+          fi

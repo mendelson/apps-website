@@ -81,3 +81,31 @@ the page carries — start there the next time it breaks.
 Map tiles were CARTO's `dark_all` until the same month, when CARTO began
 requiring an API key: every tile still answers HTTP 200, but with an
 "API KEY REQUIRED" image, so Leaflet reports no error at all.
+
+## Automated check (daily)
+
+`.github/workflows/live-tracker-check.yml` runs `scripts/check-live-tracker.js`
+every day at 21:07 UTC against the **published** page, and on any PR touching
+`live_tracker/` against the PR's own copy. A failure opens an issue titled
+*"Live tracker check is failing"*; the next green run closes it. It reads the
+parser, the tile URL and the proxy URL out of `index.html` itself, so it cannot
+drift from the app. It checks:
+
+| Check | Catches |
+|---|---|
+| `syntax` | a script block that no longer compiles |
+| `parser` | `parseGarminPageData` against an anonymised real Garmin page (`scripts/fixtures/`), in the current key shape and the pre-Sept-2026 one, under `"use strict"` |
+| `tiles` | a tile server that errors, or serves one placeholder for everywhere (the CARTO failure) |
+| `proxy` | the Apps Script proxy down, or Garmin's page no longer Next.js flight data |
+| `session` | a **real** session no longer parsing to track points (the Garmin failure) |
+
+`session` needs a real session, and Garmin only serves one for ~24 h after it
+ends. The repo variable `LIVETRACK_USER` (the proxy registry's `+tag`) makes
+every day with an activity an end-to-end test; without it, or on a day with no
+activity, `session` is reported **SKIPPED**, never passed.
+
+Run it locally the same way: `node scripts/check-live-tracker.js`
+(`--offline` for no network, `--source <url>` to test the published page,
+`LIVETRACK_URL=<link>` for a specific session). When Garmin changes its page
+again, save a real session page and regenerate the fixture with
+`node scripts/make-live-tracker-fixture.js <saved.html>` — it anonymises it.
