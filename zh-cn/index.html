@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="scroll-behavior:smooth;">
+<head>
+<!-- Language detection: redirect root to detected language -->
+<script>
+(function(){var p=location.pathname;if(p!=='/'&&p!=='/index.html')return;var s=['de','en','es','fr','it','pt','ru','nl','pt-pt','pl','cs','sk','sl','hr','hu','el','da','nb','sv','fi','ja','ko','zh-cn','zh-tw','th','he','id','ms'];function t(g){var q=String(g||'').toLowerCase().replace(/_/g,'-').split('-'),b=q[0],u=q.slice(1);function h(a){for(var i=0;i<u.length;i++){if(a.indexOf(u[i])>=0)return true;}return false;}if(b==='pt')return h(['pt','ao','mz','cv','gw','st','tl'])?'pt-pt':'pt';if(b==='zh')return h(['hans'])?'zh-cn':(h(['hant','tw','hk','mo'])?'zh-tw':'zh-cn');if(b==='no'||b==='nn')return 'nb';if(b==='iw')return 'he';if(b==='in')return 'id';return s.indexOf(b)>=0?b:null;}var n=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language],l=null;for(var i=0;i<n.length&&!l;i++){l=t(n[i]);}location.replace('/'+(l||'en')+'/');})();
+</script>
+
+<!-- Google Analytics (GA4), Consent Mode v2. ONE measurement ID for the whole
+     mmendelson.com family, so a hub -> apps -> run journey is one session:
+     the _ga cookies land on .mmendelson.com and every site reads the same
+     ones. Which site a hit came from is the built-in Hostname dimension, not
+     a parameter. Denied by default -> cookieless pings until the visitor
+     accepts. See website/ANALYTICS_TRACKING.md. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('consent', 'default', { ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', analytics_storage:'denied', wait_for_update:500 });
+  // Consent is shared across the family, so it cannot live in localStorage
+  // alone: that is per ORIGIN, and the hub, apps and run are three origins.
+  // The record is a cookie on .mmendelson.com; localStorage stays as the
+  // fallback for hosts where that domain cannot be set (a local preview, the
+  // github.io project URL) and for visitors who answered before this change.
+  function mmConsentGet(k){ var m = document.cookie.match('(^|; )' + k + '=([^;]*)');
+    if (m) return decodeURIComponent(m[2]);
+    try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function mmConsentSet(k, v){
+    try { localStorage.setItem(k, v); } catch (e) {}
+    try { document.cookie = k + '=' + v + '; domain=.mmendelson.com; path=/; max-age=15552000; SameSite=Lax; Secure'; } catch (e) {}
+  }
+  // mm_consent_v is the banner VERSION the visitor answered. Only '2' — the
+  // banner that names the demographic signals — may grant them, so an older
+  // 'granted' stays analytics-only until the visitor is asked again.
+  try { var mmC = mmConsentGet('mm_consent'), mmV = mmConsentGet('mm_consent_v');
+        if (mmC === 'granted') { var mmU = { analytics_storage:'granted' };
+          if (mmV === '2') { mmU.ad_storage='granted'; mmU.ad_user_data='granted'; mmU.ad_personalization='granted'; }
+          gtag('consent','update', mmU); } } catch(e){}
+  // The three things GA4 does not collect by itself: the language actually
+  // RENDERED (it only sees the browser's), the colour scheme, and whether this
+  // is an installed PWA rather than a tab. They go in the CONFIG call, not
+  // gtag('set', …) — measured against the real collect payload, custom keys
+  // passed to set() never leave the page, while config params ride along on
+  // every event to this destination.
+  gtag('config', 'G-0MHS4QK452', { ui_lang: document.documentElement.lang || '', ui_theme: (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light', display_mode: (window.matchMedia && matchMedia('(display-mode: standalone)').matches) ? 'standalone' : 'browser' });
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MHS4QK452"></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/favicon-180.png">
+<title>Garmin 应用 – M. Mendelson</title>
+<meta name="description" content="M. Mendelson 开发的 Garmin Connect IQ 应用：Connect IQ 商店中的数据字段和表盘。" />
+<link rel="canonical" href="https://apps.mmendelson.com/zh-cn/" />
+
+<link rel="alternate" hreflang="de"       href="https://apps.mmendelson.com/de/">
+<link rel="alternate" hreflang="en"       href="https://apps.mmendelson.com/en/">
+<link rel="alternate" hreflang="es"       href="https://apps.mmendelson.com/es/">
+<link rel="alternate" hreflang="fr"       href="https://apps.mmendelson.com/fr/">
+<link rel="alternate" hreflang="it"       href="https://apps.mmendelson.com/it/">
+<link rel="alternate" hreflang="pt"       href="https://apps.mmendelson.com/pt/">
+<link rel="alternate" hreflang="ru"       href="https://apps.mmendelson.com/ru/">
+<link rel="alternate" hreflang="nl"       href="https://apps.mmendelson.com/nl/">
+<link rel="alternate" hreflang="pt-PT"    href="https://apps.mmendelson.com/pt-pt/">
+<link rel="alternate" hreflang="pl"       href="https://apps.mmendelson.com/pl/">
+<link rel="alternate" hreflang="cs"       href="https://apps.mmendelson.com/cs/">
+<link rel="alternate" hreflang="sk"       href="https://apps.mmendelson.com/sk/">
+<link rel="alternate" hreflang="sl"       href="https://apps.mmendelson.com/sl/">
+<link rel="alternate" hreflang="hr"       href="https://apps.mmendelson.com/hr/">
+<link rel="alternate" hreflang="hu"       href="https://apps.mmendelson.com/hu/">
+<link rel="alternate" hreflang="el"       href="https://apps.mmendelson.com/el/">
+<link rel="alternate" hreflang="da"       href="https://apps.mmendelson.com/da/">
+<link rel="alternate" hreflang="nb"       href="https://apps.mmendelson.com/nb/">
+<link rel="alternate" hreflang="sv"       href="https://apps.mmendelson.com/sv/">
+<link rel="alternate" hreflang="fi"       href="https://apps.mmendelson.com/fi/">
+<link rel="alternate" hreflang="ja"       href="https://apps.mmendelson.com/ja/">
+<link rel="alternate" hreflang="ko"       href="https://apps.mmendelson.com/ko/">
+<link rel="alternate" hreflang="zh-CN"    href="https://apps.mmendelson.com/zh-cn/">
+<link rel="alternate" hreflang="zh-TW"    href="https://apps.mmendelson.com/zh-tw/">
+<link rel="alternate" hreflang="th"       href="https://apps.mmendelson.com/th/">
+<link rel="alternate" hreflang="he"       href="https://apps.mmendelson.com/he/">
+<link rel="alternate" hreflang="id"       href="https://apps.mmendelson.com/id/">
+<link rel="alternate" hreflang="ms"       href="https://apps.mmendelson.com/ms/">
+<link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/visual.css?v=32" />
+<style>
+.header-subtitle-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+.header-subtitle-row p{margin:0;}
+</style>
+
+<!-- apps-jsonld:start — generated by scripts/gen-index-pages.js from the cards below; do not hand-edit -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Garmin Connect IQ apps by M. Mendelson",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Live Predictor Premium",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/050e3354-5f00-4a72-9a88-3371a131d92f",
+        "image": "https://apps.mmendelson.com/img/live-predictor-premium.jpeg",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Live Time Predictor",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766",
+        "image": "https://apps.mmendelson.com/img/live-time-predictor.jpeg",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Pacer Data Field",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/7f0fc44b-4ee7-4b01-b911-ea60205c654b",
+        "image": "https://apps.mmendelson.com/img/pacer.jpeg",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Split Pacer Pro",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/8a352d96-c19d-4a5c-a922-de362349e240",
+        "image": "https://apps.mmendelson.com/img/split-pacer-pro.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Live Pace Speed Calculator",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/bacd16b3-8f20-4224-bf7e-c7f0f54f5fac",
+        "image": "https://apps.mmendelson.com/img/pace-speed-calculator.jpeg",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Tracker Data Field",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Data Field",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/1bcdf5f3-fc2e-460a-80f8-b0c32246f4cd",
+        "image": "https://apps.mmendelson.com/img/tracker.jpeg",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Route Silhouette",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d",
+        "image": "https://apps.mmendelson.com/img/route-silhouette.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Premium Route Silhouette",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/e392daf7-7b55-4ffa-9f18-e77cd8e83906",
+        "image": "https://apps.mmendelson.com/img/premium-route-silhouette.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Time Across The Galaxy",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/5f4dad46-077c-4876-b860-9000e3285ef1",
+        "image": "https://apps.mmendelson.com/img/galaxy.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 10,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Solve for X",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/f6ae5589-7a3a-41c3-8f38-d46d39d898bb",
+        "image": "https://apps.mmendelson.com/img/solve-for-x.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 11,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Dynamic Hours",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/aeb269d7-e3df-49f9-95d7-5107084f5fc3",
+        "image": "https://apps.mmendelson.com/img/dynamic-hours.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 12,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Football Matches",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/009380c9-8085-402d-8f57-a85ec5862da5",
+        "image": "https://apps.mmendelson.com/img/football-matches.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 13,
+      "item": {
+        "@type": "SoftwareApplication",
+        "name": "Volty",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Watch Face",
+        "operatingSystem": "Garmin Connect IQ",
+        "url": "https://apps.garmin.com/apps/652e229b-1a38-4f44-87da-d82973c4b622",
+        "image": "https://apps.mmendelson.com/img/volty.png",
+        "author": {
+          "@type": "Person",
+          "name": "Mateus Mendelson",
+          "url": "https://mmendelson.com/"
+        }
+      }
+    }
+  ]
+}
+</script>
+<!-- apps-jsonld:end -->
+</head>
+
+<body>
+  <div id="preloader">
+    <div id="loader-container"></div>
+  </div>
+
+  <h1 class="visually-hidden">Garmin Apps</h1>
+
+<nav>
+  <a class="brand-logo" href="/" aria-label="apps.mmendelson.com — home">
+    <svg width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <g transform="translate(2 0)" stroke="currentColor" stroke-width="4" stroke-linejoin="miter">
+        <path d="M6 7H23V25H38V42"></path>
+        <path d="M6 13H17V30H34V42"></path>
+      </g>
+    </svg>
+  </a>
+  <div class="site-switch" role="navigation" aria-label="Sister sites">
+    <a href="https://mmendelson.com">Home</a>
+    <a href="/" class="active" aria-current="page">Apps</a>
+    <a href="https://run.mmendelson.com">Run</a>
+  </div>
+  <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="lang-selector">
+    <button class="lang-btn" aria-label="Language">🌐</button>
+    <div class="lang-dropdown">
+      <a href="/de/" class="lang-option" lang="de">Deutsch</a>
+      <a href="/en/" class="lang-option" lang="en">English</a>
+      <a href="/es/" class="lang-option" lang="es">Español</a>
+      <a href="/fr/" class="lang-option" lang="fr">Français</a>
+      <a href="/it/" class="lang-option" lang="it">Italiano</a>
+      <a href="/pt/" class="lang-option" lang="pt">Português (Brasil)</a>
+      <a href="/ru/" class="lang-option" lang="ru">Русский</a>
+      <a href="/nl/" class="lang-option" lang="nl">Nederlands</a>
+      <a href="/pt-pt/" class="lang-option" lang="pt-PT">Português (Portugal)</a>
+      <a href="/pl/" class="lang-option" lang="pl">Polski</a>
+      <a href="/cs/" class="lang-option" lang="cs">Čeština</a>
+      <a href="/sk/" class="lang-option" lang="sk">Slovenčina</a>
+      <a href="/sl/" class="lang-option" lang="sl">Slovenščina</a>
+      <a href="/hr/" class="lang-option" lang="hr">Hrvatski</a>
+      <a href="/hu/" class="lang-option" lang="hu">Magyar</a>
+      <a href="/el/" class="lang-option" lang="el">Ελληνικά</a>
+      <a href="/da/" class="lang-option" lang="da">Dansk</a>
+      <a href="/nb/" class="lang-option" lang="nb">Norsk bokmål</a>
+      <a href="/sv/" class="lang-option" lang="sv">Svenska</a>
+      <a href="/fi/" class="lang-option" lang="fi">Suomi</a>
+      <a href="/ja/" class="lang-option" lang="ja">日本語</a>
+      <a href="/ko/" class="lang-option" lang="ko">한국어</a>
+      <a href="/zh-cn/" class="lang-option" lang="zh-CN">简体中文</a>
+      <a href="/zh-tw/" class="lang-option" lang="zh-TW">繁體中文</a>
+      <a href="/th/" class="lang-option" lang="th">ไทย</a>
+      <a href="/he/" class="lang-option" lang="he">עברית</a>
+      <a href="/id/" class="lang-option" lang="id">Bahasa Indonesia</a>
+      <a href="/ms/" class="lang-option" lang="ms">Bahasa Melayu</a>
+    </div>
+  </div>
+  <ul>
+    <li><a href="#featured"    data-i18n="navFeatured">Featured</a></li>
+    <li><a href="#data-fields" data-i18n="navDataFields">Data Fields</a></li>
+    <li><a href="#watch-faces" data-i18n="navWatchFaces">Watch Faces</a></li>
+    <li><a href="#tracker-web"    data-i18n="navTracker">Live Tracker</a></li>
+    <li><a href="#run-aggregator" data-i18n="navRun">Run Aggregator</a></li>
+    <li><a href="#contact"        data-i18n="navContact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="search-container">
+  <input type="text" id="search" data-i18n="searchPlaceholder" placeholder="Search apps…">
+</div>
+
+<!-- ================= FEATURED ================= -->
+<section id="featured" class="section">
+<h2 data-i18n="navFeatured">Featured</h2>
+<p class="desc" data-i18n="featuredDesc">Fresh picks and crowd favorites — updated from live stats.</p>
+
+<div id="featured-carousel">
+  <div class="carousel">
+    <div class="carousel-stage">
+      <button type="button" class="carousel-nav carousel-prev" data-i18n-aria="carouselPrev" aria-label="Previous featured app">&#10094;</button>
+      <div class="carousel-viewport">
+        <div class="carousel-track"></div>
+      </div>
+      <button type="button" class="carousel-nav carousel-next" data-i18n-aria="carouselNext" aria-label="Next featured app">&#10095;</button>
+    </div>
+    <div class="carousel-indicators"></div>
+  </div>
+</div>
+</section>
+
+<!-- ================= DATA FIELDS ================= -->
+<section id="data-fields" class="section">
+<h2 data-i18n="navDataFields">Data Fields</h2>
+<p class="desc" data-i18n="dataFieldsDesc">Performance tools for pacing, prediction and live tracking.</p>
+
+<div class="grid">
+
+<!-- LIVE PREDICTOR PREMIUM -->
+<div class="card" data-name="Live Predictor Premium">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/live-predictor-premium.jpeg" loading="lazy"/>
+  <h3>Live Predictor Premium</h3>
+  <p>Advanced real-time predictions with flexible configurations.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="live-predictor-premium">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/050e3354-5f00-4a72-9a88-3371a131d92f">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="live-predictor-premium">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/f608915d-7edf-49d8-9d8b-69bac9f9db08">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+
+  <div class="versions">
+    <button data-i18n="moreVersions">More versions ▾</button>
+    <div class="dropdown">
+      <a href="https://apps.garmin.com/apps/3df7d8a5-43d4-4d51-b379-abd8b03a84f9" data-i18n="liteVersion">Lite version</a>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE TIME PREDICTOR -->
+<div class="card" data-name="Live Time Predictor">
+  <div class="badge-slot"></div>
+
+  <img class="thumb" src="/img/live-time-predictor.jpeg" loading="lazy"/>
+  <h3>Live Time Predictor</h3>
+  <p>Live time predictions for custom distances.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="live-time-predictor">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/8faa55af-a318-45a1-a20a-86f3b57e2766">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+</div>
+
+<!-- PACER -->
+<div class="card" data-name="Pacer Data Field">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/pacer.jpeg" loading="lazy"/>
+  <h3>Pacer Data Field</h3>
+  <p>Real-time pacing guidance to stay exactly on target.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="pacer">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/7f0fc44b-4ee7-4b01-b911-ea60205c654b">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="pacer">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/738acc8f-c8eb-44cf-a929-b6a2ed083947">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+
+  <div class="versions">
+    <button data-i18n="moreVersions">More versions ▾</button>
+    <div class="dropdown">
+      <a href="https://apps.garmin.com/apps/d9f06aa8-5905-492f-9951-9e0a7b539a41" data-i18n="mirrorB">Mirror B</a>
+      <a href="https://apps.garmin.com/apps/947be485-d8f3-4bd2-8a7b-c68ef1a92984" data-i18n="mirrorC">Mirror C</a>
+      <a href="https://apps.garmin.com/apps/0dd6e1a1-b0b5-4e05-80de-8a4d21c2d857" data-i18n="milesVersion">Miles version</a>
+    </div>
+  </div>
+</div>
+
+<!-- SPLIT PACER PRO -->
+<div class="card" data-name="Split Pacer Pro">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/split-pacer-pro.png" loading="lazy" alt="Split Pacer Pro"/>
+  <h3>Split Pacer Pro</h3>
+  <p>Finish line plus intermediate splits: live required pace, ETA, ahead/behind, and segment progress.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="split-pacer-pro">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/8a352d96-c19d-4a5c-a922-de362349e240">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy" alt="Get on Connect IQ"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy" alt="Get on Connect IQ"/>
+  </a>
+
+  <div class="pay-alt" data-app="split-pacer-pro">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/c3be19e9-b06e-482c-96b4-bbbc576288b2">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy" alt="Get on Connect IQ"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy" alt="Get on Connect IQ"/>
+    </a>
+  </div>
+</div>
+
+<!-- LIVE PACE SPEED CALCULATOR -->
+<div class="card" data-name="Live Pace Speed Calculator">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/pace-speed-calculator.jpeg" loading="lazy"/>
+  <h3>Live Pace Speed Calculator</h3>
+  <p>Required pace or speed for custom goals.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="pace-speed-calculator">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/bacd16b3-8f20-4224-bf7e-c7f0f54f5fac">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="pace-speed-calculator">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/240b756e-1e5b-4374-9d4b-9e67d5049759">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+
+  <div class="versions">
+    <button data-i18n="moreVersions">More versions ▾</button>
+    <div class="dropdown">
+      <a href="https://apps.garmin.com/apps/41a74229-1e7e-488d-8f43-1d01d28bad27" data-i18n="liteVersion">Lite version</a>
+    </div>
+  </div>
+</div>
+
+<!-- TRACKER -->
+<div class="card" data-name="Tracker Data Field">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/tracker.jpeg" loading="lazy"/>
+  <h3>Tracker Data Field</h3>
+  <p>Share your activity live with a unique tracker ID.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="tracker">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/1bcdf5f3-fc2e-460a-80f8-b0c32246f4cd">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="tracker">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/30200a33-2330-4b15-8a6a-e87045bbf126">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+</div>
+
+</div>
+</section>
+
+<!-- ================= WATCH FACES ================= -->
+<section id="watch-faces" class="section">
+<h2 data-i18n="navWatchFaces">Watch Faces</h2>
+<p class="desc" data-i18n="watchFacesDesc">Creative watch faces with distinctive visual concepts.</p>
+
+<div class="grid">
+
+<!-- ROUTE SILHOUETTE -->
+<div class="card" data-name="Route Silhouette">
+  <div class="badge-slot"></div>
+
+  <img class="thumb" src="/img/route-silhouette.png" loading="lazy"/>
+  <h3>Route Silhouette</h3>
+  <p>Shows your latest GPS-based Strava activity on your watch.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="route-silhouette">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/2ee2a842-8ded-4f19-b9cd-f0d6c621454d">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+</div>
+
+<!-- PREMIUM ROUTE SILHOUETTE -->
+<div class="card" data-name="Premium Route Silhouette">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/premium-route-silhouette.png" loading="lazy"/>
+  <h3>Premium Route Silhouette</h3>
+  <p>Premium watch face: your latest Strava route with complications and multiple backgrounds.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="premium-route-silhouette">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/e392daf7-7b55-4ffa-9f18-e77cd8e83906">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="premium-route-silhouette">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/80ff15cd-01ff-4ecc-b9cf-d43c750e8758">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+</div>
+
+<!-- TIME ACROSS THE GALAXY -->
+<div class="card" data-name="Time Across The Galaxy">
+  <div class="badge-slot"></div>
+
+  <img class="thumb" src="/img/galaxy.png" />
+  <h3>Time Across The Galaxy</h3>
+  <p>Cosmic-themed watch face inspired by a galaxy far away.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="time-across-the-galaxy">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/5f4dad46-077c-4876-b860-9000e3285ef1">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+</div>
+
+<!-- SOLVE FOR X -->
+<div class="card" data-name="Solve for X">
+  <div class="badge-slot"></div>
+
+  <img class="thumb" src="/img/solve-for-x.png" loading="lazy"/>
+  <h3>Solve for X</h3>
+  <p>Solve a puzzle to reveal the time.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="solve-for-x">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" href="https://apps.garmin.com/apps/f6ae5589-7a3a-41c3-8f38-d46d39d898bb">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+</div>
+
+<!-- FOOTBALL MATCHES -->
+<div class="card" data-name="Dynamic Hours">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/dynamic-hours.png" loading="lazy"/>
+  <h3>Dynamic Hours</h3>
+  <p>An analog watch face that shows time in 24-hour format, so 1 AM and 1 PM never look the same.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="dynamic-hours">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/aeb269d7-e3df-49f9-95d7-5107084f5fc3">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="dynamic-hours">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/466cecf3-b4db-4f3d-b7b0-ac00f456de12">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+</div>
+
+<div class="card" data-name="Football Matches">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/football-matches.png" loading="lazy"/>
+  <h3>Football Matches</h3>
+  <p>Your club’s matches on the watch face: live score, match clock and the next fixture.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="football-matches">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/009380c9-8085-402d-8f57-a85ec5862da5">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="football-matches">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/c1a20142-f24b-49dc-81f4-c8ec688e3aa1">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+</div>
+
+<div class="card" data-name="Volty">
+  <div class="badge-slot"><span class="trial" data-i18n="freeTrial">FREE TRIAL</span></div>
+
+  <img class="thumb" src="/img/volty.png" loading="lazy"/>
+  <h3>Volty</h3>
+  <p>An animated watch face starring Volty, a little battery that trains with you. Its mood shows how much charge your watch has left.</p>
+
+  <div class="momentum">
+    <div class="momentum-tag hidden"></div>
+    <div class="tooltip hidden"></div>
+  </div>
+
+  <div class="metrics" data-app="volty">
+    <span class="metric metric-total"></span>
+    <span class="metric metric-installs"></span>
+    <span class="metric metric-users"></span>
+  </div>
+
+  <a class="ciq-badge" data-method="garmin-pay" href="https://apps.garmin.com/apps/652e229b-1a38-4f44-87da-d82973c4b622">
+    <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+    <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+  </a>
+
+  <div class="pay-alt" data-app="volty">
+    <p class="pay-alt__text" data-i18n="payAlt">Free trial &amp; alternative payment methods below</p>
+
+    <a class="ciq-badge" data-method="kiezelpay" href="https://apps.garmin.com/apps/836bd25a-0618-42c8-a58b-813ed84114f3">
+      <img class="light" src="/img/Connect IQ Badge-Black.svg" loading="lazy"/>
+      <img class="dark" src="/img/Connect IQ Badge-White.svg" loading="lazy"/>
+    </a>
+  </div>
+</div>
+
+</div>
+</section>
+
+<!-- ================= TRACKER WEB ================= -->
+<section id="tracker-web" class="section">
+<h2 data-i18n="navTracker">Live Tracker</h2>
+<div class="tracker-web-card">
+  <p data-i18n="trackerWebDesc">Follow your activity live directly on Google Maps — with Garmin integration.</p>
+  <a href="/live_tracker/" target="_blank" rel="noopener" class="tracker-web-btn" data-i18n="trackerWebBtn">Open Tracker →</a>
+</div>
+</section>
+
+<!-- ================= RUN AGGREGATOR ================= -->
+<section id="run-aggregator" class="section">
+<h2 data-i18n="navRun">Run Aggregator</h2>
+<div class="tracker-web-card">
+  <p data-i18n="runWebDesc">Find your next races in one place.</p>
+  <a href="https://run.mmendelson.com" class="tracker-web-btn" data-i18n="runWebBtn">Open Aggregator →</a>
+</div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="contact-card">
+    <h2 data-i18n="contactTitle">Contact</h2>
+    <p data-i18n="contactText">Questions, feedback or feature ideas? I'd be glad to hear from you.</p>
+    <button id="emailBtn" data-i18n="contactBtn">Send email</button>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="foot-social" role="navigation" aria-label="Social profiles">
+      <a href="https://www.linkedin.com/in/mateusmendelson/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/mendelson" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.youtube.com/mateusmendelson" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.strava.com/athletes/9485255" target="_blank" rel="noopener">Strava</a>
+      <a href="https://instagram.com/byte.papo" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://open.spotify.com/show/1zGax7Ftyup8WKN7BQGJ1g" target="_blank" rel="noopener">Spotify</a>
+      <a href="https://t.me/mmendelson" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <div class="foot-switch" role="navigation" aria-label="Sister sites">
+      <a href="https://mmendelson.com">Home</a>
+      <a href="/" class="active">Apps</a>
+      <a href="https://run.mmendelson.com">Run</a>
+    </div>
+  </div>
+  <div class="foot-copy" data-i18n="footer">© 2026 M. Mendelson · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></div>
+</footer>
+
+<div id="consent-bar" class="consent-bar" role="dialog" aria-live="polite" aria-label="Cookies" hidden>
+  <p class="consent-text"></p>
+  <div class="consent-actions">
+    <button type="button" class="consent-btn consent-btn--ghost" data-consent="decline"></button>
+    <button type="button" class="consent-btn" data-consent="accept"></button>
+  </div>
+</div>
+
+<script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/script.js?v=9"></script>
+<script src="/assets/js/consent.js?v=3"></script>
+
+<script>
+(async function() {
+  const pre = document.getElementById("preloader");
+  const container = document.getElementById("loader-container");
+
+  const loaders = {
+    1: `<div class="loader-1"></div>`,
+    2: `<div class="loader-2"></div>`,
+    3: `<div class="loader-3"></div>`,
+    4: `
+      <div class="loader-4">
+          <div class="outer">
+              <div class="body">
+                  <div class="arm behind"></div>
+                  <div class="arm front"></div>
+                  <div class="leg behind"></div>
+                  <div class="leg front"></div>
+              </div>
+          </div>
+      </div>`,
+    5: `<div class="loader-5"></div>`,
+    6: `
+        <div class="loader-gym">
+    <div class="gym-container">
+        <div class="container">
+
+            <div class="bench-container">
+                <div class="seat"></div>
+                <div class="left"></div>
+                <div class="right"></div>
+            </div>
+
+            <div class="man">
+                <div class="legs">
+                    <div class="leg one"></div>
+                    <div class="leg two"></div>
+                    <div class="thy"></div>
+                </div>
+
+                <div class="main-parts">
+                    <div class="lower"></div>
+                    <div class="upper">
+                        <div class="above"></div>
+                    </div>
+                </div>
+
+                <div class="neck">
+                    <div class="head"></div>
+                </div>
+
+                <div class="arm"></div>
+
+                <div class="nose"><div></div><div></div></div>
+
+                <div class="hairs">
+                    <div class="lower"></div>
+                    <div class="upper">
+                        <div></div><div></div><div></div>
+                    </div>
+                </div>
+
+                <div class="hand"></div>
+                <div class="weight"></div>
+            </div>
+
+            <div class="rod1"></div>
+
+        </div>
+    </div>
+</div>
+    `,
+    7: `
+      <div class="loader-7">
+        <div class="treadmill-animation">
+          <div class="treadmill">
+            <div class="base"></div>
+            <div class="legs"></div>
+            <div class="legs-behind"></div>
+            <div class="panel"></div>
+          </div>
+          <div class="runner">
+            <div class="runner-body"></div>
+            <div class="right-arm"></div>
+            <div class="left-arm"></div>
+            <div class="runner-legs">
+              <div class="right-leg">
+                <div class="right-calf">
+                  <div class="right-shoe"></div>
+                </div>
+              </div>
+              <div class="left-leg">
+                <div class="left-calf">
+                  <div class="left-shoe"></div>
+                </div>
+              </div>
+            </div>
+            <div class="runner-face">
+              <div class="hair"></div>
+            </div>
+          </div>
+        </div>
+      </div>`,
+    8: `
+      <div class="loader-8">
+        <div class="pool">
+          <div class="water">
+            <hr class="rope">
+            <ul class="swimmer backstroke"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer breaststroke"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer butterfly"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+            <ul class="swimmer free"><li class="head"></li><li class="arm"></li><li class="leg"></li></ul>
+            <hr class="rope">
+          </div>
+        </div>
+      </div>`
+  };
+
+  const desiredLoaders = [1, 4, 6, 7, 8];
+  const randomPick = desiredLoaders[Math.floor(Math.random() * desiredLoaders.length)];
+
+  container.innerHTML = loaders[randomPick];
+
+  if (randomPick === 8 && window.startSwimRace) {
+    window.startSwimRace(container);
+  }
+
+  const start = performance.now();
+
+  await new Promise(resolve => {
+    if (document.readyState === "complete") resolve();
+    else window.addEventListener("load", resolve);
+  });
+
+  if (window._mfMetricsPromise instanceof Promise) {
+    await window._mfMetricsPromise;
+  }
+
+  const elapsed = performance.now() - start;
+  const minimum = 2000;
+  if (elapsed < minimum) {
+    await new Promise(r => setTimeout(r, minimum - elapsed));
+  }
+
+  pre.classList.add("hide");
+  setTimeout(() => pre.remove(), 650);
+})();
+</script>
+
+</body>
+</html>

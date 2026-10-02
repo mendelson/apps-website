@@ -6,15 +6,42 @@ const ROOT = path.join(SITE, "privacy_policy");
 const EMAIL = "mateusmendelson@hotmail.com";
 const GARMIN_URL = "https://www.garmin.com/en-US/privacy/connect/";
 
+// The 28 locales of the Connect IQ Store listings — the same set as the
+// showcase (assets/js/i18n.js) and run.mmendelson.com. [URL code, native name].
 const LANGS = [
   ["de", "Deutsch"],
   ["en", "English"],
   ["es", "Español"],
   ["fr", "Français"],
   ["it", "Italiano"],
-  ["pt", "Português"],
+  ["pt", "Português (Brasil)"],
   ["ru", "Русский"],
+  ["nl", "Nederlands"],
+  ["pt-pt", "Português (Portugal)"],
+  ["pl", "Polski"],
+  ["cs", "Čeština"],
+  ["sk", "Slovenčina"],
+  ["sl", "Slovenščina"],
+  ["hr", "Hrvatski"],
+  ["hu", "Magyar"],
+  ["el", "Ελληνικά"],
+  ["da", "Dansk"],
+  ["nb", "Norsk bokmål"],
+  ["sv", "Svenska"],
+  ["fi", "Suomi"],
+  ["ja", "日本語"],
+  ["ko", "한국어"],
+  ["zh-cn", "简体中文"],
+  ["zh-tw", "繁體中文"],
+  ["th", "ไทย"],
+  ["he", "עברית"],
+  ["id", "Bahasa Indonesia"],
+  ["ms", "Bahasa Melayu"],
 ];
+// BCP-47 tag for the URL codes that are not one as written; RTL languages.
+const HTML_LANG = { "pt-pt": "pt-PT", "zh-cn": "zh-CN", "zh-tw": "zh-TW" };
+const RTL = new Set(["he"]);
+const tagOf = (code) => HTML_LANG[code] || code;
 
 const CSS = `
   :root {
@@ -41,26 +68,27 @@ const CSS = `
     border-radius: 50%; width: 34px; height: 34px; font-size: 18px; line-height: 1; cursor: pointer;
     transition: background .2s; display: flex; align-items: center; justify-content: center; padding: 0; color: inherit; }
   .lang-btn:hover { background: rgba(255,255,255,0.18); }
-  .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #1e1e1e;
-    border: 1px solid #333; border-radius: 10px; overflow: hidden; min-width: 140px;
+  .lang-dropdown { display: none; position: absolute; inset-inline-end: 0; top: calc(100% + 6px); background: #1e1e1e;
+    border: 1px solid #333; border-radius: 10px; max-height: min(70vh, 560px); overflow-y: auto;
+    overscroll-behavior: contain; min-width: 140px;
     box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 1001; }
   .lang-selector.open .lang-dropdown { display: block; }
   .lang-option { display: block; padding: 9px 16px; color: #bbb; text-decoration: none; font-size: 14px;
-    transition: background .15s, color .15s; }
+    white-space: nowrap; transition: background .15s, color .15s; }
   .lang-option:hover { background: #2a2a2a; color: #fff; }
   .lang-option.active { color: #fff; font-weight: 600; }
 
   main { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 64px; }
   .meta { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
-  .intro { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  .intro { background: var(--surface); border: 1px solid var(--border); border-inline-start: 3px solid var(--accent);
     border-radius: 10px; padding: 18px 20px; margin: 0 0 32px; }
   h2 { font-size: 20px; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
   p, li { font-size: 15.5px; }
-  ul { padding-left: 22px; }
+  ul { padding-inline-start: 22px; }
   li { margin: 6px 0; }
   .table-wrap { overflow-x: auto; margin: 14px 0; }
   table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 14.5px; }
-  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  th, td { text-align: start; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
   th { background: var(--surface2); }
   .note { color: var(--muted); font-size: 14px; }
   footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
@@ -83,10 +111,10 @@ function fill(str, map) {
 
 function page(lang, t) {
   const dropdown = LANGS.map(([code, name]) =>
-    `<a href="/privacy_policy/${code}/" class="lang-option${code === lang ? " active" : ""}">${name}</a>`
+    `<a href="/privacy_policy/${code}/" class="lang-option${code === lang ? " active" : ""}" lang="${tagOf(code)}">${name}</a>`
   ).join("\n        ");
   const altLinks = LANGS.map(([code]) =>
-    `<link rel="alternate" hreflang="${code}" href="https://apps.mmendelson.com/privacy_policy/${code}/" />`
+    `<link rel="alternate" hreflang="${tagOf(code)}" href="https://apps.mmendelson.com/privacy_policy/${code}/" />`
   ).join("\n");
   const rows = t.rows.map(r => `      <tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("\n");
   const s4b = t.s4Bullets.map(b => `    <li>${b}</li>`).join("\n");
@@ -99,7 +127,7 @@ function page(lang, t) {
   const s9Body = fill(t.s9Body, { EMAIL: emailLink });
 
   return `<!DOCTYPE html>
-<html lang="${lang}">
+<html lang="${tagOf(lang)}"${RTL.has(lang) ? ' dir="rtl"' : ""}>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -241,7 +269,7 @@ ${s7b}
     <button type="button" class="consent-btn" data-consent="accept"></button>
   </div>
 </div>
-<script src="/assets/js/consent.js?v=2"></script>
+<script src="/assets/js/consent.js?v=3"></script>
 </body>
 </html>
 `;
@@ -266,7 +294,7 @@ const redirect = `<!DOCTYPE html>
 <link rel="canonical" href="https://apps.mmendelson.com/privacy_policy/en/" />
 <link rel="icon" href="/assets/favicon.ico" sizes="any" />
 <script>
-(function(){var s=['de','en','es','fr','it','pt','ru'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/privacy_policy/'+l+'/');})();
+(function(){var s=${JSON.stringify(LANGS.map(([c]) => c)).replace(/"/g, "'")};function t(g){var q=String(g||'').toLowerCase().replace(/_/g,'-').split('-'),b=q[0],u=q.slice(1);function h(a){for(var i=0;i<u.length;i++){if(a.indexOf(u[i])>=0)return true;}return false;}if(b==='pt')return h(['pt','ao','mz','cv','gw','st','tl'])?'pt-pt':'pt';if(b==='zh')return h(['hans'])?'zh-cn':(h(['hant','tw','hk','mo'])?'zh-tw':'zh-cn');if(b==='no'||b==='nn')return 'nb';if(b==='iw')return 'he';if(b==='in')return 'id';return s.indexOf(b)>=0?b:null;}var n=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language],l=null;for(var i=0;i<n.length&&!l;i++){l=t(n[i]);}location.replace('/privacy_policy/'+(l||'en')+'/');})();
 </script>
 <meta http-equiv="refresh" content="0; url=/privacy_policy/en/" />
 </head>
