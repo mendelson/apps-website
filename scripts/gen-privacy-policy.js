@@ -226,6 +226,7 @@ ${s7b}
   <p>${s9Body}</p>
   <h2>${t.sAnalyticsTitle}</h2>
   <p>${t.sAnalyticsBody}</p>
+  <p>${t.sShortLinksBody}</p>
 </main>
 
 <footer class="page"><p>${t.footer} · <a href="#" class="foot-cookies" data-consent="reset">Cookies</a></p></footer>
