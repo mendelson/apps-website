@@ -47,22 +47,35 @@ browser loads directly.
   the map tiles), so `live-tracker-check.yml` tests it against them daily —
   run `node scripts/check-live-tracker.js` after touching it.
 - **Site i18n.** `assets/js/i18n.js` holds the showcase translations and its
-  `SUPPORTED` list is `de/en/es/fr/it/pt/ru` — **seven, matching the apps**
-  (rule G). Language comes from the `/xx/` path, then `navigator.language`, then
-  English, and `data-i18n` attributes are applied on load.
-- **The site and the apps ship the SAME set, and that is new.** They used to
-  differ — the site had `es` and no `ru`, the apps had `ru` and no `es` — so
-  whichever of the two a customer spoke, one half of the product answered in
-  English. `ru` and `it` were added here on 2026-08-10 in the same pass that
-  added `spa`/`ita` to the watch face.
-- **Widening `SUPPORTED` is only safe once every page has the strings**, which
-  is why it could not be done before: a code in that list makes every page
-  detect the language and then render English under `<html lang="ru">` if it has
-  no dictionary. The order is translate, then widen, then load each page in that
-  language and look.
-- **`fm-pair/` keeps its own page-local dictionary** (a `t()` helper plus a
-  `?lang=` override) because a single-URL companion page has no `/xx/` path to
-  read and no language switcher. It carries all seven too.
+  `SUPPORTED` list carries the **28 Connect IQ Store locales** (the set rule 30
+  puts on every listing), under URL codes, not Store codes: `pt` (Brazil),
+  `pt-pt`, `zh-cn`, `zh-tw`, `he` (Store `iw`), `id` (Store `in`), `nb`, and the
+  plain two-letter rest. Language comes from the first `/xx/` or `/xx-yy/` path
+  segment, then `navigator.languages` (each tag through `langFromTag`, which
+  maps `pt-PT`/`pt-AO`… to `pt-pt`, `zh-Hant`/`TW`/`HK`/`MO` to `zh-tw`,
+  `no`/`nn` to `nb`, `iw` to `he`, `in` to `id`), then English. `HTML_LANG`
+  turns the three lower-case codes into real BCP 47 tags (`pt-PT`, `zh-CN`,
+  `zh-TW`), and `he` also gets `dir="rtl"` — so anything new that positions
+  with `left`/`right` breaks the Hebrew pages; use `inset-inline-*`,
+  `margin-inline-*` and `text-align: start`.
+- **The site, its companion pages and the Store listings ship the SAME 28**
+  since 2026-10-02 (before that the site had seven: `ru` and `it` came on
+  2026-08-10). Every surface carries them: the showcase, `consent.js`, the
+  privacy policy, `fm-pair/`, `live_tracker/` and `tracker/`. The run site
+  (`corridas`) carries the same 28 under the same URL codes.
+- **Widening `SUPPORTED` is only safe once every page has the strings**: a code
+  in that list makes every page detect the language and then render English
+  under `<html lang="xx">` if it has no dictionary. The order is translate,
+  then widen, then load each page in that language and look.
+- **`fm-pair/` and `tracker/` keep their own page-local dictionaries** (a `t()`
+  helper plus a `?lang=` override) because a single-URL companion page — the
+  watch links straight to it — has no `/xx/` path to read and no language
+  switcher. `live_tracker/` has its own `TRANSLATIONS` and a menu, and
+  remembers the choice in `localStorage['gt-lang']`. On `tracker/`, "Track ID"
+  is left in English in every language on purpose: it is the label the watch
+  shows. On `fm-pair/`, national-team names come from `team-names-i18n.json`,
+  which the `matches` repo generates for only six languages; the rest show
+  the English name until that generator is widened.
 - **`fm-pair/`** is the pairing page for the Football Matches watch face: enter
   the code the watch shows, pick teams, set their priority order. It calls the
   `matches` Apps Script backend over **JSONP** (`callback=`), because Apps Script
@@ -86,6 +99,6 @@ browser loads directly.
 - **The privacy policy is the family's, not this site's.** It covers all three
   domains and is the page every consent banner links to, including the ones on
   the hub and run, which have no policy page of their own. Its text lives in
-  `scripts/privacy-translations.js` (seven languages, Russian stored
+  `scripts/privacy-translations.js` (all 28 languages; Russian is stored
   `\uXXXX`-escaped) and the pages are generated — never edit
   `privacy_policy/*/index.html` by hand.
