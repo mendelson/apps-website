@@ -1992,6 +1992,10 @@
   // Women/W suffix is translated too, but an age-bracket token like `U17`
   // reads the same in every language and is left exactly as it is.
   var SUFFIX_RE = /^(.*)\s+(Women|W|U\d{1,2})$/;
+  // The table has no pt-PT column; European Portuguese reads its national-team
+  // names from the Portuguese one (Brasil, Alemanha, Feminino), which is what
+  // a pt-PT visitor saw before this page had a pt-pt dictionary of its own.
+  var TEAM_LANG = { 'pt-pt': 'pt' }[LANG] || LANG;
   function localizeName(name) {
     var i18n = state.teamI18n;
     if (!i18n || LANG === 'en') return name;
@@ -1999,13 +2003,13 @@
     var base = m ? m[1] : name;
     var entry = i18n.names[base];
     if (!entry) return name; // not a recognized national side — leave unchanged
-    var translatedBase = entry[LANG] || base;
+    var translatedBase = entry[TEAM_LANG] || base;
     if (!m) return translatedBase;
     var suffixToken = m[2];
     var translatedSuffix = suffixToken;
     if (!/^U\d{1,2}$/.test(suffixToken)) {
       var sufEntry = i18n.suffixes[suffixToken];
-      translatedSuffix = (sufEntry && sufEntry[LANG]) || suffixToken;
+      translatedSuffix = (sufEntry && sufEntry[TEAM_LANG]) || suffixToken;
     }
     return translatedBase + ' ' + translatedSuffix;
   }

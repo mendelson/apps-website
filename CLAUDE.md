@@ -74,8 +74,9 @@ browser loads directly.
   remembers the choice in `localStorage['gt-lang']`. On `tracker/`, "Track ID"
   is left in English in every language on purpose: it is the label the watch
   shows. On `fm-pair/`, national-team names come from `team-names-i18n.json`,
-  which the `matches` repo generates for only six languages; the rest show
-  the English name until that generator is widened.
+  which the `matches` repo generates for only six languages; `pt-pt` reads the
+  `pt` column (`TEAM_LANG`), and the rest show the English name until that
+  generator is widened.
 - **`fm-pair/`** is the pairing page for the Football Matches watch face: enter
   the code the watch shows, pick teams, set their priority order. It calls the
   `matches` Apps Script backend over **JSONP** (`callback=`), because Apps Script
