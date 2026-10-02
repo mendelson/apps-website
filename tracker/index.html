@@ -147,21 +147,493 @@
 
   <main>
     <h1>Garmin Tracker Data Field</h1>
-    <p class="lead">Live companion for the Garmin Tracker Data Field. Enter the Track ID shown on your watch to see the latest records it shares — refreshed automatically every 5 minutes.</p>
+    <p class="lead" data-i18n="lead">Live companion for the Garmin Tracker Data Field. Enter the Track ID shown on your watch to see the latest records it shares — refreshed automatically every 5 minutes.</p>
 
     <div class="panel">
       <label for="trackIdInput">Track ID</label>
       <div class="row">
-        <input type="text" id="trackIdInput" placeholder="Enter your Track ID here" autocomplete="off" autocapitalize="off" spellcheck="false" />
-        <button id="checkTrackingBtn" type="button">Track</button>
+        <input type="text" id="trackIdInput" placeholder="Enter your Track ID here" data-i18n="placeholder" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <button id="checkTrackingBtn" type="button" data-i18n="trackBtn">Track</button>
       </div>
-      <p id="autoUpdateMessage">Data will be automatically updated every 5 minutes.</p>
-      <p class="hint">It may take up to 10 minutes after you start recording your activity until any data starts to show up.</p>
+      <p id="autoUpdateMessage" data-i18n="autoUpdate">Data will be automatically updated every 5 minutes.</p>
+      <p class="hint" data-i18n="hint">It may take up to 10 minutes after you start recording your activity until any data starts to show up.</p>
     </div>
 
     <div id="garminTrackerDataField"></div>
   </main>
 
+<script>
+// Page-local strings: like fm-pair/, this is a single-URL companion page (the
+// watch links to /tracker/?trackId=…), so there is no /xx/ path to read — the
+// language comes from ?lang=, then the browser's preferred languages, then English.
+// "Track ID" stays in English in every language: it is the label the data
+// field shows on the watch, and the visitor has to recognise it.
+(function () {
+  var I18N = {
+    en: {
+      lead: 'Live companion for the Garmin Tracker Data Field. Enter the Track ID shown on your watch to see the latest records it shares — refreshed automatically every 5 minutes.',
+      placeholder: 'Enter your Track ID here',
+      trackBtn: 'Track',
+      autoUpdate: 'Data will be automatically updated every 5 minutes.',
+      hint: 'It may take up to 10 minutes after you start recording your activity until any data starts to show up.',
+      noData: 'No data found. It may take up to 5 minutes until any data starts to show up.',
+      noRecords: 'No matching records found. It may take up to 10 minutes after you start recording your activity until any data starts to show up.',
+      record: 'Record {n}',
+      noHeader: '(no header)',
+      invalid: 'Please enter a valid Track ID.',
+      loading: 'Loading data...',
+      error: 'Error: {msg}',
+      next: 'Next update in {time}'
+    },
+    pt: {
+      lead: 'Companheiro ao vivo do Garmin Tracker Data Field. Digite o Track ID exibido no seu relógio para ver os registros mais recentes que ele compartilha — atualizados automaticamente a cada 5 minutos.',
+      placeholder: 'Digite seu Track ID aqui',
+      trackBtn: 'Acompanhar',
+      autoUpdate: 'Os dados serão atualizados automaticamente a cada 5 minutos.',
+      hint: 'Pode levar até 10 minutos depois de você começar a gravar a atividade até que os dados comecem a aparecer.',
+      noData: 'Nenhum dado encontrado. Pode levar até 5 minutos até que os dados comecem a aparecer.',
+      noRecords: 'Nenhum registro correspondente encontrado. Pode levar até 10 minutos depois de você começar a gravar a atividade até que os dados comecem a aparecer.',
+      record: 'Registro {n}',
+      noHeader: '(sem cabeçalho)',
+      invalid: 'Digite um Track ID válido.',
+      loading: 'Carregando dados...',
+      error: 'Erro: {msg}',
+      next: 'Próxima atualização em {time}'
+    },
+    es: {
+      lead: 'Compañero en directo del Garmin Tracker Data Field. Introduce el Track ID que muestra tu reloj para ver los últimos registros que comparte — se actualizan automáticamente cada 5 minutos.',
+      placeholder: 'Introduce aquí tu Track ID',
+      trackBtn: 'Seguir',
+      autoUpdate: 'Los datos se actualizarán automáticamente cada 5 minutos.',
+      hint: 'Pueden pasar hasta 10 minutos desde que empiezas a grabar la actividad hasta que aparezcan los primeros datos.',
+      noData: 'No se encontraron datos. Pueden pasar hasta 5 minutos hasta que aparezcan los primeros datos.',
+      noRecords: 'No se encontraron registros coincidentes. Pueden pasar hasta 10 minutos desde que empiezas a grabar la actividad hasta que aparezcan los primeros datos.',
+      record: 'Registro {n}',
+      noHeader: '(sin encabezado)',
+      invalid: 'Introduce un Track ID válido.',
+      loading: 'Cargando datos...',
+      error: 'Error: {msg}',
+      next: 'Próxima actualización en {time}'
+    },
+    de: {
+      lead: 'Live-Begleiter für das Garmin Tracker Data Field. Gib die Track ID ein, die deine Uhr anzeigt, um die neuesten geteilten Datensätze zu sehen — automatisch alle 5 Minuten aktualisiert.',
+      placeholder: 'Track ID hier eingeben',
+      trackBtn: 'Verfolgen',
+      autoUpdate: 'Die Daten werden automatisch alle 5 Minuten aktualisiert.',
+      hint: 'Nach dem Start der Aufzeichnung kann es bis zu 10 Minuten dauern, bis die ersten Daten erscheinen.',
+      noData: 'Keine Daten gefunden. Es kann bis zu 5 Minuten dauern, bis die ersten Daten erscheinen.',
+      noRecords: 'Keine passenden Datensätze gefunden. Nach dem Start der Aufzeichnung kann es bis zu 10 Minuten dauern, bis die ersten Daten erscheinen.',
+      record: 'Datensatz {n}',
+      noHeader: '(keine Überschrift)',
+      invalid: 'Bitte gib eine gültige Track ID ein.',
+      loading: 'Daten werden geladen...',
+      error: 'Fehler: {msg}',
+      next: 'Nächste Aktualisierung in {time}'
+    },
+    fr: {
+      lead: 'Compagnon en direct du Garmin Tracker Data Field. Saisissez le Track ID affiché sur votre montre pour voir les derniers enregistrements qu’elle partage — actualisés automatiquement toutes les 5 minutes.',
+      placeholder: 'Saisissez votre Track ID ici',
+      trackBtn: 'Suivre',
+      autoUpdate: 'Les données seront actualisées automatiquement toutes les 5 minutes.',
+      hint: 'Après le début de l’enregistrement de votre activité, les premières données peuvent mettre jusqu’à 10 minutes à apparaître.',
+      noData: 'Aucune donnée trouvée. Les premières données peuvent mettre jusqu’à 5 minutes à apparaître.',
+      noRecords: 'Aucun enregistrement correspondant. Après le début de l’enregistrement de votre activité, les premières données peuvent mettre jusqu’à 10 minutes à apparaître.',
+      record: 'Enregistrement {n}',
+      noHeader: '(sans en-tête)',
+      invalid: 'Veuillez saisir un Track ID valide.',
+      loading: 'Chargement des données...',
+      error: 'Erreur : {msg}',
+      next: 'Prochaine mise à jour dans {time}'
+    },
+    it: {
+      lead: 'Compagno in tempo reale del Garmin Tracker Data Field. Inserisci il Track ID mostrato sul tuo orologio per vedere gli ultimi record che condivide — aggiornati automaticamente ogni 5 minuti.',
+      placeholder: 'Inserisci qui il tuo Track ID',
+      trackBtn: 'Segui',
+      autoUpdate: 'I dati verranno aggiornati automaticamente ogni 5 minuti.',
+      hint: 'Dopo l’avvio della registrazione dell’attività possono servire fino a 10 minuti prima che compaiano i primi dati.',
+      noData: 'Nessun dato trovato. Possono servire fino a 5 minuti prima che compaiano i primi dati.',
+      noRecords: 'Nessun record corrispondente trovato. Dopo l’avvio della registrazione dell’attività possono servire fino a 10 minuti prima che compaiano i primi dati.',
+      record: 'Record {n}',
+      noHeader: '(senza intestazione)',
+      invalid: 'Inserisci un Track ID valido.',
+      loading: 'Caricamento dati...',
+      error: 'Errore: {msg}',
+      next: 'Prossimo aggiornamento tra {time}'
+    },
+    ru: {
+      lead: 'Онлайн-компаньон для Garmin Tracker Data Field. Введите Track ID, который показывают часы, чтобы увидеть последние переданные ими записи — они обновляются автоматически каждые 5 минут.',
+      placeholder: 'Введите здесь ваш Track ID',
+      trackBtn: 'Отслеживать',
+      autoUpdate: 'Данные будут автоматически обновляться каждые 5 минут.',
+      hint: 'После начала записи активности первые данные могут появиться в течение 10 минут.',
+      noData: 'Данные не найдены. Первые данные могут появиться в течение 5 минут.',
+      noRecords: 'Подходящих записей не найдено. После начала записи активности первые данные могут появиться в течение 10 минут.',
+      record: 'Запись {n}',
+      noHeader: '(без заголовка)',
+      invalid: 'Введите корректный Track ID.',
+      loading: 'Загрузка данных...',
+      error: 'Ошибка: {msg}',
+      next: 'Следующее обновление через {time}'
+    },
+    nl: {
+      lead: 'Live-companion voor het Garmin Tracker Data Field. Voer de Track ID in die je horloge toont om de nieuwste records te zien die het deelt — elke 5 minuten automatisch vernieuwd.',
+      placeholder: 'Voer hier je Track ID in',
+      trackBtn: 'Volgen',
+      autoUpdate: 'De gegevens worden elke 5 minuten automatisch bijgewerkt.',
+      hint: 'Het kan tot 10 minuten duren nadat je de activiteit bent gaan opnemen voordat er gegevens verschijnen.',
+      noData: 'Geen gegevens gevonden. Het kan tot 5 minuten duren voordat er gegevens verschijnen.',
+      noRecords: 'Geen overeenkomende records gevonden. Het kan tot 10 minuten duren nadat je de activiteit bent gaan opnemen voordat er gegevens verschijnen.',
+      record: 'Record {n}',
+      noHeader: '(geen kop)',
+      invalid: 'Voer een geldige Track ID in.',
+      loading: 'Gegevens laden...',
+      error: 'Fout: {msg}',
+      next: 'Volgende update over {time}'
+    },
+    'pt-pt': {
+      lead: 'Companheiro em direto do Garmin Tracker Data Field. Introduza o Track ID apresentado no seu relógio para ver os registos mais recentes que ele partilha — atualizados automaticamente a cada 5 minutos.',
+      placeholder: 'Introduza aqui o seu Track ID',
+      trackBtn: 'Acompanhar',
+      autoUpdate: 'Os dados serão atualizados automaticamente a cada 5 minutos.',
+      hint: 'Pode demorar até 10 minutos depois de começar a gravar a atividade até que os dados comecem a aparecer.',
+      noData: 'Não foram encontrados dados. Pode demorar até 5 minutos até que os dados comecem a aparecer.',
+      noRecords: 'Não foram encontrados registos correspondentes. Pode demorar até 10 minutos depois de começar a gravar a atividade até que os dados comecem a aparecer.',
+      record: 'Registo {n}',
+      noHeader: '(sem cabeçalho)',
+      invalid: 'Introduza um Track ID válido.',
+      loading: 'A carregar dados...',
+      error: 'Erro: {msg}',
+      next: 'Próxima atualização dentro de {time}'
+    },
+    pl: {
+      lead: 'Podgląd na żywo dla Garmin Tracker Data Field. Wpisz Track ID wyświetlany na zegarku, aby zobaczyć najnowsze udostępniane przez niego rekordy — odświeżane automatycznie co 5 minut.',
+      placeholder: 'Wpisz tutaj swój Track ID',
+      trackBtn: 'Śledź',
+      autoUpdate: 'Dane będą automatycznie aktualizowane co 5 minut.',
+      hint: 'Od rozpoczęcia nagrywania aktywności do pojawienia się pierwszych danych może minąć do 10 minut.',
+      noData: 'Nie znaleziono danych. Do pojawienia się pierwszych danych może minąć do 5 minut.',
+      noRecords: 'Nie znaleziono pasujących rekordów. Od rozpoczęcia nagrywania aktywności do pojawienia się pierwszych danych może minąć do 10 minut.',
+      record: 'Rekord {n}',
+      noHeader: '(bez nagłówka)',
+      invalid: 'Wpisz prawidłowy Track ID.',
+      loading: 'Wczytywanie danych...',
+      error: 'Błąd: {msg}',
+      next: 'Następna aktualizacja za {time}'
+    },
+    cs: {
+      lead: 'Živý přehled pro Garmin Tracker Data Field. Zadejte Track ID zobrazené na hodinkách a uvidíte nejnovější záznamy, které sdílejí — automaticky obnovované každých 5 minut.',
+      placeholder: 'Sem zadejte své Track ID',
+      trackBtn: 'Sledovat',
+      autoUpdate: 'Data se budou automaticky aktualizovat každých 5 minut.',
+      hint: 'Od zahájení záznamu aktivity může trvat až 10 minut, než se objeví první data.',
+      noData: 'Nebyla nalezena žádná data. Může trvat až 5 minut, než se objeví první data.',
+      noRecords: 'Nebyly nalezeny žádné odpovídající záznamy. Od zahájení záznamu aktivity může trvat až 10 minut, než se objeví první data.',
+      record: 'Záznam {n}',
+      noHeader: '(bez záhlaví)',
+      invalid: 'Zadejte platné Track ID.',
+      loading: 'Načítání dat...',
+      error: 'Chyba: {msg}',
+      next: 'Další aktualizace za {time}'
+    },
+    sk: {
+      lead: 'Živý prehľad pre Garmin Tracker Data Field. Zadajte Track ID zobrazené na hodinkách a uvidíte najnovšie záznamy, ktoré zdieľajú — automaticky obnovované každých 5 minút.',
+      placeholder: 'Sem zadajte svoje Track ID',
+      trackBtn: 'Sledovať',
+      autoUpdate: 'Údaje sa budú automaticky aktualizovať každých 5 minút.',
+      hint: 'Od spustenia záznamu aktivity môže trvať až 10 minút, kým sa zobrazia prvé údaje.',
+      noData: 'Nenašli sa žiadne údaje. Môže trvať až 5 minút, kým sa zobrazia prvé údaje.',
+      noRecords: 'Nenašli sa žiadne zodpovedajúce záznamy. Od spustenia záznamu aktivity môže trvať až 10 minút, kým sa zobrazia prvé údaje.',
+      record: 'Záznam {n}',
+      noHeader: '(bez hlavičky)',
+      invalid: 'Zadajte platné Track ID.',
+      loading: 'Načítavajú sa údaje...',
+      error: 'Chyba: {msg}',
+      next: 'Ďalšia aktualizácia o {time}'
+    },
+    sl: {
+      lead: 'Spremljevalec v živo za Garmin Tracker Data Field. Vnesite Track ID, ki ga prikazuje ura, in si oglejte najnovejše zapise, ki jih deli — samodejno osveženi vsakih 5 minut.',
+      placeholder: 'Tukaj vnesite svoj Track ID',
+      trackBtn: 'Sledi',
+      autoUpdate: 'Podatki se bodo samodejno posodabljali vsakih 5 minut.',
+      hint: 'Po začetku snemanja dejavnosti lahko traja do 10 minut, preden se prikažejo prvi podatki.',
+      noData: 'Ni podatkov. Lahko traja do 5 minut, preden se prikažejo prvi podatki.',
+      noRecords: 'Ni ustreznih zapisov. Po začetku snemanja dejavnosti lahko traja do 10 minut, preden se prikažejo prvi podatki.',
+      record: 'Zapis {n}',
+      noHeader: '(brez glave)',
+      invalid: 'Vnesite veljaven Track ID.',
+      loading: 'Nalaganje podatkov...',
+      error: 'Napaka: {msg}',
+      next: 'Naslednja posodobitev čez {time}'
+    },
+    hr: {
+      lead: 'Pratitelj uživo za Garmin Tracker Data Field. Unesite Track ID prikazan na satu kako biste vidjeli najnovije zapise koje dijeli — automatski osvježene svakih 5 minuta.',
+      placeholder: 'Ovdje unesite svoj Track ID',
+      trackBtn: 'Prati',
+      autoUpdate: 'Podaci će se automatski ažurirati svakih 5 minuta.',
+      hint: 'Nakon početka snimanja aktivnosti može proći do 10 minuta prije nego što se pojave prvi podaci.',
+      noData: 'Nema pronađenih podataka. Može proći do 5 minuta prije nego što se pojave prvi podaci.',
+      noRecords: 'Nema odgovarajućih zapisa. Nakon početka snimanja aktivnosti može proći do 10 minuta prije nego što se pojave prvi podaci.',
+      record: 'Zapis {n}',
+      noHeader: '(bez zaglavlja)',
+      invalid: 'Unesite valjani Track ID.',
+      loading: 'Učitavanje podataka...',
+      error: 'Pogreška: {msg}',
+      next: 'Sljedeće ažuriranje za {time}'
+    },
+    hu: {
+      lead: 'Élő kísérőoldal a Garmin Tracker Data Fieldhez. Add meg az órádon látható Track ID-t, és megjelennek az általa megosztott legfrissebb rekordok — 5 percenként automatikusan frissülnek.',
+      placeholder: 'Írd be ide a Track ID-t',
+      trackBtn: 'Követés',
+      autoUpdate: 'Az adatok 5 percenként automatikusan frissülnek.',
+      hint: 'A tevékenység rögzítésének megkezdése után akár 10 perc is eltelhet, mire megjelennek az első adatok.',
+      noData: 'Nem található adat. Akár 5 perc is eltelhet, mire megjelennek az első adatok.',
+      noRecords: 'Nincs egyező rekord. A tevékenység rögzítésének megkezdése után akár 10 perc is eltelhet, mire megjelennek az első adatok.',
+      record: '{n}. rekord',
+      noHeader: '(nincs fejléc)',
+      invalid: 'Adj meg egy érvényes Track ID-t.',
+      loading: 'Adatok betöltése...',
+      error: 'Hiba: {msg}',
+      next: 'Következő frissítés {time} múlva'
+    },
+    el: {
+      lead: 'Ζωντανός σύντροφος για το Garmin Tracker Data Field. Εισαγάγετε το Track ID που εμφανίζει το ρολόι σας για να δείτε τις πιο πρόσφατες εγγραφές που μοιράζεται — ανανεώνονται αυτόματα κάθε 5 λεπτά.',
+      placeholder: 'Εισαγάγετε εδώ το Track ID σας',
+      trackBtn: 'Παρακολούθηση',
+      autoUpdate: 'Τα δεδομένα θα ενημερώνονται αυτόματα κάθε 5 λεπτά.',
+      hint: 'Μετά την έναρξη καταγραφής της δραστηριότητας, ενδέχεται να χρειαστούν έως 10 λεπτά μέχρι να εμφανιστούν τα πρώτα δεδομένα.',
+      noData: 'Δεν βρέθηκαν δεδομένα. Ενδέχεται να χρειαστούν έως 5 λεπτά μέχρι να εμφανιστούν τα πρώτα δεδομένα.',
+      noRecords: 'Δεν βρέθηκαν αντίστοιχες εγγραφές. Μετά την έναρξη καταγραφής της δραστηριότητας, ενδέχεται να χρειαστούν έως 10 λεπτά μέχρι να εμφανιστούν τα πρώτα δεδομένα.',
+      record: 'Εγγραφή {n}',
+      noHeader: '(χωρίς κεφαλίδα)',
+      invalid: 'Εισαγάγετε ένα έγκυρο Track ID.',
+      loading: 'Φόρτωση δεδομένων...',
+      error: 'Σφάλμα: {msg}',
+      next: 'Επόμενη ενημέρωση σε {time}'
+    },
+    da: {
+      lead: 'Live-ledsager til Garmin Tracker Data Field. Indtast det Track ID, dit ur viser, for at se de seneste poster, det deler — opdateres automatisk hvert 5. minut.',
+      placeholder: 'Indtast dit Track ID her',
+      trackBtn: 'Følg',
+      autoUpdate: 'Dataene opdateres automatisk hvert 5. minut.',
+      hint: 'Der kan gå op til 10 minutter, efter du er begyndt at optage aktiviteten, før der vises data.',
+      noData: 'Ingen data fundet. Der kan gå op til 5 minutter, før der vises data.',
+      noRecords: 'Ingen matchende poster fundet. Der kan gå op til 10 minutter, efter du er begyndt at optage aktiviteten, før der vises data.',
+      record: 'Post {n}',
+      noHeader: '(ingen overskrift)',
+      invalid: 'Indtast et gyldigt Track ID.',
+      loading: 'Indlæser data...',
+      error: 'Fejl: {msg}',
+      next: 'Næste opdatering om {time}'
+    },
+    nb: {
+      lead: 'Live-følgesvenn for Garmin Tracker Data Field. Skriv inn Track ID-en klokken viser, for å se de nyeste postene den deler — oppdateres automatisk hvert 5. minutt.',
+      placeholder: 'Skriv inn Track ID-en din her',
+      trackBtn: 'Følg',
+      autoUpdate: 'Dataene oppdateres automatisk hvert 5. minutt.',
+      hint: 'Det kan ta opptil 10 minutter etter at du har begynt å registrere aktiviteten, før data vises.',
+      noData: 'Fant ingen data. Det kan ta opptil 5 minutter før data vises.',
+      noRecords: 'Fant ingen samsvarende poster. Det kan ta opptil 10 minutter etter at du har begynt å registrere aktiviteten, før data vises.',
+      record: 'Post {n}',
+      noHeader: '(ingen overskrift)',
+      invalid: 'Skriv inn en gyldig Track ID.',
+      loading: 'Laster inn data...',
+      error: 'Feil: {msg}',
+      next: 'Neste oppdatering om {time}'
+    },
+    sv: {
+      lead: 'Följeslagare i realtid för Garmin Tracker Data Field. Ange det Track ID som klockan visar för att se de senaste posterna den delar — uppdateras automatiskt var 5:e minut.',
+      placeholder: 'Ange ditt Track ID här',
+      trackBtn: 'Följ',
+      autoUpdate: 'Data uppdateras automatiskt var 5:e minut.',
+      hint: 'Det kan ta upp till 10 minuter efter att du börjat spela in aktiviteten innan data visas.',
+      noData: 'Inga data hittades. Det kan ta upp till 5 minuter innan data visas.',
+      noRecords: 'Inga matchande poster hittades. Det kan ta upp till 10 minuter efter att du börjat spela in aktiviteten innan data visas.',
+      record: 'Post {n}',
+      noHeader: '(ingen rubrik)',
+      invalid: 'Ange ett giltigt Track ID.',
+      loading: 'Läser in data...',
+      error: 'Fel: {msg}',
+      next: 'Nästa uppdatering om {time}'
+    },
+    fi: {
+      lead: 'Reaaliaikainen seurantasivu Garmin Tracker Data Fieldille. Syötä kellosi näyttämä Track ID nähdäksesi sen jakamat uusimmat tietueet — ne päivittyvät automaattisesti 5 minuutin välein.',
+      placeholder: 'Syötä Track ID tähän',
+      trackBtn: 'Seuraa',
+      autoUpdate: 'Tiedot päivittyvät automaattisesti 5 minuutin välein.',
+      hint: 'Voi kestää jopa 10 minuuttia aktiviteetin tallennuksen aloittamisesta, ennen kuin tietoja alkaa näkyä.',
+      noData: 'Tietoja ei löytynyt. Voi kestää jopa 5 minuuttia, ennen kuin tietoja alkaa näkyä.',
+      noRecords: 'Vastaavia tietueita ei löytynyt. Voi kestää jopa 10 minuuttia aktiviteetin tallennuksen aloittamisesta, ennen kuin tietoja alkaa näkyä.',
+      record: 'Tietue {n}',
+      noHeader: '(ei otsikkoa)',
+      invalid: 'Syötä kelvollinen Track ID.',
+      loading: 'Ladataan tietoja...',
+      error: 'Virhe: {msg}',
+      next: 'Seuraava päivitys {time} kuluttua'
+    },
+    ja: {
+      lead: 'Garmin Tracker Data Field のライブコンパニオンです。時計に表示される Track ID を入力すると、共有された最新のレコードを確認できます（5 分ごとに自動更新）。',
+      placeholder: 'ここに Track ID を入力',
+      trackBtn: '追跡',
+      autoUpdate: 'データは 5 分ごとに自動更新されます。',
+      hint: 'アクティビティの記録を開始してから、データが表示されるまで最大 10 分かかることがあります。',
+      noData: 'データが見つかりません。データが表示されるまで最大 5 分かかることがあります。',
+      noRecords: '一致するレコードが見つかりません。アクティビティの記録を開始してから、データが表示されるまで最大 10 分かかることがあります。',
+      record: 'レコード {n}',
+      noHeader: '（見出しなし）',
+      invalid: '有効な Track ID を入力してください。',
+      loading: 'データを読み込んでいます...',
+      error: 'エラー: {msg}',
+      next: '次の更新まで {time}'
+    },
+    ko: {
+      lead: 'Garmin Tracker Data Field의 실시간 동반 페이지입니다. 시계에 표시된 Track ID를 입력하면 공유된 최신 기록을 볼 수 있으며, 5분마다 자동으로 새로 고쳐집니다.',
+      placeholder: '여기에 Track ID를 입력하세요',
+      trackBtn: '추적',
+      autoUpdate: '데이터는 5분마다 자동으로 업데이트됩니다.',
+      hint: '활동 기록을 시작한 후 데이터가 표시되기까지 최대 10분이 걸릴 수 있습니다.',
+      noData: '데이터를 찾을 수 없습니다. 데이터가 표시되기까지 최대 5분이 걸릴 수 있습니다.',
+      noRecords: '일치하는 기록을 찾을 수 없습니다. 활동 기록을 시작한 후 데이터가 표시되기까지 최대 10분이 걸릴 수 있습니다.',
+      record: '기록 {n}',
+      noHeader: '(헤더 없음)',
+      invalid: '유효한 Track ID를 입력하세요.',
+      loading: '데이터를 불러오는 중...',
+      error: '오류: {msg}',
+      next: '다음 업데이트까지 {time}'
+    },
+    'zh-cn': {
+      lead: 'Garmin Tracker Data Field 的实时伴侣页面。输入手表上显示的 Track ID，即可查看它分享的最新记录——每 5 分钟自动刷新。',
+      placeholder: '在此输入你的 Track ID',
+      trackBtn: '追踪',
+      autoUpdate: '数据将每 5 分钟自动更新一次。',
+      hint: '开始记录活动后，最多可能需要 10 分钟才会显示数据。',
+      noData: '未找到数据。最多可能需要 5 分钟才会显示数据。',
+      noRecords: '未找到匹配的记录。开始记录活动后，最多可能需要 10 分钟才会显示数据。',
+      record: '记录 {n}',
+      noHeader: '（无标题）',
+      invalid: '请输入有效的 Track ID。',
+      loading: '正在加载数据...',
+      error: '错误：{msg}',
+      next: '距下次更新 {time}'
+    },
+    'zh-tw': {
+      lead: 'Garmin Tracker Data Field 的即時夥伴頁面。輸入手錶上顯示的 Track ID，即可查看它分享的最新紀錄——每 5 分鐘自動重新整理。',
+      placeholder: '在此輸入你的 Track ID',
+      trackBtn: '追蹤',
+      autoUpdate: '資料將每 5 分鐘自動更新一次。',
+      hint: '開始記錄活動後，最多可能需要 10 分鐘才會顯示資料。',
+      noData: '找不到資料。最多可能需要 5 分鐘才會顯示資料。',
+      noRecords: '找不到相符的紀錄。開始記錄活動後，最多可能需要 10 分鐘才會顯示資料。',
+      record: '紀錄 {n}',
+      noHeader: '（無標題）',
+      invalid: '請輸入有效的 Track ID。',
+      loading: '正在載入資料...',
+      error: '錯誤：{msg}',
+      next: '距下次更新 {time}'
+    },
+    th: {
+      lead: 'หน้าเว็บคู่หูแบบสดสำหรับ Garmin Tracker Data Field ป้อน Track ID ที่แสดงบนนาฬิกาเพื่อดูบันทึกล่าสุดที่แชร์ไว้ — รีเฟรชอัตโนมัติทุก 5 นาที',
+      placeholder: 'ป้อน Track ID ของคุณที่นี่',
+      trackBtn: 'ติดตาม',
+      autoUpdate: 'ข้อมูลจะอัปเดตอัตโนมัติทุก 5 นาที',
+      hint: 'หลังจากเริ่มบันทึกกิจกรรม อาจใช้เวลาสูงสุด 10 นาทีก่อนที่ข้อมูลจะเริ่มแสดง',
+      noData: 'ไม่พบข้อมูล อาจใช้เวลาสูงสุด 5 นาทีก่อนที่ข้อมูลจะเริ่มแสดง',
+      noRecords: 'ไม่พบบันทึกที่ตรงกัน หลังจากเริ่มบันทึกกิจกรรม อาจใช้เวลาสูงสุด 10 นาทีก่อนที่ข้อมูลจะเริ่มแสดง',
+      record: 'บันทึก {n}',
+      noHeader: '(ไม่มีหัวข้อ)',
+      invalid: 'โปรดป้อน Track ID ที่ถูกต้อง',
+      loading: 'กำลังโหลดข้อมูล...',
+      error: 'ข้อผิดพลาด: {msg}',
+      next: 'อัปเดตครั้งถัดไปใน {time}'
+    },
+    he: {
+      lead: 'עמוד מלווה בזמן אמת ל-Garmin Tracker Data Field. הזינו את ה-Track ID שמוצג בשעון כדי לראות את הרשומות האחרונות שהוא משתף — מתעדכן אוטומטית כל 5 דקות.',
+      placeholder: 'הזינו כאן את ה-Track ID',
+      trackBtn: 'מעקב',
+      autoUpdate: 'הנתונים יתעדכנו אוטומטית כל 5 דקות.',
+      hint: 'לאחר תחילת הקלטת הפעילות, ייתכן שיעברו עד 10 דקות עד שיופיעו נתונים.',
+      noData: 'לא נמצאו נתונים. ייתכן שיעברו עד 5 דקות עד שיופיעו נתונים.',
+      noRecords: 'לא נמצאו רשומות תואמות. לאחר תחילת הקלטת הפעילות, ייתכן שיעברו עד 10 דקות עד שיופיעו נתונים.',
+      record: 'רשומה {n}',
+      noHeader: '(ללא כותרת)',
+      invalid: 'הזינו Track ID תקין.',
+      loading: 'טוען נתונים...',
+      error: 'שגיאה: {msg}',
+      next: 'העדכון הבא בעוד {time}'
+    },
+    id: {
+      lead: 'Pendamping langsung untuk Garmin Tracker Data Field. Masukkan Track ID yang tampil di jam tangan Anda untuk melihat catatan terbaru yang dibagikannya — diperbarui otomatis setiap 5 menit.',
+      placeholder: 'Masukkan Track ID Anda di sini',
+      trackBtn: 'Lacak',
+      autoUpdate: 'Data akan diperbarui otomatis setiap 5 menit.',
+      hint: 'Setelah Anda mulai merekam aktivitas, perlu waktu hingga 10 menit sampai data mulai muncul.',
+      noData: 'Data tidak ditemukan. Perlu waktu hingga 5 menit sampai data mulai muncul.',
+      noRecords: 'Tidak ada catatan yang cocok. Setelah Anda mulai merekam aktivitas, perlu waktu hingga 10 menit sampai data mulai muncul.',
+      record: 'Catatan {n}',
+      noHeader: '(tanpa judul)',
+      invalid: 'Masukkan Track ID yang valid.',
+      loading: 'Memuat data...',
+      error: 'Kesalahan: {msg}',
+      next: 'Pembaruan berikutnya dalam {time}'
+    },
+    ms: {
+      lead: 'Pendamping langsung untuk Garmin Tracker Data Field. Masukkan Track ID yang dipaparkan pada jam tangan anda untuk melihat rekod terkini yang dikongsinya — dimuat semula secara automatik setiap 5 minit.',
+      placeholder: 'Masukkan Track ID anda di sini',
+      trackBtn: 'Jejak',
+      autoUpdate: 'Data akan dikemas kini secara automatik setiap 5 minit.',
+      hint: 'Selepas anda mula merakam aktiviti, mungkin mengambil masa sehingga 10 minit sebelum data mula dipaparkan.',
+      noData: 'Tiada data ditemui. Mungkin mengambil masa sehingga 5 minit sebelum data mula dipaparkan.',
+      noRecords: 'Tiada rekod yang sepadan ditemui. Selepas anda mula merakam aktiviti, mungkin mengambil masa sehingga 10 minit sebelum data mula dipaparkan.',
+      record: 'Rekod {n}',
+      noHeader: '(tiada pengepala)',
+      invalid: 'Sila masukkan Track ID yang sah.',
+      loading: 'Memuatkan data...',
+      error: 'Ralat: {msg}',
+      next: 'Kemas kini seterusnya dalam {time}'
+    }
+  };
+
+  function langFromTag(tag) {
+    var p = String(tag || '').toLowerCase().replace(/_/g, '-').split('-');
+    var b = p[0], sub = p.slice(1);
+    function has(list) { for (var i = 0; i < sub.length; i++) { if (list.indexOf(sub[i]) >= 0) return true; } return false; }
+    if (b === 'pt') return has(['pt', 'ao', 'mz', 'cv', 'gw', 'st', 'tl']) ? 'pt-pt' : 'pt';
+    if (b === 'zh') return has(['hans']) ? 'zh-cn' : (has(['hant', 'tw', 'hk', 'mo']) ? 'zh-tw' : 'zh-cn');
+    if (b === 'no' || b === 'nn') return 'nb';
+    if (b === 'iw') return 'he';
+    if (b === 'in') return 'id';
+    return I18N[b] ? b : null;
+  }
+  var LANG = (function () {
+    var q = (location.search.match(/[?&]lang=([a-z]{2}(?:-[a-z]{2})?)/i) || [])[1];
+    if (q && I18N[q.toLowerCase()]) return q.toLowerCase();
+    var prefs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language];
+    for (var i = 0; i < prefs.length; i++) {
+      var l = langFromTag(prefs[i]);
+      if (l) return l;
+    }
+    return 'en';
+  })();
+  var HTML_LANG = { 'pt-pt': 'pt-PT', 'zh-cn': 'zh-CN', 'zh-tw': 'zh-TW' };
+
+  window.t = function (key, vars) {
+    var s = (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || '';
+    if (vars) {
+      Object.keys(vars).forEach(function (k) {
+        s = s.split('{' + k + '}').join(String(vars[k]));
+      });
+    }
+    return s;
+  };
+
+  document.documentElement.lang = HTML_LANG[LANG] || LANG;
+  if (LANG === 'he') document.documentElement.dir = 'rtl';
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    var v = window.t(el.getAttribute('data-i18n'));
+    if (!v) return;
+    if (el.tagName === 'INPUT') { el.placeholder = v; } else { el.textContent = v; }
+  });
+})();
+</script>
 <script>
 // Garmin Tracker Data Field — live-data companion.
 // Reads a trackId from the URL (or the input), queries the backend, renders
@@ -189,7 +661,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
   function renderData(data) {
     if (!data || !data.result) {
-      return '<p class="error">No data found. It may take up to 5 minutes until any data starts to show up.</p>';
+      return `<p class="error">${escapeHtml(t('noData'))}</p>`;
     }
 
     if (typeof data.result === 'string') {
@@ -198,13 +670,13 @@ window.addEventListener('DOMContentLoaded', function () {
 
     if (Array.isArray(data.result)) {
       if (data.result.length === 0) {
-        return '<p class="error">No matching records found. It may take up to 10 minutes after you start recording your activity until any data starts to show up.</p>';
+        return `<p class="error">${escapeHtml(t('noRecords'))}</p>`;
       }
 
       return data.result.map((record, idx) => {
-        let dl = `<strong>Record ${idx + 1}</strong><dl>`;
+        let dl = `<strong>${escapeHtml(t('record', { n: idx + 1 }))}</strong><dl>`;
         for (const [key, value] of Object.entries(record)) {
-          dl += `<dt>${escapeHtml(key || '(no header)')}</dt><dd>${escapeHtml(value)}</dd>`;
+          dl += `<dt>${escapeHtml(key || t('noHeader'))}</dt><dd>${escapeHtml(value)}</dd>`;
         }
         dl += '</dl>';
         return dl;
@@ -213,7 +685,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
     let dl = '<dl>';
     for (const [key, value] of Object.entries(data.result)) {
-      dl += `<dt>${escapeHtml(key || '(no header)')}</dt><dd>${escapeHtml(value)}</dd>`;
+      dl += `<dt>${escapeHtml(key || t('noHeader'))}</dt><dd>${escapeHtml(value)}</dd>`;
     }
     dl += '</dl>';
     return dl;
@@ -221,10 +693,10 @@ window.addEventListener('DOMContentLoaded', function () {
 
   async function fetchData(trackId) {
     if (!trackId.trim()) {
-      targetDiv.innerHTML = '<p class="error">Please enter a valid Track ID.</p>';
+      targetDiv.innerHTML = `<p class="error">${escapeHtml(t('invalid'))}</p>`;
       return;
     }
-    targetDiv.innerHTML = '<p class="loading">Loading data...</p>';
+    targetDiv.innerHTML = `<p class="loading">${escapeHtml(t('loading'))}</p>`;
     const url = `${ENDPOINT}?trackId=${encodeURIComponent(trackId)}`;
     try {
       const response = await fetch(url);
@@ -233,7 +705,7 @@ window.addEventListener('DOMContentLoaded', function () {
       targetDiv.innerHTML = renderData(data);
       if (autoUpdateMessage) autoUpdateMessage.style.display = 'block';
     } catch (error) {
-      targetDiv.innerHTML = `<p class="error">Error: ${escapeHtml(error.message)}</p>`;
+      targetDiv.innerHTML = `<p class="error">${escapeHtml(t('error', { msg: error.message }))}</p>`;
       if (autoUpdateMessage) autoUpdateMessage.style.display = 'none';
     }
   }
@@ -244,7 +716,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const minutes = Math.floor(secondsLeft / 60);
     const seconds = secondsLeft % 60;
     autoUpdateMessage.textContent =
-      `Next update in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      t('next', { time: `${minutes}:${seconds.toString().padStart(2, '0')}` });
   }
 
   // Drive the countdown from an absolute target timestamp rather than a
@@ -285,7 +757,7 @@ window.addEventListener('DOMContentLoaded', function () {
   checkButton.addEventListener('click', () => {
     const trackId = inputField.value.trim();
     if (!trackId) {
-      targetDiv.innerHTML = '<p class="error">Please enter a valid Track ID.</p>';
+      targetDiv.innerHTML = `<p class="error">${escapeHtml(t('invalid'))}</p>`;
       return;
     }
 
@@ -320,6 +792,6 @@ window.addEventListener('DOMContentLoaded', function () {
     <button type="button" class="consent-btn" data-consent="accept"></button>
   </div>
 </div>
-<script src="/assets/js/consent.js?v=2"></script>
+<script src="/assets/js/consent.js?v=3"></script>
 </body>
 </html>

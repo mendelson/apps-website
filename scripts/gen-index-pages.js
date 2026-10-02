@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 /*
- * gen-index-pages.js — regenerate the five language copies of the apps
- * showcase from the canonical source `index.html`.
+ * gen-index-pages.js — regenerate the language copies of the apps showcase
+ * (one per Connect IQ Store locale — 28) from the canonical source `index.html`.
  *
- * The site's five URLs (/de/ /en/ /es/ /fr/ /pt/) have always existed, but
- * every copy used to be a *byte-identical* clone of the English HTML — the
+ * Every copy used to be a *byte-identical* clone of the English HTML — the
  * translation happened only client-side in assets/js/i18n.js. To a crawler
- * that is five duplicate English pages: English titles/descriptions in every
- * locale's search results, and no per-URL language signal.
+ * that is a set of duplicate English pages: English titles/descriptions in
+ * every locale's search results, and no per-URL language signal.
  *
  * This generator stamps the few head fields that must be correct *before*
  * JavaScript runs — the language, the title, the meta description and a
@@ -60,7 +59,96 @@ const T = {
     title: "Приложения Garmin – M. Mendelson",
     desc: "Приложения Garmin Connect IQ от M. Mendelson. Поля данных и циферблаты в Connect IQ Store.",
   },
+  nl: {
+    title: "Garmin-apps – M. Mendelson",
+    desc: "Garmin Connect IQ-apps van M. Mendelson. Gegevensvelden en wijzerplaten in de Connect IQ Store.",
+  },
+  "pt-pt": {
+    title: "Aplicações Garmin – M. Mendelson",
+    desc: "Aplicações Garmin Connect IQ desenvolvidas por M. Mendelson. Campos de dados e mostradores disponíveis na Connect IQ Store.",
+  },
+  pl: {
+    title: "Aplikacje Garmin – M. Mendelson",
+    desc: "Aplikacje Garmin Connect IQ autorstwa M. Mendelsona. Pola danych i tarcze zegarka w sklepie Connect IQ Store.",
+  },
+  cs: {
+    title: "Aplikace pro Garmin – M. Mendelson",
+    desc: "Aplikace Garmin Connect IQ od M. Mendelsona. Datová pole a ciferníky v obchodě Connect IQ Store.",
+  },
+  sk: {
+    title: "Aplikácie pre Garmin – M. Mendelson",
+    desc: "Aplikácie Garmin Connect IQ od M. Mendelsona. Dátové polia a ciferníky v obchode Connect IQ Store.",
+  },
+  sl: {
+    title: "Aplikacije za Garmin – M. Mendelson",
+    desc: "Aplikacije Garmin Connect IQ avtorja M. Mendelsona. Podatkovna polja in številčnice v trgovini Connect IQ Store.",
+  },
+  hr: {
+    title: "Aplikacije za Garmin – M. Mendelson",
+    desc: "Garmin Connect IQ aplikacije autora M. Mendelsona. Podatkovna polja i brojčanici u trgovini Connect IQ Store.",
+  },
+  hu: {
+    title: "Garmin-alkalmazások – M. Mendelson",
+    desc: "M. Mendelson Garmin Connect IQ-alkalmazásai. Adatmezők és óralapok a Connect IQ Store-ban.",
+  },
+  el: {
+    title: "Εφαρμογές Garmin – M. Mendelson",
+    desc: "Εφαρμογές Garmin Connect IQ από τον M. Mendelson. Πεδία δεδομένων και προσόψεις ρολογιού στο Connect IQ Store.",
+  },
+  da: {
+    title: "Garmin-apps – M. Mendelson",
+    desc: "Garmin Connect IQ-apps udviklet af M. Mendelson. Datafelter og urskiver i Connect IQ Store.",
+  },
+  nb: {
+    title: "Garmin-apper – M. Mendelson",
+    desc: "Garmin Connect IQ-apper utviklet av M. Mendelson. Datafelt og urskiver i Connect IQ Store.",
+  },
+  sv: {
+    title: "Garmin-appar – M. Mendelson",
+    desc: "Garmin Connect IQ-appar utvecklade av M. Mendelson. Datafält och urtavlor i Connect IQ Store.",
+  },
+  fi: {
+    title: "Garmin-sovellukset – M. Mendelson",
+    desc: "M. Mendelsonin Garmin Connect IQ -sovellukset. Tietokentät ja kellotaulut Connect IQ Storessa.",
+  },
+  ja: {
+    title: "Garmin アプリ – M. Mendelson",
+    desc: "M. Mendelson が開発した Garmin Connect IQ アプリ。Connect IQ ストアで入手できるデータフィールドとウォッチフェイス。",
+  },
+  ko: {
+    title: "Garmin 앱 – M. Mendelson",
+    desc: "M. Mendelson이 개발한 Garmin Connect IQ 앱. Connect IQ 스토어의 데이터 필드와 워치 페이스.",
+  },
+  "zh-cn": {
+    title: "Garmin 应用 – M. Mendelson",
+    desc: "M. Mendelson 开发的 Garmin Connect IQ 应用：Connect IQ 商店中的数据字段和表盘。",
+  },
+  "zh-tw": {
+    title: "Garmin 應用程式 – M. Mendelson",
+    desc: "M. Mendelson 開發的 Garmin Connect IQ 應用程式：Connect IQ 商店中的資料欄位與錶面。",
+  },
+  th: {
+    title: "แอป Garmin – M. Mendelson",
+    desc: "แอป Garmin Connect IQ ที่พัฒนาโดย M. Mendelson ทั้งฟิลด์ข้อมูลและหน้าปัดนาฬิกาใน Connect IQ Store",
+  },
+  he: {
+    title: "אפליקציות Garmin – M. Mendelson",
+    desc: "אפליקציות Garmin Connect IQ שפותחו על ידי M. Mendelson: שדות נתונים ופני שעון ב־Connect IQ Store.",
+  },
+  id: {
+    title: "Aplikasi Garmin – M. Mendelson",
+    desc: "Aplikasi Garmin Connect IQ yang dikembangkan oleh M. Mendelson. Bidang data dan tampilan jam di Connect IQ Store.",
+  },
+  ms: {
+    title: "Aplikasi Garmin – M. Mendelson",
+    desc: "Aplikasi Garmin Connect IQ yang dibangunkan oleh M. Mendelson. Medan data dan muka jam di Connect IQ Store.",
+  },
 };
+
+// <html lang> for the URL codes that are not a valid BCP-47 tag as written,
+// and the one right-to-left language.
+const HTML_LANG = { "pt-pt": "pt-PT", "zh-cn": "zh-CN", "zh-tw": "zh-TW" };
+const RTL = new Set(["he"]);
 
 // ---------------------------------------------------------------------------
 // SoftwareApplication structured data (ItemList of the app cards).
@@ -141,7 +229,7 @@ function buildAppsJsonLd(source) {
 let template = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 
 // Refresh the JSON-LD region in the source, then persist it back to index.html
-// so the root page carries current structured data too. The five language
+// so the root page carries current structured data too. The language
 // copies inherit the same block (app names/URLs/categories are language-neutral).
 {
   const START = "<!-- apps-jsonld:start";
@@ -182,7 +270,7 @@ function esc(s) {
 
 for (const [lang, t] of Object.entries(T)) {
   const html = template
-    .replace(/<html lang="en"/, `<html lang="${lang}"`)
+    .replace(/<html lang="en"/, `<html lang="${HTML_LANG[lang] || lang}"${RTL.has(lang) ? ' dir="rtl"' : ""}`)
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(t.title)}</title>`)
     .replace(
       /<meta name="description" content="[^"]*"\s*\/?>/,
@@ -196,5 +284,5 @@ for (const [lang, t] of Object.entries(T)) {
   const dir = path.join(ROOT, lang);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, "index.html"), html);
-  console.log(`wrote ${lang}/index.html  (lang=${lang}, canonical=${SITE}/${lang}/)`);
+  console.log(`wrote ${lang}/index.html  (lang=${HTML_LANG[lang] || lang}, canonical=${SITE}/${lang}/)`);
 }

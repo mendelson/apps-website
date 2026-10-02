@@ -3,7 +3,7 @@
 <head>
 <!-- Language detection: redirect root to detected language -->
 <script>
-(function(){var p=location.pathname;if(p==='/'||p==='/index.html'){var s=['de','en','es','fr','it','pt','ru'],b=(navigator.language||'').toLowerCase().split('-')[0],l=s.indexOf(b)>=0?b:'en';location.replace('/'+l+'/');}})();
+(function(){var p=location.pathname;if(p!=='/'&&p!=='/index.html')return;var s=['de','en','es','fr','it','pt','ru','nl','pt-pt','pl','cs','sk','sl','hr','hu','el','da','nb','sv','fi','ja','ko','zh-cn','zh-tw','th','he','id','ms'];function t(g){var q=String(g||'').toLowerCase().replace(/_/g,'-').split('-'),b=q[0],u=q.slice(1);function h(a){for(var i=0;i<u.length;i++){if(a.indexOf(u[i])>=0)return true;}return false;}if(b==='pt')return h(['pt','ao','mz','cv','gw','st','tl'])?'pt-pt':'pt';if(b==='zh')return h(['hans'])?'zh-cn':(h(['hant','tw','hk','mo'])?'zh-tw':'zh-cn');if(b==='no'||b==='nn')return 'nb';if(b==='iw')return 'he';if(b==='in')return 'id';return s.indexOf(b)>=0?b:null;}var n=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language],l=null;for(var i=0;i<n.length&&!l;i++){l=t(n[i]);}location.replace('/'+(l||'en')+'/');})();
 </script>
 
 <!-- Google Analytics (GA4), Consent Mode v2. ONE measurement ID for the whole
@@ -64,6 +64,27 @@
 <link rel="alternate" hreflang="it"       href="https://apps.mmendelson.com/it/">
 <link rel="alternate" hreflang="pt"       href="https://apps.mmendelson.com/pt/">
 <link rel="alternate" hreflang="ru"       href="https://apps.mmendelson.com/ru/">
+<link rel="alternate" hreflang="nl"       href="https://apps.mmendelson.com/nl/">
+<link rel="alternate" hreflang="pt-PT"    href="https://apps.mmendelson.com/pt-pt/">
+<link rel="alternate" hreflang="pl"       href="https://apps.mmendelson.com/pl/">
+<link rel="alternate" hreflang="cs"       href="https://apps.mmendelson.com/cs/">
+<link rel="alternate" hreflang="sk"       href="https://apps.mmendelson.com/sk/">
+<link rel="alternate" hreflang="sl"       href="https://apps.mmendelson.com/sl/">
+<link rel="alternate" hreflang="hr"       href="https://apps.mmendelson.com/hr/">
+<link rel="alternate" hreflang="hu"       href="https://apps.mmendelson.com/hu/">
+<link rel="alternate" hreflang="el"       href="https://apps.mmendelson.com/el/">
+<link rel="alternate" hreflang="da"       href="https://apps.mmendelson.com/da/">
+<link rel="alternate" hreflang="nb"       href="https://apps.mmendelson.com/nb/">
+<link rel="alternate" hreflang="sv"       href="https://apps.mmendelson.com/sv/">
+<link rel="alternate" hreflang="fi"       href="https://apps.mmendelson.com/fi/">
+<link rel="alternate" hreflang="ja"       href="https://apps.mmendelson.com/ja/">
+<link rel="alternate" hreflang="ko"       href="https://apps.mmendelson.com/ko/">
+<link rel="alternate" hreflang="zh-CN"    href="https://apps.mmendelson.com/zh-cn/">
+<link rel="alternate" hreflang="zh-TW"    href="https://apps.mmendelson.com/zh-tw/">
+<link rel="alternate" hreflang="th"       href="https://apps.mmendelson.com/th/">
+<link rel="alternate" hreflang="he"       href="https://apps.mmendelson.com/he/">
+<link rel="alternate" hreflang="id"       href="https://apps.mmendelson.com/id/">
+<link rel="alternate" hreflang="ms"       href="https://apps.mmendelson.com/ms/">
 <link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -349,13 +370,34 @@
   <div class="lang-selector">
     <button class="lang-btn" aria-label="Language">🌐</button>
     <div class="lang-dropdown">
-      <a href="/de/" class="lang-option">Deutsch</a>
-      <a href="/en/" class="lang-option">English</a>
-      <a href="/es/" class="lang-option">Español</a>
-      <a href="/fr/" class="lang-option">Français</a>
-      <a href="/it/" class="lang-option">Italiano</a>
-      <a href="/pt/" class="lang-option">Português</a>
-      <a href="/ru/" class="lang-option">Русский</a>
+      <a href="/de/" class="lang-option" lang="de">Deutsch</a>
+      <a href="/en/" class="lang-option" lang="en">English</a>
+      <a href="/es/" class="lang-option" lang="es">Español</a>
+      <a href="/fr/" class="lang-option" lang="fr">Français</a>
+      <a href="/it/" class="lang-option" lang="it">Italiano</a>
+      <a href="/pt/" class="lang-option" lang="pt">Português (Brasil)</a>
+      <a href="/ru/" class="lang-option" lang="ru">Русский</a>
+      <a href="/nl/" class="lang-option" lang="nl">Nederlands</a>
+      <a href="/pt-pt/" class="lang-option" lang="pt-PT">Português (Portugal)</a>
+      <a href="/pl/" class="lang-option" lang="pl">Polski</a>
+      <a href="/cs/" class="lang-option" lang="cs">Čeština</a>
+      <a href="/sk/" class="lang-option" lang="sk">Slovenčina</a>
+      <a href="/sl/" class="lang-option" lang="sl">Slovenščina</a>
+      <a href="/hr/" class="lang-option" lang="hr">Hrvatski</a>
+      <a href="/hu/" class="lang-option" lang="hu">Magyar</a>
+      <a href="/el/" class="lang-option" lang="el">Ελληνικά</a>
+      <a href="/da/" class="lang-option" lang="da">Dansk</a>
+      <a href="/nb/" class="lang-option" lang="nb">Norsk bokmål</a>
+      <a href="/sv/" class="lang-option" lang="sv">Svenska</a>
+      <a href="/fi/" class="lang-option" lang="fi">Suomi</a>
+      <a href="/ja/" class="lang-option" lang="ja">日本語</a>
+      <a href="/ko/" class="lang-option" lang="ko">한국어</a>
+      <a href="/zh-cn/" class="lang-option" lang="zh-CN">简体中文</a>
+      <a href="/zh-tw/" class="lang-option" lang="zh-TW">繁體中文</a>
+      <a href="/th/" class="lang-option" lang="th">ไทย</a>
+      <a href="/he/" class="lang-option" lang="he">עברית</a>
+      <a href="/id/" class="lang-option" lang="id">Bahasa Indonesia</a>
+      <a href="/ms/" class="lang-option" lang="ms">Bahasa Melayu</a>
     </div>
   </div>
   <ul>
@@ -895,7 +937,7 @@
 
 <script src="/assets/js/i18n.js"></script>
 <script src="/assets/js/script.js?v=9"></script>
-<script src="/assets/js/consent.js?v=2"></script>
+<script src="/assets/js/consent.js?v=3"></script>
 
 <script>
 (async function() {

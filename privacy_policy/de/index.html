@@ -13,6 +13,27 @@
 <link rel="alternate" hreflang="it" href="https://apps.mmendelson.com/privacy_policy/it/" />
 <link rel="alternate" hreflang="pt" href="https://apps.mmendelson.com/privacy_policy/pt/" />
 <link rel="alternate" hreflang="ru" href="https://apps.mmendelson.com/privacy_policy/ru/" />
+<link rel="alternate" hreflang="nl" href="https://apps.mmendelson.com/privacy_policy/nl/" />
+<link rel="alternate" hreflang="pt-PT" href="https://apps.mmendelson.com/privacy_policy/pt-pt/" />
+<link rel="alternate" hreflang="pl" href="https://apps.mmendelson.com/privacy_policy/pl/" />
+<link rel="alternate" hreflang="cs" href="https://apps.mmendelson.com/privacy_policy/cs/" />
+<link rel="alternate" hreflang="sk" href="https://apps.mmendelson.com/privacy_policy/sk/" />
+<link rel="alternate" hreflang="sl" href="https://apps.mmendelson.com/privacy_policy/sl/" />
+<link rel="alternate" hreflang="hr" href="https://apps.mmendelson.com/privacy_policy/hr/" />
+<link rel="alternate" hreflang="hu" href="https://apps.mmendelson.com/privacy_policy/hu/" />
+<link rel="alternate" hreflang="el" href="https://apps.mmendelson.com/privacy_policy/el/" />
+<link rel="alternate" hreflang="da" href="https://apps.mmendelson.com/privacy_policy/da/" />
+<link rel="alternate" hreflang="nb" href="https://apps.mmendelson.com/privacy_policy/nb/" />
+<link rel="alternate" hreflang="sv" href="https://apps.mmendelson.com/privacy_policy/sv/" />
+<link rel="alternate" hreflang="fi" href="https://apps.mmendelson.com/privacy_policy/fi/" />
+<link rel="alternate" hreflang="ja" href="https://apps.mmendelson.com/privacy_policy/ja/" />
+<link rel="alternate" hreflang="ko" href="https://apps.mmendelson.com/privacy_policy/ko/" />
+<link rel="alternate" hreflang="zh-CN" href="https://apps.mmendelson.com/privacy_policy/zh-cn/" />
+<link rel="alternate" hreflang="zh-TW" href="https://apps.mmendelson.com/privacy_policy/zh-tw/" />
+<link rel="alternate" hreflang="th" href="https://apps.mmendelson.com/privacy_policy/th/" />
+<link rel="alternate" hreflang="he" href="https://apps.mmendelson.com/privacy_policy/he/" />
+<link rel="alternate" hreflang="id" href="https://apps.mmendelson.com/privacy_policy/id/" />
+<link rel="alternate" hreflang="ms" href="https://apps.mmendelson.com/privacy_policy/ms/" />
 <link rel="alternate" hreflang="x-default" href="https://apps.mmendelson.com/privacy_policy/" />
 <link rel="icon" href="/assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
@@ -46,26 +67,27 @@
     border-radius: 50%; width: 34px; height: 34px; font-size: 18px; line-height: 1; cursor: pointer;
     transition: background .2s; display: flex; align-items: center; justify-content: center; padding: 0; color: inherit; }
   .lang-btn:hover { background: rgba(255,255,255,0.18); }
-  .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: #1e1e1e;
-    border: 1px solid #333; border-radius: 10px; overflow: hidden; min-width: 140px;
+  .lang-dropdown { display: none; position: absolute; inset-inline-end: 0; top: calc(100% + 6px); background: #1e1e1e;
+    border: 1px solid #333; border-radius: 10px; max-height: min(70vh, 560px); overflow-y: auto;
+    overscroll-behavior: contain; min-width: 140px;
     box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 1001; }
   .lang-selector.open .lang-dropdown { display: block; }
   .lang-option { display: block; padding: 9px 16px; color: #bbb; text-decoration: none; font-size: 14px;
-    transition: background .15s, color .15s; }
+    white-space: nowrap; transition: background .15s, color .15s; }
   .lang-option:hover { background: #2a2a2a; color: #fff; }
   .lang-option.active { color: #fff; font-weight: 600; }
 
   main { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 64px; }
   .meta { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
-  .intro { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  .intro { background: var(--surface); border: 1px solid var(--border); border-inline-start: 3px solid var(--accent);
     border-radius: 10px; padding: 18px 20px; margin: 0 0 32px; }
   h2 { font-size: 20px; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
   p, li { font-size: 15.5px; }
-  ul { padding-left: 22px; }
+  ul { padding-inline-start: 22px; }
   li { margin: 6px 0; }
   .table-wrap { overflow-x: auto; margin: 14px 0; }
   table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 14.5px; }
-  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  th, td { text-align: start; padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
   th { background: var(--surface2); }
   .note { color: var(--muted); font-size: 14px; }
   footer.page { border-top: 1px solid var(--border); text-align: center; padding: 24px 20px; color: var(--muted); font-size: 13px; }
@@ -127,13 +149,34 @@
     <div class="lang-selector">
       <button class="lang-btn" aria-label="Sprache">🌐</button>
       <div class="lang-dropdown">
-        <a href="/privacy_policy/de/" class="lang-option active">Deutsch</a>
-        <a href="/privacy_policy/en/" class="lang-option">English</a>
-        <a href="/privacy_policy/es/" class="lang-option">Español</a>
-        <a href="/privacy_policy/fr/" class="lang-option">Français</a>
-        <a href="/privacy_policy/it/" class="lang-option">Italiano</a>
-        <a href="/privacy_policy/pt/" class="lang-option">Português</a>
-        <a href="/privacy_policy/ru/" class="lang-option">Русский</a>
+        <a href="/privacy_policy/de/" class="lang-option active" lang="de">Deutsch</a>
+        <a href="/privacy_policy/en/" class="lang-option" lang="en">English</a>
+        <a href="/privacy_policy/es/" class="lang-option" lang="es">Español</a>
+        <a href="/privacy_policy/fr/" class="lang-option" lang="fr">Français</a>
+        <a href="/privacy_policy/it/" class="lang-option" lang="it">Italiano</a>
+        <a href="/privacy_policy/pt/" class="lang-option" lang="pt">Português (Brasil)</a>
+        <a href="/privacy_policy/ru/" class="lang-option" lang="ru">Русский</a>
+        <a href="/privacy_policy/nl/" class="lang-option" lang="nl">Nederlands</a>
+        <a href="/privacy_policy/pt-pt/" class="lang-option" lang="pt-PT">Português (Portugal)</a>
+        <a href="/privacy_policy/pl/" class="lang-option" lang="pl">Polski</a>
+        <a href="/privacy_policy/cs/" class="lang-option" lang="cs">Čeština</a>
+        <a href="/privacy_policy/sk/" class="lang-option" lang="sk">Slovenčina</a>
+        <a href="/privacy_policy/sl/" class="lang-option" lang="sl">Slovenščina</a>
+        <a href="/privacy_policy/hr/" class="lang-option" lang="hr">Hrvatski</a>
+        <a href="/privacy_policy/hu/" class="lang-option" lang="hu">Magyar</a>
+        <a href="/privacy_policy/el/" class="lang-option" lang="el">Ελληνικά</a>
+        <a href="/privacy_policy/da/" class="lang-option" lang="da">Dansk</a>
+        <a href="/privacy_policy/nb/" class="lang-option" lang="nb">Norsk bokmål</a>
+        <a href="/privacy_policy/sv/" class="lang-option" lang="sv">Svenska</a>
+        <a href="/privacy_policy/fi/" class="lang-option" lang="fi">Suomi</a>
+        <a href="/privacy_policy/ja/" class="lang-option" lang="ja">日本語</a>
+        <a href="/privacy_policy/ko/" class="lang-option" lang="ko">한국어</a>
+        <a href="/privacy_policy/zh-cn/" class="lang-option" lang="zh-CN">简体中文</a>
+        <a href="/privacy_policy/zh-tw/" class="lang-option" lang="zh-TW">繁體中文</a>
+        <a href="/privacy_policy/th/" class="lang-option" lang="th">ไทย</a>
+        <a href="/privacy_policy/he/" class="lang-option" lang="he">עברית</a>
+        <a href="/privacy_policy/id/" class="lang-option" lang="id">Bahasa Indonesia</a>
+        <a href="/privacy_policy/ms/" class="lang-option" lang="ms">Bahasa Melayu</a>
       </div>
     </div>
   </div>
@@ -221,6 +264,6 @@
     <button type="button" class="consent-btn" data-consent="accept"></button>
   </div>
 </div>
-<script src="/assets/js/consent.js?v=2"></script>
+<script src="/assets/js/consent.js?v=3"></script>
 </body>
 </html>
