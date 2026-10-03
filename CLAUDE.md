@@ -73,7 +73,15 @@ browser loads directly.
   switcher. `live_tracker/` has its own `TRANSLATIONS` and a menu, and
   remembers the choice in `localStorage['gt-lang']`. On `tracker/`, "Track ID"
   is left in English in every language on purpose: it is the label the watch
-  shows. On `fm-pair/`, national-team names come from `team-names-i18n.json`,
+  shows. The record's field names and its activity status arrive from the
+  tracking backend in the data field's English ("Time on Watch", "Stopped" —
+  set in `TrackerDataFieldBackground.mc`/`TrackerDataFieldView.mc`) and are
+  translated at display time (`FIELD`/`STATUS` → `f_*`/`s_*` keys); the
+  watch-clock date, the `hour/min/sec` duration and the decimals are
+  reformatted with `Intl` in the page's language. Sport and watch model are
+  the watch's own words and stay as sent, and so does a date whose month the
+  watch wrote in another language. Values carry `dir="auto"`, or the Hebrew
+  page shows `km/6:13`. On `fm-pair/`, national-team names come from `team-names-i18n.json`,
   which the `matches` repo generates for only six languages; `pt-pt` reads the
   `pt` column (`TEAM_LANG`), and the rest show the English name until that
   generator is widened.
