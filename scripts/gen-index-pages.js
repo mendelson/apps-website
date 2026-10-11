@@ -178,11 +178,12 @@ function buildAppsJsonLd(source) {
     const name = m[1];
     const body = m[2];
     const pos = m.index;
-    // A card is a watch face only if it sits after the #watch-faces section;
-    // everything from #data-fields onward (before that) is a data field.
-    const isWatchFace = watchFacesAt >= 0 && pos > watchFacesAt;
-    const inCatalogue = dataFieldsAt >= 0 && pos > dataFieldsAt;
-    if (!inCatalogue) continue; // skip anything before the catalogue (e.g. featured markup)
+    // A card belongs to the nearest section that starts before it, whichever
+    // of the two comes first on the page.
+    const inWatch = watchFacesAt >= 0 && pos > watchFacesAt;
+    const inData = dataFieldsAt >= 0 && pos > dataFieldsAt;
+    if (!inWatch && !inData) continue; // skip anything before the catalogue (e.g. featured markup)
+    const isWatchFace = inWatch && (!inData || watchFacesAt > dataFieldsAt);
 
     const store = /<a class="ciq-badge"[^>]*href="([^"]+)"/.exec(body);
     const thumb = /<img class="thumb" src="([^"]+)"/.exec(body);
