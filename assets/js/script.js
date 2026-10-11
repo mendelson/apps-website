@@ -458,10 +458,10 @@ function loadMetrics() {
       });
 
       /* Dynamic ordering inside each app section, by composite score (see
-         RANK_WEIGHTS above). The section order itself — Data Fields before
-         Watch Faces — stays authored: that is an editorial statement, not a
+         RANK_WEIGHTS above). The section order itself — Watch Faces before
+         Data Fields — stays authored: that is an editorial statement, not a
          metric. Only the cards within a section reflow as the stats change. */
-      ["#data-fields .grid", "#watch-faces .grid"].forEach(sel => {
+      ["#watch-faces .grid", "#data-fields .grid"].forEach(sel => {
         const grid = document.querySelector(sel);
         if (grid) rankCardsInGrid(grid, data);
       });
