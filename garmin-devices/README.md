@@ -2,12 +2,22 @@
 
 Mapeamento extraído automaticamente da [referência de dispositivos do Connect IQ](https://developer.garmin.com/connect-iq/device-reference/).
 
-- **Part numbers:** 325 (325 listados hoje no site da Garmin)
-- **Última atualização:** 2026-10-05
+- **Part numbers:** 328 (328 listados hoje no site da Garmin)
+- **Última atualização:** 2026-10-12
 - Arquivo para copiar/colar em planilha: [`garmin-pn-map.tsv`](garmin-pn-map.tsv)
 - Cada seção abaixo é um dia em que algo mudou (mais recente no topo): dispositivos vistos pela 1ª vez, renomeados, removidos do site ou que voltaram a aparecer. Part numbers removidos são mantidos como registro histórico.
 
 ## Histórico de alterações
+
+### 2026-10-12 — 3 novo(s)
+
+**Vistos pela primeira vez**
+
+| Part number | Device |
+|---|---|
+| 006-B4874-00 | Approach® S72 43mm |
+| 006-B4875-00 | Approach® S72 47mm |
+| 006-B5169-00 | Enduro™ 4 |
 
 ### 2026-08-31 — 7 novo(s)
 
