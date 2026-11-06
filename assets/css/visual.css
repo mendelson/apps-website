@@ -184,7 +184,11 @@ nav a:hover {
   margin-bottom: 6px;
 }
 
-.trial {
+/* Every card says whether it costs anything: FREE TRIAL on a paid app, FREE on a
+   free one. Same pill, so the two read as one classification. `isPaid` in
+   script.js keys on `.trial` only, never on `.free`. */
+.trial,
+.free {
   display: inline-block;
   padding: 3px 10px;
   border: 1px solid #666;
