@@ -24,6 +24,7 @@
       contactBtn: 'E-Mail senden',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'KOSTENLOS TESTEN',
+      freeBadge: 'KOSTENLOS',
       moreVersions: 'Weitere Versionen ▾',
       liteVersion: 'Lite-Version',
       mirrorB: 'Mirror B',
@@ -49,7 +50,9 @@
         'Solve for X': 'Lösen Sie ein Rätsel, um die Uhrzeit zu enthüllen.',
         'Football Matches': 'Die Spiele deines Vereins auf dem Zifferblatt: Live-Ergebnis, Spielminute und nächste Partie.',
         'Dynamic Hours': 'Ein analoges Zifferblatt im 24-Stunden-Format – 1 Uhr nachts und 13 Uhr sehen nie gleich aus.',
-        'Volty': 'Ein animiertes Zifferblatt mit Volty, einer kleinen Batterie, die mit dir trainiert. Ihre Laune zeigt, wie viel Akku deine Uhr noch hat.'
+        'Volty': 'Ein animiertes Zifferblatt mit Volty, einer kleinen Batterie, die mit dir trainiert. Ihre Laune zeigt, wie viel Akku deine Uhr noch hat.',
+        'Discomfort': 'Ein Zifferblatt, bei dem immer etwas leicht daneben ist: Zeiger, die die Mitte verfehlen, eine schiefe Linie, ein Sekundenpunkt, der vom Bildschirm wandert. Drei Layouts.',
+        'Demotivation': 'Beende ein Training (oder lass eins ausfallen), und dein Zifferblatt hat einen sarkastischen Kommentar dazu – direkt unter der Uhrzeit.'
       },
       momentumTags: {
         trending: '🔥 Trend Diese Woche',
@@ -117,6 +120,7 @@
       contactBtn: 'Send email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'FREE TRIAL',
+      freeBadge: 'FREE',
       moreVersions: 'More versions ▾',
       liteVersion: 'Lite version',
       mirrorB: 'Mirror B',
@@ -142,7 +146,9 @@
         'Solve for X': 'Solve a puzzle to reveal the time.',
         'Football Matches': 'Your club’s matches on the watch face: live score, match clock and the next fixture.',
         'Dynamic Hours': 'An analog watch face that shows time in 24-hour format, so 1 AM and 1 PM never look the same.',
-        'Volty': 'An animated watch face starring Volty, a little battery that trains with you. Its mood shows how much charge your watch has left.'
+        'Volty': 'An animated watch face starring Volty, a little battery that trains with you. Its mood shows how much charge your watch has left.',
+        'Discomfort': 'A watch face where something is always slightly wrong: hands that miss the centre, a tilted line, a seconds dot that wanders off the screen. Three layouts.',
+        'Demotivation': 'Finish a workout (or skip one) and your watch face has a sarcastic comment about it, right under the time.'
       },
       momentumTags: {
         trending: '🔥 Trending This Week',
@@ -210,6 +216,7 @@
       contactBtn: 'Enviar correo',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'PRUEBA GRATIS',
+      freeBadge: 'GRATIS',
       moreVersions: 'Más versiones ▾',
       liteVersion: 'Versión Lite',
       mirrorB: 'Mirror B',
@@ -235,7 +242,9 @@
         'Solve for X': 'Resuelve un rompecabezas para revelar la hora.',
         'Football Matches': 'Los partidos de tu equipo en la esfera: marcador en vivo, minuto y próximo partido.',
         'Dynamic Hours': 'Una esfera analógica que muestra la hora en formato de 24 horas, para que la 1 AM y la 1 PM nunca se vean iguales.',
-        'Volty': 'Una esfera animada protagonizada por Volty, una pequeña batería que entrena contigo. Su estado de ánimo muestra cuánta carga le queda a tu reloj.'
+        'Volty': 'Una esfera animada protagonizada por Volty, una pequeña batería que entrena contigo. Su estado de ánimo muestra cuánta carga le queda a tu reloj.',
+        'Discomfort': 'Una esfera en la que siempre hay algo ligeramente mal: agujas que no dan en el centro, una línea torcida, un punto de segundos que se escapa de la pantalla. Tres diseños.',
+        'Demotivation': 'Termina un entrenamiento (o sáltatelo) y tu esfera tiene un comentario sarcástico al respecto, justo debajo de la hora.'
       },
       momentumTags: {
         trending: '🔥 Tendencia Esta Semana',
@@ -303,6 +312,7 @@
       contactBtn: 'Envoyer un e-mail',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ESSAI GRATUIT',
+      freeBadge: 'GRATUIT',
       moreVersions: 'Plus de versions ▾',
       liteVersion: 'Version Lite',
       mirrorB: 'Mirror B',
@@ -328,7 +338,9 @@
         'Solve for X': "Résolvez un puzzle pour révéler l'heure.",
         'Football Matches': 'Les matchs de ton club sur le cadran : score en direct, minute et prochain match.',
         'Dynamic Hours': 'Un cadran analogique qui affiche l’heure au format 24 heures : 1 h et 13 h ne se ressemblent jamais.',
-        'Volty': 'Un cadran animé avec Volty, une petite batterie qui s’entraîne avec vous. Son humeur indique la charge restante de votre montre.'
+        'Volty': 'Un cadran animé avec Volty, une petite batterie qui s’entraîne avec vous. Son humeur indique la charge restante de votre montre.',
+        'Discomfort': 'Un cadran où quelque chose cloche toujours un peu : des aiguilles qui ratent le centre, une ligne de travers, un point des secondes qui s’échappe de l’écran. Trois mises en page.',
+        'Demotivation': 'Terminez une séance (ou sautez-la) et votre cadran a un commentaire sarcastique à faire, juste sous l’heure.'
       },
       momentumTags: {
         trending: '🔥 Tendance Cette Semaine',
@@ -396,6 +408,7 @@
       contactBtn: 'Enviar email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'TESTE GRÁTIS',
+      freeBadge: 'GRÁTIS',
       moreVersions: 'Mais versões ▾',
       liteVersion: 'Versão Lite',
       mirrorB: 'Mirror B',
@@ -421,7 +434,9 @@
         'Solve for X': 'Resolva um puzzle para revelar a hora.',
         'Football Matches': 'Os jogos do seu time no mostrador: placar ao vivo, minuto e o próximo jogo.',
         'Dynamic Hours': 'Um mostrador analógico que exibe a hora no formato 24 horas, para que 1h e 13h nunca pareçam iguais.',
-        'Volty': 'Um mostrador animado estrelado pelo Volty, uma pequena bateria que treina com você. O humor dele mostra quanta carga ainda resta no seu relógio.'
+        'Volty': 'Um mostrador animado estrelado pelo Volty, uma pequena bateria que treina com você. O humor dele mostra quanta carga ainda resta no seu relógio.',
+        'Discomfort': 'Um mostrador em que sempre tem algo levemente errado: ponteiros que erram o centro, uma linha torta, um ponto dos segundos que foge da tela. Três layouts.',
+        'Demotivation': 'Termine um treino (ou pule um) e o seu mostrador tem um comentário sarcástico sobre isso, logo abaixo da hora.'
       },
       momentumTags: {
         trending: '🔥 Em Alta Esta Semana',
@@ -488,6 +503,7 @@
       contactBtn: 'Invia una email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'PROVA GRATUITA',
+      freeBadge: 'GRATIS',
       moreVersions: 'Altre versioni ▾',
       liteVersion: 'Versione Lite',
       mirrorB: 'Mirror B',
@@ -513,7 +529,9 @@
         'Solve for X': 'Risolvi un enigma per scoprire l’ora.',
         'Football Matches': 'Le partite della tua squadra sul quadrante: risultato in diretta, minuto e prossimo incontro.',
         'Dynamic Hours': 'Un quadrante analogico che mostra l’ora in formato 24 ore, così l’1 di notte e le 13 non sembrano mai uguali.',
-        'Volty': 'Un quadrante animato con Volty, una piccola batteria che si allena con te. Il suo umore mostra quanta carica resta al tuo orologio.'
+        'Volty': 'Un quadrante animato con Volty, una piccola batteria che si allena con te. Il suo umore mostra quanta carica resta al tuo orologio.',
+        'Discomfort': 'Un quadrante in cui c’è sempre qualcosa di leggermente sbagliato: lancette che mancano il centro, una linea storta, un punto dei secondi che scappa dallo schermo. Tre layout.',
+        'Demotivation': 'Finisci un allenamento (o saltane uno) e il tuo quadrante ha un commento sarcastico da fare, proprio sotto l’ora.'
       },
       momentumTags: {
         trending: '🔥 Di tendenza questa settimana',
@@ -581,6 +599,7 @@
       contactBtn: 'Написать письмо',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'БЕСПЛАТНЫЙ ПЕРИОД',
+      freeBadge: 'БЕСПЛАТНО',
       moreVersions: 'Другие версии ▾',
       liteVersion: 'Версия Lite',
       mirrorB: 'Зеркало B',
@@ -606,7 +625,9 @@
         'Solve for X': 'Решите задачу, чтобы узнать время.',
         'Football Matches': 'Матчи вашей команды на циферблате: счёт в реальном времени, минута и следующая игра.',
         'Dynamic Hours': 'Аналоговый циферблат в 24-часовом формате: час ночи и час дня никогда не выглядят одинаково.',
-        'Volty': 'Анимированный циферблат с Volty — маленькой батарейкой, которая тренируется вместе с вами. Её настроение показывает, сколько заряда осталось в часах.'
+        'Volty': 'Анимированный циферблат с Volty — маленькой батарейкой, которая тренируется вместе с вами. Её настроение показывает, сколько заряда осталось в часах.',
+        'Discomfort': 'Циферблат, в котором всегда что-то слегка не так: стрелки мимо центра, перекошенная линия, точка секунд, уходящая за край экрана. Три варианта.',
+        'Demotivation': 'Закончите тренировку (или пропустите её) — и у циферблата найдётся саркастичный комментарий прямо под временем.'
       },
       momentumTags: {
         trending: '🔥 В тренде на этой неделе',
@@ -674,6 +695,7 @@
       contactBtn: 'E-mail sturen',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'GRATIS PROBEREN',
+      freeBadge: 'GRATIS',
       moreVersions: 'Meer versies ▾',
       liteVersion: 'Lite-versie',
       mirrorB: 'Mirror B',
@@ -699,7 +721,9 @@
         'Solve for X': 'Los een puzzel op om de tijd te onthullen.',
         'Football Matches': 'De wedstrijden van je club op de wijzerplaat: live stand, speelminuut en de volgende wedstrijd.',
         'Dynamic Hours': 'Een analoge wijzerplaat die de tijd in 24-uursnotatie toont, zodat 1 uur ’s nachts en 13 uur er nooit hetzelfde uitzien.',
-        'Volty': 'Een geanimeerde wijzerplaat met Volty, een kleine batterij die met je meetraint. Zijn humeur laat zien hoeveel lading je horloge nog heeft.'
+        'Volty': 'Een geanimeerde wijzerplaat met Volty, een kleine batterij die met je meetraint. Zijn humeur laat zien hoeveel lading je horloge nog heeft.',
+        'Discomfort': 'Een wijzerplaat waar altijd iets net niet klopt: wijzers die het midden missen, een scheve lijn, een secondestip die van het scherm afdwaalt. Drie lay-outs.',
+        'Demotivation': 'Rond een training af (of sla er een over) en je wijzerplaat heeft er een sarcastische opmerking over, vlak onder de tijd.'
       },
       momentumTags: {
         trending: '🔥 Trending deze week',
@@ -767,6 +791,7 @@
       contactBtn: 'Enviar email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'TESTE GRÁTIS',
+      freeBadge: 'GRÁTIS',
       moreVersions: 'Mais versões ▾',
       liteVersion: 'Versão Lite',
       mirrorB: 'Mirror B',
@@ -792,7 +817,9 @@
         'Solve for X': 'Resolva um enigma para revelar as horas.',
         'Football Matches': 'Os jogos do seu clube no mostrador: resultado ao vivo, minuto de jogo e o próximo jogo.',
         'Dynamic Hours': 'Um mostrador analógico que mostra as horas no formato de 24 horas, para que a 1h e as 13h nunca pareçam iguais.',
-        'Volty': 'Um mostrador animado protagonizado pelo Volty, uma pequena bateria que treina consigo. O humor dele mostra quanta carga ainda resta no relógio.'
+        'Volty': 'Um mostrador animado protagonizado pelo Volty, uma pequena bateria que treina consigo. O humor dele mostra quanta carga ainda resta no relógio.',
+        'Discomfort': 'Um mostrador em que há sempre algo ligeiramente errado: ponteiros que falham o centro, uma linha torta, um ponto dos segundos que foge do ecrã. Três esquemas.',
+        'Demotivation': 'Termine um treino (ou salte um) e o seu mostrador tem um comentário sarcástico sobre isso, mesmo por baixo da hora.'
       },
       momentumTags: {
         trending: '🔥 Em Destaque Esta Semana',
@@ -860,6 +887,7 @@
       contactBtn: 'Wyślij e-mail',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'WYPRÓBUJ ZA DARMO',
+      freeBadge: 'ZA DARMO',
       moreVersions: 'Więcej wersji ▾',
       liteVersion: 'Wersja Lite',
       mirrorB: 'Mirror B',
@@ -885,7 +913,9 @@
         'Solve for X': 'Rozwiąż zagadkę, aby odkryć godzinę.',
         'Football Matches': 'Mecze Twojego klubu na tarczy: wynik na żywo, minuta meczu i najbliższe spotkanie.',
         'Dynamic Hours': 'Analogowa tarcza w formacie 24-godzinnym — 1:00 w nocy i 13:00 nigdy nie wyglądają tak samo.',
-        'Volty': 'Animowana tarcza z Voltym, małą baterią, która trenuje razem z Tobą. Jego nastrój pokazuje, ile energii zostało w zegarku.'
+        'Volty': 'Animowana tarcza z Voltym, małą baterią, która trenuje razem z Tobą. Jego nastrój pokazuje, ile energii zostało w zegarku.',
+        'Discomfort': 'Tarcza, na której zawsze coś jest odrobinę nie tak: wskazówki chybiające środka, przekrzywiona linia, kropka sekund uciekająca z ekranu. Trzy układy.',
+        'Demotivation': 'Skończ trening (albo go odpuść), a tarcza skomentuje to sarkastycznie tuż pod godziną.'
       },
       momentumTags: {
         trending: '🔥 Popularne w tym tygodniu',
@@ -953,6 +983,7 @@
       contactBtn: 'Poslat e-mail',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ZKUŠEBNÍ VERZE ZDARMA',
+      freeBadge: 'ZDARMA',
       moreVersions: 'Další verze ▾',
       liteVersion: 'Verze Lite',
       mirrorB: 'Mirror B',
@@ -978,7 +1009,9 @@
         'Solve for X': 'Vyřešte hádanku a odhalte čas.',
         'Football Matches': 'Zápasy vašeho klubu na ciferníku: živé skóre, minuta zápasu a další utkání.',
         'Dynamic Hours': 'Analogový ciferník s časem ve 24hodinovém formátu — 1 hodina v noci a 13 hodin nikdy nevypadají stejně.',
-        'Volty': 'Animovaný ciferník s Voltym, malou baterkou, která trénuje s vámi. Jeho nálada ukazuje, kolik energie vašim hodinkám zbývá.'
+        'Volty': 'Animovaný ciferník s Voltym, malou baterkou, která trénuje s vámi. Jeho nálada ukazuje, kolik energie vašim hodinkám zbývá.',
+        'Discomfort': 'Ciferník, na kterém je vždy něco trochu špatně: ručičky mimo střed, nakloněná čára, sekundová tečka, která utíká z displeje. Tři rozvržení.',
+        'Demotivation': 'Dokončete trénink (nebo ho vynechte) a ciferník k tomu má sarkastický komentář, přímo pod časem.'
       },
       momentumTags: {
         trending: '🔥 Tento týden v kurzu',
@@ -1046,6 +1079,7 @@
       contactBtn: 'Poslať e-mail',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'SKÚŠOBNÁ VERZIA ZDARMA',
+      freeBadge: 'ZADARMO',
       moreVersions: 'Ďalšie verzie ▾',
       liteVersion: 'Verzia Lite',
       mirrorB: 'Mirror B',
@@ -1071,7 +1105,9 @@
         'Solve for X': 'Vyriešte hádanku a odhaľte čas.',
         'Football Matches': 'Zápasy vášho klubu na ciferníku: živé skóre, minúta zápasu a ďalší zápas.',
         'Dynamic Hours': 'Analógový ciferník s časom v 24-hodinovom formáte — 1 hodina v noci a 13 hodín nikdy nevyzerajú rovnako.',
-        'Volty': 'Animovaný ciferník s Voltym, malou batériou, ktorá trénuje s vami. Jeho nálada ukazuje, koľko energie hodinkám zostáva.'
+        'Volty': 'Animovaný ciferník s Voltym, malou batériou, ktorá trénuje s vami. Jeho nálada ukazuje, koľko energie hodinkám zostáva.',
+        'Discomfort': 'Ciferník, na ktorom je vždy niečo trochu zle: ručičky mimo stredu, naklonená čiara, sekundová bodka, ktorá uteká z displeja. Tri rozloženia.',
+        'Demotivation': 'Dokončite tréning (alebo ho vynechajte) a ciferník k tomu má sarkastický komentár, priamo pod časom.'
       },
       momentumTags: {
         trending: '🔥 Tento týždeň v kurze',
@@ -1139,6 +1175,7 @@
       contactBtn: 'Pošlji e-pošto',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'BREZPLAČNI PREIZKUS',
+      freeBadge: 'BREZPLAČNO',
       moreVersions: 'Več različic ▾',
       liteVersion: 'Različica Lite',
       mirrorB: 'Mirror B',
@@ -1164,7 +1201,9 @@
         'Solve for X': 'Rešite uganko in razkrijte uro.',
         'Football Matches': 'Tekme vašega kluba na številčnici: rezultat v živo, minuta tekme in naslednja tekma.',
         'Dynamic Hours': 'Analogna številčnica, ki kaže čas v 24-urnem zapisu, zato 1. ura ponoči in 13. ura nikoli nista videti enako.',
-        'Volty': 'Animirana številčnica z Voltyjem, majhno baterijo, ki trenira z vami. Njegovo razpoloženje pokaže, koliko energije ima ura še na voljo.'
+        'Volty': 'Animirana številčnica z Voltyjem, majhno baterijo, ki trenira z vami. Njegovo razpoloženje pokaže, koliko energije ima ura še na voljo.',
+        'Discomfort': 'Številčnica, na kateri je vedno nekaj rahlo narobe: kazalci, ki zgrešijo središče, poševna črta, sekundna pika, ki odtava z zaslona. Tri postavitve.',
+        'Demotivation': 'Končajte trening (ali ga izpustite) in številčnica ima o tem sarkastičen komentar, tik pod uro.'
       },
       momentumTags: {
         trending: '🔥 Priljubljeno ta teden',
@@ -1231,6 +1270,7 @@
       contactBtn: 'Pošalji e-poruku',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'BESPLATNA PROBA',
+      freeBadge: 'BESPLATNO',
       moreVersions: 'Više verzija ▾',
       liteVersion: 'Lite verzija',
       mirrorB: 'Mirror B',
@@ -1256,7 +1296,9 @@
         'Solve for X': 'Riješite zagonetku kako biste otkrili vrijeme.',
         'Football Matches': 'Utakmice vašeg kluba na brojčaniku: rezultat uživo, minuta utakmice i sljedeća utakmica.',
         'Dynamic Hours': 'Analogni brojčanik koji prikazuje vrijeme u 24-satnom formatu, pa 1 sat noću i 13 sati nikad ne izgledaju isto.',
-        'Volty': 'Animirani brojčanik s Voltyjem, malom baterijom koja trenira s vama. Njegovo raspoloženje pokazuje koliko je energije satu preostalo.'
+        'Volty': 'Animirani brojčanik s Voltyjem, malom baterijom koja trenira s vama. Njegovo raspoloženje pokazuje koliko je energije satu preostalo.',
+        'Discomfort': 'Brojčanik na kojem je uvijek nešto malo krivo: kazaljke koje promašuju središte, nakrivljena linija, točka sekundi koja odluta sa zaslona. Tri rasporeda.',
+        'Demotivation': 'Završite trening (ili ga preskočite) i brojčanik ima sarkastičan komentar o tome, odmah ispod vremena.'
       },
       momentumTags: {
         trending: '🔥 Popularno ovaj tjedan',
@@ -1324,6 +1366,7 @@
       contactBtn: 'E-mail küldése',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'INGYENES PRÓBA',
+      freeBadge: 'INGYENES',
       moreVersions: 'További verziók ▾',
       liteVersion: 'Lite verzió',
       mirrorB: 'Mirror B',
@@ -1349,7 +1392,9 @@
         'Solve for X': 'Oldj meg egy rejtvényt, hogy kiderüljön az idő.',
         'Football Matches': 'A klubod meccsei az óralapon: élő eredmény, játékperc és a következő mérkőzés.',
         'Dynamic Hours': 'Analóg óralap 24 órás kijelzéssel, így hajnali 1 és délután 1 sosem néz ki ugyanúgy.',
-        'Volty': 'Animált óralap Volty főszereplésével — egy kis akkumulátor, amely veled edz. A hangulata mutatja, mennyi töltés maradt az órádban.'
+        'Volty': 'Animált óralap Volty főszereplésével — egy kis akkumulátor, amely veled edz. A hangulata mutatja, mennyi töltés maradt az órádban.',
+        'Discomfort': 'Óralap, amelyen mindig van valami kicsit elcsúszva: a középpontot elvétő mutatók, egy ferde vonal, a kijelzőről elkóborló másodpercpont. Három elrendezés.',
+        'Demotivation': 'Fejezz be egy edzést (vagy hagyd ki), és az óralapnak lesz hozzá egy szarkasztikus megjegyzése, közvetlenül az idő alatt.'
       },
       momentumTags: {
         trending: '🔥 A hét slágere',
@@ -1417,6 +1462,7 @@
       contactBtn: 'Αποστολή email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ΔΩΡΕΑΝ ΔΟΚΙΜΗ',
+      freeBadge: 'ΔΩΡΕΑΝ',
       moreVersions: 'Περισσότερες εκδόσεις ▾',
       liteVersion: 'Έκδοση Lite',
       mirrorB: 'Mirror B',
@@ -1442,7 +1488,9 @@
         'Solve for X': 'Λύστε έναν γρίφο για να αποκαλυφθεί η ώρα.',
         'Football Matches': 'Οι αγώνες της ομάδας σας στην πρόσοψη: ζωντανό σκορ, λεπτό αγώνα και ο επόμενος αγώνας.',
         'Dynamic Hours': 'Αναλογική πρόσοψη που δείχνει την ώρα σε 24ωρη μορφή, ώστε η 1 π.μ. και η 1 μ.μ. να μη μοιάζουν ποτέ.',
-        'Volty': 'Κινούμενη πρόσοψη με πρωταγωνιστή τον Volty, μια μικρή μπαταρία που προπονείται μαζί σας. Η διάθεσή του δείχνει πόση μπαταρία απομένει στο ρολόι.'
+        'Volty': 'Κινούμενη πρόσοψη με πρωταγωνιστή τον Volty, μια μικρή μπαταρία που προπονείται μαζί σας. Η διάθεσή του δείχνει πόση μπαταρία απομένει στο ρολόι.',
+        'Discomfort': 'Ένα ρολόι όπου κάτι είναι πάντα λίγο λάθος: δείκτες που αστοχούν στο κέντρο, μια στραβή γραμμή, μια κουκκίδα δευτερολέπτων που ξεφεύγει από την οθόνη. Τρεις διατάξεις.',
+        'Demotivation': 'Ολοκληρώστε μια προπόνηση (ή παραλείψτε τη) και το ρολόι σας έχει ένα σαρκαστικό σχόλιο γι’ αυτό, ακριβώς κάτω από την ώρα.'
       },
       momentumTags: {
         trending: '🔥 Δημοφιλές αυτή την εβδομάδα',
@@ -1510,6 +1558,7 @@
       contactBtn: 'Send e-mail',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'GRATIS PRØVEPERIODE',
+      freeBadge: 'GRATIS',
       moreVersions: 'Flere versioner ▾',
       liteVersion: 'Lite-version',
       mirrorB: 'Mirror B',
@@ -1535,7 +1584,9 @@
         'Solve for X': 'Løs en gåde for at afsløre klokken.',
         'Football Matches': 'Din klubs kampe på urskiven: live-resultat, kampminut og næste kamp.',
         'Dynamic Hours': 'En analog urskive, der viser tiden i 24-timersformat, så kl. 1 om natten og kl. 13 aldrig ser ens ud.',
-        'Volty': 'En animeret urskive med Volty, et lille batteri, der træner med dig. Humøret viser, hvor meget strøm uret har tilbage.'
+        'Volty': 'En animeret urskive med Volty, et lille batteri, der træner med dig. Humøret viser, hvor meget strøm uret har tilbage.',
+        'Discomfort': 'En urskive, hvor noget altid er en smule forkert: visere, der rammer ved siden af midten, en skæv streg, en sekundprik, der vandrer ud af skærmen. Tre layouts.',
+        'Demotivation': 'Afslut en træning (eller spring en over), og din urskive har en sarkastisk kommentar til det, lige under klokken.'
       },
       momentumTags: {
         trending: '🔥 Populær i denne uge',
@@ -1603,6 +1654,7 @@
       contactBtn: 'Send e-post',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'GRATIS PRØVEPERIODE',
+      freeBadge: 'GRATIS',
       moreVersions: 'Flere versjoner ▾',
       liteVersion: 'Lite-versjon',
       mirrorB: 'Mirror B',
@@ -1628,7 +1680,9 @@
         'Solve for X': 'Løs en gåte for å avsløre klokkeslettet.',
         'Football Matches': 'Klubbens kamper på urskiven: live-resultat, kampminutt og neste kamp.',
         'Dynamic Hours': 'En analog urskive som viser tiden i 24-timersformat, så klokken 1 om natten og 13 aldri ser like ut.',
-        'Volty': 'En animert urskive med Volty, et lite batteri som trener sammen med deg. Humøret viser hvor mye strøm klokken har igjen.'
+        'Volty': 'En animert urskive med Volty, et lite batteri som trener sammen med deg. Humøret viser hvor mye strøm klokken har igjen.',
+        'Discomfort': 'En urskive der noe alltid er litt feil: visere som bommer på midten, en skjev strek, en sekundprikk som vandrer ut av skjermen. Tre oppsett.',
+        'Demotivation': 'Fullfør en økt (eller hopp over en), og urskiven din har en sarkastisk kommentar til det, rett under klokkeslettet.'
       },
       momentumTags: {
         trending: '🔥 Populær denne uken',
@@ -1696,6 +1750,7 @@
       contactBtn: 'Skicka e-post',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'GRATIS PROVPERIOD',
+      freeBadge: 'GRATIS',
       moreVersions: 'Fler versioner ▾',
       liteVersion: 'Lite-version',
       mirrorB: 'Mirror B',
@@ -1721,7 +1776,9 @@
         'Solve for X': 'Lös en gåta för att avslöja tiden.',
         'Football Matches': 'Klubbens matcher på urtavlan: liveresultat, matchminut och nästa match.',
         'Dynamic Hours': 'En analog urtavla som visar tiden i 24-timmarsformat, så att klockan 1 på natten och 13 aldrig ser likadana ut.',
-        'Volty': 'En animerad urtavla med Volty, ett litet batteri som tränar med dig. Humöret visar hur mycket laddning klockan har kvar.'
+        'Volty': 'En animerad urtavla med Volty, ett litet batteri som tränar med dig. Humöret visar hur mycket laddning klockan har kvar.',
+        'Discomfort': 'En urtavla där något alltid är lite fel: visare som missar mitten, en sned linje, en sekundprick som vandrar av skärmen. Tre layouter.',
+        'Demotivation': 'Avsluta ett pass (eller hoppa över ett) så har urtavlan en sarkastisk kommentar om det, precis under klockan.'
       },
       momentumTags: {
         trending: '🔥 Populär den här veckan',
@@ -1789,6 +1846,7 @@
       contactBtn: 'Lähetä sähköpostia',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ILMAINEN KOKEILU',
+      freeBadge: 'ILMAINEN',
       moreVersions: 'Lisää versioita ▾',
       liteVersion: 'Lite-versio',
       mirrorB: 'Mirror B',
@@ -1814,7 +1872,9 @@
         'Solve for X': 'Ratkaise arvoitus, niin kellonaika paljastuu.',
         'Football Matches': 'Seurasi ottelut kellotaululla: tulos livenä, peliminuutti ja seuraava ottelu.',
         'Dynamic Hours': 'Analoginen kellotaulu, joka näyttää ajan 24 tunnin muodossa, joten kello 1 yöllä ja kello 13 eivät koskaan näytä samalta.',
-        'Volty': 'Animoitu kellotaulu, jonka tähtenä on Volty — pieni akku, joka treenaa kanssasi. Sen mieliala kertoo, paljonko kellossa on virtaa jäljellä.'
+        'Volty': 'Animoitu kellotaulu, jonka tähtenä on Volty — pieni akku, joka treenaa kanssasi. Sen mieliala kertoo, paljonko kellossa on virtaa jäljellä.',
+        'Discomfort': 'Kellotaulu, jossa jokin on aina hieman pielessä: keskustan ohi osuvat osoittimet, vino viiva, ruudulta karkaava sekuntipiste. Kolme asettelua.',
+        'Demotivation': 'Lopeta treeni (tai jätä se väliin), niin kellotaulullasi on siitä sarkastinen kommentti heti kellonajan alla.'
       },
       momentumTags: {
         trending: '🔥 Suosittu tällä viikolla',
@@ -1881,6 +1941,7 @@
       contactBtn: 'メールを送る',
       footer: '© 2026 M. Mendelson',
       freeTrial: '無料トライアル',
+      freeBadge: '無料',
       moreVersions: 'ほかのバージョン ▾',
       liteVersion: 'Lite 版',
       mirrorB: 'Mirror B',
@@ -1906,7 +1967,9 @@
         'Solve for X': 'パズルを解いて時刻を表示。',
         'Football Matches': '応援するクラブの試合をウォッチフェイスに：ライブスコア、試合時間、次の試合。',
         'Dynamic Hours': '24時間表示のアナログウォッチフェイス。午前1時と午後1時が同じに見えることはありません。',
-        'Volty': 'あなたと一緒にトレーニングする小さなバッテリー、Volty が主役のアニメーションウォッチフェイス。表情で時計のバッテリー残量がわかります。'
+        'Volty': 'あなたと一緒にトレーニングする小さなバッテリー、Volty が主役のアニメーションウォッチフェイス。表情で時計のバッテリー残量がわかります。',
+        'Discomfort': 'いつもどこかが少しだけおかしいウォッチフェイス：中心を外れた針、傾いた線、画面の外へさまよう秒のドット。3つのレイアウト。',
+        'Demotivation': 'ワークアウトを終えると（またはサボると）、時刻のすぐ下にウォッチフェイスが皮肉なひと言を添えます。'
       },
       momentumTags: {
         trending: '🔥 今週の注目',
@@ -1974,6 +2037,7 @@
       contactBtn: '이메일 보내기',
       footer: '© 2026 M. Mendelson',
       freeTrial: '무료 체험',
+      freeBadge: '무료',
       moreVersions: '다른 버전 ▾',
       liteVersion: 'Lite 버전',
       mirrorB: 'Mirror B',
@@ -1999,7 +2063,9 @@
         'Solve for X': '퍼즐을 풀어 시간을 확인하세요.',
         'Football Matches': '응원하는 클럽의 경기를 워치 페이스에: 실시간 스코어, 경기 시간, 다음 경기.',
         'Dynamic Hours': '24시간 형식으로 시간을 보여 주는 아날로그 워치 페이스로, 오전 1시와 오후 1시가 절대 같아 보이지 않습니다.',
-        'Volty': '함께 훈련하는 작은 배터리 Volty가 주인공인 애니메이션 워치 페이스. 기분으로 시계의 남은 배터리를 알려 줍니다.'
+        'Volty': '함께 훈련하는 작은 배터리 Volty가 주인공인 애니메이션 워치 페이스. 기분으로 시계의 남은 배터리를 알려 줍니다.',
+        'Discomfort': '항상 무언가가 살짝 어긋나 있는 워치 페이스: 중심을 비껴간 바늘, 기울어진 선, 화면 밖으로 떠도는 초 점. 레이아웃 3가지.',
+        'Demotivation': '운동을 끝내면(혹은 건너뛰면) 워치 페이스가 시간 바로 아래에 비꼬는 한마디를 남깁니다.'
       },
       momentumTags: {
         trending: '🔥 이번 주 인기',
@@ -2067,6 +2133,7 @@
       contactBtn: '发送邮件',
       footer: '© 2026 M. Mendelson',
       freeTrial: '免费试用',
+      freeBadge: '免费',
       moreVersions: '更多版本 ▾',
       liteVersion: '精简版',
       mirrorB: 'Mirror B',
@@ -2092,7 +2159,9 @@
         'Solve for X': '解开谜题即可显示时间。',
         'Football Matches': '在表盘上关注你的球队：实时比分、比赛时间和下一场比赛。',
         'Dynamic Hours': '以 24 小时制显示时间的指针表盘，凌晨 1 点和下午 1 点永远不会看起来一样。',
-        'Volty': '由 Volty 主演的动画表盘——一块陪你一起训练的小电池。它的心情会告诉你手表还剩多少电量。'
+        'Volty': '由 Volty 主演的动画表盘——一块陪你一起训练的小电池。它的心情会告诉你手表还剩多少电量。',
+        'Discomfort': '总有哪里不太对劲的表盘：没对准中心的指针、歪斜的线条、溜出屏幕的秒点。三种布局。',
+        'Demotivation': '完成一次训练（或者干脆跳过），表盘就会在时间正下方送上一句讽刺点评。'
       },
       momentumTags: {
         trending: '🔥 本周热门',
@@ -2160,6 +2229,7 @@
       contactBtn: '傳送電子郵件',
       footer: '© 2026 M. Mendelson',
       freeTrial: '免費試用',
+      freeBadge: '免費',
       moreVersions: '更多版本 ▾',
       liteVersion: '精簡版',
       mirrorB: 'Mirror B',
@@ -2185,7 +2255,9 @@
         'Solve for X': '解開謎題即可顯示時間。',
         'Football Matches': '在錶面上關注你的球隊：即時比分、比賽時間與下一場比賽。',
         'Dynamic Hours': '以 24 小時制顯示時間的指針錶面，凌晨 1 點與下午 1 點永遠不會看起來一樣。',
-        'Volty': '由 Volty 主演的動畫錶面——一顆陪你一起訓練的小電池。它的心情會告訴你手錶還剩多少電量。'
+        'Volty': '由 Volty 主演的動畫錶面——一顆陪你一起訓練的小電池。它的心情會告訴你手錶還剩多少電量。',
+        'Discomfort': '總有哪裡不太對勁的錶面：沒對準中心的指針、歪斜的線條、溜出螢幕的秒點。三種版面。',
+        'Demotivation': '完成一次訓練（或乾脆跳過），錶面就會在時間正下方送上一句諷刺評語。'
       },
       momentumTags: {
         trending: '🔥 本週熱門',
@@ -2252,6 +2324,7 @@
       contactBtn: 'ส่งอีเมล',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ทดลองใช้ฟรี',
+      freeBadge: 'ฟรี',
       moreVersions: 'เวอร์ชันอื่น ▾',
       liteVersion: 'เวอร์ชัน Lite',
       mirrorB: 'Mirror B',
@@ -2277,7 +2350,9 @@
         'Solve for X': 'ไขปริศนาเพื่อเผยเวลา',
         'Football Matches': 'แมตช์ของสโมสรคุณบนหน้าปัด: สกอร์สด นาทีการแข่งขัน และนัดถัดไป',
         'Dynamic Hours': 'หน้าปัดแบบเข็มที่แสดงเวลาแบบ 24 ชั่วโมง ตีหนึ่งกับบ่ายโมงจึงไม่มีวันดูเหมือนกัน',
-        'Volty': 'หน้าปัดแอนิเมชันที่มี Volty แบตเตอรี่ตัวน้อยที่ฝึกซ้อมไปกับคุณ อารมณ์ของมันบอกว่านาฬิกาเหลือแบตเตอรี่เท่าไร'
+        'Volty': 'หน้าปัดแอนิเมชันที่มี Volty แบตเตอรี่ตัวน้อยที่ฝึกซ้อมไปกับคุณ อารมณ์ของมันบอกว่านาฬิกาเหลือแบตเตอรี่เท่าไร',
+        'Discomfort': 'หน้าปัดที่มีบางอย่างผิดเพี้ยนเล็กน้อยเสมอ: เข็มที่ไม่ตรงกลาง เส้นที่เอียง จุดวินาทีที่หลุดออกนอกจอ มีสามรูปแบบ',
+        'Demotivation': 'ออกกำลังกายเสร็จ (หรือโดดไป) แล้วหน้าปัดจะมีคำประชดให้ทันที ใต้เวลาเลย'
       },
       momentumTags: {
         trending: '🔥 มาแรงสัปดาห์นี้',
@@ -2345,6 +2420,7 @@
       contactBtn: 'שליחת דוא״ל',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'ניסיון חינם',
+      freeBadge: 'חינם',
       moreVersions: 'גרסאות נוספות ▾',
       liteVersion: 'גרסת Lite',
       mirrorB: 'Mirror B',
@@ -2370,7 +2446,9 @@
         'Solve for X': 'פתרו חידה כדי לגלות את השעה.',
         'Football Matches': 'המשחקים של הקבוצה שלכם על פני השעון: תוצאה חיה, דקת המשחק והמשחק הבא.',
         'Dynamic Hours': 'פני שעון אנלוגיים שמציגים את השעה בפורמט 24 שעות, כך ש־1 בלילה ו־1 בצהריים לעולם לא נראים אותו דבר.',
-        'Volty': 'פני שעון מונפשים בכיכובו של Volty, סוללה קטנה שמתאמנת איתכם. מצב הרוח שלה מראה כמה טעינה נשארה בשעון.'
+        'Volty': 'פני שעון מונפשים בכיכובו של Volty, סוללה קטנה שמתאמנת איתכם. מצב הרוח שלה מראה כמה טעינה נשארה בשעון.',
+        'Discomfort': 'פני שעון שבהם תמיד משהו קצת לא בסדר: מחוגים שמחטיאים את המרכז, קו עקום, נקודת שניות שנודדת אל מחוץ למסך. שלוש פריסות.',
+        'Demotivation': 'סיימתם אימון (או דילגתם עליו)? פני השעון יגיבו בהערה עוקצנית, ממש מתחת לשעה.'
       },
       momentumTags: {
         trending: '🔥 חם השבוע',
@@ -2438,6 +2516,7 @@
       contactBtn: 'Kirim email',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'UJI COBA GRATIS',
+      freeBadge: 'GRATIS',
       moreVersions: 'Versi lain ▾',
       liteVersion: 'Versi Lite',
       mirrorB: 'Mirror B',
@@ -2463,7 +2542,9 @@
         'Solve for X': 'Pecahkan teka-teki untuk melihat waktu.',
         'Football Matches': 'Pertandingan klub Anda di tampilan jam: skor langsung, menit pertandingan, dan laga berikutnya.',
         'Dynamic Hours': 'Tampilan jam analog yang menunjukkan waktu dalam format 24 jam, jadi pukul 1 dini hari dan 1 siang tidak pernah terlihat sama.',
-        'Volty': 'Tampilan jam animasi yang dibintangi Volty, baterai kecil yang berlatih bersama Anda. Suasana hatinya menunjukkan sisa daya jam Anda.'
+        'Volty': 'Tampilan jam animasi yang dibintangi Volty, baterai kecil yang berlatih bersama Anda. Suasana hatinya menunjukkan sisa daya jam Anda.',
+        'Discomfort': 'Muka jam yang selalu sedikit keliru: jarum yang meleset dari tengah, garis yang miring, titik detik yang keluyuran keluar layar. Tiga tata letak.',
+        'Demotivation': 'Selesaikan latihan (atau lewatkan saja) dan muka jam Anda punya komentar sarkastis tentangnya, tepat di bawah jam.'
       },
       momentumTags: {
         trending: '🔥 Sedang Tren Minggu Ini',
@@ -2531,6 +2612,7 @@
       contactBtn: 'Hantar e-mel',
       footer: '© 2026 M. Mendelson',
       freeTrial: 'PERCUBAAN PERCUMA',
+      freeBadge: 'PERCUMA',
       moreVersions: 'Versi lain ▾',
       liteVersion: 'Versi Lite',
       mirrorB: 'Mirror B',
@@ -2556,7 +2638,9 @@
         'Solve for X': 'Selesaikan teka-teki untuk mendedahkan masa.',
         'Football Matches': 'Perlawanan kelab anda pada muka jam: skor langsung, minit perlawanan dan perlawanan seterusnya.',
         'Dynamic Hours': 'Muka jam analog yang memaparkan masa dalam format 24 jam, jadi pukul 1 pagi dan 1 petang tidak pernah kelihatan sama.',
-        'Volty': 'Muka jam animasi yang dibintangi Volty, bateri kecil yang berlatih bersama anda. Moodnya menunjukkan baki cas jam anda.'
+        'Volty': 'Muka jam animasi yang dibintangi Volty, bateri kecil yang berlatih bersama anda. Moodnya menunjukkan baki cas jam anda.',
+        'Discomfort': 'Muka jam yang sentiasa ada sesuatu yang sedikit tidak kena: jarum yang tersasar dari tengah, garisan senget, titik saat yang merayau keluar skrin. Tiga susun atur.',
+        'Demotivation': 'Habiskan senaman (atau ponteng) dan muka jam anda ada komen sinis tentangnya, betul-betul di bawah waktu.'
       },
       momentumTags: {
         trending: '🔥 Trending Minggu Ini',
