@@ -573,7 +573,20 @@ function buildFeaturedCarousel(data) {
   const topPaid = byTotal.find(isPaid);
   if (topPaid) pushEntry(topPaid, "premium");
 
-  /* 2. ALL-TIME FAVORITE — only the genuine #1 by total downloads; if it is
+  /* 2. TRENDING — the genuine #1 by weekly installs, and only once it clears
+        the same floor as the "🔥 Trending" momentum tag. It comes BEFORE the
+        all-time favorite on purpose: the same app often leads both lists, and
+        when the favorite slot went first it took the card and the trending
+        highlight was skipped, so the week's hottest app showed no 🔥 at all. */
+  if (
+    byInstalls[0] &&
+    !hasCard(byInstalls[0]) &&
+    get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS
+  ) {
+    pushEntry(byInstalls[0], "installs");
+  }
+
+  /* 3. ALL-TIME FAVORITE — only the genuine #1 by total downloads; if it is
         already featured above, skip rather than mislabel the runner-up. */
   if (byTotal[0] && !hasCard(byTotal[0])) pushEntry(byTotal[0], "total");
 
@@ -589,16 +602,6 @@ function buildFeaturedCarousel(data) {
     } else if (favCat === "data") {
       pushEntry(byTotal.find(c => categoryOf(c) === "watch"), "topWatchFace");
     }
-  }
-
-  /* 3. TRENDING — the genuine #1 by weekly installs, and only once it clears
-        the same floor as the "🔥 Trending" momentum tag. */
-  if (
-    byInstalls[0] &&
-    !hasCard(byInstalls[0]) &&
-    get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS
-  ) {
-    pushEntry(byInstalls[0], "installs");
   }
 
   /* 4. NEW — the youngest app, only while it is genuinely recent. */
