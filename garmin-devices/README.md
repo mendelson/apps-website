@@ -2,12 +2,21 @@
 
 Mapeamento extraído automaticamente da [referência de dispositivos do Connect IQ](https://developer.garmin.com/connect-iq/device-reference/).
 
-- **Part numbers:** 330 (330 listados hoje no site da Garmin)
-- **Última atualização:** 2026-11-02
+- **Part numbers:** 332 (332 listados hoje no site da Garmin)
+- **Última atualização:** 2026-11-09
 - Arquivo para copiar/colar em planilha: [`garmin-pn-map.tsv`](garmin-pn-map.tsv)
 - Cada seção abaixo é um dia em que algo mudou (mais recente no topo): dispositivos vistos pela 1ª vez, renomeados, removidos do site ou que voltaram a aparecer. Part numbers removidos são mantidos como registro histórico.
 
 ## Histórico de alterações
+
+### 2026-11-09 — 2 novo(s)
+
+**Vistos pela primeira vez**
+
+| Part number | Device |
+|---|---|
+| 006-B4970-00 | Edge® Explore 3 |
+| 006-B4972-00 | Edge® Explore 3 Plus |
 
 ### 2026-10-26 — 2 novo(s)
 
