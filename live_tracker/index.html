@@ -640,6 +640,50 @@
       z-index: 1;
     }
 
+    /* "Athlete is here" / "You are here" callouts, one above each dot. The
+       wrapper is inset equally on both inline sides and centres the callout
+       with flex, so it sits on the dot the same way in LTR and on the Hebrew
+       (RTL) page. Only the callout itself takes clicks — they reach the marker,
+       which opens its popup — so the wide wrapper never blocks the map.
+       .label-below flips it under the dot when the two dots are close on
+       screen (layoutPinLabels), so neither callout covers the other. */
+    .pin-label-wrap {
+      position: absolute;
+      bottom: calc(100% + 3px);
+      inset-inline: -110px;
+      display: flex; justify-content: center;
+      pointer-events: none;
+    }
+    .label-below .pin-label-wrap { bottom: auto; top: calc(100% + 3px); }
+    .pin-label {
+      --pin-bg: var(--primary);
+      position: relative;
+      pointer-events: auto;
+      white-space: nowrap;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--pin-bg);
+      color: #fff;
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      font-size: 0.72rem; font-weight: 700; line-height: 1.2;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.55), 0 0 0 1.5px rgba(255,255,255,0.85);
+    }
+    .pin-label.athlete { --pin-bg: var(--accent); }
+    .pin-label::after {                 /* the tail pointing at the dot */
+      content: '';
+      position: absolute;
+      top: 100%;
+      inset-inline: 0; margin-inline: auto;
+      width: 0; height: 0;
+      border: 5px solid transparent;
+      border-top-color: var(--pin-bg);
+    }
+    .label-below .pin-label::after {
+      top: auto; bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: var(--pin-bg);
+    }
+
     .start-marker {
       width: 10px; height: 10px;
       background: #22c55e;
@@ -1359,6 +1403,7 @@ const TRANSLATIONS = {
     titleRoute:'Manter percurso visível — clique no mapa para cancelar',
     titleAll:'Manter percurso e minha localização visíveis — clique no mapa para cancelar',
     trackerPopup:'Posição do atleta',userPopup:'Minha localização',startTooltip:'Início',
+    youAreHere:'Você está aqui',athleteHere:'O atleta está aqui',
     connecting:'Conectando à sessão…',resolvingUser:'Buscando a sessão mais recente…',tryingAlt:'Tentando endpoints alternativos…',
     fetchingGarmin:'Buscando página da Garmin…',loadingTest:'Carregando sessão de teste…',
     connectedViaProxy:'Conectado via proxy',
@@ -1416,6 +1461,7 @@ const TRANSLATIONS = {
     titleRoute:'Keep full route visible — click map to cancel',
     titleAll:'Keep route and my location visible — click map to cancel',
     trackerPopup:'Tracker position',userPopup:'My location',startTooltip:'Start',
+    youAreHere:'You are here',athleteHere:'Athlete is here',
     connecting:'Connecting to session…',resolvingUser:'Finding the latest session…',tryingAlt:'Trying alternative endpoints…',
     fetchingGarmin:'Fetching Garmin page…',loadingTest:'Loading test session…',
     connectedViaProxy:'Connected via proxy',
@@ -1473,6 +1519,7 @@ const TRANSLATIONS = {
     titleRoute:'Mantener ruta visible — toca el mapa para cancelar',
     titleAll:'Mantener ruta y mi ubicación visibles — toca el mapa para cancelar',
     trackerPopup:'Posición del atleta',userPopup:'Mi ubicación',startTooltip:'Inicio',
+    youAreHere:'Estás aquí',athleteHere:'El atleta está aquí',
     connecting:'Conectando a la sesión…',resolvingUser:'Buscando la sesión más reciente…',tryingAlt:'Probando endpoints alternativos…',
     fetchingGarmin:'Buscando página de Garmin…',loadingTest:'Cargando sesión de prueba…',
     connectedViaProxy:'Conectado vía proxy',
@@ -1530,6 +1577,7 @@ const TRANSLATIONS = {
     titleRoute:'Maintenir le parcours visible — cliquez sur la carte pour annuler',
     titleAll:'Maintenir le parcours et ma position visibles — cliquez sur la carte pour annuler',
     trackerPopup:"Position de l'athlète",userPopup:'Ma position',startTooltip:'Départ',
+    youAreHere:'Vous êtes ici',athleteHere:'L’athlète est ici',
     connecting:'Connexion à la session…',resolvingUser:'Recherche de la dernière session…',tryingAlt:"Essai d'endpoints alternatifs…",
     fetchingGarmin:'Récupération de la page Garmin…',loadingTest:'Chargement de la session de test…',
     connectedViaProxy:'Connecté via proxy',
@@ -1587,6 +1635,7 @@ const TRANSLATIONS = {
     titleRoute:'Gesamte Strecke anzeigen — Karte klicken zum Abbrechen',
     titleAll:'Strecke und Standort anzeigen — Karte klicken zum Abbrechen',
     trackerPopup:'Position des Athleten',userPopup:'Mein Standort',startTooltip:'Start',
+    youAreHere:'Du bist hier',athleteHere:'Der Athlet ist hier',
     connecting:'Verbindung zur Sitzung…',resolvingUser:'Neueste Sitzung wird gesucht…',tryingAlt:'Alternative Endpunkte werden versucht…',
     fetchingGarmin:'Garmin-Seite wird abgerufen…',loadingTest:'Testsitzung wird geladen…',
     connectedViaProxy:'Verbunden über Proxy',
@@ -1644,6 +1693,7 @@ const TRANSLATIONS = {
     titleRoute:"Mantieni visibile l'intero percorso — clicca sulla mappa per annullare",
     titleAll:'Mantieni visibili percorso e posizione — clicca sulla mappa per annullare',
     trackerPopup:"Posizione dell'atleta",userPopup:'La mia posizione',startTooltip:'Partenza',
+    youAreHere:'Sei qui',athleteHere:'L’atleta è qui',
     connecting:'Connessione alla sessione…',resolvingUser:'Ricerca della sessione più recente…',tryingAlt:'Tentativo con endpoint alternativi…',
     fetchingGarmin:'Recupero della pagina Garmin…',loadingTest:'Caricamento sessione di test…',
     connectedViaProxy:'Connesso tramite proxy',
@@ -1701,6 +1751,7 @@ const TRANSLATIONS = {
     titleRoute:'Показывать весь маршрут — нажмите на карту, чтобы отменить',
     titleAll:'Показывать маршрут и моё местоположение — нажмите на карту, чтобы отменить',
     trackerPopup:'Местоположение спортсмена',userPopup:'Моё местоположение',startTooltip:'Старт',
+    youAreHere:'Вы здесь',athleteHere:'Спортсмен здесь',
     connecting:'Подключение к сессии…',resolvingUser:'Поиск последней сессии…',tryingAlt:'Пробуем альтернативные источники…',
     fetchingGarmin:'Загрузка страницы Garmin…',loadingTest:'Загрузка тестовой сессии…',
     connectedViaProxy:'Подключено через прокси',
@@ -1758,6 +1809,7 @@ const TRANSLATIONS = {
     titleRoute:'Hele route in beeld houden — klik op de kaart om te annuleren',
     titleAll:'Route en mijn locatie in beeld houden — klik op de kaart om te annuleren',
     trackerPopup:'Positie van tracker',userPopup:'Mijn locatie',startTooltip:'Start',
+    youAreHere:'Je bent hier',athleteHere:'De atleet is hier',
     connecting:'Verbinden met sessie…',resolvingUser:'Nieuwste sessie zoeken…',tryingAlt:'Alternatieve endpoints proberen…',
     fetchingGarmin:'Garmin-pagina ophalen…',loadingTest:'Testsessie laden…',
     connectedViaProxy:'Verbonden via proxy',
@@ -1815,6 +1867,7 @@ const TRANSLATIONS = {
     titleRoute:'Manter o percurso completo visível — clique no mapa para cancelar',
     titleAll:'Manter o percurso e a minha localização visíveis — clique no mapa para cancelar',
     trackerPopup:'Posição do atleta',userPopup:'A minha localização',startTooltip:'Partida',
+    youAreHere:'Está aqui',athleteHere:'O atleta está aqui',
     connecting:'A ligar à sessão…',resolvingUser:'A procurar a sessão mais recente…',tryingAlt:'A tentar endpoints alternativos…',
     fetchingGarmin:'A obter a página da Garmin…',loadingTest:'A carregar a sessão de teste…',
     connectedViaProxy:'Ligado através de proxy',
@@ -1872,6 +1925,7 @@ const TRANSLATIONS = {
     titleRoute:'Pokazuj całą trasę — kliknij mapę, aby anulować',
     titleAll:'Pokazuj trasę i moją lokalizację — kliknij mapę, aby anulować',
     trackerPopup:'Pozycja sportowca',userPopup:'Moja lokalizacja',startTooltip:'Start',
+    youAreHere:'Jesteś tutaj',athleteHere:'Sportowiec jest tutaj',
     connecting:'Łączenie z sesją…',resolvingUser:'Szukanie najnowszej sesji…',tryingAlt:'Próba alternatywnych punktów końcowych…',
     fetchingGarmin:'Pobieranie strony Garmin…',loadingTest:'Wczytywanie sesji testowej…',
     connectedViaProxy:'Połączono przez proxy',
@@ -1929,6 +1983,7 @@ const TRANSLATIONS = {
     titleRoute:'Zobrazovat celou trasu — klepnutím do mapy zrušíte',
     titleAll:'Zobrazovat trasu i mou polohu — klepnutím do mapy zrušíte',
     trackerPopup:'Poloha sportovce',userPopup:'Moje poloha',startTooltip:'Start',
+    youAreHere:'Jste zde',athleteHere:'Sportovec je zde',
     connecting:'Připojování k relaci…',resolvingUser:'Hledání nejnovější relace…',tryingAlt:'Zkouším alternativní koncové body…',
     fetchingGarmin:'Načítání stránky Garmin…',loadingTest:'Načítání testovací relace…',
     connectedViaProxy:'Připojeno přes proxy',
@@ -1986,6 +2041,7 @@ const TRANSLATIONS = {
     titleRoute:'Zobrazovať celú trasu — ťuknutím do mapy zrušíte',
     titleAll:'Zobrazovať trasu aj moju polohu — ťuknutím do mapy zrušíte',
     trackerPopup:'Poloha športovca',userPopup:'Moja poloha',startTooltip:'Štart',
+    youAreHere:'Ste tu',athleteHere:'Športovec je tu',
     connecting:'Pripájanie k relácii…',resolvingUser:'Hľadá sa najnovšia relácia…',tryingAlt:'Skúšajú sa alternatívne koncové body…',
     fetchingGarmin:'Načítava sa stránka Garmin…',loadingTest:'Načítava sa testovacia relácia…',
     connectedViaProxy:'Pripojené cez proxy',
@@ -2043,6 +2099,7 @@ const TRANSLATIONS = {
     titleRoute:'Prikazuj celotno pot — kliknite zemljevid za preklic',
     titleAll:'Prikazuj pot in mojo lokacijo — kliknite zemljevid za preklic',
     trackerPopup:'Položaj športnika',userPopup:'Moja lokacija',startTooltip:'Start',
+    youAreHere:'Tukaj ste',athleteHere:'Športnik je tukaj',
     connecting:'Povezovanje s sejo…',resolvingUser:'Iskanje najnovejše seje…',tryingAlt:'Poskus z alternativnimi končnimi točkami…',
     fetchingGarmin:'Pridobivanje strani Garmin…',loadingTest:'Nalaganje preizkusne seje…',
     connectedViaProxy:'Povezano prek posrednika',
@@ -2100,6 +2157,7 @@ const TRANSLATIONS = {
     titleRoute:'Prikazuj cijelu rutu — kliknite kartu za odustajanje',
     titleAll:'Prikazuj rutu i moju lokaciju — kliknite kartu za odustajanje',
     trackerPopup:'Položaj sportaša',userPopup:'Moja lokacija',startTooltip:'Start',
+    youAreHere:'Ovdje ste',athleteHere:'Sportaš je ovdje',
     connecting:'Povezivanje sa sesijom…',resolvingUser:'Traženje najnovije sesije…',tryingAlt:'Isprobavanje alternativnih krajnjih točaka…',
     fetchingGarmin:'Dohvaćanje Garmin stranice…',loadingTest:'Učitavanje testne sesije…',
     connectedViaProxy:'Povezano preko proxyja',
@@ -2157,6 +2215,7 @@ const TRANSLATIONS = {
     titleRoute:'Teljes útvonal látható — a térképre kattintva megszakíthatod',
     titleAll:'Útvonal és helyzetem látható — a térképre kattintva megszakíthatod',
     trackerPopup:'A sportoló helyzete',userPopup:'Helyzetem',startTooltip:'Rajt',
+    youAreHere:'Itt vagy',athleteHere:'A sportoló itt van',
     connecting:'Csatlakozás a munkamenethez…',resolvingUser:'A legújabb munkamenet keresése…',tryingAlt:'Alternatív végpontok kipróbálása…',
     fetchingGarmin:'Garmin-oldal lekérése…',loadingTest:'Tesztmunkamenet betöltése…',
     connectedViaProxy:'Csatlakozva proxyn keresztül',
@@ -2214,6 +2273,7 @@ const TRANSLATIONS = {
     titleRoute:'Ολόκληρη η διαδρομή ορατή — κάντε κλικ στον χάρτη για ακύρωση',
     titleAll:'Διαδρομή και τοποθεσία μου ορατές — κάντε κλικ στον χάρτη για ακύρωση',
     trackerPopup:'Θέση αθλητή',userPopup:'Η τοποθεσία μου',startTooltip:'Εκκίνηση',
+    youAreHere:'Είστε εδώ',athleteHere:'Ο αθλητής είναι εδώ',
     connecting:'Σύνδεση με τη συνεδρία…',resolvingUser:'Αναζήτηση της πιο πρόσφατης συνεδρίας…',tryingAlt:'Δοκιμή εναλλακτικών endpoints…',
     fetchingGarmin:'Λήψη της σελίδας Garmin…',loadingTest:'Φόρτωση δοκιμαστικής συνεδρίας…',
     connectedViaProxy:'Σύνδεση μέσω proxy',
@@ -2271,6 +2331,7 @@ const TRANSLATIONS = {
     titleRoute:'Hold hele ruten synlig — klik på kortet for at annullere',
     titleAll:'Hold ruten og min placering synlige — klik på kortet for at annullere',
     trackerPopup:'Atletens position',userPopup:'Min placering',startTooltip:'Start',
+    youAreHere:'Du er her',athleteHere:'Atleten er her',
     connecting:'Opretter forbindelse til sessionen…',resolvingUser:'Finder den seneste session…',tryingAlt:'Prøver alternative endpoints…',
     fetchingGarmin:'Henter Garmin-siden…',loadingTest:'Indlæser testsession…',
     connectedViaProxy:'Forbundet via proxy',
@@ -2328,6 +2389,7 @@ const TRANSLATIONS = {
     titleRoute:'Hold hele ruten synlig — klikk på kartet for å avbryte',
     titleAll:'Hold ruten og posisjonen min synlig — klikk på kartet for å avbryte',
     trackerPopup:'Utøverens posisjon',userPopup:'Min posisjon',startTooltip:'Start',
+    youAreHere:'Du er her',athleteHere:'Utøveren er her',
     connecting:'Kobler til økten…',resolvingUser:'Finner den nyeste økten…',tryingAlt:'Prøver alternative endepunkter…',
     fetchingGarmin:'Henter Garmin-siden…',loadingTest:'Laster inn testøkt…',
     connectedViaProxy:'Koblet til via proxy',
@@ -2385,6 +2447,7 @@ const TRANSLATIONS = {
     titleRoute:'Håll hela rutten synlig — klicka på kartan för att avbryta',
     titleAll:'Håll rutten och min position synliga — klicka på kartan för att avbryta',
     trackerPopup:'Idrottarens position',userPopup:'Min position',startTooltip:'Start',
+    youAreHere:'Du är här',athleteHere:'Idrottaren är här',
     connecting:'Ansluter till sessionen…',resolvingUser:'Letar efter den senaste sessionen…',tryingAlt:'Provar alternativa slutpunkter…',
     fetchingGarmin:'Hämtar Garmin-sidan…',loadingTest:'Läser in testsession…',
     connectedViaProxy:'Ansluten via proxy',
@@ -2442,6 +2505,7 @@ const TRANSLATIONS = {
     titleRoute:'Pidä koko reitti näkyvissä — peruuta napsauttamalla karttaa',
     titleAll:'Pidä reitti ja oma sijainti näkyvissä — peruuta napsauttamalla karttaa',
     trackerPopup:'Urheilijan sijainti',userPopup:'Oma sijainti',startTooltip:'Lähtö',
+    youAreHere:'Olet tässä',athleteHere:'Urheilija on tässä',
     connecting:'Yhdistetään istuntoon…',resolvingUser:'Etsitään uusinta istuntoa…',tryingAlt:'Kokeillaan vaihtoehtoisia päätepisteitä…',
     fetchingGarmin:'Haetaan Garmin-sivua…',loadingTest:'Ladataan testi-istuntoa…',
     connectedViaProxy:'Yhdistetty välityspalvelimen kautta',
@@ -2499,6 +2563,7 @@ const TRANSLATIONS = {
     titleRoute:'ルート全体を表示 — 地図をクリックで解除',
     titleAll:'ルートと現在地を表示 — 地図をクリックで解除',
     trackerPopup:'選手の位置',userPopup:'現在地',startTooltip:'スタート',
+    youAreHere:'現在地',athleteHere:'選手はここ',
     connecting:'セッションに接続中…',resolvingUser:'最新のセッションを検索中…',tryingAlt:'別のエンドポイントを試行中…',
     fetchingGarmin:'Garmin のページを取得中…',loadingTest:'テストセッションを読み込み中…',
     connectedViaProxy:'プロキシ経由で接続しました',
@@ -2556,6 +2621,7 @@ const TRANSLATIONS = {
     titleRoute:'전체 경로 보기 유지 — 지도를 클릭하면 해제',
     titleAll:'경로와 내 위치 보기 유지 — 지도를 클릭하면 해제',
     trackerPopup:'선수 위치',userPopup:'내 위치',startTooltip:'출발',
+    youAreHere:'현재 위치',athleteHere:'선수는 여기',
     connecting:'세션에 연결하는 중…',resolvingUser:'최신 세션을 찾는 중…',tryingAlt:'대체 엔드포인트를 시도하는 중…',
     fetchingGarmin:'Garmin 페이지를 가져오는 중…',loadingTest:'테스트 세션을 불러오는 중…',
     connectedViaProxy:'프록시를 통해 연결됨',
@@ -2613,6 +2679,7 @@ const TRANSLATIONS = {
     titleRoute:'保持显示完整路线 — 点击地图取消',
     titleAll:'保持显示路线和我的位置 — 点击地图取消',
     trackerPopup:'运动员位置',userPopup:'我的位置',startTooltip:'起点',
+    youAreHere:'你在这里',athleteHere:'运动员在这里',
     connecting:'正在连接会话…',resolvingUser:'正在查找最新会话…',tryingAlt:'正在尝试备用接口…',
     fetchingGarmin:'正在获取 Garmin 页面…',loadingTest:'正在加载测试会话…',
     connectedViaProxy:'已通过代理连接',
@@ -2670,6 +2737,7 @@ const TRANSLATIONS = {
     titleRoute:'持續顯示完整路線 — 點一下地圖即可取消',
     titleAll:'持續顯示路線與我的位置 — 點一下地圖即可取消',
     trackerPopup:'運動員位置',userPopup:'我的位置',startTooltip:'起點',
+    youAreHere:'你在這裡',athleteHere:'運動員在這裡',
     connecting:'正在連線至工作階段…',resolvingUser:'正在尋找最新的工作階段…',tryingAlt:'正在嘗試備用端點…',
     fetchingGarmin:'正在取得 Garmin 網頁…',loadingTest:'正在載入測試工作階段…',
     connectedViaProxy:'已透過 Proxy 連線',
@@ -2727,6 +2795,7 @@ const TRANSLATIONS = {
     titleRoute:'แสดงเส้นทางทั้งหมดไว้เสมอ — คลิกแผนที่เพื่อยกเลิก',
     titleAll:'แสดงเส้นทางและตำแหน่งของฉันไว้เสมอ — คลิกแผนที่เพื่อยกเลิก',
     trackerPopup:'ตำแหน่งนักกีฬา',userPopup:'ตำแหน่งของฉัน',startTooltip:'จุดเริ่มต้น',
+    youAreHere:'คุณอยู่ที่นี่',athleteHere:'นักกีฬาอยู่ที่นี่',
     connecting:'กำลังเชื่อมต่อเซสชัน…',resolvingUser:'กำลังค้นหาเซสชันล่าสุด…',tryingAlt:'กำลังลองปลายทางสำรอง…',
     fetchingGarmin:'กำลังดึงหน้า Garmin…',loadingTest:'กำลังโหลดเซสชันทดสอบ…',
     connectedViaProxy:'เชื่อมต่อผ่านพร็อกซีแล้ว',
@@ -2784,6 +2853,7 @@ const TRANSLATIONS = {
     titleRoute:'הצגת המסלול המלא — לחצו על המפה לביטול',
     titleAll:'הצגת המסלול והמיקום שלי — לחצו על המפה לביטול',
     trackerPopup:'מיקום הספורטאי',userPopup:'המיקום שלי',startTooltip:'זינוק',
+    youAreHere:'אתם כאן',athleteHere:'הספורטאי כאן',
     connecting:'מתחבר לסשן…',resolvingUser:'מחפש את הסשן האחרון…',tryingAlt:'מנסה נקודות קצה חלופיות…',
     fetchingGarmin:'מאחזר את דף Garmin…',loadingTest:'טוען סשן בדיקה…',
     connectedViaProxy:'מחובר דרך פרוקסי',
@@ -2841,6 +2911,7 @@ const TRANSLATIONS = {
     titleRoute:'Tampilkan seluruh rute — klik peta untuk membatalkan',
     titleAll:'Tampilkan rute dan lokasi saya — klik peta untuk membatalkan',
     trackerPopup:'Posisi atlet',userPopup:'Lokasi saya',startTooltip:'Start',
+    youAreHere:'Anda di sini',athleteHere:'Atlet di sini',
     connecting:'Menghubungkan ke sesi…',resolvingUser:'Mencari sesi terbaru…',tryingAlt:'Mencoba endpoint alternatif…',
     fetchingGarmin:'Mengambil halaman Garmin…',loadingTest:'Memuat sesi uji…',
     connectedViaProxy:'Terhubung melalui proxy',
@@ -2898,6 +2969,7 @@ const TRANSLATIONS = {
     titleRoute:'Kekalkan seluruh laluan kelihatan — klik peta untuk membatalkan',
     titleAll:'Kekalkan laluan dan lokasi saya kelihatan — klik peta untuk membatalkan',
     trackerPopup:'Kedudukan atlet',userPopup:'Lokasi saya',startTooltip:'Mula',
+    youAreHere:'Anda di sini',athleteHere:'Atlet di sini',
     connecting:'Menyambung ke sesi…',resolvingUser:'Mencari sesi terkini…',tryingAlt:'Mencuba titik akhir alternatif…',
     fetchingGarmin:'Mengambil halaman Garmin…',loadingTest:'Memuatkan sesi ujian…',
     connectedViaProxy:'Disambungkan melalui proksi',
@@ -3044,6 +3116,7 @@ function applyTranslations() {
   if (state.activityState) applyActivityState(state.activityState);
   // Marker popups/tooltips (if already placed)
   if (userMarker)  userMarker.setPopupContent(`<b style="color:#3b82f6">${t('userPopup')}</b>`);
+  refreshPinLabels();
   if (startMarker) { startMarker.setTooltipContent(t('startTooltip')); startMarker.options.title = t('startTooltip'); }
   // Dropdown active state
   document.querySelectorAll('.lang-option').forEach(el => {
@@ -3098,6 +3171,7 @@ function initMap() {
     maxZoom: 19,
   }).addTo(map);
   map.getPane('tilePane').classList.add('dark-tiles');
+  map.on('zoomend', layoutPinLabels);
 
   // Disable auto-follow silently on any user-initiated map interaction
   map.on('dragstart', _deactivateAutoFollow);
@@ -3105,20 +3179,58 @@ function initMap() {
   map.getContainer().addEventListener('touchmove', e => { if (e.touches.length >= 2) _deactivateAutoFollow(); }, { passive: true });
 }
 
+// Each dot carries a callout naming it ("Athlete is here" / "You are here").
+// It sits above the dot unless layoutPinLabels() flipped it below, and the
+// popup opens above whichever of the two is on top, so it never hides it.
+const _labelBelow = { tracker: false, user: false };
+
+function pinLabel(kind, text) {
+  return `<div class="pin-label-wrap"><div class="pin-label ${kind}">${escHtml(text)}</div></div>`;
+}
+
 function trackerIcon() {
+  const below = _labelBelow.tracker;
   return L.divIcon({
-    className: '',
-    html: `<div class="tracker-marker-outer"><div class="tracker-pulse"></div><div class="tracker-dot"></div></div>`,
-    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -16],
+    className: below ? 'label-below' : '',
+    html: `<div class="tracker-marker-outer"><div class="tracker-pulse"></div><div class="tracker-dot"></div>${pinLabel('athlete', t('athleteHere'))}</div>`,
+    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, below ? -16 : -44],
   });
 }
 
 function userIcon() {
+  const below = _labelBelow.user;
   return L.divIcon({
-    className: '',
-    html: `<div class="user-marker-outer"><div class="user-pulse"></div><div class="user-dot"></div></div>`,
-    iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -14],
+    className: below ? 'label-below' : '',
+    html: `<div class="user-marker-outer"><div class="user-pulse"></div><div class="user-dot"></div>${pinLabel('user', t('youAreHere'))}</div>`,
+    iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, below ? -14 : -42],
   });
+}
+
+// Spectating from the roadside puts the two dots on top of each other, and two
+// callouts above them would cover each other (and the upper dot). When the dots
+// are that close on screen, the LOWER one's callout goes below its dot, which
+// opens the gap between them. Screen distance changes only with zoom, a new
+// position or a new language (callout width), so it runs on those.
+function layoutPinLabels() {
+  let tBelow = false, uBelow = false;
+  if (map && trackerMarker && userMarker) {
+    const a = map.latLngToContainerPoint(trackerMarker.getLatLng());
+    const b = map.latLngToContainerPoint(userMarker.getLatLng());
+    const w = m => m.getElement()?.querySelector('.pin-label')?.offsetWidth || 140;
+    const clashX = (w(trackerMarker) + w(userMarker)) / 2 + 6;
+    if (Math.abs(a.x - b.x) < clashX && Math.abs(a.y - b.y) < 48) {
+      if (b.y >= a.y) uBelow = true; else tBelow = true;
+    }
+  }
+  if (trackerMarker && tBelow !== _labelBelow.tracker) { _labelBelow.tracker = tBelow; trackerMarker.setIcon(trackerIcon()); }
+  if (userMarker    && uBelow !== _labelBelow.user)    { _labelBelow.user    = uBelow; userMarker.setIcon(userIcon()); }
+}
+
+// Re-renders both callouts in the current language (applyLang)
+function refreshPinLabels() {
+  if (trackerMarker) trackerMarker.setIcon(trackerIcon());
+  if (userMarker)    userMarker.setIcon(userIcon());
+  layoutPinLabels();
 }
 
 function startIcon() {
@@ -3144,6 +3256,7 @@ function updateTrackerOnMap(lat, lng, label) {
   }
   document.getElementById('tracker-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   state.trackerLatLng = [lat, lng];
+  layoutPinLabels();
   updateGap();
   setNavButton(lat, lng);
   if (_camBusy()) return;
@@ -3190,6 +3303,7 @@ function updateUserOnMap(lat, lng, accuracy) {
   }
   document.getElementById('user-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   document.getElementById('user-loc-dot').className = 'loc-dot user';
+  layoutPinLabels();
   updateGap();
   if (_camBusy()) return;
   switch (state.autoFollow) {
@@ -4189,6 +4303,7 @@ async function startSession(url) {
     if (layer) map.removeLayer(layer);
   });
   trackerMarker = userMarker = userAccuracy = trackPolyline = startMarker = null;
+  _labelBelow.tracker = _labelBelow.user = false;
 
   ['m-status','m-pace','m-speed','m-dist','m-dur','m-act'].forEach(id => {
     const el = document.getElementById(id); if (el) { el.textContent = '—'; el.style.color = ''; }

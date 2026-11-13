@@ -15,7 +15,10 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
 
 ## Features
 
-- Real-time athlete position on an interactive map
+- Real-time athlete position on an interactive map, alongside your own — each
+  dot carries a callout, "Athlete is here" and "You are here". When the two
+  dots are close on screen (you are at the roadside), the lower one's callout
+  flips below its dot so neither hides the other (`layoutPinLabels`)
 - Live / paused / finished detection, with a timer counting how long the pause has lasted ([how it works](#how-a-pause-is-detected))
 - Straight-line distance between you and the athlete, updated on every trackpoint and every GPS fix
 - Auto-follow modes: athlete, my location, route, or all
@@ -23,7 +26,7 @@ A single-page web app for following a Garmin LiveTrack session in real time — 
   - Per-field unit selection: km, m, mi / /km, /mi / km/h, mi/h
   - Smart recalculation based on the last two fields edited
 - One-tap navigation to athlete via Google Maps (FAB button)
-- Multilingual: Português, English, Español, Français, Deutsch
+- Multilingual: the 28 Connect IQ Store languages (`TRANSLATIONS`), Hebrew right-to-left
 - Dark theme, mobile-first layout with safe-area support
 
 ## Usage
