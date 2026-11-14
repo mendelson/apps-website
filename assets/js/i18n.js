@@ -52,7 +52,8 @@
         'Dynamic Hours': 'Ein analoges Zifferblatt im 24-Stunden-Format – 1 Uhr nachts und 13 Uhr sehen nie gleich aus.',
         'Volty': 'Ein animiertes Zifferblatt mit Volty, einer kleinen Batterie, die mit dir trainiert. Ihre Laune zeigt, wie viel Akku deine Uhr noch hat.',
         'Discomfort': 'Ein Zifferblatt, bei dem immer etwas leicht daneben ist: Zeiger, die die Mitte verfehlen, eine schiefe Linie, ein Sekundenpunkt, der vom Bildschirm wandert. Drei Layouts.',
-        'Demotivation': 'Beende ein Training (oder lass eins ausfallen), und dein Zifferblatt hat einen sarkastischen Kommentar dazu – direkt unter der Uhrzeit.'
+        'Demotivation': 'Beende ein Training (oder lass eins ausfallen), und dein Zifferblatt hat einen sarkastischen Kommentar dazu – direkt unter der Uhrzeit.',
+        'Cutout': 'Ein hochwertiges analog-digitales Zifferblatt: Uhrzeit, dein Fortschritt und das Wetter – alles auf einen Blick.'
       },
       momentumTags: {
         trending: '🔥 Trend Diese Woche',
@@ -148,7 +149,8 @@
         'Dynamic Hours': 'An analog watch face that shows time in 24-hour format, so 1 AM and 1 PM never look the same.',
         'Volty': 'An animated watch face starring Volty, a little battery that trains with you. Its mood shows how much charge your watch has left.',
         'Discomfort': 'A watch face where something is always slightly wrong: hands that miss the centre, a tilted line, a seconds dot that wanders off the screen. Three layouts.',
-        'Demotivation': 'Finish a workout (or skip one) and your watch face has a sarcastic comment about it, right under the time.'
+        'Demotivation': 'Finish a workout (or skip one) and your watch face has a sarcastic comment about it, right under the time.',
+        'Cutout': 'A premium analog-digital watch face: the time, your progress and the weather, all in one glance.'
       },
       momentumTags: {
         trending: '🔥 Trending This Week',
@@ -244,7 +246,8 @@
         'Dynamic Hours': 'Una esfera analógica que muestra la hora en formato de 24 horas, para que la 1 AM y la 1 PM nunca se vean iguales.',
         'Volty': 'Una esfera animada protagonizada por Volty, una pequeña batería que entrena contigo. Su estado de ánimo muestra cuánta carga le queda a tu reloj.',
         'Discomfort': 'Una esfera en la que siempre hay algo ligeramente mal: agujas que no dan en el centro, una línea torcida, un punto de segundos que se escapa de la pantalla. Tres diseños.',
-        'Demotivation': 'Termina un entrenamiento (o sáltatelo) y tu esfera tiene un comentario sarcástico al respecto, justo debajo de la hora.'
+        'Demotivation': 'Termina un entrenamiento (o sáltatelo) y tu esfera tiene un comentario sarcástico al respecto, justo debajo de la hora.',
+        'Cutout': 'Una esfera analógico-digital premium: la hora, tu progreso y el tiempo, todo de un vistazo.'
       },
       momentumTags: {
         trending: '🔥 Tendencia Esta Semana',
@@ -340,7 +343,8 @@
         'Dynamic Hours': 'Un cadran analogique qui affiche l’heure au format 24 heures : 1 h et 13 h ne se ressemblent jamais.',
         'Volty': 'Un cadran animé avec Volty, une petite batterie qui s’entraîne avec vous. Son humeur indique la charge restante de votre montre.',
         'Discomfort': 'Un cadran où quelque chose cloche toujours un peu : des aiguilles qui ratent le centre, une ligne de travers, un point des secondes qui s’échappe de l’écran. Trois mises en page.',
-        'Demotivation': 'Terminez une séance (ou sautez-la) et votre cadran a un commentaire sarcastique à faire, juste sous l’heure.'
+        'Demotivation': 'Terminez une séance (ou sautez-la) et votre cadran a un commentaire sarcastique à faire, juste sous l’heure.',
+        'Cutout': 'Un cadran analogique-numérique haut de gamme : l’heure, vos progrès et la météo, en un seul coup d’œil.'
       },
       momentumTags: {
         trending: '🔥 Tendance Cette Semaine',
@@ -436,7 +440,8 @@
         'Dynamic Hours': 'Um mostrador analógico que exibe a hora no formato 24 horas, para que 1h e 13h nunca pareçam iguais.',
         'Volty': 'Um mostrador animado estrelado pelo Volty, uma pequena bateria que treina com você. O humor dele mostra quanta carga ainda resta no seu relógio.',
         'Discomfort': 'Um mostrador em que sempre tem algo levemente errado: ponteiros que erram o centro, uma linha torta, um ponto dos segundos que foge da tela. Três layouts.',
-        'Demotivation': 'Termine um treino (ou pule um) e o seu mostrador tem um comentário sarcástico sobre isso, logo abaixo da hora.'
+        'Demotivation': 'Termine um treino (ou pule um) e o seu mostrador tem um comentário sarcástico sobre isso, logo abaixo da hora.',
+        'Cutout': 'Um mostrador analógico-digital premium: a hora, seu progresso e o clima, tudo em um só olhar.'
       },
       momentumTags: {
         trending: '🔥 Em Alta Esta Semana',
@@ -531,7 +536,8 @@
         'Dynamic Hours': 'Un quadrante analogico che mostra l’ora in formato 24 ore, così l’1 di notte e le 13 non sembrano mai uguali.',
         'Volty': 'Un quadrante animato con Volty, una piccola batteria che si allena con te. Il suo umore mostra quanta carica resta al tuo orologio.',
         'Discomfort': 'Un quadrante in cui c’è sempre qualcosa di leggermente sbagliato: lancette che mancano il centro, una linea storta, un punto dei secondi che scappa dallo schermo. Tre layout.',
-        'Demotivation': 'Finisci un allenamento (o saltane uno) e il tuo quadrante ha un commento sarcastico da fare, proprio sotto l’ora.'
+        'Demotivation': 'Finisci un allenamento (o saltane uno) e il tuo quadrante ha un commento sarcastico da fare, proprio sotto l’ora.',
+        'Cutout': 'Un quadrante analogico-digitale premium: l’ora, i tuoi progressi e il meteo, tutto in un solo sguardo.'
       },
       momentumTags: {
         trending: '🔥 Di tendenza questa settimana',
@@ -627,7 +633,8 @@
         'Dynamic Hours': 'Аналоговый циферблат в 24-часовом формате: час ночи и час дня никогда не выглядят одинаково.',
         'Volty': 'Анимированный циферблат с Volty — маленькой батарейкой, которая тренируется вместе с вами. Её настроение показывает, сколько заряда осталось в часах.',
         'Discomfort': 'Циферблат, в котором всегда что-то слегка не так: стрелки мимо центра, перекошенная линия, точка секунд, уходящая за край экрана. Три варианта.',
-        'Demotivation': 'Закончите тренировку (или пропустите её) — и у циферблата найдётся саркастичный комментарий прямо под временем.'
+        'Demotivation': 'Закончите тренировку (или пропустите её) — и у циферблата найдётся саркастичный комментарий прямо под временем.',
+        'Cutout': 'Премиальный аналогово-цифровой циферблат: время, ваш прогресс и погода — всё с одного взгляда.'
       },
       momentumTags: {
         trending: '🔥 В тренде на этой неделе',
@@ -723,7 +730,8 @@
         'Dynamic Hours': 'Een analoge wijzerplaat die de tijd in 24-uursnotatie toont, zodat 1 uur ’s nachts en 13 uur er nooit hetzelfde uitzien.',
         'Volty': 'Een geanimeerde wijzerplaat met Volty, een kleine batterij die met je meetraint. Zijn humeur laat zien hoeveel lading je horloge nog heeft.',
         'Discomfort': 'Een wijzerplaat waar altijd iets net niet klopt: wijzers die het midden missen, een scheve lijn, een secondestip die van het scherm afdwaalt. Drie lay-outs.',
-        'Demotivation': 'Rond een training af (of sla er een over) en je wijzerplaat heeft er een sarcastische opmerking over, vlak onder de tijd.'
+        'Demotivation': 'Rond een training af (of sla er een over) en je wijzerplaat heeft er een sarcastische opmerking over, vlak onder de tijd.',
+        'Cutout': 'Een premium analoog-digitale wijzerplaat: de tijd, je voortgang en het weer, alles in één oogopslag.'
       },
       momentumTags: {
         trending: '🔥 Trending deze week',
@@ -819,7 +827,8 @@
         'Dynamic Hours': 'Um mostrador analógico que mostra as horas no formato de 24 horas, para que a 1h e as 13h nunca pareçam iguais.',
         'Volty': 'Um mostrador animado protagonizado pelo Volty, uma pequena bateria que treina consigo. O humor dele mostra quanta carga ainda resta no relógio.',
         'Discomfort': 'Um mostrador em que há sempre algo ligeiramente errado: ponteiros que falham o centro, uma linha torta, um ponto dos segundos que foge do ecrã. Três esquemas.',
-        'Demotivation': 'Termine um treino (ou salte um) e o seu mostrador tem um comentário sarcástico sobre isso, mesmo por baixo da hora.'
+        'Demotivation': 'Termine um treino (ou salte um) e o seu mostrador tem um comentário sarcástico sobre isso, mesmo por baixo da hora.',
+        'Cutout': 'Um mostrador analógico-digital premium: a hora, o seu progresso e o tempo, tudo num só olhar.'
       },
       momentumTags: {
         trending: '🔥 Em Destaque Esta Semana',
@@ -915,7 +924,8 @@
         'Dynamic Hours': 'Analogowa tarcza w formacie 24-godzinnym — 1:00 w nocy i 13:00 nigdy nie wyglądają tak samo.',
         'Volty': 'Animowana tarcza z Voltym, małą baterią, która trenuje razem z Tobą. Jego nastrój pokazuje, ile energii zostało w zegarku.',
         'Discomfort': 'Tarcza, na której zawsze coś jest odrobinę nie tak: wskazówki chybiające środka, przekrzywiona linia, kropka sekund uciekająca z ekranu. Trzy układy.',
-        'Demotivation': 'Skończ trening (albo go odpuść), a tarcza skomentuje to sarkastycznie tuż pod godziną.'
+        'Demotivation': 'Skończ trening (albo go odpuść), a tarcza skomentuje to sarkastycznie tuż pod godziną.',
+        'Cutout': 'Tarcza analogowo-cyfrowa klasy premium: godzina, twoje postępy i pogoda – wszystko w jednym spojrzeniu.'
       },
       momentumTags: {
         trending: '🔥 Popularne w tym tygodniu',
@@ -1011,7 +1021,8 @@
         'Dynamic Hours': 'Analogový ciferník s časem ve 24hodinovém formátu — 1 hodina v noci a 13 hodin nikdy nevypadají stejně.',
         'Volty': 'Animovaný ciferník s Voltym, malou baterkou, která trénuje s vámi. Jeho nálada ukazuje, kolik energie vašim hodinkám zbývá.',
         'Discomfort': 'Ciferník, na kterém je vždy něco trochu špatně: ručičky mimo střed, nakloněná čára, sekundová tečka, která utíká z displeje. Tři rozvržení.',
-        'Demotivation': 'Dokončete trénink (nebo ho vynechte) a ciferník k tomu má sarkastický komentář, přímo pod časem.'
+        'Demotivation': 'Dokončete trénink (nebo ho vynechte) a ciferník k tomu má sarkastický komentář, přímo pod časem.',
+        'Cutout': 'Prémiový analogově-digitální ciferník: čas, váš pokrok a počasí, vše na jeden pohled.'
       },
       momentumTags: {
         trending: '🔥 Tento týden v kurzu',
@@ -1107,7 +1118,8 @@
         'Dynamic Hours': 'Analógový ciferník s časom v 24-hodinovom formáte — 1 hodina v noci a 13 hodín nikdy nevyzerajú rovnako.',
         'Volty': 'Animovaný ciferník s Voltym, malou batériou, ktorá trénuje s vami. Jeho nálada ukazuje, koľko energie hodinkám zostáva.',
         'Discomfort': 'Ciferník, na ktorom je vždy niečo trochu zle: ručičky mimo stredu, naklonená čiara, sekundová bodka, ktorá uteká z displeja. Tri rozloženia.',
-        'Demotivation': 'Dokončite tréning (alebo ho vynechajte) a ciferník k tomu má sarkastický komentár, priamo pod časom.'
+        'Demotivation': 'Dokončite tréning (alebo ho vynechajte) a ciferník k tomu má sarkastický komentár, priamo pod časom.',
+        'Cutout': 'Prémiový analógovo-digitálny ciferník: čas, váš pokrok a počasie, všetko na jeden pohľad.'
       },
       momentumTags: {
         trending: '🔥 Tento týždeň v kurze',
@@ -1203,7 +1215,8 @@
         'Dynamic Hours': 'Analogna številčnica, ki kaže čas v 24-urnem zapisu, zato 1. ura ponoči in 13. ura nikoli nista videti enako.',
         'Volty': 'Animirana številčnica z Voltyjem, majhno baterijo, ki trenira z vami. Njegovo razpoloženje pokaže, koliko energije ima ura še na voljo.',
         'Discomfort': 'Številčnica, na kateri je vedno nekaj rahlo narobe: kazalci, ki zgrešijo središče, poševna črta, sekundna pika, ki odtava z zaslona. Tri postavitve.',
-        'Demotivation': 'Končajte trening (ali ga izpustite) in številčnica ima o tem sarkastičen komentar, tik pod uro.'
+        'Demotivation': 'Končajte trening (ali ga izpustite) in številčnica ima o tem sarkastičen komentar, tik pod uro.',
+        'Cutout': 'Vrhunska analogno-digitalna številčnica: ura, vaš napredek in vreme, vse na en pogled.'
       },
       momentumTags: {
         trending: '🔥 Priljubljeno ta teden',
@@ -1298,7 +1311,8 @@
         'Dynamic Hours': 'Analogni brojčanik koji prikazuje vrijeme u 24-satnom formatu, pa 1 sat noću i 13 sati nikad ne izgledaju isto.',
         'Volty': 'Animirani brojčanik s Voltyjem, malom baterijom koja trenira s vama. Njegovo raspoloženje pokazuje koliko je energije satu preostalo.',
         'Discomfort': 'Brojčanik na kojem je uvijek nešto malo krivo: kazaljke koje promašuju središte, nakrivljena linija, točka sekundi koja odluta sa zaslona. Tri rasporeda.',
-        'Demotivation': 'Završite trening (ili ga preskočite) i brojčanik ima sarkastičan komentar o tome, odmah ispod vremena.'
+        'Demotivation': 'Završite trening (ili ga preskočite) i brojčanik ima sarkastičan komentar o tome, odmah ispod vremena.',
+        'Cutout': 'Vrhunski analogno-digitalni brojčanik: vrijeme, vaš napredak i vremenska prognoza, sve u jednom pogledu.'
       },
       momentumTags: {
         trending: '🔥 Popularno ovaj tjedan',
@@ -1394,7 +1408,8 @@
         'Dynamic Hours': 'Analóg óralap 24 órás kijelzéssel, így hajnali 1 és délután 1 sosem néz ki ugyanúgy.',
         'Volty': 'Animált óralap Volty főszereplésével — egy kis akkumulátor, amely veled edz. A hangulata mutatja, mennyi töltés maradt az órádban.',
         'Discomfort': 'Óralap, amelyen mindig van valami kicsit elcsúszva: a középpontot elvétő mutatók, egy ferde vonal, a kijelzőről elkóborló másodpercpont. Három elrendezés.',
-        'Demotivation': 'Fejezz be egy edzést (vagy hagyd ki), és az óralapnak lesz hozzá egy szarkasztikus megjegyzése, közvetlenül az idő alatt.'
+        'Demotivation': 'Fejezz be egy edzést (vagy hagyd ki), és az óralapnak lesz hozzá egy szarkasztikus megjegyzése, közvetlenül az idő alatt.',
+        'Cutout': 'Prémium analóg-digitális számlap: az idő, a haladásod és az időjárás, mind egy pillantással.'
       },
       momentumTags: {
         trending: '🔥 A hét slágere',
@@ -1490,7 +1505,8 @@
         'Dynamic Hours': 'Αναλογική πρόσοψη που δείχνει την ώρα σε 24ωρη μορφή, ώστε η 1 π.μ. και η 1 μ.μ. να μη μοιάζουν ποτέ.',
         'Volty': 'Κινούμενη πρόσοψη με πρωταγωνιστή τον Volty, μια μικρή μπαταρία που προπονείται μαζί σας. Η διάθεσή του δείχνει πόση μπαταρία απομένει στο ρολόι.',
         'Discomfort': 'Ένα ρολόι όπου κάτι είναι πάντα λίγο λάθος: δείκτες που αστοχούν στο κέντρο, μια στραβή γραμμή, μια κουκκίδα δευτερολέπτων που ξεφεύγει από την οθόνη. Τρεις διατάξεις.',
-        'Demotivation': 'Ολοκληρώστε μια προπόνηση (ή παραλείψτε τη) και το ρολόι σας έχει ένα σαρκαστικό σχόλιο γι’ αυτό, ακριβώς κάτω από την ώρα.'
+        'Demotivation': 'Ολοκληρώστε μια προπόνηση (ή παραλείψτε τη) και το ρολόι σας έχει ένα σαρκαστικό σχόλιο γι’ αυτό, ακριβώς κάτω από την ώρα.',
+        'Cutout': 'Ένα premium αναλογικό-ψηφιακό καντράν: η ώρα, η πρόοδός σας και ο καιρός, όλα με μια ματιά.'
       },
       momentumTags: {
         trending: '🔥 Δημοφιλές αυτή την εβδομάδα',
@@ -1586,7 +1602,8 @@
         'Dynamic Hours': 'En analog urskive, der viser tiden i 24-timersformat, så kl. 1 om natten og kl. 13 aldrig ser ens ud.',
         'Volty': 'En animeret urskive med Volty, et lille batteri, der træner med dig. Humøret viser, hvor meget strøm uret har tilbage.',
         'Discomfort': 'En urskive, hvor noget altid er en smule forkert: visere, der rammer ved siden af midten, en skæv streg, en sekundprik, der vandrer ud af skærmen. Tre layouts.',
-        'Demotivation': 'Afslut en træning (eller spring en over), og din urskive har en sarkastisk kommentar til det, lige under klokken.'
+        'Demotivation': 'Afslut en træning (eller spring en over), og din urskive har en sarkastisk kommentar til det, lige under klokken.',
+        'Cutout': 'En premium analog-digital urskive: klokken, dine fremskridt og vejret, alt sammen med ét blik.'
       },
       momentumTags: {
         trending: '🔥 Populær i denne uge',
@@ -1682,7 +1699,8 @@
         'Dynamic Hours': 'En analog urskive som viser tiden i 24-timersformat, så klokken 1 om natten og 13 aldri ser like ut.',
         'Volty': 'En animert urskive med Volty, et lite batteri som trener sammen med deg. Humøret viser hvor mye strøm klokken har igjen.',
         'Discomfort': 'En urskive der noe alltid er litt feil: visere som bommer på midten, en skjev strek, en sekundprikk som vandrer ut av skjermen. Tre oppsett.',
-        'Demotivation': 'Fullfør en økt (eller hopp over en), og urskiven din har en sarkastisk kommentar til det, rett under klokkeslettet.'
+        'Demotivation': 'Fullfør en økt (eller hopp over en), og urskiven din har en sarkastisk kommentar til det, rett under klokkeslettet.',
+        'Cutout': 'En premium analog-digital urskive: klokkeslettet, fremgangen din og været, alt med ett blikk.'
       },
       momentumTags: {
         trending: '🔥 Populær denne uken',
@@ -1778,7 +1796,8 @@
         'Dynamic Hours': 'En analog urtavla som visar tiden i 24-timmarsformat, så att klockan 1 på natten och 13 aldrig ser likadana ut.',
         'Volty': 'En animerad urtavla med Volty, ett litet batteri som tränar med dig. Humöret visar hur mycket laddning klockan har kvar.',
         'Discomfort': 'En urtavla där något alltid är lite fel: visare som missar mitten, en sned linje, en sekundprick som vandrar av skärmen. Tre layouter.',
-        'Demotivation': 'Avsluta ett pass (eller hoppa över ett) så har urtavlan en sarkastisk kommentar om det, precis under klockan.'
+        'Demotivation': 'Avsluta ett pass (eller hoppa över ett) så har urtavlan en sarkastisk kommentar om det, precis under klockan.',
+        'Cutout': 'En premium analog-digital urtavla: tiden, dina framsteg och vädret, allt med en blick.'
       },
       momentumTags: {
         trending: '🔥 Populär den här veckan',
@@ -1874,7 +1893,8 @@
         'Dynamic Hours': 'Analoginen kellotaulu, joka näyttää ajan 24 tunnin muodossa, joten kello 1 yöllä ja kello 13 eivät koskaan näytä samalta.',
         'Volty': 'Animoitu kellotaulu, jonka tähtenä on Volty — pieni akku, joka treenaa kanssasi. Sen mieliala kertoo, paljonko kellossa on virtaa jäljellä.',
         'Discomfort': 'Kellotaulu, jossa jokin on aina hieman pielessä: keskustan ohi osuvat osoittimet, vino viiva, ruudulta karkaava sekuntipiste. Kolme asettelua.',
-        'Demotivation': 'Lopeta treeni (tai jätä se väliin), niin kellotaulullasi on siitä sarkastinen kommentti heti kellonajan alla.'
+        'Demotivation': 'Lopeta treeni (tai jätä se väliin), niin kellotaulullasi on siitä sarkastinen kommentti heti kellonajan alla.',
+        'Cutout': 'Premium-tason analogis-digitaalinen kellotaulu: aika, edistymisesi ja sää yhdellä silmäyksellä.'
       },
       momentumTags: {
         trending: '🔥 Suosittu tällä viikolla',
@@ -1969,7 +1989,8 @@
         'Dynamic Hours': '24時間表示のアナログウォッチフェイス。午前1時と午後1時が同じに見えることはありません。',
         'Volty': 'あなたと一緒にトレーニングする小さなバッテリー、Volty が主役のアニメーションウォッチフェイス。表情で時計のバッテリー残量がわかります。',
         'Discomfort': 'いつもどこかが少しだけおかしいウォッチフェイス：中心を外れた針、傾いた線、画面の外へさまよう秒のドット。3つのレイアウト。',
-        'Demotivation': 'ワークアウトを終えると（またはサボると）、時刻のすぐ下にウォッチフェイスが皮肉なひと言を添えます。'
+        'Demotivation': 'ワークアウトを終えると（またはサボると）、時刻のすぐ下にウォッチフェイスが皮肉なひと言を添えます。',
+        'Cutout': 'プレミアムなアナログ・デジタル文字盤：時刻、あなたの進捗、天気をひと目で。'
       },
       momentumTags: {
         trending: '🔥 今週の注目',
@@ -2065,7 +2086,8 @@
         'Dynamic Hours': '24시간 형식으로 시간을 보여 주는 아날로그 워치 페이스로, 오전 1시와 오후 1시가 절대 같아 보이지 않습니다.',
         'Volty': '함께 훈련하는 작은 배터리 Volty가 주인공인 애니메이션 워치 페이스. 기분으로 시계의 남은 배터리를 알려 줍니다.',
         'Discomfort': '항상 무언가가 살짝 어긋나 있는 워치 페이스: 중심을 비껴간 바늘, 기울어진 선, 화면 밖으로 떠도는 초 점. 레이아웃 3가지.',
-        'Demotivation': '운동을 끝내면(혹은 건너뛰면) 워치 페이스가 시간 바로 아래에 비꼬는 한마디를 남깁니다.'
+        'Demotivation': '운동을 끝내면(혹은 건너뛰면) 워치 페이스가 시간 바로 아래에 비꼬는 한마디를 남깁니다.',
+        'Cutout': '프리미엄 아날로그-디지털 워치 페이스: 시간, 진행 상황, 날씨를 한눈에.'
       },
       momentumTags: {
         trending: '🔥 이번 주 인기',
@@ -2161,7 +2183,8 @@
         'Dynamic Hours': '以 24 小时制显示时间的指针表盘，凌晨 1 点和下午 1 点永远不会看起来一样。',
         'Volty': '由 Volty 主演的动画表盘——一块陪你一起训练的小电池。它的心情会告诉你手表还剩多少电量。',
         'Discomfort': '总有哪里不太对劲的表盘：没对准中心的指针、歪斜的线条、溜出屏幕的秒点。三种布局。',
-        'Demotivation': '完成一次训练（或者干脆跳过），表盘就会在时间正下方送上一句讽刺点评。'
+        'Demotivation': '完成一次训练（或者干脆跳过），表盘就会在时间正下方送上一句讽刺点评。',
+        'Cutout': '高端模拟数字表盘：时间、你的进度和天气，一眼尽览。'
       },
       momentumTags: {
         trending: '🔥 本周热门',
@@ -2257,7 +2280,8 @@
         'Dynamic Hours': '以 24 小時制顯示時間的指針錶面，凌晨 1 點與下午 1 點永遠不會看起來一樣。',
         'Volty': '由 Volty 主演的動畫錶面——一顆陪你一起訓練的小電池。它的心情會告訴你手錶還剩多少電量。',
         'Discomfort': '總有哪裡不太對勁的錶面：沒對準中心的指針、歪斜的線條、溜出螢幕的秒點。三種版面。',
-        'Demotivation': '完成一次訓練（或乾脆跳過），錶面就會在時間正下方送上一句諷刺評語。'
+        'Demotivation': '完成一次訓練（或乾脆跳過），錶面就會在時間正下方送上一句諷刺評語。',
+        'Cutout': '高端類比數位錶面：時間、你的進度和天氣，一眼盡覽。'
       },
       momentumTags: {
         trending: '🔥 本週熱門',
@@ -2352,7 +2376,8 @@
         'Dynamic Hours': 'หน้าปัดแบบเข็มที่แสดงเวลาแบบ 24 ชั่วโมง ตีหนึ่งกับบ่ายโมงจึงไม่มีวันดูเหมือนกัน',
         'Volty': 'หน้าปัดแอนิเมชันที่มี Volty แบตเตอรี่ตัวน้อยที่ฝึกซ้อมไปกับคุณ อารมณ์ของมันบอกว่านาฬิกาเหลือแบตเตอรี่เท่าไร',
         'Discomfort': 'หน้าปัดที่มีบางอย่างผิดเพี้ยนเล็กน้อยเสมอ: เข็มที่ไม่ตรงกลาง เส้นที่เอียง จุดวินาทีที่หลุดออกนอกจอ มีสามรูปแบบ',
-        'Demotivation': 'ออกกำลังกายเสร็จ (หรือโดดไป) แล้วหน้าปัดจะมีคำประชดให้ทันที ใต้เวลาเลย'
+        'Demotivation': 'ออกกำลังกายเสร็จ (หรือโดดไป) แล้วหน้าปัดจะมีคำประชดให้ทันที ใต้เวลาเลย',
+        'Cutout': 'หน้าปัดอนาล็อก-ดิจิทัลระดับพรีเมียม: เวลา ความคืบหน้าของคุณ และสภาพอากาศ ในพริบตาเดียว'
       },
       momentumTags: {
         trending: '🔥 มาแรงสัปดาห์นี้',
@@ -2448,7 +2473,8 @@
         'Dynamic Hours': 'פני שעון אנלוגיים שמציגים את השעה בפורמט 24 שעות, כך ש־1 בלילה ו־1 בצהריים לעולם לא נראים אותו דבר.',
         'Volty': 'פני שעון מונפשים בכיכובו של Volty, סוללה קטנה שמתאמנת איתכם. מצב הרוח שלה מראה כמה טעינה נשארה בשעון.',
         'Discomfort': 'פני שעון שבהם תמיד משהו קצת לא בסדר: מחוגים שמחטיאים את המרכז, קו עקום, נקודת שניות שנודדת אל מחוץ למסך. שלוש פריסות.',
-        'Demotivation': 'סיימתם אימון (או דילגתם עליו)? פני השעון יגיבו בהערה עוקצנית, ממש מתחת לשעה.'
+        'Demotivation': 'סיימתם אימון (או דילגתם עליו)? פני השעון יגיבו בהערה עוקצנית, ממש מתחת לשעה.',
+        'Cutout': 'פני שעון אנלוגיים-דיגיטליים יוקרתיים: השעה, ההתקדמות שלך ומזג האוויר, הכול במבט אחד.'
       },
       momentumTags: {
         trending: '🔥 חם השבוע',
@@ -2544,7 +2570,8 @@
         'Dynamic Hours': 'Tampilan jam analog yang menunjukkan waktu dalam format 24 jam, jadi pukul 1 dini hari dan 1 siang tidak pernah terlihat sama.',
         'Volty': 'Tampilan jam animasi yang dibintangi Volty, baterai kecil yang berlatih bersama Anda. Suasana hatinya menunjukkan sisa daya jam Anda.',
         'Discomfort': 'Muka jam yang selalu sedikit keliru: jarum yang meleset dari tengah, garis yang miring, titik detik yang keluyuran keluar layar. Tiga tata letak.',
-        'Demotivation': 'Selesaikan latihan (atau lewatkan saja) dan muka jam Anda punya komentar sarkastis tentangnya, tepat di bawah jam.'
+        'Demotivation': 'Selesaikan latihan (atau lewatkan saja) dan muka jam Anda punya komentar sarkastis tentangnya, tepat di bawah jam.',
+        'Cutout': 'Tampilan jam analog-digital premium: waktu, kemajuan Anda, dan cuaca, semuanya dalam sekali lihat.'
       },
       momentumTags: {
         trending: '🔥 Sedang Tren Minggu Ini',
@@ -2640,7 +2667,8 @@
         'Dynamic Hours': 'Muka jam analog yang memaparkan masa dalam format 24 jam, jadi pukul 1 pagi dan 1 petang tidak pernah kelihatan sama.',
         'Volty': 'Muka jam animasi yang dibintangi Volty, bateri kecil yang berlatih bersama anda. Moodnya menunjukkan baki cas jam anda.',
         'Discomfort': 'Muka jam yang sentiasa ada sesuatu yang sedikit tidak kena: jarum yang tersasar dari tengah, garisan senget, titik saat yang merayau keluar skrin. Tiga susun atur.',
-        'Demotivation': 'Habiskan senaman (atau ponteng) dan muka jam anda ada komen sinis tentangnya, betul-betul di bawah waktu.'
+        'Demotivation': 'Habiskan senaman (atau ponteng) dan muka jam anda ada komen sinis tentangnya, betul-betul di bawah waktu.',
+        'Cutout': 'Muka jam analog-digital premium: masa, kemajuan anda dan cuaca, semuanya dalam sekali pandang.'
       },
       momentumTags: {
         trending: '🔥 Trending Minggu Ini',
