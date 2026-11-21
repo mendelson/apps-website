@@ -90,7 +90,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/visual.css?v=32" />
+<link rel="stylesheet" href="/assets/css/visual.css?v=33" />
 <style>
 .header-subtitle-row{display:flex;align-items:center;justify-content:center;gap:8px;}
 .header-subtitle-row p{margin:0;}
@@ -1261,7 +1261,34 @@
   const desiredLoaders = [1, 4, 6, 7, 8];
   const randomPick = desiredLoaders[Math.floor(Math.random() * desiredLoaders.length)];
 
-  container.innerHTML = loaders[randomPick];
+  container.innerHTML = '<div class="loader-fit">' + loaders[randomPick] + '</div>';
+  const fit = container.firstElementChild;
+
+  /* Each drawing's visible box at scale 1, in px — measured from rendered
+     pixels, since the bike's wheels and parts of the others are pseudo-
+     elements or overflow their own layout box — and the offset of that box's
+     centre from the layout box's centre, so the drawing itself is centred. */
+  const BOX = {
+    1: { w: 170, h: 128, x: 2, y: 14 },   // bike
+    4: { w: 34, h: 43, x: 0, y: 32 },     // running man
+    6: { w: 497, h: 338, x: 41, y: 42 },  // gym bench
+    7: { w: 511, h: 380, x: 5, y: -20 },  // treadmill
+    8: { w: 800, h: 643, x: 0, y: -4 }    // pool
+  }[randomPick];
+
+  /* Same share of the screen for every loader, on every device. The bike and
+     the treadmill used to have a fixed px size (a small patch in the middle
+     of a phone), the others a CSS tan(atan2()) scale; this is plain JS
+     arithmetic, so it does not depend on CSS trig support either. */
+  function fitLoader() {
+    const vw = pre.clientWidth || window.innerWidth;
+    const vh = Math.min(pre.clientHeight || window.innerHeight, window.innerHeight || Infinity);
+    const s = Math.min(Math.min(vw * 0.84, 560) / BOX.w, Math.min(vh * 0.56, 400) / BOX.h);
+    fit.style.transform = "scale(" + s + ") translate(" + (-BOX.x) + "px," + (-BOX.y) + "px)";
+    fit.classList.add("fitted");
+  }
+  fitLoader();
+  window.addEventListener("resize", fitLoader);
 
   if (randomPick === 8 && window.startSwimRace) {
     window.startSwimRace(container);
@@ -1284,6 +1311,7 @@
     await new Promise(r => setTimeout(r, minimum - elapsed));
   }
 
+  window.removeEventListener("resize", fitLoader);
   pre.classList.add("hide");
   setTimeout(() => pre.remove(), 650);
 })();

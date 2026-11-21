@@ -735,7 +735,17 @@ nav a:hover {
 ============================================ */
 #preloader {
   position: fixed;
+  /* top/left/width/height first: an engine without `inset` (iOS < 14.5)
+     would otherwise shrink the overlay to its content. */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   inset: 0;
+  /* The drawings are built with left/right and translateX, and hold no text:
+     under the Hebrew page's dir="rtl" they came out mirrored, off-centre and
+     (the pool) with the swimmers outside the water. */
+  direction: ltr;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -758,6 +768,21 @@ nav a:hover {
   align-items: center;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+
+/* Every loader sits in .loader-fit, which the inline script in index.html
+   scales (and re-centres) so the drawing fills the same share of the screen
+   whatever its natural size — the loaders themselves carry no viewport
+   scaling. Hidden until that first fit, so a phone never flashes the
+   unscaled drawing. */
+.loader-fit {
+  flex: none;
+  transform-origin: center center;
+  visibility: hidden;
+}
+.loader-fit.fitted {
+  visibility: visible;
 }
 
 /* tema escuro */
@@ -969,10 +994,8 @@ html:has(#preloader:not(.hide)) body {
   /* Garante que nada seja cortado */
   overflow: visible;
 
-  /* Scale maior, mas COM compensação vertical.
-     Limitado pela viewport para caber em telas pequenas
-     (tan(atan2()) converte comprimento em número). */
-  transform: scale(min(2.8, tan(atan2(85vw, 120px)), tan(atan2(75vh, 180px)))) translateY(25px);
+  /* Compensação vertical do pulo (a escala vem do .loader-fit). */
+  transform: translateY(25px);
 
   /* Centraliza o conteúdo interno */
   display: flex;
@@ -1146,31 +1169,17 @@ html:has(#preloader:not(.hide)) body {
 
 /* Wrapper inside the preloader */
 .loader-gym {
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Responsive scaling preserving exact 800x600 geometry.
-   scale() needs a plain number, so lengths are turned into ratios via
-   tan(atan2(len, len)). Scaling from the center keeps the drawing centered
-   (the 800x600 layout box is flex-centered; transforms don't move it). */
+/* Exact 800x600 geometry; the scale comes from .loader-fit. */
 .gym-container {
     width: 800px;
     height: 600px;
     position: relative;
-    transform-origin: center center;
-    transform: scale(min(tan(atan2(90vw, 800px)), tan(atan2(70vh, 600px))));
     overflow: visible;
-}
-
-/* Mobile: size against the small viewport so the browser UI never covers it */
-@supports (height: 100svh) {
-    .gym-container {
-        transform: scale(min(tan(atan2(90vw, 800px)), tan(atan2(70svh, 600px))));
-    }
 }
 
 /* ROOT CANVAS */
@@ -1736,7 +1745,6 @@ nav.open .nav-hamburger span:nth-child(3) {
 ============================================ */
 .loader-7 {
   position: relative;
-  transform: scale(0.75);
 }
 
 .loader-7 .treadmill-animation {
@@ -2166,13 +2174,6 @@ nav.open .nav-hamburger span:nth-child(3) {
   left: 60px;
 }
 
-/* keep the wide treadmill inside the overlay on small screens */
-@media (max-width: 520px) {
-  .loader-7 {
-    transform: scale(0.5);
-  }
-}
-
 /* ============================================
    PRELOADER 8 (medley swimmers)
    Scoped under .loader-8, keyframes prefixed
@@ -2180,11 +2181,6 @@ nav.open .nav-hamburger span:nth-child(3) {
    no start button). Self-contained pool bg so
    it reads on both light and dark overlays.
 ============================================ */
-/* Escala contínua limitada pela viewport (pool tem ~820px de largura natural) */
-.loader-8 {
-  transform: scale(min(0.6, tan(atan2(88vw, 820px)), tan(atan2(70vh, 640px))));
-}
-
 .loader-8 .pool {
   margin: 0 auto;
   width: 800px;
