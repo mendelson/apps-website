@@ -536,7 +536,8 @@ const FEATURED_REASON_COPY = window.FEATURED_REASON_COPY || {
 
 /**
  * Featured carousel: up to 4 slides, each a different `.card` (no duplicates).
- * First slide: app with the smallest parsed API `app_age` (youngest); launch_date is not used.
+ * First slide: the youngest app by parsed API `app_age` while it is at most 90 days old (launch_date is
+ * not used); otherwise the weekly-installs #1 ("Trending This Week"). Then the paid app, the favorites...
  */
 function buildFeaturedCarousel(data) {
   document.querySelectorAll(".card-badge").forEach(b => b.remove());
@@ -567,6 +568,17 @@ function buildFeaturedCarousel(data) {
   /* Slots fill in priority order, and every badge is guaranteed truthful: a
      slot is skipped (never relabelled) when its claim no longer holds, so the
      carousel shrinks to as few as one slide rather than padding with filler. */
+
+  /* 0. FIRST SLIDE, ALWAYS (owner, 2026-11-18): the newest launch, only while it is
+        genuinely recent (MAX_NEW_AGE_DAYS); with no launch to show, "Trending This
+        Week" (the genuine #1 by weekly installs, once it clears the trending floor).
+        The slides below keep their old order and are unchanged: a slot already used
+        above is skipped, never relabelled. */
+  if (newcomer && newcomerDays !== null && newcomerDays <= MAX_NEW_AGE_DAYS) {
+    pushEntry(newcomer, "new");
+  } else if (byInstalls[0] && get(byInstalls[0], "installs") >= MIN_TRENDING_INSTALLS) {
+    pushEntry(byInstalls[0], "installs");
+  }
 
   /* 1. COMMERCIAL — lead with the strongest paid app (revenue first),
         ranked by total downloads among paid apps. */
